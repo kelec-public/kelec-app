@@ -10,6 +10,7 @@ import BigButton, { ButtonColours } from "../../../../Common/BigButton";
 import CarViewContext from "../../../../../lib/Contexts/CarViewContext";
 import LinearGradient from "react-native-linear-gradient";
 import TemperatureHandler from "../../../../../lib/model/TemperatureHandler";
+import InfoPopup from "../../../../Common/InfoPopup";
 
 
 function HVACCard(): React.JSX.Element {
@@ -166,31 +167,20 @@ function HVACCard(): React.JSX.Element {
                                 </View>
                             </View>
                             {((apiHandler.getMinimumHvacSOC() ?? Infinity) >= apiHandler.getBatteryLevel()) && (
-                                <View
-                                    style={{
-                                        backgroundColor: apiHandler.getMinimumHvacSOC() == null ? '#FFCCB3' : '#F4B6B6',
-                                        padding: 10,
-                                        borderRadius: 10
-                                    }}
+                                <InfoPopup
+                                    backgroundColour={apiHandler.getMinimumHvacSOC() == null ? '#FFCCB3' : '#F4B6B6'}
+                                    icon={"warning"}
+                                    iconColour={'#7A1F1F'}
                                 >
-                                    <View
-                                        style={{
-                                            flexDirection: 'row',
-                                            alignItems: 'center',
-                                            gap: 10,
-                                            width: '100%'
-                                        }}
-                                    >
-                                        <Icon name="warning" size={20} color={'#7A1F1F'} />
+                                    <>
                                         {apiHandler.getMinimumHvacSOC() == null && (
                                             <Text style={{ color: 'black', flexShrink: 1, }}>{languageHandler.getTranslation("hvacMinSocUnknown")}</Text>
                                         )}
                                         {apiHandler.getMinimumHvacSOC() != null && (
                                             <Text style={{ color: 'black', flexShrink: 1, }}>{languageHandler.getTranslation("hvacUnderMinSoc")} {apiHandler.getMinimumHvacSOC()}%</Text>
                                         )}
-                                    </View>
-
-                                </View>
+                                    </>
+                                </InfoPopup>
                             )}
 
                             <View style={commonStyles.navSeparator}></View>

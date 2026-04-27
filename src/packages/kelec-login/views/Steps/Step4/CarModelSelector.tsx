@@ -44,7 +44,7 @@ const CarModelSelector = (props: Props) => {
     const [selectedBrand, setSelectedBrand] = useState<DropDownData | null>(null);
     const [selectedModel, setSelectedModel] = useState<DropDownData | null>(null);
     const [selectedBattery, setSelectedBattery] = useState<DropDownData | null>(null);
-    const [chargingLimit, setChargingLimit] = useState<number>(80);
+    const [chargingLimit, setChargingLimit] = useState<number>(100);
     const [leasingData, setLeasingData] = useState<LeasingData | undefined>(undefined);
     const [supportsV2G, setSupportsV2G] = useState<boolean>(false);
 

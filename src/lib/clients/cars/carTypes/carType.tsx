@@ -30,10 +30,23 @@ enum CarAvailableModels {
     IONIQ = "ioniq",
     ZOE1 = 'Zoe 1',
     ZOE_E_TECH = "zoe_e_tech",
+    TWINGO = "twingo_e_tech",
+    TRAFIC = "trafic_e_tech",
+    MASTER = "master_e_tech",
+    A290 = "a290",
+    A390 = "a390",
 }
 
 const AUTHORISED_MODELS = [
-    CarAvailableModels.MEGANE, CarAvailableModels.SCENIC, CarAvailableModels.R5, CarAvailableModels.R4
+    CarAvailableModels.MEGANE,
+    CarAvailableModels.SCENIC,
+    CarAvailableModels.R5,
+    CarAvailableModels.R4,
+    CarAvailableModels.TWINGO,
+    CarAvailableModels.TRAFIC,
+    CarAvailableModels.MASTER,
+    CarAvailableModels.A290,
+    CarAvailableModels.A390
 ]
 
 class CarType {
@@ -71,7 +84,13 @@ class CarType {
     }
 
     getChargingLimit(): number {
-        return this.chargingLimit ?? 100;
+        // if custom charging limit is allowed
+        if (AUTHORISED_MODELS.includes(this.model.name as CarAvailableModels)) {
+            return this.chargingLimit ?? 100;
+        }
+
+        // all other models
+        return 100;
     }
 
     setChargingLimit(chargingLimit: number): void {

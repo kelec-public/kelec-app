@@ -7,6 +7,7 @@ import MainContext from "../../../../../lib/Contexts/MainContext";
 import commonStyles, { fontFamilyBold, fontWeightBold } from "../../../../../lib/graphics/commonStyle";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { ChargeSchedule, ChargeSettingsStatus } from "../../../../../lib/clients/carMakers/renaultClient";
+import InfoPopup from "../../../../Common/InfoPopup";
 
 
 function BatteryCard(): React.JSX.Element {
@@ -173,26 +174,37 @@ function BatteryCard(): React.JSX.Element {
             </View>
             <View testID={'chargeTimeWrapper'} style={{ gap: 10 }}>
                 {apiHandler.getIsCarPlugged() && (
-                    <View testID="chargeTimeIfCharging" style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 10, flexWrap: "wrap" }}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Text testID={'chargeText'} style={{ fontSize: 15, }}>{languageHandler.getTranslation(apiHandler.getChargeText())}</Text>
-                            {(apiHandler.getIsCarCharging() && apiHandler.getBatteryLevel() < 100 && appPreferences.displayChargingPower) && (
-                                <View testID={'chargingWrapper'} style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 10 }}>
-                                    <Icon name="bolt" size={20} color={getChargingBarColour(apiHandler.getIsV2GOrV2L())} />
-                                    <Text testID={'chargingPowerText'} style={{ fontWeight: 'bold', fontSize: 15 }}>{apiHandler.getChargingPower(carType)}</Text>
-                                    <Text testID={'chargingPowerUnit'} style={{ fontSize: 15, color: 'gray', fontWeight: '300' }}> {'kW'}</Text>
-                                </View>
-                            )}
-                        </View>
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Icon name="hourglass-top" size={15} color={getBlackColour(isDarkMode)} />
-                            <Text testID={'remainingTimeText'} style={{ fontSize: 15 }}>{apiHandler.getIsCarCharging() && apiHandler.getBatteryLevel() != 100 ? formatHour(apiHandler.getRemainingMinutes()) : '--h--'}</Text>
-                            <View testID={'endHourWrapper'} style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', opacity: apiHandler.getIsCarCharging() && apiHandler.getBatteryLevel() < 100 ? 1 : 0 }}>
-                                <Icon name="battery-charging-full" size={15} style={{ marginLeft: 10 }} color={getBlackColour(isDarkMode)} />
-                                <Text testID={'endHourText'} style={{ fontSize: 15 }}>{formatDate(apiHandler.getEndChargeHour())}</Text>
+                    <View style={{ gap: 10 }}>
+                        <View testID="chargeTimeIfCharging" style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 10, flexWrap: "wrap" }}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <Text testID={'chargeText'} style={{ fontSize: 15, }}>{languageHandler.getTranslation(apiHandler.getChargeText())}</Text>
+                                {(apiHandler.getIsCarCharging() && apiHandler.getBatteryLevel() < 100 && appPreferences.displayChargingPower) && (
+                                    <View testID={'chargingWrapper'} style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 10 }}>
+                                        <Icon name="bolt" size={20} color={getChargingBarColour(apiHandler.getIsV2GOrV2L())} />
+                                        <Text testID={'chargingPowerText'} style={{ fontWeight: 'bold', fontSize: 15 }}>{apiHandler.getChargingPower(carType)}</Text>
+                                        <Text testID={'chargingPowerUnit'} style={{ fontSize: 15, color: 'gray', fontWeight: '300' }}> {'kW'}</Text>
+                                    </View>
+                                )}
                             </View>
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <Icon name="hourglass-top" size={15} color={getBlackColour(isDarkMode)} />
+                                <Text testID={'remainingTimeText'} style={{ fontSize: 15 }}>{apiHandler.getIsCarCharging() && apiHandler.getBatteryLevel() != 100 ? formatHour(apiHandler.getRemainingMinutes()) : '--h--'}</Text>
+                                <View testID={'endHourWrapper'} style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', opacity: apiHandler.getIsCarCharging() && apiHandler.getBatteryLevel() < 100 ? 1 : 0 }}>
+                                    <Icon name="battery-charging-full" size={15} style={{ marginLeft: 10 }} color={getBlackColour(isDarkMode)} />
+                                    <Text testID={'endHourText'} style={{ fontSize: 15 }}>{formatDate(apiHandler.getEndChargeHour())}</Text>
+                                </View>
 
+                            </View>
                         </View>
+                        {carType.shouldDisplayChargingLimit() && apiHandler.getChargingPower(carType) < 0 && (
+                            <InfoPopup
+                                backgroundColour={'#FFCCB3'}
+                                icon={'warning'}
+                                iconColour={'#7A1F1F'}
+                            >
+                                <Text style={{ color: '#7A1F1F' }}>{languageHandler.getTranslation("negativeChargingPower")}</Text>
+                            </InfoPopup>
+                        )}
                     </View>
                 )}
                 {apiHandler.shouldDisplayNextChargeSettings() && (
