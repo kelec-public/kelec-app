@@ -2,10 +2,10 @@ import { View } from "react-native";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 type InfoPopupProps = {
-    backgroundColour: string;
-    icon: string;
-    iconColour: string;
-    children: React.JSX.Element | React.JSX.Element[];
+    readonly backgroundColour: string;
+    readonly icon: string;
+    readonly iconColour: string;
+    readonly children: React.JSX.Element | React.JSX.Element[];
 
 }
 
