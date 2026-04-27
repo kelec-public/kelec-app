@@ -1,0 +1,12 @@
+{
+    "timestamp": "2024-03-30T19:28:15Z",
+    "batteryLevel": 90,
+    "batteryTemperature": 20,
+    "batteryAutonomy": 320,
+    "batteryCapacity": 0,
+    "batteryAvailableEnergy": 54,
+    "plugStatus": 1,
+    "chargingStatus": 1.0,
+    "chargingRemainingTime": 51,
+    "chargingInstantaneousPower": 45.3
+}

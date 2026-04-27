@@ -6,12 +6,13 @@ type InfoPopupProps = {
     readonly icon: string;
     readonly iconColour: string;
     readonly children: React.JSX.Element | React.JSX.Element[];
-
+    readonly testID?: string;
 }
 
-function InfoPopup({ backgroundColour, icon, iconColour, children }: InfoPopupProps): React.JSX.Element {
+function InfoPopup({ backgroundColour, icon, iconColour, children, testID }: InfoPopupProps): React.JSX.Element {
     return (
         <View
+            testID={testID}
             style={{
                 backgroundColor: backgroundColour,
                 padding: 10,

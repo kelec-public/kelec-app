@@ -207,6 +207,45 @@ describe('should display next charge', () => {
     });
 });
 
+describe('negative charging power popup', () => {
+    const meganeCarType = {
+        brand: { name: 'RENAULT', display_name: 'Renault' },
+        model: { name: 'megane_e_tech', display_name: 'Megane E-Tech', engine_type: '' },
+        battery: { size: 60, max_ac_power: 7, max_dc_power: -1 },
+        chargingLimit: 80
+    };
+    // batteryLevel (90) > chargingLimit (80) → getChargingPower returns negative
+    const batteryPluggedOverLimit = { ...mockJSONBatteryStatus, batteryLevel: 90, plugStatus: 1, chargingStatus: 1.0 };
+    // batteryLevel (70) < chargingLimit (80) → getChargingPower returns positive
+    const batteryPluggedUnderLimit = { ...mockJSONBatteryStatus, batteryLevel: 70, plugStatus: 1, chargingStatus: 1.0 };
+
+    test('should display popup when charging power is negative', async () => {
+        await AsyncStorage.setItem('vin1/carType', JSON.stringify(meganeCarType));
+        const { getByTestId } = render(<App />);
+        mockGetBatteryStatus.mockResolvedValueOnce({ hasError: false, apiData: batteryPluggedOverLimit });
+        mockGetCockpitStatus.mockResolvedValueOnce({ hasError: false, apiData: mockJSONCockpit });
+        mockGetLocationStatus.mockResolvedValueOnce({ hasError: true });
+        mockGetChargeSettings.mockResolvedValueOnce({ hasError: true });
+
+        await waitFor(() => {
+            expect(getByTestId('negativeChargingPowerPopup')).toBeDefined();
+        });
+    });
+
+    test('should not display popup when charging power is positive', async () => {
+        await AsyncStorage.setItem('vin1/carType', JSON.stringify(meganeCarType));
+        const { queryAllByTestId } = render(<App />);
+        mockGetBatteryStatus.mockResolvedValueOnce({ hasError: false, apiData: batteryPluggedUnderLimit });
+        mockGetCockpitStatus.mockResolvedValueOnce({ hasError: false, apiData: mockJSONCockpit });
+        mockGetLocationStatus.mockResolvedValueOnce({ hasError: true });
+        mockGetChargeSettings.mockResolvedValueOnce({ hasError: true });
+
+        await waitFor(() => {
+            expect(queryAllByTestId('negativeChargingPowerPopup')).toHaveLength(0);
+        });
+    });
+});
+
 describe('should display next charge with scheduled offset from app preferences', () => {
 
     test('should display next charge for scheduled charge with one schedule', async () => {
