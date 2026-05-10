@@ -8,7 +8,7 @@ on:
       - features/**
       - dependabot/**
 
-  pull_request:
+  pull_request_target:
     branches:
       - main
       - KAN-**
