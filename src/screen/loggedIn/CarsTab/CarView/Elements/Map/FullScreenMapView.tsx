@@ -1,5 +1,6 @@
 
-import { LayoutChangeEvent, StyleSheet, View, SafeAreaView, Image, TouchableOpacity, useColorScheme, Platform, Linking } from "react-native";
+import { LayoutChangeEvent, StyleSheet, View, TouchableOpacity, useColorScheme, Platform, Linking } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import Text from "../../../../../Common/CustomText";
 import MapView, { MapType, Marker } from "react-native-maps";
 import commonStyles from "../../../../../../lib/graphics/commonStyle";
@@ -68,76 +69,68 @@ const FullScreenMapView = ({ route, navigation }: Props) => {
                 ref={mapModalViewRef}
             >
                 {mapDimensions.width > 0 && mapDimensions.height > 0 && (
-                    <Marker 
-                    coordinate={{
-                        latitude: latitude,
-                        longitude: longitude
-                    }}
-                    title={carModel.getModel()}
-                    description={languageHandler.getTranslation("lastUpdated") + getDisplayDate(lastMapUpdateDate)}
+                    <Marker
+                        coordinate={{
+                            latitude: latitude,
+                            longitude: longitude
+                        }}
+                        title={carModel.getModel()}
+                        description={languageHandler.getTranslation("lastUpdated") + getDisplayDate(lastMapUpdateDate)}
                     >
 
-         
-                      {/*     <View style={[styles.bigMarker, { backgroundColor: getWhiteColour(isDarkMode) }]}>
+
+                        {/*     <View style={[styles.bigMarker, { backgroundColor: getWhiteColour(isDarkMode) }]}>
                        <Image style={{ flex: 1, resizeMode: 'contain', transform: [{ rotate: '-45deg' }] }} source={{ uri: `data:image/jpeg;base64,${image}` }} />
                        </View> */}
                     </Marker>
 
-                   /*  <Marker
-                        coordinate={
-                            {
-                                latitude: latitude,
-                                longitude: longitude,
-                            }
-                        }
-                        title={carModel.getModel()}
-                        description={languageHandler.getTranslation("lastUpdated") + getDisplayDate(lastMapUpdateDate)}
-                        centerOffset={{ x: 0, y: -46.6 }}
-                    >
-                        <View style={styles.bigMarkerWrapper}>
-                            <View style={[styles.bigMarker, { backgroundColor: getWhiteColour(isDarkMode) }]}>
-                                <Image style={{ flex: 1, resizeMode: 'contain', transform: [{ rotate: '-45deg' }] }} source={{ uri: `data:image/jpeg;base64,${image}` }} />
-                            </View>
-                        </View>
-                    </Marker> */
+                    /*  <Marker
+                         coordinate={
+                             {
+                                 latitude: latitude,
+                                 longitude: longitude,
+                             }
+                         }
+                         title={carModel.getModel()}
+                         description={languageHandler.getTranslation("lastUpdated") + getDisplayDate(lastMapUpdateDate)}
+                         centerOffset={{ x: 0, y: -46.6 }}
+                     >
+                         <View style={styles.bigMarkerWrapper}>
+                             <View style={[styles.bigMarker, { backgroundColor: getWhiteColour(isDarkMode) }]}>
+                                 <Image style={{ flex: 1, resizeMode: 'contain', transform: [{ rotate: '-45deg' }] }} source={{ uri: `data:image/jpeg;base64,${image}` }} />
+                             </View>
+                         </View>
+                     </Marker> */
                 )}
             </MapView>
             {/*  top left button */}
-            <SafeAreaView style={{
-                position: 'absolute',
-                top: 15,
-                left: 15,
-            }}>
-                <View>
-                    <TouchableOpacity
-                        testID="closeModalButton"
-                        onPress={() => {
-                            navigation.goBack();
-                        }}
-                    >
-                        <View
-                            style={[styles.fullScreenButton, { backgroundColor: getWhiteColour(isDarkMode) }]}>
-                            <Icon name="chevron-left" color={getBlackColour(isDarkMode)} size={20}></Icon>
-                            <Text style={{ color: getBlackColour(isDarkMode) }}>{languageHandler.getTranslation("backToVehicle")}</Text>
-                        </View>
-                    </TouchableOpacity>
-
+            <SafeAreaView edges={['top']} style={{ position: 'absolute', top: 0, width: '100%' }}>
+                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginHorizontal: 15 }}>
+                    <View>
+                        <TouchableOpacity
+                            testID="closeModalButton"
+                            onPress={() => {
+                                navigation.goBack();
+                            }}
+                        >
+                            <View
+                                style={[styles.fullScreenButton, { backgroundColor: getWhiteColour(isDarkMode) }]}>
+                                <Icon name="chevron-left" color={getBlackColour(isDarkMode)} size={20}></Icon>
+                                <Text style={{ color: getBlackColour(isDarkMode) }}>{languageHandler.getTranslation("backToVehicle")}</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                    <WeatherMapCard weatherHandler={weatherHandler} />
                 </View>
             </SafeAreaView>
-            <SafeAreaView style={{
-                position: 'absolute',
-                top: 15,
-                right: 15,
-            }}>
-                <WeatherMapCard weatherHandler={weatherHandler} />
-            </SafeAreaView>
             {/*  bottom right buttons */}
-            <SafeAreaView style={{
+            <View style={{
                 position: 'absolute',
                 right: 15,
-                bottom: 15,
-            }}>
-                <View style={{ display: 'flex', gap: 15 }}>
+                bottom: 0,
+            }}
+            >
+                <View style={{ display: 'flex', gap: 15, marginBottom: 15 }}>
                     {hasModalRegionChanged && (
                         <TouchableOpacity
                             testID="resetFullRegionButton"
@@ -209,7 +202,7 @@ const FullScreenMapView = ({ route, navigation }: Props) => {
                         </View>
                     </TouchableOpacity>
                 </View>
-            </SafeAreaView>
+            </View>
         </View>
     )
 };

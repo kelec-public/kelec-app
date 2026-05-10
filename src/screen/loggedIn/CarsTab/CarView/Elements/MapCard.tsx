@@ -92,7 +92,7 @@ function MapCard({ navigation }: Props): React.JSX.Element {
                         }
                         title={carModel.getModel()}
                         description={languageHandler.getTranslation("lastUpdated") + getDisplayDate(apiHandler.getLastMapUpdateDate())}
-                        /* centerOffset={{ x: 0, y: -28.3 }} */
+                    /* centerOffset={{ x: 0, y: -28.3 }} */
                     >
                         {/* <View style={styles.smallMarkerWrapper}>
                             <View style={[styles.smallMarker, { backgroundColor: getWhiteColour(isDarkMode) }]}>
@@ -105,8 +105,8 @@ function MapCard({ navigation }: Props): React.JSX.Element {
                 <View style={{
                     zIndex: 99, elevation: 99,
                     position: 'absolute',
-                    top: 0,
-                    left: 0,
+                    top: 10,
+                    left: 10,
                 }}>
                     <WeatherMapCard weatherHandler={weatherHandler} />
                 </View>

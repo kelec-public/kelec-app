@@ -39,9 +39,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 10,
         borderRadius: 999,
-        marginRight: 10,
-        marginTop: 10,
-        marginLeft: 10,
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
