@@ -150,18 +150,15 @@ const getMileageHistory = async (vin: string): Promise<MileageLog[] | null> => {
     }
 
     if (Platform.OS === 'android') {
-        SharedStorage.get(`${vin}_mileageHistory`, (mileage_history: string | null) => {
-            try {
-                if (mileage_history !== null) {
-                    const parsedMileage = JSON.parse(mileage_history);
-                    console.log("mileage history", parsedMileage);
-                    return parsedMileage;
-                }
-            } catch (err) {
-                console.error("Failed to get mileage history", err);
-                return null;
+        try {
+            const response = await SharedStorage.async_get(`${vin}_mileageHistory`);
+            if (response !== null) {
+                return JSON.parse(response);
             }
-        });
+        } catch (err) {
+            console.error("Failed to get mileage history", err);
+        }
+        return null;
     }
 
     return null;

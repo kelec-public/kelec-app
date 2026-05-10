@@ -7,15 +7,13 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONObject;
-
 import java.lang.reflect.Type;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
+import java.util.TimeZone;
 
 public class MileageHandler {
     private static final String TAG = "MileageHandler";
@@ -92,17 +90,12 @@ public class MileageHandler {
      * Convert Date to ISO string format
      */
     static private String convertDateToIsoString(Date date) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
-        return sdf.format(date);
+        return date.toInstant().toString();
     }
 
-    /**
-     * Convert ISO string to Date
-     */
     static private Date convertIsoStringToDate(String isoString) {
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
-            return sdf.parse(isoString);
+            return Date.from(Instant.parse(isoString));
         } catch (Exception e) {
             logDebug("Failed to parse ISO date string: " + isoString + ", error: " + e.getMessage());
             return null;
