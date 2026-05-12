@@ -1,3 +1,5 @@
+const { platform } = require("os");
+
 module.exports = {
     project: {
         ios: {},
@@ -10,5 +12,10 @@ module.exports = {
                 ios: null,
             },
         },
+        'react-native-config': {
+            platforms: {
+                android: null
+            }
+        }
     },
 };

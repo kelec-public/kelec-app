@@ -1,0 +1,10 @@
+//
+//  Config.xcconfig
+//  Kelec
+//
+//  Created by Kelyan PEGEOT SELME on 12/05/2026.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://developer.apple.com/documentation/xcode/adding-a-build-configuration-file-to-your-project
+#include? "tmp.xcconfig"

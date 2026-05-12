@@ -10,6 +10,7 @@ import com.facebook.react.ReactPackage
 import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
 import com.rnfs.RNFSPackage;
+import com.lugg.RNCConfig.RNCConfigPackage
 
 class MainApplication : Application(), ReactApplication {
 
@@ -20,7 +21,8 @@ class MainApplication : Application(), ReactApplication {
               // Packages that cannot be autolinked yet can be added manually here, for example:
               // add(MyReactNativePackage())
               add(SharedStoragePackager());
-              add(NativeLanguagePackager())
+              add(NativeLanguagePackager());
+                add(RNCConfigPackage());
             }
 
         override fun getJSMainModuleName(): String = "index"

@@ -98,7 +98,7 @@ func getCarImage(vin: String, userBundle: UserDefaults) -> String {
 
 
 func getTempoData() async -> tempoFinalReturn? {
-  let rteClient = rteApi()
+  let rteClient = getRteClient()
   if let tempoReturn = try? await rteClient.getTempo(){
     zeServices.saveTempoData(tempo: tempoReturn)
     return tempoReturn

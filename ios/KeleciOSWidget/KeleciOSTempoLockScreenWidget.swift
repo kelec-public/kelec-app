@@ -27,7 +27,7 @@ struct LockScreenTempoProvider: TimelineProvider{
       let entryDate = Date()
       var tempoApi: tempoFinalReturn? = nil
       let nextRefresh = Calendar.current.date(byAdding: .minute, value: 15, to: entryDate)!
-      let rteClient = rteApi()
+      let rteClient = getRteClient()
       if let tempoReturn = try? await rteClient.getTempo(){
         tempoApi = tempoReturn
         zeServices.saveTempoData(tempo: tempoReturn)
@@ -76,12 +76,12 @@ struct iosTempoLockScreenInline: View {
       }
   
   func getHPPrice()->Float{
-    let client = rteApi()
+    let client = getRteClient()
     return client.getHPPrice(colour: self.tempoApi!.colour)
   }
   
   func getHCPrice()->Float{
-    let client = rteApi()
+    let client = getRteClient()
     return client.getHCPrice(colour: self.tempoApi!.colour)
   }
   
@@ -116,12 +116,12 @@ struct iosTempoLockScreenRectangular: View {
       }
   
   func getHPPrice()->Float{
-    let client = rteApi()
+    let client = getRteClient()
     return client.getHPPrice(colour: self.tempoApi!.colour)
   }
   
   func getHCPrice()->Float{
-    let client = rteApi()
+    let client = getRteClient()
     return client.getHCPrice(colour: self.tempoApi!.colour)
   }
   

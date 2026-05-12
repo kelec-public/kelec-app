@@ -107,12 +107,12 @@ struct KeleciOSTempoMediumView: View{
       }
   
   func getHPPrice()->Float{
-    let client = rteApi()
+    let client = getRteClient()
     return client.getHPPrice(colour: self.tempoApi.colour)
   }
   
   func getHCPrice()->Float{
-    let client = rteApi()
+    let client = getRteClient()
     return client.getHCPrice(colour: self.tempoApi.colour)
   }
   

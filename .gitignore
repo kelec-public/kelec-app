@@ -71,4 +71,6 @@ yarn-error.log
 
 reports/
 
+# react-native-config codegen
+ios/tmp.xcconfig
 test-report.html

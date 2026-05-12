@@ -1,5 +1,6 @@
 package com.kelec.ApiHandler
 
+import com.kelec.BuildConfig
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -32,7 +33,7 @@ public object KamereonCockpitApiClient{
     }
 }
 
-private const val KAMEREON_API_KEY = "TO_FILL";
+private const val KAMEREON_API_KEY = BuildConfig.KAMEREON_API_KEY;
 
 interface KamereonApiService{
     @Headers("apikey: " + KAMEREON_API_KEY)

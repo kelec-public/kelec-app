@@ -1,5 +1,6 @@
 package com.kelec.ApiHandler
 
+import com.kelec.BuildConfig
 import retrofit2.Retrofit
 import retrofit2.http.*
 import retrofit2.Call
@@ -22,7 +23,7 @@ public object GigyaApiClient {
     }
 }
 
-private const val GIGYA_API_KEY = "TO_FILL";
+private const val GIGYA_API_KEY = BuildConfig.GIGYA_API_KEY;
 interface GigyaApiService {
 
     // to get the account cookieValue

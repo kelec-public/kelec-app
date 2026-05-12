@@ -1,6 +1,7 @@
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
+apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
 
 /**
  * This is the configuration block to customize your React Native Android app.
@@ -88,6 +89,8 @@ android {
         targetSdk 35
         versionCode 265
         versionName '2.5.9'
+        resValue "string", "build_config_package", "com.kelec"
+        resValue "string", "MAPS_API_KEY", project.findProperty('MAPS_API_KEY') ?: ""
     }
     signingConfigs {
         debug {
@@ -129,6 +132,7 @@ android {
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
+    implementation project(':react-native-config')
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation project(':react-native-fs')

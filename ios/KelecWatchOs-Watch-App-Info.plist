@@ -6,13 +6,6 @@
 	<string>$(GIGYA_API_KEY)</string>
 	<key>KAMEREON_API_KEY</key>
 	<string>$(KAMEREON_API_KEY)</string>
-	<key>NSExtension</key>
-	<dict>
-		<key>NSExtensionPointIdentifier</key>
-		<string>com.apple.widgetkit-extension</string>
-	</dict>
-	<key>RCTNewArchEnabled</key>
-	<true/>
 	<key>RTE_BASIC_AUTH</key>
 	<string>$(RTE_BASIC_AUTH)</string>
 </dict>

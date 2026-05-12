@@ -6,22 +6,12 @@ The repo may not be the most easy to work on, and it may not be the best code, b
 
 Discord link : [here](https://discord.gg/ntJayVBYGV)
 
-## Variables to replace
+## Variables to replace in .env
 
-- android/app/src/main/AndroidManifest.xml
-  - `com.google.android.geo.API_KEY`
-
-- src/lib/clients/carMakers/renaultClient.tsx
-  - `GIGYA_API_KEY`
-  - `KAMEREON_API_KEY`
-
-- android/app/src/main/java/com/kelec/ApiHandler/GigyaApiClient.kt
-  - `GIGYA_API_KEY`
-  - `KAMEREON_API_KEY`
-  
-- src/screen/loggedIn/SettingsTab/DebugZone/DebugZoneView.tsx
-  - `GIGYA_API_KEY`
-  - `KAMEREON_API_KEY`
+- `MAPS_API_KEY`
+- `GIGYA_API_KEY`
+- `KAMEREON_API_KEY`
+- `RTE_BASIC_AUTH`
 
 # DEFAULT REACT NATIVE README
 

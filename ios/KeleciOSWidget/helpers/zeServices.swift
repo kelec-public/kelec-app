@@ -264,20 +264,6 @@ public struct CarAccount: Codable{
 }
 
 
-public func getCarMakerApiClient(usercar: UserCar) -> ApiClient{
-  switch (usercar.getCarMaker()){
-  case "renault":
-    return RenaultApiClient(
-      username: usercar.getEmail(),
-      password: usercar.getPassword(),
-      kamereonAccountId: usercar.kamereonAccountID ?? ""
-  )
-  case "hyundai":
-    return HyundaiApiClient(email: usercar.getEmail(), password: usercar.getPassword(), pin: usercar.pinCode ?? "")
-  default:
-    return DemoApiClient()
-  }
-}
 
 
 public func parseCarMaker(carMaker: String)->CarMaker{

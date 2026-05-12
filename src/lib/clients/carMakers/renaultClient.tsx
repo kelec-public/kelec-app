@@ -4,6 +4,7 @@ import { HVACStatusEnum } from "./renaultEnums";
 import { CarMaker } from "../accounts/account";
 import { RenaultCredentials } from "./renaultCredentials";
 import { V2GApiResponse, V2GApiSession } from "./renault/v2gApiResponse";
+import Config from 'react-native-config';
 
 enum RenaultEndpoints {
     // 1st step, get gigya token
@@ -235,9 +236,9 @@ type MapLocationStatus = {
 class RenaultClient extends CarMakerClient {
 
     private static readonly GIGYA_URL = 'https://accounts.eu1.gigya.com';
-    private static readonly GIGYA_API_KEY = 'TO_FILL';
+    private static readonly GIGYA_API_KEY = Config.GIGYA_API_KEY;
     private static readonly KAMEREON_URL = 'https://api-wired-prod-1-euw1.wrd-aws.com';
-    private static readonly KAMEREON_API_KEY = 'TO_FILL';
+    private static readonly KAMEREON_API_KEY = Config.KAMEREON_API_KEY;
 
     kamereonAccountID: string;
 

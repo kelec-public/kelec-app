@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>GIGYA_API_KEY</key>
+	<string>$(GIGYA_API_KEY)</string>
+	<key>KAMEREON_API_KEY</key>
+	<string>$(KAMEREON_API_KEY)</string>
+	<key>RTE_BASIC_AUTH</key>
+	<string>$(RTE_BASIC_AUTH)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
