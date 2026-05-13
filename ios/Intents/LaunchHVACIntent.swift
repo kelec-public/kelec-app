@@ -33,7 +33,6 @@ struct LaunchHVACIntent: AppIntent {
         let userCar = cars.first{ $0.car?.vin == car.id}
         
         if let userCar = userCar{
-          let carMaker = parseCarMaker(carMaker: userCar.carMaker)
           let vin = userCar.car?.vin ?? ""
           var client = getCarMakerApiClient(usercar: userCar)
           let dispatchSemaphore = DispatchSemaphore(value: 0)

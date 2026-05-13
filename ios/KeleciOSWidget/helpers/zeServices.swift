@@ -45,7 +45,7 @@ struct zeServices{
     var finalCars:[VehicleToSave] = []
     var carToSave: VehicleToSave
     switch (zecar.getCarMaker()){
-    case .RENAULT:
+    case .RENAULT, .DACIA, .ALPINE:
       carToSave = RenaultSaved(vin: vin, batteryStatus: zecar.getApiData() as! RenaultBatteryStatus)
       if let data = UserDefaults.standard.data(forKey: "RENAULT_carsLoaded")
       {
@@ -83,7 +83,7 @@ struct zeServices{
     
     switch(zecar.getCarMaker()){
       
-    case .RENAULT:
+    case .RENAULT, .DACIA, .ALPINE:
       let finalConvertedCars = finalCars as! [RenaultSaved]
       let encoder = JSONEncoder()
       if let encoded = try? encoder.encode(finalConvertedCars){
@@ -127,7 +127,7 @@ struct zeServices{
   
   static func loadSavedCar(vin: String, carMaker: CarMaker)->ApiHandler?{
     switch(carMaker){
-    case .RENAULT:
+    case .RENAULT, .DACIA, .ALPINE:
       var carsLoaded: [RenaultSaved] = []
       if let data = UserDefaults.standard.data(forKey: "RENAULT_carsLoaded"){
         let decoder = JSONDecoder()
@@ -271,6 +271,10 @@ public func parseCarMaker(carMaker: String)->CarMaker{
   switch (carMaker){
   case "renault":
     return .RENAULT
+  case "dacia":
+    return .DACIA
+  case "alpine":
+    return .ALPINE
   case "hyundai":
     return .HYUNDAI
   default:

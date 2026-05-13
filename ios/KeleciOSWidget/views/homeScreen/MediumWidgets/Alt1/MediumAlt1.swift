@@ -24,7 +24,7 @@ struct GetImageView: View {
           .widgetAccentedRenderingMode(.fullColor)
           .scaledToFit()
       } else {
-        Image("logo")
+        Image("renaultLogo")
           .resizable()
           .widgetAccentedRenderingMode(.fullColor)
           .scaledToFit()
@@ -39,7 +39,7 @@ struct GetImageView: View {
           .resizable()
           .scaledToFit()
       } else {
-        Image("logo")
+        Image("renaultLogo")
           .resizable()
           .scaledToFit()
       }

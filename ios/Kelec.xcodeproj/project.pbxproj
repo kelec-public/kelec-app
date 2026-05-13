@@ -1829,7 +1829,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = KeleciOSWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 268;
+				CURRENT_PROJECT_VERSION = 269;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = A67QZT46J7;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -1845,7 +1845,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 2.5.9;
+				MARKETING_VERSION = 2.6.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.kelyanselme.MyRenault.iosWidget;
@@ -1874,7 +1874,7 @@
 				CODE_SIGN_ENTITLEMENTS = KeleciOSWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 268;
+				CURRENT_PROJECT_VERSION = 269;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = A67QZT46J7;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -1890,7 +1890,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 2.5.9;
+				MARKETING_VERSION = 2.6.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.kelyanselme.MyRenault.iosWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2076,7 +2076,7 @@
 			repositoryURL = "https://github.com/kelec-public/renault-api-swift-client.git";
 			requirement = {
 				kind = exactVersion;
-				version = 1.0.3;
+				version = 1.0.4;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

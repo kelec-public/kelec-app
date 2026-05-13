@@ -18,7 +18,7 @@ func getRteClient() -> rteApi {
 
 public func getCarMakerApiClient(usercar: UserCar) -> ApiClient{
   switch (usercar.getCarMaker()){
-  case "renault":
+  case "renault", "dacia", "alpine":
     let gigyaApiKey = envVar("GIGYA_API_KEY")
     let kamareonApiKey = envVar("KAMEREON_API_KEY")
     return RenaultApiClient(

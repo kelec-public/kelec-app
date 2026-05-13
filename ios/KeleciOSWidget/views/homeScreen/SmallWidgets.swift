@@ -105,7 +105,7 @@ struct iosWidgetSmallView: View{
                   .widgetAccentedRenderingMode(.fullColor)
                   .scaledToFit()
               }else{
-                Image("logo")
+                Image("renaultLogo")
                   .resizable()
                   .widgetAccentedRenderingMode(.fullColor)
                   .scaledToFit()
@@ -120,7 +120,7 @@ struct iosWidgetSmallView: View{
                   .resizable()
                   .scaledToFit()
               }else{
-                Image("logo")
+                Image("renaultLogo")
                   .resizable()
                   .scaledToFit()
               }

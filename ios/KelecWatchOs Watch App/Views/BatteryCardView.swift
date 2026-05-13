@@ -46,61 +46,15 @@ struct BatteryCardView: View{
                   .scaledToFit()
                   .padding(5)
               case .failure(_):
-                switch(carMaker){
-                case "renault":
-                  Image("logo")
-                    .resizable()
-                    .scaledToFit()
-                    .padding(5)
-                case "peugeot":
-                  Image("peugeotLogo")
-                    .resizable()
-                    .scaledToFit()
-                    .padding(5)
-                case "hyundai":
-                  Image("hyundaiLogo")
-                    .resizable()
-                    .scaledToFit()
-                    .padding(5)
-                case "fiat":
-                  Image("fiatLogo")
-                    .resizable()
-                    .scaledToFit()
-                    .padding(5)
-                default:
-                  Image("logo")
-                    .resizable()
-                    .scaledToFit()
-                    .padding(5)
-                }
+                Image("\(carMaker)Logo")
+                  .resizable()
+                  .scaledToFit()
+                  .padding(5)
               @unknown default:
-                switch(carMaker){
-                case "renault":
-                  Image("logo")
-                    .resizable()
-                    .scaledToFit()
-                    .padding(5)
-                case "peugeot":
-                  Image("peugeotLogo")
-                    .resizable()
-                    .scaledToFit()
-                    .padding(5)
-                case "hyundai":
-                  Image("hyundaiLogo")
-                    .resizable()
-                    .scaledToFit()
-                    .padding(5)
-                case "fiat":
-                  Image("fiatLogo")
-                    .resizable()
-                    .scaledToFit()
-                    .padding(5)
-                default:
-                  Image("logo")
-                    .resizable()
-                    .scaledToFit()
-                    .padding(5)
-                }
+                Image("\(carMaker)Logo")
+                  .resizable()
+                  .scaledToFit()
+                  .padding(5)
               }
             }
             
@@ -290,7 +244,6 @@ struct BatteryCardView: View{
   
   
   func launchHVAC(carAccount: UserCar) async -> Bool {
-    let carMaker = parseCarMaker(carMaker: carAccount.carMaker)
     let vin = carAccount.car?.vin ?? "VIN"
     let client = getCarMakerApiClient(usercar: carAccount)
     
