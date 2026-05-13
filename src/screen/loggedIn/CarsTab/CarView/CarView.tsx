@@ -300,6 +300,8 @@ function CarView({ carModel, navigation, account, pagerRef }: CarViewProps): Rea
                 await loadHyundaiCar();
                 break;
             }
+            case CarMaker.ALPINE:
+            case CarMaker.DACIA:
             case CarMaker.RENAULT: {
                 await loadRenaultCar();
                 break;

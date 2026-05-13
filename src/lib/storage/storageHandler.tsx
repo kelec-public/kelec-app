@@ -75,9 +75,11 @@ class StorageHandler {
                 password = typedAccout.password;
             }
             switch (carMaker) {
+                case CarMaker.ALPINE:
+                case CarMaker.DACIA:
                 case CarMaker.RENAULT:
                     carToAdd = new CarModel(typedCar.vin, typedCar.model, typedCar.imageUrl, typedCar.carMaker, typedCar.registrationNumber);
-                    currentUserAccount.addCar(new RenaultAccount(typedAccout.email, password ?? '', typedAccout.kamereonAccountID ?? "", carToAdd, typedAccout.firstName, typedAccout.lastName));
+                    currentUserAccount.addCar(new RenaultAccount(typedAccout.email, password ?? '', typedAccout.kamereonAccountID ?? "", carToAdd, typedAccout.firstName, typedAccout.lastName, carMaker));
                     break;
                 case CarMaker.HYUNDAI:
                     carToAdd = new CarModel(typedCar.vin, typedCar.model, typedCar.imageUrl, typedCar.carMaker, typedCar.registrationNumber);

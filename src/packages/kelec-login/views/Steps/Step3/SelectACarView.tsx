@@ -67,6 +67,7 @@ const SelectACarView = (props: Props) => {
     /* the following sections need a refactoring */
     const loadRenaultGroupCars = async () => {
         try {
+            const carMaker = account?.getCarMaker();
             const userRenault = account as RenaultAccount;
             const client = new RenaultClient(userRenault.getEmail(), userRenault.getPassword(), userRenault.getKamereonAccountID());
             const vehicles = await client.getVehicles();
@@ -86,7 +87,8 @@ const SelectACarView = (props: Props) => {
                         imageUrl = asset.renditions[0].url;
                     }
                 }
-                const carModel = new RenaultCar(vin, name, imageUrl, CarMaker.RENAULT, registrationNumber);
+
+                const carModel = new RenaultCar(vin, name, imageUrl, carMaker, registrationNumber);
                 vehiclesModels.push(carModel);
             }
             setCars(vehiclesModels);

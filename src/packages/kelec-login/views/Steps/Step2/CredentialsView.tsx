@@ -109,7 +109,7 @@ const CredentialsView = (props: Props) => {
         const client = new RenaultClient(email.toLowerCase(), password);
         const kamereonAccountID = await client.getKamereonAccount(selectedCarMaker);
         if (kamereonAccountID.canLogin) {
-            const renaultAccount = new RenaultAccount(email.toLowerCase(), password, kamereonAccountID.kamereonAccountID ?? '', undefined, kamereonAccountID.firstName, kamereonAccountID.lastName);
+            const renaultAccount = new RenaultAccount(email.toLowerCase(), password, kamereonAccountID.kamereonAccountID ?? '', undefined, kamereonAccountID.firstName, kamereonAccountID.lastName, selectedCarMaker);
             loginUser(renaultAccount);
             return;
         }

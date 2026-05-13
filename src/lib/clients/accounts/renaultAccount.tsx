@@ -7,8 +7,8 @@ class RenaultAccount extends Account {
     kamereonAccountID: string;
     firstName?: string;
     lastName?: string;
-    constructor(email: string, password: string, kamereonAccountID: string, car?: CarModel, firstName?: string, lastName?: string) {
-        super(email, password, CarMaker.RENAULT, car);
+    constructor(email: string, password: string, kamereonAccountID: string, car?: CarModel, firstName?: string, lastName?: string, carMaker: CarMaker = CarMaker.RENAULT) {
+        super(email, password, carMaker, car);
         this.kamereonAccountID = kamereonAccountID;
         this.firstName = firstName;
         this.lastName = lastName;
