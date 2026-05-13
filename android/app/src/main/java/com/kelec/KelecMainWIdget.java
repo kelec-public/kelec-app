@@ -210,8 +210,18 @@ public class KelecMainWIdget extends AppWidgetProvider {
      */
     private static void applyWidgetView(@NonNull Context context, @NonNull AppWidgetManager appWidgetManager,
                                         int appWidgetId, @NonNull BatteryStatusAttributes battery,
-                                        @NonNull String carName, @Nullable AppPreferences appPreferences) {
+                                        @NonNull String carName, @NonNull String carMaker, @Nullable AppPreferences appPreferences) {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.kelec_main_w_idget);
+
+        // Set car maker logo
+        int logoRes;
+        switch (carMaker) {
+            case "alpine": logoRes = R.drawable.alpine_logo; break;
+            case "dacia": logoRes = R.drawable.dacia_logo; break;
+            case "renault": logoRes = R.drawable.renault_logo; break;
+            default: logoRes = R.drawable.renault_logo; break;
+        }
+        views.setImageViewResource(R.id.car_manufacturer_logo, logoRes);
 
         // Set car name
         views.setTextViewText(R.id.car_name, carName);
@@ -458,7 +468,7 @@ public class KelecMainWIdget extends AppWidgetProvider {
             // Handle demo car
             if (DEMO_CAR_MAKER.equals(carMaker)) {
                 BatteryStatusAttributes mockData = createMockBatteryData();
-                applyWidgetView(context, appWidgetManager, appWidgetId, mockData, carName, appPreferences);
+                applyWidgetView(context, appWidgetManager, appWidgetId, mockData, carName, carMaker, appPreferences);
                 return;
             }
 
@@ -483,13 +493,13 @@ public class KelecMainWIdget extends AppWidgetProvider {
                     .thenAccept(carData -> {
                         if (carData != null){
                             saveCachedCarData(context, selectedCarVin, carData);
-                            applyWidgetView(context, appWidgetManager, appWidgetId, carData, finalCarName, appPreferences);
+                            applyWidgetView(context, appWidgetManager, appWidgetId, carData, finalCarName, carMaker, appPreferences);
                         }
                     })
                     .exceptionally(error -> {
                         if (cachedData != null) {
                             Log.d(TAG, "Using cached car data");
-                            applyWidgetView(context, appWidgetManager, appWidgetId, cachedData, finalCarName, appPreferences);
+                            applyWidgetView(context, appWidgetManager, appWidgetId, cachedData, finalCarName, carMaker, appPreferences);
                         } else {
                             applyError(context, appWidgetManager, appWidgetId, error.getCause() != null ? error.getCause().getMessage() : error.getMessage());
                         }
