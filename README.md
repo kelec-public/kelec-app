@@ -6,7 +6,7 @@ The repo may not be the most easy to work on, and it may not be the best code, b
 
 Discord link : [here](https://discord.gg/ntJayVBYGV)
 
-## Variables to replace in .env
+## Variables to replace in .env (after you remove the .example extension)
 
 - `MAPS_API_KEY`
 - `GIGYA_API_KEY`
