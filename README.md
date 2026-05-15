@@ -6,12 +6,12 @@ The repo may not be the most easy to work on, and it may not be the best code, b
 
 Discord link : [here](https://discord.gg/ntJayVBYGV)
 
-## Variables to replace in .env (after you remove the .example extension)
+## Variables to replace in environment file (make sure to rename `.env.example` to `.env`)
 
-- `MAPS_API_KEY`
+- `MAPS_API_KEY` -> useful only if you are developing on android. Google maps api key used to display Maps background. Could be retreived on Google Cloud Plateform.
 - `GIGYA_API_KEY`
 - `KAMEREON_API_KEY`
-- `RTE_BASIC_AUTH`
+- `RTE_BASIC_AUTH` -> useful only if you are developing tempo widgets. Could be retreived [here](https://data.rte-france.com/catalog/-/api/consumption/Tempo-Like-Supply-Contract/v1.1) . Encode then to base64 `CLIENT_ID:CLIENT_SECRET` and put the result in this variable.
 
 # DEFAULT REACT NATIVE README
 
