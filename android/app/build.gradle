@@ -87,8 +87,8 @@ android {
         applicationId 'com.myrenaultplus'
         minSdk 29
         targetSdk 35
-        versionCode 265
-        versionName '2.5.9'
+        versionCode 275
+        versionName '2.6.1'
         resValue "string", "build_config_package", "com.kelec"
         resValue "string", "MAPS_API_KEY", project.findProperty('MAPS_API_KEY') ?: ""
     }

@@ -16,7 +16,7 @@ module.exports = {
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
   setupFiles: ['./jest.setup.js'],
   transformIgnorePatterns: [
-    'node_modules/(?!(jest-)?@?react-native|@react-native-community|@react-navigation)'
+    'node_modules/(?!(jest-)?@?react-native|@react-native-community|@react-navigation|react-native-config)'
   ],
   reporters: [
     'default',
