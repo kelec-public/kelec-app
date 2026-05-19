@@ -7,6 +7,7 @@ import MainContext from "../../../../lib/Contexts/MainContext";
 import { CarMakerClientErrors } from "../../../../lib/clients/carMakers/carMakerClient";
 import RenaultAccount from "../../../../lib/clients/accounts/renaultAccount";
 import { BatteryStatus, RenaultStatus } from "../../../../lib/clients/carMakers/renaultClient";
+import Config from 'react-native-config';
 
 type DebugZoneProps = {
     readonly setShowDebugZone: (showDebugZone: boolean) => void;
@@ -91,10 +92,10 @@ type BatteryStatusApiResponse = {
 
 const DebugZoneView = ({ setShowDebugZone }: DebugZoneProps): React.JSX.Element => {
     class MiniRenaultClient {
-        private static readonly GIGYA_URL = 'https://accounts.eu1.gigya.com';
-        private static readonly GIGYA_API_KEY = 'TO_FILL';
+        private static readonly GIGYA_URL = 'https://gigya-prod-eu1.renaultgroup.com';
+        private static readonly GIGYA_API_KEY = Config.GIGYA_API_KEY;
         private static readonly KAMEREON_URL = 'https://api-wired-prod-1-euw1.wrd-aws.com';
-        private static readonly KAMEREON_API_KEY = 'TO_FILL';
+        private static readonly KAMEREON_API_KEY = Config.KAMEREON_API_KEY;
 
         email: string;
         password: string;
@@ -106,10 +107,21 @@ const DebugZoneView = ({ setShowDebugZone }: DebugZoneProps): React.JSX.Element 
         }
 
         getGigyaToken = async (): Promise<GigyaTokenFunctionResponse> => {
-            const url = MiniRenaultClient.GIGYA_URL + RenaultEndpoints.GET_GIGYA_TOKEN + '?loginID=' + encodeURIComponent(this.email) + '&password=' + encodeURIComponent(this.password) + '&include=data&apiKey=' + MiniRenaultClient.GIGYA_API_KEY;
-            writeLog('Getting Gigya token');
+            const url = MiniRenaultClient.GIGYA_URL + RenaultEndpoints.GET_GIGYA_TOKEN;
+            const body = {
+                loginID: this.email,
+                password: this.password,
+                include: 'data',
+                APIKey: MiniRenaultClient.GIGYA_API_KEY ?? ''
+            }
             return new Promise((resolve, reject) => {
-                fetch(url).then((response) => {
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams(body).toString()
+                }).then((response) => {
                     response.json().then((data: unknown) => {
                         writeLog('Successfully fetched gigya server')
                         const typedData = data as GigyaTokenApiResponse;
@@ -163,10 +175,22 @@ const DebugZoneView = ({ setShowDebugZone }: DebugZoneProps): React.JSX.Element 
         };
 
         getJWTToken = async (cookieValue: string): Promise<JWTTokenFunctionResponse> => {
-            const url = `${MiniRenaultClient.GIGYA_URL}${RenaultEndpoints.GET_JWT_TOKEN}?login_token=${cookieValue}&expiration=87000&fields=data.personId, data.gigyaDataCenter&ApiKey=${MiniRenaultClient.GIGYA_API_KEY}`;
+            const url = `${MiniRenaultClient.GIGYA_URL}${RenaultEndpoints.GET_JWT_TOKEN}`;
+            const body = {
+                fields: 'data.personId,data.gigyaDataCenter',
+                expiration: String(1800),
+                APIKey: MiniRenaultClient.GIGYA_API_KEY ?? '',
+                login_token: cookieValue
+            }
             writeLog('Now getting JWT token');
             return new Promise((resolve, reject) => {
-                fetch(url).then((response) => {
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams(body).toString()
+                }).then((response) => {
                     response.json().then((data: unknown) => {
                         writeLog('Successfully fecthed Gigya server');
                         const typedData = data as JWTTokenApiResponse

@@ -235,7 +235,7 @@ type MapLocationStatus = {
 
 class RenaultClient extends CarMakerClient {
 
-    private static readonly GIGYA_URL = 'https://accounts.eu1.gigya.com';
+    private static readonly GIGYA_URL = 'https://gigya-prod-eu1.renaultgroup.com';
     private static readonly GIGYA_API_KEY = Config.GIGYA_API_KEY;
     private static readonly KAMEREON_URL = 'https://api-wired-prod-1-euw1.wrd-aws.com';
     private static readonly KAMEREON_API_KEY = Config.KAMEREON_API_KEY;
@@ -258,9 +258,21 @@ class RenaultClient extends CarMakerClient {
                 personId: storedCookieValue.personId
             };
         }
-        const url = RenaultClient.GIGYA_URL + RenaultEndpoints.GET_GIGYA_TOKEN + '?loginID=' + encodeURIComponent(this.getEmail()) + '&password=' + encodeURIComponent(this.getPassword()) + '&include=data&apiKey=' + RenaultClient.GIGYA_API_KEY;
+        const url = RenaultClient.GIGYA_URL + RenaultEndpoints.GET_GIGYA_TOKEN;
+        const body = {
+            loginID: this.getEmail(),
+            password: this.getPassword(),
+            include: 'data',
+            APIKey: RenaultClient.GIGYA_API_KEY ?? ''
+        }
         return new Promise((resolve, reject) => {
-            fetch(url).then((response) => {
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams(body).toString()
+            }).then((response) => {
                 response.json().then((data: unknown) => {
                     const typedData = data as GigyaTokenApiResponse;
                     switch (typedData.statusCode) {
@@ -322,9 +334,21 @@ class RenaultClient extends CarMakerClient {
                 jwtToken: storedJWT
             };
         }
-        const url = `${RenaultClient.GIGYA_URL}${RenaultEndpoints.GET_JWT_TOKEN}?login_token=${cookieValue}&expiration=87000&fields=data.personId, data.gigyaDataCenter&ApiKey=${RenaultClient.GIGYA_API_KEY}`;
+        const url = `${RenaultClient.GIGYA_URL}${RenaultEndpoints.GET_JWT_TOKEN}`;
+        const body = {
+            fields: 'data.personId,data.gigyaDataCenter',
+            expiration: String(1800),
+            APIKey: RenaultClient.GIGYA_API_KEY ?? '',
+            login_token: cookieValue
+        }
         return new Promise((resolve, reject) => {
-            fetch(url).then((response) => {
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams(body).toString()
+            }).then((response) => {
                 response.json().then((data: unknown) => {
                     const typedData = data as JWTTokenApiResponse
                     if (typedData.statusCode === 200) {
