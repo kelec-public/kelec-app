@@ -7,7 +7,7 @@ import retrofit2.Call
 import retrofit2.converter.gson.GsonConverterFactory
 
 object GigyaRetrofitClient {
-    private const val BASE_URL = "https://accounts.eu1.gigya.com/"
+    private const val BASE_URL = "https://gigya-prod-eu1.renaultgroup.com/"
 
     val retrofit: Retrofit by lazy {
         Retrofit.Builder()
@@ -27,15 +27,22 @@ private const val GIGYA_API_KEY = BuildConfig.GIGYA_API_KEY;
 interface GigyaApiService {
 
     // to get the account cookieValue
-    @GET("accounts.login?include=data&apiKey=" + GIGYA_API_KEY)
+    @FormUrlEncoded
+    @POST("accounts.login")
     suspend fun getGigyaToken(
-        @Query("loginID") loginID: String,
-        @Query("password") password: String
+        @Field("loginID") loginID: String,
+        @Field("password") password: String,
+        @Field("include") include: String = "data",
+        @Field("APIKey") apiKey: String = GIGYA_API_KEY
     ): getGigyaTokenResponse;
 
-    @GET("accounts.getJWT?expiration=87000&fields=data.personId, data.gigyaDataCenter&ApiKey=" + GIGYA_API_KEY)
+    @FormUrlEncoded
+    @POST("accounts.getJWT")
     suspend fun getJWTToken(
-        @Query("login_token") login_token: String
+        @Field("login_token") login_token: String,
+        @Field("fields") fields: String = "data.personId,data.gigyaDataCenter",
+        @Field("expiration") expiration: Int = 1800,
+        @Field("APIKey") apiKey: String = GIGYA_API_KEY
     ): getJWTTokenResponse;
 }
 
