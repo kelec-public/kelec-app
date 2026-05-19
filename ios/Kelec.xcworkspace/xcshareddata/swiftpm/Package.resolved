@@ -6,8 +6,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kelec-public/renault-api-swift-client.git",
       "state" : {
-        "revision" : "47fd99844912452acb97ab27450117465884dc27",
-        "version" : "1.0.4"
+        "revision" : "5d7c065cb4502281c81a8f6135ec245ac43080dd",
+        "version" : "1.0.5"
       }
     }
   ],
