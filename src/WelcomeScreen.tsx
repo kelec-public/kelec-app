@@ -48,7 +48,7 @@ function WelcomeScreen(): React.JSX.Element {
     }
 
 
-    const [checked, setChecked] = useState<boolean[]>([false, false, false, false]);
+    const [checked, setChecked] = useState<boolean[]>([false]);
 
     const getAmountOfCheckeds = (): number => {
         return checked.filter((value) => value).length;
@@ -57,7 +57,7 @@ function WelcomeScreen(): React.JSX.Element {
     // action when the button is pressed
     const handleButtonPress = async () => {
         // first check if all checkboxes are checked
-        if (getAmountOfCheckeds() !== 4) {
+        if (getAmountOfCheckeds() !== 1) {
             setShouldShowError(true);
             return;
         }
@@ -74,44 +74,14 @@ function WelcomeScreen(): React.JSX.Element {
                     <View style={styles.content}>
                         <Text style={styles.mainTitle}>{languageHandler.getTranslation("welcomeOnKelec")} !</Text>
                         <View style={styles.cat}>
-                            <Text style={styles.catTitle}>{languageHandler.getTranslation("whatIsKelec")}</Text>
-                            <Text style={styles.catText}>{languageHandler.getTranslation("kelecIsAnAppMadeByAStudent")} {languageHandler.getTranslation("itsPurposeIsToMakeABetterApp")}</Text>
-                            <Text style={[styles.catText, styles.bold]}>{languageHandler.getTranslation("itIsNotAnOfficialApp")}</Text>
-                            <Text style={styles.catText}>{languageHandler.getTranslation("hereAreSomeInformationBeforeUsingKelec")}</Text>
-                        </View>
-                        <View style={styles.cat}>
-                            <Text style={styles.catTitle}>{languageHandler.getTranslation("whatCanIDoWithKelec")}</Text>
-                            <Text style={styles.catText}>{languageHandler.getTranslation("kelecExtendsSomeMyRenaultFeatures")}</Text>
-                            <Text style={styles.catText}>{languageHandler.getTranslation("fasterLoadingTime")}</Text>
-                            <Text style={styles.catText}>{languageHandler.getTranslation("widgetIntegration")}</Text>
-                            {Platform.OS === "ios" && (
-                                <Text style={styles.catText}>{languageHandler.getTranslation("siriIntegration")}</Text>
-                            )}
-                            <Text style={styles.catText}>{languageHandler.getTranslation(getWatchString())}</Text>
-                        </View>
-                        <View style={styles.cat}>
-                            <Text style={styles.catTitle}>{languageHandler.getTranslation("howDoesKelecWorks")}</Text>
-                            <Text style={styles.catText}>{languageHandler.getTranslation("kelecRequestsRenaultServers")} {languageHandler.getTranslation("bothAppsCanBeUsedInTheSameTime")}</Text>
-                        </View>
-                        <View style={styles.cat}>
-                            <Text style={styles.catTitle}>{languageHandler.getTranslation("doesKelecCollectData")}</Text>
-                            <Text style={styles.catText}>{languageHandler.getTranslation("kelecDoesNotCollectData")} {languageHandler.getTranslation("dataIsStoredOnDeviceKeychain")}</Text>
-                        </View>
-                        <View style={styles.cat}>
-                            <Text style={styles.catTitle}>{languageHandler.getTranslation("howCanIMakeSureOfIt")}</Text>
-                            <Text style={styles.catText}>{languageHandler.getTranslation("youCanListenToOutgoingConnections")}</Text>
-                        </View>
-                        <View style={styles.cat}>
-                            <Text style={styles.catTitle}>{languageHandler.getTranslation("whatShouldIKnowBeforeUsingKelec")}</Text>
-                            <Text style={styles.catText}>{languageHandler.getTranslation("youMustHaveAnActiveMyRenaultConnection")}</Text>
-                            <Text style={styles.catText}>{languageHandler.getTranslation("yourPasswordCannotContainAPlus")} {languageHandler.getTranslation("becauseOfNativeFeatures")}</Text>
+                            <Text style={styles.catTitle}>{languageHandler.getTranslation("importantInformation")}</Text>
+                            <Text style={styles.catText}>{languageHandler.getTranslation("renaultIsMakingSomeChangesOnTheLogin")}</Text>
+                            <Text style={[styles.catText, styles.bold]}>{languageHandler.getTranslation("theAppCouldBeBrokenAtAnyTime")}</Text>
+                            <Text style={styles.catText}>{languageHandler.getTranslation("IllAlwaysTryToRestoreTheAppASAP")}</Text>
                         </View>
                     </View>
                     <View style={styles.bottomView}>
-                        {getCheckbox("iUnderstandThatKelecIsNotAnOfficialApp", 0)}
-                        {getCheckbox("iUnderstandThatKelecIsInBetaStatus", 1)}
-                        {getCheckbox("thereIsNoPlusInMyPassword", 2)}
-                        {getCheckbox("myCarHasAnActiveMyRenaultConnection", 3)}
+                        {getCheckbox("iUnderstand", 0)}
                         <BigButton
                             colour={ButtonColours.PRIMARY}
                             onPress={handleButtonPress}

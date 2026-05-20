@@ -105,9 +105,9 @@ function Main(): React.JSX.Element {
     return (
         <AppErrorBoundary>
             <MainContext.Provider value={mainContextValues}>
-                {/*    <Modal visible={showOnboarding} animationType='slide'>
-                <WelcomeScreen />
-            </Modal> */}
+                <Modal visible={showOnboarding} animationType='slide'>
+                    <WelcomeScreen />
+                </Modal>
                 <View testID='appView' style={{ flex: 1 }} >
                     {getCurrentView()}
                 </View>

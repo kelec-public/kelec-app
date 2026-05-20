@@ -22,13 +22,13 @@ class StorageHandler {
 
     getHasSeenOnboarding = async (): Promise<boolean> => {
         // check if the user has seen the onboarding
-        const hasSeenOnboarding = await AsyncStorage.getItem('hasSeenOnboarding');
+        const hasSeenOnboarding = await AsyncStorage.getItem('hasSeenLoginOnboarding');
         return hasSeenOnboarding === 'true';
     }
 
     setHasSeenOnboarding = async (): Promise<void> => {
         // set that the user has seen the onboarding
-        await AsyncStorage.setItem('hasSeenOnboarding', 'true');
+        await AsyncStorage.setItem('hasSeenLoginOnboarding', 'true');
     }
 
     saveAccount = async (account: UserAccount): Promise<void> => {
