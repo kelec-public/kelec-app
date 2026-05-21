@@ -92,6 +92,7 @@
 		EB334B622D523E7B007CB65D /* zeServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 893FFED62BA8677F006D7475 /* zeServices.swift */; };
 		EB334B662D524C2B007CB65D /* CarEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB334B652D524C2B007CB65D /* CarEntity.swift */; };
 		EB334B672D524C2B007CB65D /* CarEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB334B652D524C2B007CB65D /* CarEntity.swift */; };
+		EB73EAFE2FBF901700E27D9D /* MediumTempo2DaysWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB73EAFD2FBF901700E27D9D /* MediumTempo2DaysWidget.swift */; };
 		EB8576672C9B5BA900DA2F7E /* KeleciOSTempoWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB8576662C9B5BA900DA2F7E /* KeleciOSTempoWidget.swift */; };
 		EB8576692C9B5F6200DA2F7E /* MediumTempoWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB8576682C9B5F6200DA2F7E /* MediumTempoWidget.swift */; };
 		EB85766B2C9B657400DA2F7E /* KeleciOSTempoLockScreenWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB85766A2C9B657400DA2F7E /* KeleciOSTempoLockScreenWidget.swift */; };
@@ -293,6 +294,7 @@
 		EB5853F62C610BDB007B430F /* bg */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = bg; path = bg.lproj/Localizable.strings; sourceTree = "<group>"; };
 		EB6D07B22EBCAC94005DE4BE /* nb */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nb; path = nb.lproj/Localizable.strings; sourceTree = "<group>"; };
 		EB6D07B32EBCB4C3005DE4BE /* sl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sl; path = sl.lproj/Localizable.strings; sourceTree = "<group>"; };
+		EB73EAFD2FBF901700E27D9D /* MediumTempo2DaysWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediumTempo2DaysWidget.swift; sourceTree = "<group>"; };
 		EB8576662C9B5BA900DA2F7E /* KeleciOSTempoWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeleciOSTempoWidget.swift; sourceTree = "<group>"; };
 		EB8576682C9B5F6200DA2F7E /* MediumTempoWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediumTempoWidget.swift; sourceTree = "<group>"; };
 		EB85766A2C9B657400DA2F7E /* KeleciOSTempoLockScreenWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeleciOSTempoLockScreenWidget.swift; sourceTree = "<group>"; };
@@ -615,6 +617,7 @@
 				893FFEDC2BA86853006D7475 /* EntryView.swift */,
 				893FFEDF2BA868AA006D7475 /* Medium.swift */,
 				EB8576682C9B5F6200DA2F7E /* MediumTempoWidget.swift */,
+				EB73EAFD2FBF901700E27D9D /* MediumTempo2DaysWidget.swift */,
 			);
 			path = MediumWidgets;
 			sourceTree = "<group>";
@@ -1207,6 +1210,7 @@
 				893FFEC02BA8659A006D7475 /* KeleciOSWidget.swift in Sources */,
 				EB85766B2C9B657400DA2F7E /* KeleciOSTempoLockScreenWidget.swift in Sources */,
 				893FFEDD2BA86853006D7475 /* EntryView.swift in Sources */,
+				EB73EAFE2FBF901700E27D9D /* MediumTempo2DaysWidget.swift in Sources */,
 				893FFEBE2BA8659A006D7475 /* KeleciOSWidgetLiveActivity.swift in Sources */,
 				895B27822C2CAEE2009A9366 /* inlineView.swift in Sources */,
 				EBF321DC2D25781300EA72BC /* WidgetsIntent.swift in Sources */,
@@ -2076,7 +2080,7 @@
 			repositoryURL = "https://github.com/kelec-public/renault-api-swift-client.git";
 			requirement = {
 				kind = exactVersion;
-				version = 1.0.5;
+				version = 1.0.6;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

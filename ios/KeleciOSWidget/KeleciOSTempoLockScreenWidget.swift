@@ -12,12 +12,16 @@ import renaultApi
 
 struct LockScreenTempoProvider: TimelineProvider{
   func placeholder(in context: Context) -> TempoLockScreenEntry {
-    let mockTempo = tempoFinalReturn(tomorrow: true, colour: "RED", date: Date())
+    let today = Date()
+    let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: today)!
+    let mockTempo = tempoFinalReturn(previousColour: "RED", previousDate: yesterday, latestColour: "RED", latestDate: today, latestIsTomorrow: true)
     return TempoLockScreenEntry(date: Date(), tempoApi: mockTempo)
   }
   
   func getSnapshot(in context: Context, completion: @escaping (TempoLockScreenEntry) -> Void) {
-    let mockTempo = tempoFinalReturn(tomorrow: true, colour: "RED", date: Date())
+    let today = Date()
+    let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: today)!
+    let mockTempo = tempoFinalReturn(previousColour: "RED", previousDate: yesterday, latestColour: "RED", latestDate: today, latestIsTomorrow: true)
     let entry =  TempoLockScreenEntry(date: Date(), tempoApi: mockTempo)
     completion(entry)
   }
@@ -62,7 +66,7 @@ struct iosTempoLockScreenInline: View {
   var tempoApi: tempoFinalReturn?
   var body: some View {
     if(tempoApi != nil){
-        Text("\(formatDate(date: tempoApi!.date)) \(LocalizedStringKey(tempoApi!.colour).stringValue())")
+      Text("\(formatDate(date: tempoApi!.latestDate)) \(LocalizedStringKey(tempoApi!.latestColour).stringValue())")
           .fontWeight(.bold)
     }else{
       Text("ERREUR CHARGEMENT DONNÉES")
@@ -77,12 +81,12 @@ struct iosTempoLockScreenInline: View {
   
   func getHPPrice()->Float{
     let client = getRteClient()
-    return client.getHPPrice(colour: self.tempoApi!.colour)
+    return client.getHPPrice(colour: self.tempoApi!.latestColour)
   }
   
   func getHCPrice()->Float{
     let client = getRteClient()
-    return client.getHCPrice(colour: self.tempoApi!.colour)
+    return client.getHCPrice(colour: self.tempoApi!.latestColour)
   }
   
 }
@@ -92,10 +96,10 @@ struct iosTempoLockScreenRectangular: View {
   var body: some View {
     if(tempoApi != nil){
       VStack{
-        Text(formatDate(date: tempoApi!.date))
+        Text(formatDate(date: tempoApi!.latestDate))
           .fontWeight(.bold)
         Spacer()
-        Text("\(LocalizedStringKey(tempoApi!.colour).stringValue())")
+        Text("\(LocalizedStringKey(tempoApi!.latestColour).stringValue())")
           .fontWeight(.bold)
         Spacer()
         HStack(spacing: 10){
@@ -117,12 +121,12 @@ struct iosTempoLockScreenRectangular: View {
   
   func getHPPrice()->Float{
     let client = getRteClient()
-    return client.getHPPrice(colour: self.tempoApi!.colour)
+    return client.getHPPrice(colour: self.tempoApi!.latestColour)
   }
   
   func getHCPrice()->Float{
     let client = getRteClient()
-    return client.getHCPrice(colour: self.tempoApi!.colour)
+    return client.getHCPrice(colour: self.tempoApi!.latestColour)
   }
   
 }

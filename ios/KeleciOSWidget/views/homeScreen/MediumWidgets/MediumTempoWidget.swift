@@ -12,6 +12,7 @@ import renaultApi
 
 struct KeleciOSTempoEntryView: View {
   var entry: TempoProvider.Entry
+  var twoDays: Bool
   @Environment(\.widgetFamily) var family
   var body: some View{
     switch family{
@@ -23,7 +24,12 @@ struct KeleciOSTempoEntryView: View {
       } else if (entry.tempoApi == nil){
         Text("Impossible de se connecter au serveur RTE")
       }else{
-        KeleciOSTempoMediumEntryView(entry: entry)
+        if (self.twoDays) {
+          KeleciOSTempoMedium2DaysEntryView(entry: entry)
+        } else {
+          KeleciOSTempoMediumEntryView(entry: entry)
+        }
+        
       }
     default:
       Text("error")
@@ -69,13 +75,13 @@ struct KeleciOSTempoMediumView: View{
         
         
         VStack{
-          Text(formatDate(date: tempoApi.date))
+          Text(formatDate(date: tempoApi.latestDate))
             .font(.title3)
             .fontWeight(.bold)
             .foregroundStyle(self.getFgColour())
             .accentColor(.clear)
           Spacer()
-          Text("\(LocalizedStringKey(tempoApi.colour).stringValue())")
+          Text("\(LocalizedStringKey(tempoApi.latestColour).stringValue())")
             .font(.title2)
             .fontWeight(.bold)
             .foregroundStyle(self.getFgColour())
@@ -108,16 +114,16 @@ struct KeleciOSTempoMediumView: View{
   
   func getHPPrice()->Float{
     let client = getRteClient()
-    return client.getHPPrice(colour: self.tempoApi.colour)
+    return client.getHPPrice(colour: self.tempoApi.latestColour)
   }
   
   func getHCPrice()->Float{
     let client = getRteClient()
-    return client.getHCPrice(colour: self.tempoApi.colour)
+    return client.getHCPrice(colour: self.tempoApi.latestColour)
   }
   
   func getBgColour()->Color{
-    switch(self.tempoApi.colour){
+    switch(self.tempoApi.latestColour){
     case "BLUE":
       return Color.blue
     case "WHITE":
@@ -130,7 +136,7 @@ struct KeleciOSTempoMediumView: View{
   }
   
   func getFgColour()->Color{
-    switch(self.tempoApi.colour){
+    switch(self.tempoApi.latestColour){
     case "WHITE":
       return Color.black
     default:

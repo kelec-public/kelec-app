@@ -17,7 +17,9 @@ struct TempoProvider: AppIntentTimelineProvider {
     let mockRenaultBatteryStatus = RenaultBatteryStatus(timestamp: "2022-01-01", batteryLevel: 50, batteryAutonomy: 50, batteryCapacity: 0, batteryAvailableEnergy: 10, plugStatus: 1, chargingStatus: 1.0,  chargingRemainingTime: 50, chargingInstantaneousPower: 10)
     let mockData = RenaultApiHandler(batteryStatus: mockRenaultBatteryStatus)
     let mockUserCar = UserCar(email: "", password: "", carMaker: "renault")
-    let mockTempo = tempoFinalReturn(tomorrow: true, colour: "RED", date: Date())
+    let today = Date()
+    let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: today)!
+    let mockTempo = tempoFinalReturn(previousColour: "RED", previousDate: yesterday, latestColour: "RED", latestDate: today, latestIsTomorrow: true)
     return TempoEntry(date: Date(), account: mockAccount, userCar: mockUserCar, carName: "Megane E-Tech", image: "megane", appPreferences: nil, tempoApi: mockTempo, apiHandler: mockData)
   }
   
@@ -26,7 +28,9 @@ struct TempoProvider: AppIntentTimelineProvider {
     let mockRenaultBatteryStatus = RenaultBatteryStatus(timestamp: "2022-01-01", batteryLevel: 50, batteryAutonomy: 50, batteryCapacity: 0, batteryAvailableEnergy: 10, plugStatus: 1, chargingStatus: 1.0,  chargingRemainingTime: 50, chargingInstantaneousPower: 10)
     let mockData = RenaultApiHandler(batteryStatus: mockRenaultBatteryStatus)
     let mockUserCar = UserCar(email: "", password: "", carMaker: "renault")
-    let mockTempo = tempoFinalReturn(tomorrow: true, colour: "RED", date: Date())
+    let today = Date()
+    let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: today)!
+    let mockTempo = tempoFinalReturn(previousColour: "RED", previousDate: yesterday, latestColour: "RED", latestDate: today, latestIsTomorrow: true)
     return TempoEntry(date: Date(), account: mockAccount, userCar: mockUserCar, carName: "Megane E-Tech", image: "megane", appPreferences: nil, tempoApi: mockTempo, apiHandler: mockData)
   }
   
@@ -134,7 +138,7 @@ struct KeleciOSTempoWidget: Widget {
   
   var body: some WidgetConfiguration {
     AppIntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: TempoProvider()) { entry in
-      KeleciOSTempoEntryView(entry: entry)
+      KeleciOSTempoEntryView(entry: entry, twoDays: false)
     }
     .contentMarginsDisabledIfAvailable()
     .configurationDisplayName("Renault E-Tech Tempo")
@@ -143,3 +147,16 @@ struct KeleciOSTempoWidget: Widget {
   }
 }
 
+struct KeleciOSTempo2DaysWidget: Widget {
+  let kind: String = "KeleciOSTempo2DaysWIidget"
+  
+  var body: some WidgetConfiguration {
+    AppIntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: TempoProvider()) { entry in
+      KeleciOSTempoEntryView(entry: entry, twoDays: true)
+    }
+    .contentMarginsDisabledIfAvailable()
+    .configurationDisplayName("Renault E-Tech Tempo")
+    .description(LocalizedStringKey("Regroupe les informations de votre Renault E-Tech sur votre écran d'accueil avec l'indication Tempo sur 2 jours").stringValue())
+    .supportedFamilies([.systemMedium])
+  }
+}

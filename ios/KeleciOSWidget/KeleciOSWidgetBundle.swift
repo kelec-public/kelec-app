@@ -15,6 +15,7 @@ struct KeleciOSWidgetBundle: WidgetBundle {
     KelecLockScreenWidget()
     KelecLockScreenWidgetAlternative()
     KeleciOSTempoWidget()
+    KeleciOSTempo2DaysWidget()
     iosTempoLockScreen()
     //KeleciOSWidgetLiveActivity()
   }
