@@ -20,11 +20,11 @@ const WeatherMapCard = ({ weatherHandler }: Props): React.JSX.Element => {
             {weatherHandler === null && (
                 <Icon name="error" color={getBlackColour(isDarkMode)} size={20}></Icon>
             )}
-            {weatherHandler !== undefined && weatherHandler !== null && (
+            {weatherHandler?.getTemperatureC() !== null && weatherHandler?.getWeatherIcon() !== null && (
                 <View>
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
-                        <Image source={{ uri: weatherHandler.getWeatherIcon() }} style={{ width: 20, height: 20 }} />
-                        <Text>{weatherHandler.getTemperatureC()}°</Text>
+                        <Image source={{ uri: weatherHandler?.getWeatherIcon()! }} style={{ width: 20, height: 20 }} />
+                        <Text>{weatherHandler?.getTemperatureC()!}°</Text>
                     </View>
                 </View>
             )}

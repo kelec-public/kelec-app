@@ -1,3 +1,5 @@
+import Config from "react-native-config";
+
 type WeatherResponse = {
     location: {
         name: string;
@@ -9,15 +11,15 @@ type WeatherResponse = {
         localtime_epoch: number;
         localtime: string;
     },
-    current: {
+    current?: {
         last_updated_epoch: number;
         last_updated: string;
-        temp_c: number;
+        temp_c?: number;
         temp_f: number;
         is_day: number;
-        condition: {
-            text: string;
-            icon: string;
+        condition?: {
+            text?: string;
+            icon?: string;
             code: number;
         }
     }
@@ -29,7 +31,7 @@ interface WeatherClientInterface {
 
 export class WeatherClient implements WeatherClientInterface {
     private static readonly API_URL: string = "https://api.weatherapi.com/v1";
-    private static readonly API_KEY: string = "9973075e92d54ce3a48131104251806";
+    private static readonly API_KEY: string = Config.WEATHER_API_KEY ?? '';
 
     public readonly getWeather = async (latitude: number, longitude: number): Promise<WeatherResponse> => {
         const response = await fetch(`${WeatherClient.API_URL}/current.json?key=${WeatherClient.API_KEY}&q=${latitude},${longitude}`);
@@ -41,21 +43,41 @@ export class WeatherClient implements WeatherClientInterface {
 };
 
 interface WeatherApiHandlerInterface {
-    getTemperatureC: () => number;
-    getWeatherIcon: () => string;
+    getTemperatureC: () => number | null;
+    getWeatherIcon: () => string | null;
 };
 
 export class WeatherApiHandler implements WeatherApiHandlerInterface {
     private readonly weatherResponse: WeatherResponse;
 
+    public temperatureC: number | null = null;
+    public weatherIcon: string | null = null;
+
     constructor(private readonly _weatherResponse: WeatherResponse) {
         this.weatherResponse = _weatherResponse;
-    }
-    getTemperatureC = (): number => {
-        return this.weatherResponse.current.temp_c;
+        this.initTemperatureC();
+        this.initWeatherIcon();
+
     }
 
-    getWeatherIcon = (): string => {
-        return `https:${this.weatherResponse.current.condition.icon}`;
-    };
-};
+    initTemperatureC = (): void => {
+        this.temperatureC = this.weatherResponse.current?.temp_c ?? null;
+    }
+
+    initWeatherIcon = (): void => {
+        if (this.weatherResponse.current?.condition?.icon) {
+            this.weatherIcon = `https:${this.weatherResponse.current.condition.icon}`;
+        } else {
+            this.weatherIcon = null;
+        }
+    }
+
+    getTemperatureC = (): number | null => {
+        return this.temperatureC;
+    }
+
+    getWeatherIcon = (): string | null => {
+        return this.weatherIcon;
+    }
+
+}
