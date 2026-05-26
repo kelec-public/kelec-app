@@ -196,7 +196,7 @@ function BatteryCard(): React.JSX.Element {
 
                             </View>
                         </View>
-                        {carType.shouldDisplayChargingLimit() && apiHandler.getChargingPower(carType) < 0 && (
+                        {carType.shouldDisplayChargingLimit() && apiHandler.getChargingPower(carType) < 0 && apiHandler.getIsCarCharging() && (
                             <InfoPopup
                                 testID={'negativeChargingPowerPopup'}
                                 backgroundColour={'#FFCCB3'}

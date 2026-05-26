@@ -66,7 +66,8 @@ class RenaultApiHandler implements ApiHandler {
         if (carType.getCarModel().name == CarAvailableModels.ZOE1) {
             return parseFloat(((this.apiBatteryStatusRenault?.apiData?.chargingInstantaneousPower ?? 0) / 1000).toFixed(2));
         }
-        const totalEnergy = carType.getBatterySize() * carType.getChargingLimit() / 100;
+        const chargingLimit = Math.min(this.getChargingLimit(carType) + 1, 100);
+        const totalEnergy = carType.getBatterySize() * chargingLimit / 100;
         const availableEnergy = this.getAvailableEnergy(carType);
         const toCharge = totalEnergy - availableEnergy;
         const estimatedPower = 60 * toCharge / this.getRemainingMinutes();
