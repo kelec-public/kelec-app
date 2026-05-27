@@ -3,7 +3,7 @@ const { defaults: tsjPreset } = require("ts-jest/presets");
 process.env.TZ = 'Europe/Paris';
 module.exports = {
   ...tsjPreset,
-  preset: "react-native",
+  preset: '@react-native/jest-preset',
   transform: {
     "^.+\\.jsx$": "babel-jest",
     "^.+\\.tsx?$": [
