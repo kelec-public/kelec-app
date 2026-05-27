@@ -1,5 +1,8 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { NavigationContainer } from "@react-navigation/native";
+import {
+  NavigationContainer,
+  NavigationIndependentTree,
+} from '@react-navigation/native';
 import CarMakerSelectView from "./Steps/Step1/CarMakerSelectView";
 import Account, { CarMaker } from "../../../lib/clients/accounts/account";
 import { useContext, useState } from "react";
@@ -42,35 +45,52 @@ const LoginEntryView = () => {
     };
 
     return (
-        <View
-            testID="loginView"
-            style={{ flex: 1 }}
-        >
-            <NavigationContainer
-                independent={true}
+      <View testID="loginView" style={{ flex: 1 }}>
+        <NavigationIndependentTree>
+          <NavigationContainer>
+            <Stack.Navigator
+              screenOptions={{
+                headerShown: false,
+              }}
             >
-                <Stack.Navigator
-                    screenOptions={{
-                        headerShown: false,
-                    }}
-                >
-                    <Stack.Screen name="CarMakerSelectView">
-                        {props => <CarMakerSelectView selectedCarMaker={selectedCarMaker} setSelectedCarMaker={setSelectedCarMaker} {...props} />}
-                    </Stack.Screen>
-                    <Stack.Screen name="CredentialsView">
-                        {props => selectedCarMaker ? <CredentialsView selectedCarMaker={selectedCarMaker} setAccount={setAccount} {...props} /> : null}
-                    </Stack.Screen>
-                    <Stack.Screen name="SelectACarView">
-                        {props => <SelectACarView selectedCar={selectedCar} setSelectedCar={setSelectedCar} onConfirmCarAdd={onConfirmCarAdd} {...props} />}
-                    </Stack.Screen>
-                    <Stack.Screen name="CarModelSelector">
-                        {props => <CarModelSelector {...props} />}
-                    </Stack.Screen>
-                </Stack.Navigator>
-            </NavigationContainer >
-        </View>
-
-    )
+              <Stack.Screen name="CarMakerSelectView">
+                {props => (
+                  <CarMakerSelectView
+                    selectedCarMaker={selectedCarMaker}
+                    setSelectedCarMaker={setSelectedCarMaker}
+                    {...props}
+                  />
+                )}
+              </Stack.Screen>
+              <Stack.Screen name="CredentialsView">
+                {props =>
+                  selectedCarMaker ? (
+                    <CredentialsView
+                      selectedCarMaker={selectedCarMaker}
+                      setAccount={setAccount}
+                      {...props}
+                    />
+                  ) : null
+                }
+              </Stack.Screen>
+              <Stack.Screen name="SelectACarView">
+                {props => (
+                  <SelectACarView
+                    selectedCar={selectedCar}
+                    setSelectedCar={setSelectedCar}
+                    onConfirmCarAdd={onConfirmCarAdd}
+                    {...props}
+                  />
+                )}
+              </Stack.Screen>
+              <Stack.Screen name="CarModelSelector">
+                {props => <CarModelSelector {...props} />}
+              </Stack.Screen>
+            </Stack.Navigator>
+          </NavigationContainer>
+        </NavigationIndependentTree>
+      </View>
+    );
 };
 
 export default LoginEntryView;
