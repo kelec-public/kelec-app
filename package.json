@@ -10,7 +10,6 @@
     "test": "jest --coverage"
   },
   "dependencies": {
-    "@million/lint": "^0.0.39",
     "@react-native-async-storage/async-storage": "^1.22.3",
     "@react-native-community/cli": "20.1.0",
     "@react-native-community/cli-platform-android": "20.1.0",
