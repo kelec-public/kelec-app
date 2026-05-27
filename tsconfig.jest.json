@@ -1,7 +1,9 @@
 {
     "extends": "./tsconfig",
     "compilerOptions": {
-        "jsx": "react-jsx",
-        "module": "commonjs"
+      "jsx": "react-jsx",
+      "module": "commonjs",
+      "rootDir": "./src",
+      "ignoreDeprecations": "6.0"
     }
 }

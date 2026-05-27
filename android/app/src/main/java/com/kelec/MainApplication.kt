@@ -9,7 +9,6 @@ import com.facebook.react.ReactNativeHost
 import com.facebook.react.ReactPackage
 import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
-import com.rnfs.RNFSPackage;
 import com.lugg.RNCConfig.RNCConfigPackage
 
 class MainApplication : Application(), ReactApplication {
