@@ -26,6 +26,10 @@
     "src/**/*.tsx",
     "App.tsx"
   ],
+  "exclude": [
+    "**/node_modules",
+    "**/Pods"
+  ],
   "ts-node": {
     "files": true
   },
