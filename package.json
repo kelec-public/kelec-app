@@ -28,7 +28,7 @@
     "react-native-screens": "^4.25.2",
     "react-native-share": "^11.0.3",
     "react-native-uuid": "^2.0.3",
-    "react-native-vector-icons": "10.2.0",
+    "react-native-vector-icons": "^10.3.0",
     "react-native-watch-connectivity": "^1.1.0",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
   },
