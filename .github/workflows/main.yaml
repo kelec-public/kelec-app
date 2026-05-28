@@ -16,14 +16,16 @@ on:
 jobs:
   code-validation:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Use Node.JS
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: "22.4.1"
+          node-version: "24.16.0"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -31,23 +33,37 @@ jobs:
       - name: Run tests
         run: ./node_modules/.bin/jest --coverage
 
+      - name: Save PR metadata
+        if: github.event_name == 'pull_request'
+        run: |
+          echo "PR_NUMBER=${{ github.event.pull_request.number }}" >> pr-meta.env
+          echo "PR_BRANCH=${{ github.event.pull_request.user.login }}:${{ github.event.pull_request.head.ref }}" >> pr-meta.env
+          echo "PR_BASE=${{ github.event.pull_request.base.ref }}" >> pr-meta.env
+          echo "PR_SHA=${{ github.event.pull_request.head.sha }}" >> pr-meta.env
       - name: Upload test artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: test-artifacts
           path: |
             reports/test-report.xml
             coverage/
+            pr-meta.env
 
   sonar-scan:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     needs: code-validation
+    # run only on same PRs
+    if: |
+      github.event_name == 'push' ||
+      (github.event_name == 'pull_request' &&
+       github.event.pull_request.head.repo.full_name == github.repository)
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Download test artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: test-artifacts
           path: ./
@@ -59,11 +75,13 @@ jobs:
 
       - name: SonarQube Scan
         continue-on-error: false
-        uses: sonarsource/sonarqube-scan-action@master
+        uses: sonarsource/sonarqube-scan-action@v8
         with:
           args: >
-            -Dsonar.qualitygate.wait=true -Dsonar.projectKey=Kelec_Nextgen
+            -Dsonar.qualitygate.wait=true
+            -Dsonar.projectKey=Kelec_Nextgen
             -Dsonar.projectName=Kelec_Nextgen
+            ${{ env.PR_NUMBER != '' && format('-Dsonar.scm.revision={0} -Dsonar.pullrequest.key={1} -Dsonar.pullrequest.branch={2} -Dsonar.pullrequest.base={3}', env.PR_SHA, env.PR_NUMBER, env.PR_BRANCH, env.PR_BASE) || '' }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_URL }}

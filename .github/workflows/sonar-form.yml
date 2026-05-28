@@ -1,0 +1,56 @@
+name: Sonar scan (fork PRs)
+
+on:
+    workflow_run:
+        workflows: ["Main pipeline"]
+        types:
+            - completed
+
+jobs:
+    sonar-scan:
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+        if: |
+            github.event.workflow_run.conclusion == 'success' &&
+            github.event.workflow_run.head_repository.full_name != github.repository
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v6
+              with:
+                  repository: ${{ github.event.workflow_run.head_repository.full_name }}
+                  ref: ${{ github.event.workflow_run.head_sha }}
+
+            - name: Download test artifacts from triggering workflow
+              uses: actions/download-artifact@v7
+              with:
+                  name: test-artifacts
+                  path: ./
+                  run-id: ${{ github.event.workflow_run.id }}
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Load PR metadata
+              run: |
+                  if [ -f pr-meta.env ]; then
+                    cat pr-meta.env >> $GITHUB_ENV
+                  fi
+
+            - name: Wake up SonarQube
+              uses: kelyanselme/kelyan_workflows_and_actions/.github/actions/wakeup-sonar@v1
+              with:
+                  sonar_instance_url: ${{ secrets.SONAR_URL }}
+
+            - name: SonarQube Scan
+              uses: sonarsource/sonarqube-scan-action@v8
+              with:
+                  args: >
+                      -Dsonar.qualitygate.wait=true
+                      -Dsonar.projectKey=test
+                      -Dsonar.projectName=test
+                      -Dsonar.projectBaseDir=${{ github.workspace }}
+                      -Dsonar.scm.revision=${{ env.PR_SHA }}
+                      -Dsonar.pullrequest.key=${{ env.PR_NUMBER }}
+                      -Dsonar.pullrequest.branch=${{ env.PR_BRANCH }}
+                      -Dsonar.pullrequest.base=${{ env.PR_BASE }}
+              env:
+                  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+                  SONAR_HOST_URL: ${{ secrets.SONAR_URL }}
