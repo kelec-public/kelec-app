@@ -43,8 +43,8 @@ function CarsPageView(): React.JSX.Element {
                 {currentUser.getCars().map((account, index) => {
                     const carModel = account.getCar()!;
                     return (
-                      <NavigationIndependentTree>
-                        <NavigationContainer key={carModel.getVin()}>
+                      <NavigationIndependentTree key={carModel.getVin()}>
+                        <NavigationContainer>
                           <Stack.Navigator
                             screenOptions={{
                               headerShown: false,
