@@ -18,8 +18,10 @@
     <string name="end_time_text">04:34</string>
     <string name="no_car_added">Mai întâi trebuie să selectați o mașină din aplicație</string>
     <string name="not_yet_logged_in">Trebuie mai întâi să te conectezi la aplicație</string>
+    <string name="widget_configure_subtitle">Alegeți mașina care va fi afișată în acest widget</string>
     <string name="scheduled_charge_status">"ÎNCĂRCARE PROGRAMATĂ | "</string>
     <string name="ended_charge_status">"ÎNCĂRCARE ÎNCHEIATĂ | "</string>
     <string name="charging_status">"SE ÎNCARCĂ | "</string>
     <string name="not_charging_status">"NU SE ÎNCARCĂ | "</string>
+    <string name="widget_configure_title">Selectați o mașină</string>
 </resources>

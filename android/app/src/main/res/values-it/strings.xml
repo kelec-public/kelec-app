@@ -20,6 +20,8 @@
     <string name="charging_status">"IN CARICA | "</string>
     <string name="no_car_added">Devi prima selezionare un\'auto sull\'app</string>
     <string name="not_yet_logged_in">Devi prima accedere all\'app</string>
+    <string name="widget_configure_subtitle">Scegli l\'auto da visualizzare in questo widget</string>
     <string name="scheduled_charge_status">"RICARICA PROGRAMMATA | "</string>
     <string name="not_charging_status">"RICARICA FALLITA | "</string>
+    <string name="widget_configure_title">Seleziona un\'auto</string>
 </resources>

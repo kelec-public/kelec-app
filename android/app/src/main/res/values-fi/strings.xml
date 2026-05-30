@@ -18,8 +18,10 @@
     <string name="end_time_text">04:34</string>
     <string name="no_car_added">Sinun on ensin valittava auto sovelluksesta</string>
     <string name="not_yet_logged_in">Sinun on ensin kirjauduttava sisään sovellukseen</string>
+    <string name="widget_configure_subtitle">Valitse tässä widgetissä näytettävä auto</string>
     <string name="scheduled_charge_status">"AJASTETTU LATAUS | "</string>
     <string name="ended_charge_status">"LATAUS PÄÄTTYNYT | "</string>
     <string name="charging_status">"LADATAAN | "</string>
     <string name="not_charging_status">"EI LATAUSTA | "</string>
+    <string name="widget_configure_title">Valitse auto</string>
 </resources>

@@ -17,6 +17,8 @@
     <string name="end_time_text">04:34</string>
     <string name="no_car_added">Vous devez d\'abord sélectionner une voiture sur l\'appli</string>
     <string name="not_yet_logged_in">Vous devez d\'abord vous connecter sur l\'appli</string>
+    <string name="widget_configure_title">Sélectionnez une voiture</string>
+    <string name="widget_configure_subtitle">Choisissez la voiture à afficher dans ce widget</string>
     <string name="scheduled_charge_status">CHARGE PLANIFIÉE | </string>
     <string name="ended_charge_status">CHARGE TERMINÉE | </string>
     <string name="charging_status">EN CHARGE | </string>

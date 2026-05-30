@@ -26,6 +26,15 @@
                 android:resource="@xml/kelec_main_w_idget_info" />
         </receiver>
 
+        <activity
+            android:name=".widgets.WidgetConfigureActivity"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.DayNight.Dialog.Alert">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/MAPS_API_KEY" />

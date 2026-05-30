@@ -20,6 +20,8 @@
     <string name="charging_status">"LADEN | "</string>
     <string name="no_car_added">Sie müssen zunächst in der App ein Auto auswählen</string>
     <string name="not_yet_logged_in">Sie müssen sich zunächst bei der App anmelden</string>
+    <string name="widget_configure_subtitle">Wählen Sie das Auto aus, das in diesem Widget angezeigt werden soll</string>
     <string name="scheduled_charge_status">"GEPLANTE LADUNG | "</string>
     <string name="not_charging_status">"LÄDT NICHT | "</string>
+    <string name="widget_configure_title">Wählen Sie ein Auto aus</string>
 </resources>

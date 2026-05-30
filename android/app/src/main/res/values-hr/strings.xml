@@ -20,6 +20,8 @@
     <string name="charging_status">"Punjenje | "</string>
     <string name="not_charging_status">"Ne puni se | "</string>
     <string name="not_yet_logged_in">Prvo se morate prijaviti u aplikaciju</string>
+    <string name="widget_configure_subtitle">Odaberite automobil koji će se prikazivati u ovom widgetu</string>
     <string name="scheduled_charge_status">"Punjenje zakazano | "</string>
     <string name="no_car_added">Prvo morate odabrati automobil u aplikaciji</string>
+    <string name="widget_configure_title">Odaberite automobil</string>
 </resources>

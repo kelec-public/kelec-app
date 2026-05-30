@@ -18,8 +18,10 @@
     <string name="end_time_text">04:34</string>
     <string name="no_car_added">Du skal først tilføje et køretøj til appen</string>
     <string name="not_yet_logged_in">Du skal først logge ind på appen</string>
+    <string name="widget_configure_subtitle">Vælg den bil, der skal vises i denne widget</string>
     <string name="scheduled_charge_status">"OPLADNING PLANLAGT | "</string>
     <string name="ended_charge_status">"OPLADNING AFSLUTTET | "</string>
     <string name="charging_status">"OPLADER | "</string>
     <string name="not_charging_status">"OPLADER IKKE | "</string>
+    <string name="widget_configure_title">Vælg en bil</string>
 </resources>

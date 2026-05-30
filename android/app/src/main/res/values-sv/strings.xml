@@ -18,8 +18,10 @@
     <string name="end_time_text">04:34</string>
     <string name="no_car_added">Du måste först lägg till en bil på appen</string>
     <string name="not_yet_logged_in">Du måste först logga in på appen</string>
+    <string name="widget_configure_subtitle">Välj bilen som ska visas i den här widgeten</string>
     <string name="scheduled_charge_status">"SCHEMALAGD LADDNING | "</string>
     <string name="ended_charge_status">"LADDNINGEN KLAR | "</string>
     <string name="charging_status">"LADDAR | "</string>
     <string name="not_charging_status">"LADDAR INTE | "</string>
+    <string name="widget_configure_title">Välj en bil</string>
 </resources>

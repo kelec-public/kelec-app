@@ -19,7 +19,9 @@
     <string name="ended_charge_status">"POLNJENJE ZAKLJUČENO | "</string>
     <string name="charging_status">"POLNJENJE | "</string>
     <string name="not_yet_logged_in">Najprej se morate prijaviti v aplikacijo</string>
+    <string name="widget_configure_subtitle">Izberite avtomobil, ki bo prikazan v tem gradniku</string>
     <string name="scheduled_charge_status">"NAČRTOVANO POLNJENJE | "</string>
     <string name="not_charging_status">"SE NE POLNI | "</string>
     <string name="no_car_added">Najprej morate v aplikaciji izbrati avto</string>
+    <string name="widget_configure_title">Izberite avtomobil</string>
 </resources>

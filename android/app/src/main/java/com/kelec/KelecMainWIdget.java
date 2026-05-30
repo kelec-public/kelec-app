@@ -74,15 +74,16 @@ public class KelecMainWIdget extends AppWidgetProvider {
     private CompletableFuture<Void> updateWidget(@NonNull Context context, @NonNull AppWidgetManager mgr,
                                                  int appWidgetId, @NonNull CarDataRepository repo,
                                                  @NonNull AppPreferences prefs) {
-        CarDataRepository.AccountSnapshot account = repo.loadAccount();
+        String widgetVin = repo.loadVinForWidget(appWidgetId);
+        CarDataRepository.AccountSnapshot account = (widgetVin != null)
+                ? repo.loadCarByVin(widgetVin)
+                : repo.loadAccount();
 
         switch (account.getStatus()) {
             case NOT_LOGGED_IN:
                 return renderError(mgr, appWidgetId, context, context.getString(R.string.not_yet_logged_in));
             case NO_CARS:
-                return renderError(mgr, appWidgetId, context, context.getString(R.string.no_car_added));
-            case CAR_NOT_FOUND:
-                return renderError(mgr, appWidgetId, context, "No selected car");
+                return renderError(mgr, appWidgetId, context, context.getString(R.string.not_yet_logged_in));
             case OK:
             default:
                 break;
@@ -140,6 +141,14 @@ public class KelecMainWIdget extends AppWidgetProvider {
 
     private static CompletableFuture<Void> done() {
         return CompletableFuture.completedFuture(null);
+    }
+
+    @Override
+    public void onDeleted(Context context, int[] appWidgetIds) {
+        CarDataRepository repo = new CarDataRepository(context);
+        for (int id : appWidgetIds) {
+            repo.clearVinForWidget(id);
+        }
     }
 
     @Override

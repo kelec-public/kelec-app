@@ -20,6 +20,8 @@
     <string name="charging_status">"Зареждане | "</string>
     <string name="no_car_added">Първо трябва да изберете кола в приложението</string>
     <string name="not_yet_logged_in">Първо трябва да влезете в приложението</string>
+    <string name="widget_configure_subtitle">Изберете автомобила, който да се показва в този уиджет</string>
     <string name="scheduled_charge_status">"Отложено зареждане | "</string>
     <string name="not_charging_status">"Не зарежда | "</string>
+    <string name="widget_configure_title">Изберете автомобил</string>
 </resources>

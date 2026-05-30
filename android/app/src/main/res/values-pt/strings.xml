@@ -18,8 +18,10 @@
     <string name="end_time_text">04:34</string>
     <string name="no_car_added">Você deve primeiro selecionar um carro no aplicativo</string>
     <string name="not_yet_logged_in">Você deve primeiro fazer login no aplicativo</string>
+    <string name="widget_configure_subtitle">Escolha o carro a exibir neste widget</string>
     <string name="scheduled_charge_status">"CARGA AGENDADA | "</string>
     <string name="ended_charge_status">"CARGA TERMINADA | "</string>
     <string name="charging_status">"CARREGANDO | "</string>
     <string name="not_charging_status">"NÃO CARREGANDO | "</string>
+    <string name="widget_configure_title">Selecione um carro</string>
 </resources>

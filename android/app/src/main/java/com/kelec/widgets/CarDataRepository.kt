@@ -17,35 +17,55 @@ class CarDataRepository(context: Context) {
 
     // account
     fun loadAccount(): AccountSnapshot {
-        val raw = prefs.getString(ACCOUNT_KEY, "") ?: ""
-        val user = try {
-            JSONObject(raw)
-        } catch(e: JSONException) {
-            return AccountSnapshot.NotLoggedIn
-        }
-
-        val cars = user.optJSONArray("cars") ?: return AccountSnapshot.NotLoggedIn
-        if (cars.length() == 0) return AccountSnapshot.NoCars
-
-        val selectedVin = user.optString("selectedCar", "")
-        for (i in 0 until cars.length()) {
-            val car = cars.optJSONObject(i) ?: continue
-            val model = car.optJSONObject("car") ?: continue
-
-            if (selectedVin == model.optString("vin", "")) {
-                return AccountSnapshot.Ok(
-                    SelectedCar(
-                        vin = selectedVin,
-                        model = model.optString("model", ""),
-                        maker = car.optString("carMaker", ""),
-                        email = car.optString("email", ""),
-                        kamereonAccountID = car.optString("kamereonAccountID", "")
-                    )
-                )
-            }
-        }
-        return AccountSnapshot.CarNotFound
+        val data = parseAccountData() ?: return AccountSnapshot.NotLoggedIn
+        if (data.cars.isEmpty()) return AccountSnapshot.NoCars
+        return data.cars.find { it.vin == data.selectedVin }
+            ?.let { AccountSnapshot.Ok(it) }
+            ?: AccountSnapshot.Ok(data.cars.first())
     }
+
+    fun loadAllCars(): List<SelectedCar> = parseAccountData()?.cars ?: emptyList()
+
+    fun loadCarByVin(vin: String): AccountSnapshot {
+        val data = parseAccountData() ?: return AccountSnapshot.NotLoggedIn
+        if (data.cars.isEmpty()) return AccountSnapshot.NoCars
+        return data.cars.find { it.vin == vin }
+            ?.let { AccountSnapshot.Ok(it) }
+            ?: AccountSnapshot.Ok(data.cars.first())
+    }
+
+    private fun parseAccountData(): AccountData? {
+        val raw = prefs.getString(ACCOUNT_KEY, "")?.takeIf { it.isNotEmpty() } ?: return null
+        val user = try { JSONObject(raw) } catch (e: JSONException) { return null }
+        val carsArray = user.optJSONArray("cars") ?: return null
+        val cars = (0 until carsArray.length()).mapNotNull { i ->
+            val car = carsArray.optJSONObject(i) ?: return@mapNotNull null
+            val model = car.optJSONObject("car") ?: return@mapNotNull null
+            SelectedCar(
+                vin = model.optString("vin", ""),
+                model = model.optString("model", ""),
+                maker = car.optString("carMaker", ""),
+                email = car.optString("email", ""),
+                kamereonAccountID = car.optString("kamereonAccountID", "")
+            )
+        }
+        return AccountData(user.optString("selectedCar", ""), cars)
+    }
+
+    private data class AccountData(val selectedVin: String, val cars: List<SelectedCar>)
+
+    fun saveVinForWidget(appWidgetId: Int, vin: String) {
+        prefs.edit().putString(widgetVinKey(appWidgetId), vin).apply()
+    }
+
+    fun loadVinForWidget(appWidgetId: Int): String? =
+        prefs.getString(widgetVinKey(appWidgetId), null)?.takeIf { it.isNotEmpty() }
+
+    fun clearVinForWidget(appWidgetId: Int) {
+        prefs.edit().remove(widgetVinKey(appWidgetId)).apply()
+    }
+
+    private fun widgetVinKey(appWidgetId: Int) = "widget_vin_$appWidgetId"
 
     // app preferences
     fun loadAppPreferences(): AppPreferences {
@@ -123,17 +143,15 @@ class CarDataRepository(context: Context) {
 
     sealed class AccountSnapshot {
 
-        enum class Status { NOT_LOGGED_IN, NO_CARS, CAR_NOT_FOUND, OK }
+        enum class Status { NOT_LOGGED_IN, NO_CARS, OK }
         val status: Status get() = when (this) {
             is NotLoggedIn -> Status.NOT_LOGGED_IN
             is NoCars -> Status.NO_CARS
-            is CarNotFound -> Status.CAR_NOT_FOUND
             is Ok -> Status.OK
         }
 
         data object NotLoggedIn: AccountSnapshot()
         data object NoCars: AccountSnapshot()
-        data object CarNotFound: AccountSnapshot()
         data class Ok(val car: SelectedCar): AccountSnapshot()
     }
 

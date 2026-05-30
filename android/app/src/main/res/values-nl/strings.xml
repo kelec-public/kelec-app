@@ -20,7 +20,9 @@
     <string name="ended_charge_status">"LADEN BEËINDIGD | "</string>
     <string name="charging_status">"BEZIG MET LADEN | "</string>
     <string name="not_yet_logged_in">Je moet eerst inloggen op de app</string>
+    <string name="widget_configure_subtitle">Kies de auto die in deze widget moet worden weergegeven</string>
     <string name="scheduled_charge_status">"LADEN GEPROGRAMMEERD | "</string>
     <string name="not_charging_status">"NIET AAN HET LADEN | "</string>
     <string name="no_car_added">U moet eerst een auto selecteren in de app</string>
+    <string name="widget_configure_title">Selecteer een auto</string>
 </resources>
