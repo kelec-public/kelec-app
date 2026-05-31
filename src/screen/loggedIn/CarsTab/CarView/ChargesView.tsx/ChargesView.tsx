@@ -20,17 +20,10 @@ import { getFilterMax, getFilterMin, getFilterUnit } from "../../../../../lib/mo
 import { useTheme } from '@react-navigation/native';
 import BottomSheet from "../../../../Common/bottomSheet/BottomSheet";
 import Button from '../../../../../packages/kelec-model/view/Button';
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { CarsViewParamList } from "../../CarsPageView";
 
-
-type ChargesViewProps = {
-    readonly navigation: any;
-    readonly route: any;
-}
-
-type RouteParams = {
-    charges: RenaultChargesHandler;
-    carType: CarType;
-}
+type ChargesViewProps = NativeStackScreenProps<CarsViewParamList, 'ChargesView'>;
 
 function ChargesView({ navigation, route }: ChargesViewProps): React.JSX.Element {
     const isDarkMode = useColorScheme() === 'dark';
@@ -38,7 +31,7 @@ function ChargesView({ navigation, route }: ChargesViewProps): React.JSX.Element
 
     const { languageHandler, appPreferences } = useContext(MainContext);
     const { handleModalAnim } = useContext(CarsViewContext);
-    const { charges, carType }: RouteParams = route.params;
+    const { charges, carType } = route.params;
 
 
     // sort charges by desc date
@@ -208,7 +201,18 @@ function ChargesView({ navigation, route }: ChargesViewProps): React.JSX.Element
                             icon="sort"
                             text={sortDesc ? languageHandler.getTranslation("sortNewerToOlder")
                                 : languageHandler.getTranslation("sortOlderToNewer")}
-                                    buttonStyle={theme.buttons.neutral}
+                            buttonStyle={theme.buttons.neutral}
+                        />
+                        <Button
+                            testID={'importButton'}
+                            icon={"file-upload"}
+                            text={languageHandler.getTranslation("import")}
+                            onPress={() => {
+                                navigation.navigate("ImportChargesView");
+                                setShouldOpenModal(false);
+                                handleModalAnim(false);
+                            }}
+                            buttonStyle={theme.buttons.neutral}
                         />
                         <Button
                             testID={'exportButton'}

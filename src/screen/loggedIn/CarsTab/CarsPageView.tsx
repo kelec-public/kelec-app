@@ -12,6 +12,9 @@ import { WeatherApiHandler } from "../../../lib/clients/weather/weatherClient";
 import CarModel from "../../../lib/clients/cars/carModel";
 import CarModelSelector, { CarModelSelectorParamList } from "../../../packages/kelec-login/views/Steps/Step4/CarModelSelector";
 import TfaView, { TfaOrigin } from "../../../packages/kelec-login/views/Steps/Step2/Tfa/TfaView";
+import ImportChargesView from "./CarView/ChargesView.tsx/ImportView/ImportView";
+import CarType from "../../../lib/clients/cars/carTypes/carType";
+import RenaultChargesHandler from "../../../lib/clients/apiHandlers/renaultChargesHandler";
 
 
 export type CarsViewParamList = {
@@ -26,21 +29,25 @@ export type CarsViewParamList = {
     DonationScreen: undefined;
     CarModelSelector: CarModelSelectorParamList;
     CarView: undefined;
-    ChargesView: undefined;
+    ChargesView: {
+      charges: RenaultChargesHandler;
+      carType: CarType;
+    };
     TfaView: {
       regToken: string;
       origin: TfaOrigin;
-  } ;
+    };
+    ImportChargesView: undefined;
 }
 
 function CarsPageView(): React.JSX.Element {
-    const { currentUser } = useContext(MainContext);
-    const theme = useTheme()
+  const { currentUser } = useContext(MainContext);
 
-    const Stack = createNativeStackNavigator<CarsViewParamList>();
+  const Stack = createNativeStackNavigator<CarsViewParamList>();
 
     const ref = useRef<PagerView>(null);
     const tfaInProgress = useRef(false);
+    const theme = useTheme();
 
     return (
         <View style={styles.flex} testID="carsPageView">
@@ -80,6 +87,9 @@ function CarsPageView(): React.JSX.Element {
                             <Stack.Screen name="CarModelSelector">
                               {props => <CarModelSelector {...props} />}
                             </Stack.Screen>
+                            <Stack.Screen name="ImportChargesView">
+                              {props => <ImportChargesView {...props} />}
+                            </Stack.Screen>
                             <Stack.Screen
                               name="DonationScreen"
                               options={{ presentation: 'modal' }}
@@ -97,18 +107,18 @@ function CarsPageView(): React.JSX.Element {
                     );
                 })}
 
-            </PagerView>
-        </View>
-    )
+      </PagerView>
+    </View>
+  )
 }
 
 const styles = StyleSheet.create({
-    flex: {
-        flex: 1,
-    },
-    pagerView: {
-        flex: 1,
-    }
+  flex: {
+    flex: 1,
+  },
+  pagerView: {
+    flex: 1,
+  }
 });
 
 export default CarsPageView;
