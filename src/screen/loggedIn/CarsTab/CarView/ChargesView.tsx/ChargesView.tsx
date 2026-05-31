@@ -1,12 +1,11 @@
 import { ActivityIndicator, FlatList, Modal, Platform, ScrollView, Share, StyleSheet, TouchableOpacity, View, useColorScheme } from "react-native";
 import Text from "../../../../Common/CustomText";
-import commonStyles, { fontFamilyBold, fontWeightBold } from "../../../../../lib/graphics/commonStyle";
+import commonStyles from "../../../../../lib/graphics/commonStyle";
 import { getBlackColour, getWhiteColour } from "../../../../../lib/graphics/utils";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import MainContext from "../../../../../lib/Contexts/MainContext";
 import RenaultChargesHandler from "../../../../../lib/clients/apiHandlers/renaultChargesHandler";
-import CarType from "../../../../../lib/clients/cars/carTypes/carType";
 import CarsViewContext from "../../../../../lib/Contexts/CarsViewContext";
 import { DocumentDirectoryPath, writeFile } from "react-native-fs";
 import XLSX from 'xlsx';
@@ -22,6 +21,7 @@ import BottomSheet from "../../../../Common/bottomSheet/BottomSheet";
 import Button from '../../../../../packages/kelec-model/view/Button';
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { CarsViewParamList } from "../../CarsPageView";
+import TopNavHeader from "../../../../Common/Navigation/TopNavHeader";
 
 type ChargesViewProps = NativeStackScreenProps<CarsViewParamList, 'ChargesView'>;
 
@@ -303,18 +303,10 @@ function ChargesView({ navigation, route }: ChargesViewProps): React.JSX.Element
                             handleModalAnim={handleModalAnim}
                         />
                 </Modal>
-                <View>
-                    <View style={
-                        [commonStyles.rowFlex, commonStyles.spaceBetween, commonStyles.paddingHorizontal]
-                    }>
-                        <TouchableOpacity
-                            testID="backButton"
-                            onPress={() => {
-                                navigation.goBack();
-                            }}>
-                            <Icon name="chevron-left" size={30} color={getBlackColour(isDarkMode)} />
-                        </TouchableOpacity>
-                        <Text style={[styles.titleText, { color: getBlackColour(isDarkMode), flexShrink: 1, flexWrap: 'wrap' }]} numberOfLines={1} adjustsFontSizeToFit>{languageHandler.getTranslation("chargeHistory")}</Text>
+                <TopNavHeader
+                    navigation={navigation}
+                    title={languageHandler.getTranslation("chargeHistory")}
+                    rightIcon={
                         <TouchableOpacity
                             testID="openModal"
                             onPress={() => {
@@ -324,10 +316,10 @@ function ChargesView({ navigation, route }: ChargesViewProps): React.JSX.Element
                         >
                             <Icon name="more-horiz" size={30} color={getBlackColour(isDarkMode)} />
                         </TouchableOpacity>
-                    </View>
+                    }
+                >
                     {displayFiltersRow()}
-                    <View style={commonStyles.navSeparator}></View>
-                </View>
+                </TopNavHeader>
                 <FlatList
                     data={displayedCharges}
                     keyExtractor={(item) => item.monthYear}
@@ -347,13 +339,6 @@ function ChargesView({ navigation, route }: ChargesViewProps): React.JSX.Element
 }
 
 const styles = StyleSheet.create({
-    titleText: {
-        textAlign: 'center',
-        paddingHorizontal: 10,
-        fontWeight: fontWeightBold,
-        fontFamily: fontFamilyBold,
-        fontSize: 25,
-    },
     modalView: {
         shadowColor: "#000",
         shadowOffset: {
