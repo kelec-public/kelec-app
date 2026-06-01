@@ -5,6 +5,7 @@ import { CarMaker } from "../accounts/account";
 import { RenaultCredentials } from "./renaultCredentials";
 import { V2GApiResponse, V2GApiSession } from "./renault/v2gApiResponse";
 import Config from 'react-native-config';
+import OIDC from "../../../packages/kelec-login/oidc/oidc";
 
 enum RenaultEndpoints {
     // 1st step, get gigya token
@@ -250,14 +251,15 @@ class RenaultClient extends CarMakerClient {
 
     private readonly getGigyaToken = async (): Promise<GigyaTokenFunctionResponse> => {
         // d'abord on vérifie si l'utilisateur n'a pas déjà un cookieValue stocké
-        const storedCookieValue = await RenaultCredentials.getCookieValue(this.getEmail());
-        if (storedCookieValue !== null) {
-            return {
-                canLogin: true,
-                cookieValue: storedCookieValue.cookieValue,
-                personId: storedCookieValue.personId
-            };
-        }
+        // temporairement désactivé
+        //const storedCookieValue = await RenaultCredentials.getCookieValue(this.getEmail());
+        //if (storedCookieValue !== null) {
+        //    return {
+        //        canLogin: true,
+        //        cookieValue: storedCookieValue.cookieValue,
+        //        personId: storedCookieValue.personId
+        //    };
+        //}
         const url = RenaultClient.GIGYA_URL + RenaultEndpoints.GET_GIGYA_TOKEN;
         const body = {
             loginID: this.getEmail(),
@@ -325,15 +327,29 @@ class RenaultClient extends CarMakerClient {
         });
     };
 
-    private readonly getJWTToken = async (cookieValue: string): Promise<JWTTokenFunctionResponse> => {
-        // d'abord on vérifie s'il n'y a pas un token déjà stocké
-        const storedJWT = await RenaultCredentials.getJWTStored(this.getEmail());
-        if (storedJWT !== null) {
+    private readonly getJWTToken = async (cookieValue?: string): Promise<JWTTokenFunctionResponse> => {
+        // on récupère depuis l'oidc
+        const tokens = await OIDC.getTokens(this.getEmail());
+        if (tokens) {
             return {
                 canLogin: true,
-                jwtToken: storedJWT
-            };
+                jwtToken: tokens.access_token
+            }
+        } else {
+            return {
+                canLogin: false
+            }
         }
+
+        // d'abord on vérifie s'il n'y a pas un token déjà stocké
+        // temporairement désactivé
+        //const storedJWT = await RenaultCredentials.getJWTStored(this.getEmail());
+        //if (storedJWT !== null) {
+        //    return {
+        //        canLogin: true,
+        //        jwtToken: storedJWT
+        //    };
+        //}
         const url = `${RenaultClient.GIGYA_URL}${RenaultEndpoints.GET_JWT_TOKEN}`;
         const body = {
             fields: 'data.personId,data.gigyaDataCenter',
@@ -650,28 +666,22 @@ class RenaultClient extends CarMakerClient {
         }
     };
 
-    getKamereonAccount = async (carMaker: CarMaker = CarMaker.RENAULT): Promise<LoginFunctionReponse> => {
+    getKamereonAccount = async (personId: string, carMaker: CarMaker = CarMaker.RENAULT): Promise<LoginFunctionReponse> => {
         if (this.kamereonAccountID !== undefined && this.kamereonAccountID !== '') {
             return {
                 canLogin: true,
                 kamereonAccountID: this.kamereonAccountID
             };
         }
-        const gigyaToken = await this.getGigyaToken();
-        if (!gigyaToken.canLogin) {
-            return {
-                canLogin: false,
-                errorMessage: gigyaToken.errorMessage
-            };
-        }
-        const jwtToken = await this.getJWTToken(gigyaToken.cookieValue!);
+        const jwtToken = await this.getJWTToken();
+        console.log("JWT Token response: ", jwtToken);
         if (!jwtToken.canLogin) {
             return {
                 canLogin: false,
                 errorMessage: jwtToken.errorMessage
             };
         }
-        const kamereonAccountID = await this.getKamereonAccountID(jwtToken.jwtToken!, gigyaToken.personId!, carMaker);
+        const kamereonAccountID = await this.getKamereonAccountID(jwtToken.jwtToken!, personId, carMaker);
         if (!kamereonAccountID.canLogin) {
             return {
                 canLogin: false,

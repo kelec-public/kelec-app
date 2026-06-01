@@ -9,12 +9,10 @@ const saveNativeAccount = async (account: UserAccount | null): Promise<void> => 
 
     if (Platform.OS === 'ios') {
         //set password crypted
-        account?.getCars().forEach(car => {
+        account?.getCars().forEach(async car => {
             const password = car.getPassword();
             if (password) {
-                const cryptedMethod = RNSharedWidget?.setCryptedData;
-                if (cryptedMethod != undefined)
-                    RNSharedWidget.setCryptedData(car.getCar()?.getVin() + '_password', password);
+                await setNativeCryptedData(car.getCar()?.getVin() + '_password', password);
                 // remove password from clear storage
                 car.password = '';
             }
@@ -31,9 +29,7 @@ const saveNativeAccount = async (account: UserAccount | null): Promise<void> => 
 
             const password = car.getPassword();
             if (password) {
-                const cryptedMethod = SharedStorage?.setEncrypted;
-                if (cryptedMethod != undefined)
-                    await SharedStorage.setEncrypted(car.getCar()?.getVin() + '_password', password);
+                await setNativeCryptedData(car.getCar()?.getVin() + '_password', password);
                 // remove password from clear storage
                 car.password = '';
             }
@@ -45,31 +41,48 @@ const saveNativeAccount = async (account: UserAccount | null): Promise<void> => 
     }
 };
 
-const getNativeCryptedPassword = async (vin: string): Promise<string | null> => {
+const getNativeCryptedData = async (key: string): Promise<string | null> => {
     return new Promise((resolve, reject) => {
         if (Platform.OS === 'ios') {
             const cryptedMethod = RNSharedWidget?.getCryptedData;
             if (cryptedMethod == undefined) {
-                resolve(""); // for tests
-            } RNSharedWidget.getCryptedData(vin + '_password')
-                .then((password: string) => {
-                    resolve(password);
+                reject("getCryptedData method not available"); // for tests
+            }
+            RNSharedWidget.getCryptedData(key)
+                .then((data: string) => {
+                    resolve(data);
                 })
                 .catch((error: any) => {
-                    resolve(null);
+                    reject(error);
                 })
         }
 
         if (Platform.OS === 'android') {
-            const cryptedMethod = SharedStorage?.getEncrypted;
-            if (cryptedMethod == undefined) {
-                resolve(""); // for tests
+            const crypedMethod = SharedStorage?.getEncrypted;
+            if (crypedMethod == undefined) {
+                reject("getEncrypted method not available"); // for tests
             }
-            SharedStorage.getEncrypted(vin + '_password', (password: string | null) => {
-                resolve(password);
+            SharedStorage.getEncrypted(key, (data: string | null) => {
+                resolve(data);
             });
         }
     });
+};
+
+const setNativeCryptedData = async (key: string, value: string): Promise<void> => {
+    if (Platform.OS === 'ios') {
+        const cryptedMethod = RNSharedWidget?.setCryptedData;
+        if (cryptedMethod != undefined) {
+            await RNSharedWidget.setCryptedData(key, value);
+            console.log(`Set crypted data for key: ${key}`);
+        }
+
+    }
+    if (Platform.OS === 'android') {
+        const cryptedMethod = SharedStorage?.setEncrypted;
+        if (cryptedMethod != undefined)
+            await SharedStorage.setEncrypted(key, value);
+    }
 }
 
 const saveNativePreferences = async (appPreferences: AppPreferences): Promise<void> => {
@@ -195,8 +208,9 @@ export {
     refreshWidget,
     getWidgetsLogs,
     saveNativePreferences,
-    getNativeCryptedPassword,
+    getNativeCryptedData,
     getMileageHistory,
     getKeyboardAvoidingView,
-    getNativeBatteryStatus
+    getNativeBatteryStatus,
+    setNativeCryptedData
 };

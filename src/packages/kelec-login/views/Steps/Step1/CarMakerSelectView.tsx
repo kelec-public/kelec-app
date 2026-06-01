@@ -1,12 +1,14 @@
 import { useColorScheme, View, Image } from "react-native";
 import Text from "../../../../../screen/Common/CustomText";
-import { CarMaker } from "../../../../../lib/clients/accounts/account";
+import Account, { CarMaker } from "../../../../../lib/clients/accounts/account";
 import { getCarMakerLogo } from "../../../../kelec-model/lib/logos";
 import { useContext } from "react";
 import MainContext from "../../../../../lib/Contexts/MainContext";
 import LoginDefaultView from "../../LoginDefaultView";
 import KelecCard from "../../../../kelec-model/view/Card";
 import { spacerM, spacerXXL } from "../../../../kelec-model/view/Spacers";
+import { COMPATIBLE_OIDC_CAR_MAKERS } from "../../../oidc/oidc-conf";
+import { OidcTokens } from "../../../oidc/oidc";
 
 type Props = {
     selectedCarMaker?: CarMaker;
@@ -76,7 +78,27 @@ const CarMakerSelectView = (props: Props) => {
             helpText="selectTheCarBrand"
             onNext={() => {
                 if (selectedCarMaker) {
-                    navigation.navigate("CredentialsView", { selectedCarMaker: selectedCarMaker });
+                    // for oidc
+                    if (COMPATIBLE_OIDC_CAR_MAKERS.includes(selectedCarMaker)) {
+                        navigation.navigate("OidcLoginView",
+                            {
+                                onError: (error: Error) => {
+                                    navigation.goBack();
+                                    alert(error.message);
+                                },
+                                onSuccess: (account: Account) => {
+                                    navigation.navigate("SelectACarView", {
+                                        account: account
+                                    });
+                                }
+                            }
+                        );
+                        return;
+                    } else {
+                        // legacy login
+                        navigation.navigate("CredentialsView", { selectedCarMaker: selectedCarMaker });
+                        return;
+                    }
                 }
             }}
             shouldDisplayDismissButton={currentUser?.getCars().length > 0}
@@ -95,7 +117,7 @@ const CarMakerSelectView = (props: Props) => {
                     })
                 }
             </View>
-        </LoginDefaultView>
+        </LoginDefaultView >
     );
 };
 

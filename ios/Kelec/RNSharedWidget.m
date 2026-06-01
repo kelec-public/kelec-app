@@ -12,7 +12,7 @@
 @implementation RNSharedWidget
 
 NSUserDefaults *sharedDefaults;
-NSString *appGroup = @"group.kelyanselme.MyRenaultPlus";
+static NSString *const appGroup = @"group.kelyanselme.MyRenaultPlus";
 
 -(dispatch_queue_t)methodQueue {
   return dispatch_get_main_queue();
@@ -22,24 +22,37 @@ RCT_EXPORT_MODULE(RNSharedWidget)
 
 
 
-RCT_EXPORT_METHOD(setCryptedData: (NSString *)key: (NSString *)data) {
+RCT_EXPORT_METHOD(setCryptedData: (NSString *)key
+                  : (NSString *)data
+                  resolver:(RCTPromiseResolveBlock) resolve
+                  rejecter:(RCTPromiseRejectBlock) reject) {
   
-  NSDictionary *query = @{
-    (__bridge id)kSecClass: (__bridge id)kSecClassGenericPassword,
-    (__bridge id)kSecAttrAccount: key,
-    (__bridge id)kSecValueData: [data dataUsingEncoding:NSUTF8StringEncoding],
-    (__bridge id)kSecAttrAccessible: (__bridge id)kSecAttrAccessibleAfterFirstUnlock,
-    (__bridge id)kSecAttrAccessGroup: appGroup // Add App Group
-  };
+  NSDictionary *searchQuery = @{
+      (__bridge id)kSecClass:           (__bridge id)kSecClassGenericPassword,
+      (__bridge id)kSecAttrAccount:     key,
+      (__bridge id)kSecAttrAccessGroup: appGroup,
+    };
   
-  // Delete any existing item with the same key
-  SecItemDelete((__bridge CFDictionaryRef)query);
+  // on supprime des éléments qui seraient déjà là
+  SecItemDelete((__bridge CFDictionaryRef)searchQuery);
   
-  // Add the new item to the Keychain
-  OSStatus status = SecItemAdd((__bridge CFDictionaryRef)query, NULL);
+  // query d'ajout
+  NSDictionary *insertQuery = @{
+      (__bridge id)kSecClass:           (__bridge id)kSecClassGenericPassword,
+      (__bridge id)kSecAttrAccount:     key,
+      (__bridge id)kSecAttrAccessGroup: appGroup,
+      (__bridge id)kSecAttrAccessible:  (__bridge id)kSecAttrAccessibleAfterFirstUnlock,
+      (__bridge id)kSecValueData:       [data dataUsingEncoding:NSUTF8StringEncoding],
+    };
   
-  if (status != errSecSuccess) {
-    NSLog(@"Failed to insert data into Keychain. Error: %d", (int)status);
+  OSStatus status = SecItemAdd((__bridge CFDictionaryRef)insertQuery, NULL);
+
+  if (status == errSecSuccess) {
+    resolve(nil);
+  } else {
+    reject(@"keychain_error",
+       [NSString stringWithFormat:@"Failed to save data. Error: %d", (int)status],
+       nil);
   }
 }
 
@@ -64,9 +77,9 @@ RCT_EXPORT_METHOD(getCryptedData: (NSString *)key resolver:(RCTPromiseResolveBlo
     NSString *cryptedData = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     resolve(cryptedData); // Resolve with the retrieved data
   } else {
-    // Handle the error
-    NSString *errorMessage = [NSString stringWithFormat:@"Failed to retrieve data from Keychain. Error: %d", (int)status];
-    reject(@"keychain_error", errorMessage, nil); // Reject with an error
+    reject(@"keychain_error",
+           [NSString stringWithFormat:@"Failed to retrieve data from Keychain. Error: %d", (int)status],
+           nil);
   }
 }
 
