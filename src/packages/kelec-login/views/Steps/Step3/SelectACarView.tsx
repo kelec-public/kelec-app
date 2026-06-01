@@ -15,6 +15,7 @@ import HyundaiAccount from "../../../../../lib/clients/accounts/hyundaiAccount";
 import HyundaiClient from "../../../../../lib/clients/carMakers/hyundaiClient";
 import HyundaiCar from "../../../../../lib/clients/cars/hyundaiCar";
 import LoginDefaultView from "../../LoginDefaultView";
+import NewRenaultClient from "../../../../../lib/clients/carMakers/newRenaultClient";
 
 type Props = NativeStackScreenProps<LoginEntryParamList, 'SelectACarView'> & {
     selectedCar?: CarModel;
@@ -69,15 +70,11 @@ const SelectACarView = (props: Props) => {
         try {
             const carMaker = account?.getCarMaker();
             const userRenault = account as RenaultAccount;
-            const client = new RenaultClient(userRenault.getEmail(), userRenault.getPassword(), userRenault.getKamereonAccountID());
+            const client = new NewRenaultClient(userRenault.getEmail(), userRenault.getKamereonAccountID());
             const vehicles = await client.getVehicles();
-            if (vehicles.hasError) {
-                setViewState(ViewState.ERROR);
-                return;
-            }
 
             const vehiclesModels = [];
-            for (const vehicle of vehicles.vehicles) {
+            for (const vehicle of vehicles) {
                 const name = vehicle.vehicleDetails.model.label;
                 const vin = vehicle.vin;
                 const registrationNumber = vehicle.vehicleDetails.registrationNumber;
@@ -94,7 +91,6 @@ const SelectACarView = (props: Props) => {
             setCars(vehiclesModels);
             setViewState(ViewState.LOADED);
         } catch (error) {
-            console.error("Error loading Renault Group cars: ", error);
             setViewState(ViewState.ERROR);
         }
     }

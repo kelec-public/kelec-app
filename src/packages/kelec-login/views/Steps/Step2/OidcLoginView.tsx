@@ -114,7 +114,6 @@ const OidcLoginView = ({ navigation, route, selectedCarMaker, setAccount }: Prop
                     account: renaultAccount
                 })
             } else {
-                console.error(kamereonAccountID.errorMessage);
                 onError(new Error(`Unable to retrieve Kamereon account ID: ${kamereonAccountID.errorMessage}`));
             }
         } catch (e) {

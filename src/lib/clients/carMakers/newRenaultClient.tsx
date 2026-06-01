@@ -2,16 +2,21 @@ import Config from "react-native-config";
 import OIDC, { OidcTokens } from "../../../packages/kelec-login/oidc/oidc";
 import CarMakerClient from "./carMakerClient";
 import { CarMaker } from "../accounts/account";
+import { VehicleLinkApi } from "./renaultClient";
 
 enum ApiEndpoints {
     V1 = "/myr/api/v1",
-    CONNECTION = "/connection"
+    CONNECTION = "/connection",
+    ACCOUNTS = "/accounts",
+    CONNECTED_VEHICLES = "/connected-vehicles"
 }
 
 class NewRenaultClient extends CarMakerClient {
 
     private static readonly API_BASE_URL = "https://apis.renault.com"
     private static readonly API_BASE_URL_KEY = Config.KAMEREON_API_KEY ?? '';
+
+    private kamereonAccountID: string;
 
     // tableau de matching des constructeurs pour kamereon
     private static readonly carMakerMapping: Record<CarMaker, string> = {
@@ -23,8 +28,9 @@ class NewRenaultClient extends CarMakerClient {
     }
 
     // pas besoin du mot de passe car OIDC
-    constructor(email: string) {
+    constructor(email: string, kamereonAccountID?: string) {
         super(email, '');
+        this.kamereonAccountID = kamereonAccountID ?? '';
     }
 
     private readonly getJWTToken = async (): Promise<OidcTokens> => {
@@ -35,7 +41,7 @@ class NewRenaultClient extends CarMakerClient {
         return tokens;
     }
 
-    async getKamereonAccount(carMaker: CarMaker): Promise<KamereonAccountIDFunctionResponse> {
+    public async getKamereonAccount(carMaker: CarMaker): Promise<KamereonAccountIDFunctionResponse> {
         try {
             const tokens = await this.getJWTToken();
             const urlParams = new URLSearchParams({
@@ -76,6 +82,28 @@ class NewRenaultClient extends CarMakerClient {
             }
         }
     }
+
+    // garage
+    public async getVehicles(): Promise<VehicleLinkApi[]> {
+        const jwtToken = await this.getJWTToken();
+        const urlParams = new URLSearchParams({
+            country: "FR",
+            locale: "fr-FR"
+        });
+        const response = await fetch(`${NewRenaultClient.API_BASE_URL}${ApiEndpoints.V1}${ApiEndpoints.ACCOUNTS}/${this.kamereonAccountID}${ApiEndpoints.CONNECTED_VEHICLES}?${urlParams.toString()}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${jwtToken.access_token}`,
+                'apiKey': NewRenaultClient.API_BASE_URL_KEY,
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to get vehicles: ${response.status}`);
+        }
+        const responseData = await response.json() as { vehicleLinks: VehicleLinkApi[] };
+        return responseData.vehicleLinks;
+    };
 }
 
 

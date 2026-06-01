@@ -110,46 +110,6 @@ type LoginFunctionReponse = {
     lastName?: string;
 }
 
-type VehiclesFunctionResponse = {
-    hasError: boolean;
-    vehicles: VehicleLinkApi[];
-}
-
-type KamereonVehiclesApiResponse = {
-    vehicleLinks?: VehicleLinkApi[];
-}
-
-type VehicleLinkApi = {
-    vin: string;
-    vehicleDetails: {
-        model: {
-            label: string;
-        }
-        energy: {
-            code: string;
-            lable: string;
-        }
-        registrationNumber?: string;
-        assets?: Asset[];
-    }
-}
-type Asset = {
-    assetType: string;
-    viewpoint: string;
-    renditions: {
-        resolutionType: string;
-        url: string;
-    }[]
-}
-
-type KamereonVehiclesFunctionResponse = {
-    hasError: boolean;
-    vehicles: VehicleLinkApi[];
-}
-
-
-
-
 type BatteryStatusApiResponse = {
     data?: {
         type?: string;
@@ -444,35 +404,6 @@ class RenaultClient extends CarMakerClient {
         });
     }
 
-    private readonly getKamereonVehicles = async (kamereonAccountID: string, JWTToken: string): Promise<KamereonVehiclesFunctionResponse> => {
-        const url = `${RenaultClient.KAMEREON_URL}${RenaultEndpoints.GET_KAMEREON_ACCOUNT}/${kamereonAccountID}/vehicles?country=FR`;
-        try {
-            const response = await fetch(url, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-gigya-id_token': JWTToken,
-                    'apikey': RenaultClient.KAMEREON_API_KEY
-                }
-            });
-            const data: KamereonVehiclesApiResponse = await response.json();
-            if (data.vehicleLinks !== undefined) {
-                return {
-                    hasError: false,
-                    vehicles: data.vehicleLinks
-                }
-            }
-            return {
-                hasError: true,
-                vehicles: []
-            }
-        } catch {
-            return {
-                hasError: true,
-                vehicles: []
-            }
-        }
-    }
-
     private readonly handleBatteryStatus = (data: BatteryStatusApiResponse): RenaultStatus => {
         const dataFormatted = data.data?.attributes as unknown as BatteryStatus;
         if (dataFormatted.timestamp) {
@@ -697,25 +628,6 @@ class RenaultClient extends CarMakerClient {
         }
     }
 
-    getVehicles = async (): Promise<VehiclesFunctionResponse> => {
-        const gigyaToken = await this.getGigyaToken();
-        if (!gigyaToken.canLogin) {
-            return {
-                hasError: true,
-                vehicles: []
-            };
-        }
-        const jwtToken = await this.getJWTToken(gigyaToken.cookieValue!);
-        if (!jwtToken.canLogin) {
-            return {
-                hasError: true,
-                vehicles: []
-            };
-        }
-
-        const kamereonVehicles = await this.getKamereonVehicles(this.kamereonAccountID, jwtToken.jwtToken!);
-        return kamereonVehicles;
-    }
 
     getBatteryStatus = async (vin: string): Promise<RenaultStatus> => {
         const gigyaToken = await this.getGigyaToken();
@@ -906,5 +818,5 @@ class RenaultClient extends CarMakerClient {
         return chargeSettings;
     }
 }
-export type { VehicleLinkApi, RenaultStatus, BatteryStatus, CockpitStatus, MapLocationStatus, ChargesHistory, ChargeSettingsStatus, ChargeSchedule, HVACStatus };
+export type { RenaultStatus, BatteryStatus, CockpitStatus, MapLocationStatus, ChargesHistory, ChargeSettingsStatus, ChargeSchedule, HVACStatus };
 export default RenaultClient;
