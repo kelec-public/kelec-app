@@ -40,17 +40,10 @@ const CredentialsView = (props: Props) => {
 
 
         switch (selectedCarMaker) {
-            case CarMaker.RENAULT:
-            case CarMaker.DACIA:
-            case CarMaker.ALPINE: {
-                await loginRenaultGroup();
-                break;
-            }
             case CarMaker.HYUNDAI: {
                 await loginHyundai();
                 break;
             }
-
         }
 
         setIsLightLoading(false);
@@ -100,39 +93,6 @@ const CredentialsView = (props: Props) => {
                 ]);
         }
 
-    };
-
-    /** 
-     * Handle Renault group login
-     */
-    const loginRenaultGroup = async () => {
-        const client = new RenaultClient(email.toLowerCase(), password);
-        const kamereonAccountID = await client.getKamereonAccount(selectedCarMaker);
-        if (kamereonAccountID.canLogin) {
-            const renaultAccount = new RenaultAccount(email.toLowerCase(), password, kamereonAccountID.kamereonAccountID ?? '', undefined, kamereonAccountID.firstName, kamereonAccountID.lastName, selectedCarMaker);
-            loginUser(renaultAccount);
-            return;
-        }
-
-        let errorMessage = "";
-        switch (kamereonAccountID.errorMessage) {
-            case CarMakerClientErrors.SERVER_ERROR:
-                errorMessage = languageHandler.getTranslation('serverError');
-                break;
-            case CarMakerClientErrors.ACCOUNT_LOCKED:
-                errorMessage = languageHandler.getTranslation('accountLocked');
-                break;
-            case CarMakerClientErrors.INVALID_CREDENTIALS:
-                errorMessage = languageHandler.getTranslation('invalidPassWord');
-                break;
-        }
-
-        Alert.alert(
-            languageHandler.getTranslation('error'),
-            errorMessage,
-            [
-                { text: languageHandler.getTranslation('ok') }
-            ]);
     };
 
     return (

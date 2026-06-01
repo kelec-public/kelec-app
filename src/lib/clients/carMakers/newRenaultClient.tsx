@@ -2,7 +2,8 @@ import Config from "react-native-config";
 import OIDC, { OidcTokens } from "../../../packages/kelec-login/oidc/oidc";
 import CarMakerClient from "./carMakerClient";
 import { CarMaker } from "../accounts/account";
-import { VehicleLinkApi } from "./renaultClient";
+import { VehicleLinkApi } from "./renault/vehicleLink";
+import { jwtDecode } from "jwt-decode";
 
 enum ApiEndpoints {
     V1 = "/myr/api/v1",
@@ -33,14 +34,28 @@ class NewRenaultClient extends CarMakerClient {
         this.kamereonAccountID = kamereonAccountID ?? '';
     }
 
+    // JWT TOKEN
     private readonly getJWTToken = async (): Promise<OidcTokens> => {
-        const tokens = await OIDC.getTokens(this.getEmail());
-        if (!tokens) {
-            throw new Error('No tokens found for email: ' + this.getEmail());
+        let tokens = await OIDC.getTokens(this.getEmail());
+        if (tokens) {
+            // on vérifie que le token est toujours valide
+            const access_token = tokens.access_token;
+            const decoded = jwtDecode(access_token);
+            const now = Date.now() / 1000; // unix timestamp in seconds
+            // on vérifie que le token est encore valide au moins 30 secondes
+            if (decoded.exp && decoded.exp < now + 30) {
+                // on refresh le token
+                const refreshedTokens = await OIDC.refreshTokens(tokens);
+                await OIDC.saveTokens(refreshedTokens);
+                tokens = refreshedTokens;
+            }
+            return tokens;
         }
-        return tokens;
+        throw new Error('No tokens found for user: ' + this.getEmail());
     }
 
+
+    // KAMAREON ACCOUNT ID
     public async getKamereonAccount(carMaker: CarMaker): Promise<KamereonAccountIDFunctionResponse> {
         try {
             const tokens = await this.getJWTToken();
@@ -83,7 +98,7 @@ class NewRenaultClient extends CarMakerClient {
         }
     }
 
-    // garage
+    // GARAGE
     public async getVehicles(): Promise<VehicleLinkApi[]> {
         const jwtToken = await this.getJWTToken();
         const urlParams = new URLSearchParams({
@@ -104,6 +119,8 @@ class NewRenaultClient extends CarMakerClient {
         const responseData = await response.json() as { vehicleLinks: VehicleLinkApi[] };
         return responseData.vehicleLinks;
     };
+
+    // CAR STATUS
 }
 
 

@@ -1,11 +1,10 @@
 import CarMakerClient, { CarMakerClientErrors } from "./carMakerClient";
 import RenaultCharge from "../apiHandlers/renaultCharges/RenaultCharge";
 import { HVACStatusEnum } from "./renaultEnums";
-import { CarMaker } from "../accounts/account";
-import { RenaultCredentials } from "./renaultCredentials";
 import { V2GApiResponse, V2GApiSession } from "./renault/v2gApiResponse";
 import Config from 'react-native-config';
 import OIDC from "../../../packages/kelec-login/oidc/oidc";
+import { jwtDecode } from "jwt-decode";
 
 enum RenaultEndpoints {
     // 1st step, get gigya token
@@ -209,200 +208,39 @@ class RenaultClient extends CarMakerClient {
     }
 
 
-    private readonly getGigyaToken = async (): Promise<GigyaTokenFunctionResponse> => {
-        // d'abord on vérifie si l'utilisateur n'a pas déjà un cookieValue stocké
-        // temporairement désactivé
-        //const storedCookieValue = await RenaultCredentials.getCookieValue(this.getEmail());
-        //if (storedCookieValue !== null) {
-        //    return {
-        //        canLogin: true,
-        //        cookieValue: storedCookieValue.cookieValue,
-        //        personId: storedCookieValue.personId
-        //    };
-        //}
-        const url = RenaultClient.GIGYA_URL + RenaultEndpoints.GET_GIGYA_TOKEN;
-        const body = {
-            loginID: this.getEmail(),
-            password: this.getPassword(),
-            include: 'data',
-            APIKey: RenaultClient.GIGYA_API_KEY ?? ''
-        }
-        return new Promise((resolve, reject) => {
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: new URLSearchParams(body).toString()
-            }).then((response) => {
-                response.json().then((data: unknown) => {
-                    const typedData = data as GigyaTokenApiResponse;
-                    switch (typedData.statusCode) {
-                        // good creds
-                        case 200: {
-                            RenaultCredentials.storeCookieValue(this.getEmail(), {
-                                canLogin: true,
-                                cookieValue: typedData.sessionInfo.cookieValue,
-                                personId: typedData.data.personId
-                            });
-                            resolve({
-                                canLogin: true,
-                                cookieValue: typedData.sessionInfo.cookieValue,
-                                personId: typedData.data.personId
-                            });
-                            break;
-                        }
-                        // bad creds
-                        case 403:
-                            typedData.errorDetails == "Account temporarily locked out" ?
-                                resolve({
-                                    canLogin: false,
-                                    errorMessage: CarMakerClientErrors.ACCOUNT_LOCKED
-                                }) :
-                                resolve({
-                                    canLogin: false,
-                                    errorMessage: CarMakerClientErrors.INVALID_CREDENTIALS
-                                });
-                            break;
-                        default:
-                            resolve({
-                                canLogin: false,
-                                errorMessage: typedData.errorDetails
-                            });
-                            break;
-                    }
-                }).catch((error: Error) => {
-                    resolve({
-                        canLogin: false,
-                        errorMessage: CarMakerClientErrors.SERVER_ERROR
-                    });
-                });
-            }).catch((error) => {
-                resolve({
-                    canLogin: false,
-                    errorMessage: CarMakerClientErrors.SERVER_ERROR
-                });
-            });
-
-        });
-    };
-
     private readonly getJWTToken = async (cookieValue?: string): Promise<JWTTokenFunctionResponse> => {
         // on récupère depuis l'oidc
-        const tokens = await OIDC.getTokens(this.getEmail());
+        let tokens = await OIDC.getTokens(this.getEmail());
         if (tokens) {
-            return {
-                canLogin: true,
-                jwtToken: tokens.access_token
+            // on vérifie que le token est toujours valide
+            const access_token = tokens.access_token;
+            try {
+                const decoded = jwtDecode(access_token);
+                const now = Date.now() / 1000; // unix timestamp in seconds
+                // on vérifie que le token est encore valide au moins 30 secondes
+                if (decoded.exp && decoded.exp < now + 30) {
+                    // on refresh le token
+                    const refreshedTokens = await OIDC.refreshTokens(tokens);
+                    await OIDC.saveTokens(refreshedTokens);
+                    tokens = refreshedTokens;
+                }
+                return {
+                    canLogin: true,
+                    jwtToken: tokens.access_token
+                }
+            } catch (error) {
+                // token invalide 
+                return {
+                    canLogin: false,
+                    errorMessage: 'Invalid token'
+                }
             }
         } else {
             return {
                 canLogin: false
             }
         }
-
-        // d'abord on vérifie s'il n'y a pas un token déjà stocké
-        // temporairement désactivé
-        //const storedJWT = await RenaultCredentials.getJWTStored(this.getEmail());
-        //if (storedJWT !== null) {
-        //    return {
-        //        canLogin: true,
-        //        jwtToken: storedJWT
-        //    };
-        //}
-        const url = `${RenaultClient.GIGYA_URL}${RenaultEndpoints.GET_JWT_TOKEN}`;
-        const body = {
-            fields: 'data.personId,data.gigyaDataCenter',
-            expiration: String(1800),
-            APIKey: RenaultClient.GIGYA_API_KEY ?? '',
-            login_token: cookieValue
-        }
-        return new Promise((resolve, reject) => {
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: new URLSearchParams(body).toString()
-            }).then((response) => {
-                response.json().then((data: unknown) => {
-                    const typedData = data as JWTTokenApiResponse
-                    if (typedData.statusCode === 200) {
-                        RenaultCredentials.storeJWT(this.getEmail(), typedData.id_token ?? "");
-                        resolve({
-                            canLogin: true,
-                            jwtToken: typedData.id_token
-                        });
-                    } else {
-                        resolve({
-                            canLogin: false,
-                            errorMessage: CarMakerClientErrors.SERVER_ERROR
-                        });
-                    }
-                }).catch((error: Error) => {
-                    resolve({
-                        canLogin: false,
-                        errorMessage: CarMakerClientErrors.SERVER_ERROR
-                    });
-                });
-            }).catch(() => {
-                resolve({
-                    canLogin: false,
-                    errorMessage: CarMakerClientErrors.SERVER_ERROR
-                });
-            });
-        });
     };
-
-    private readonly getKamereonAccountID = async (jwtToken: string, gigyaPersonID: string, carMaker: CarMaker): Promise<KamereonAccountIDFunctionResponse> => {
-        const url = `${RenaultClient.KAMEREON_URL}${RenaultEndpoints.GET_KAMEREON_ACCOUNT_ID}/${gigyaPersonID}?country=FR`;
-
-        return new Promise((resolve, reject) => {
-            fetch(url, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-gigya-id_token': jwtToken,
-                    'apikey': RenaultClient.KAMEREON_API_KEY
-                }
-            }).then((response) => {
-                response.json().then((data: unknown) => {
-                    const typedData = data as KamereonAccountIDApiResponse;
-                    const accounts = typedData.accounts;
-                    for (let account of accounts) {
-                        if (
-                            (carMaker === CarMaker.DACIA && account.accountType === 'MYDACIA' ||
-                                carMaker === CarMaker.RENAULT && account.accountType === 'MYRENAULT' ||
-                                carMaker === CarMaker.ALPINE && account.accountType === 'MYALPINE')
-                            && account.accountStatus === 'ACTIVE'
-                        ) {
-                            resolve({
-                                canLogin: true,
-                                kamereonAccountID: account.accountId,
-                                firstName: typedData.firstName,
-                                lastName: typedData.lastName
-                            });
-                            return;
-                        }
-                    }
-                    resolve({
-                        canLogin: false,
-                        errorMessage: CarMakerClientErrors.SERVER_ERROR
-                    });
-                }).catch((error: Error) => {
-                    resolve({
-                        canLogin: false,
-                        errorMessage: CarMakerClientErrors.SERVER_ERROR
-                    });
-                });
-            }).catch(() => {
-                resolve({
-                    canLogin: false,
-                    errorMessage: CarMakerClientErrors.SERVER_ERROR
-                })
-            });
-
-        });
-    }
 
     private readonly handleBatteryStatus = (data: BatteryStatusApiResponse): RenaultStatus => {
         const dataFormatted = data.data?.attributes as unknown as BatteryStatus;
@@ -521,7 +359,8 @@ class RenaultClient extends CarMakerClient {
                 headers: {
                     'Content-Type': 'application/json',
                     'x-gigya-id_token': JWTToken,
-                    'apikey': RenaultClient.KAMEREON_API_KEY
+                    'apikey': RenaultClient.KAMEREON_API_KEY,
+                    'Authorization': `Bearer ${JWTToken}`
                 }
             });
             const data: BatteryStatusApiResponse = await request.json();
@@ -597,60 +436,9 @@ class RenaultClient extends CarMakerClient {
         }
     };
 
-    getKamereonAccount = async (personId: string, carMaker: CarMaker = CarMaker.RENAULT): Promise<LoginFunctionReponse> => {
-        if (this.kamereonAccountID !== undefined && this.kamereonAccountID !== '') {
-            return {
-                canLogin: true,
-                kamereonAccountID: this.kamereonAccountID
-            };
-        }
-        const jwtToken = await this.getJWTToken();
-        console.log("JWT Token response: ", jwtToken);
-        if (!jwtToken.canLogin) {
-            return {
-                canLogin: false,
-                errorMessage: jwtToken.errorMessage
-            };
-        }
-        const kamereonAccountID = await this.getKamereonAccountID(jwtToken.jwtToken!, personId, carMaker);
-        if (!kamereonAccountID.canLogin) {
-            return {
-                canLogin: false,
-                errorMessage: kamereonAccountID.errorMessage
-            };
-        } else {
-            return {
-                canLogin: true,
-                kamereonAccountID: kamereonAccountID.kamereonAccountID,
-                firstName: kamereonAccountID.firstName,
-                lastName: kamereonAccountID.lastName
-            }
-        }
-    }
-
 
     getBatteryStatus = async (vin: string): Promise<RenaultStatus> => {
-        const gigyaToken = await this.getGigyaToken();
-        if (!gigyaToken.canLogin) {
-            switch (gigyaToken.errorMessage) {
-                case CarMakerClientErrors.ACCOUNT_LOCKED:
-                    return {
-                        hasError: true,
-                        errorMessage: CarMakerClientErrors.ACCOUNT_LOCKED
-                    }
-                case CarMakerClientErrors.INVALID_CREDENTIALS:
-                    return {
-                        hasError: true,
-                        errorMessage: CarMakerClientErrors.INVALID_CREDENTIALS
-                    }
-                default:
-                    return {
-                        hasError: true,
-                        errorMessage: CarMakerClientErrors.SERVER_ERROR
-                    }
-            }
-        }
-        const jwtToken = await this.getJWTToken(gigyaToken.cookieValue!);
+        const jwtToken = await this.getJWTToken();
         if (!jwtToken.canLogin) {
             return {
                 hasError: true,
@@ -664,13 +452,7 @@ class RenaultClient extends CarMakerClient {
     }
 
     getCockpit = async (vin: string): Promise<RenaultStatus> => {
-        const gigyaToken = await this.getGigyaToken();
-        if (!gigyaToken.canLogin) {
-            return {
-                hasError: true,
-            };
-        }
-        const jwtToken = await this.getJWTToken(gigyaToken.cookieValue!);
+        const jwtToken = await this.getJWTToken();
         if (!jwtToken.canLogin) {
             return {
                 hasError: true,
@@ -681,13 +463,7 @@ class RenaultClient extends CarMakerClient {
     }
 
     getLocation = async (vin: string): Promise<RenaultStatus> => {
-        const gigyaToken = await this.getGigyaToken();
-        if (!gigyaToken.canLogin) {
-            return {
-                hasError: true,
-            };
-        }
-        const jwtToken = await this.getJWTToken(gigyaToken.cookieValue!);
+        const jwtToken = await this.getJWTToken();
         if (!jwtToken.canLogin) {
             return {
                 hasError: true,
@@ -698,13 +474,7 @@ class RenaultClient extends CarMakerClient {
     }
 
     getHVACStatus = async (vin: string): Promise<RenaultStatus> => {
-        const gigyaToken = await this.getGigyaToken();
-        if (!gigyaToken.canLogin) {
-            return {
-                hasError: true,
-            };
-        }
-        const jwtToken = await this.getJWTToken(gigyaToken.cookieValue!);
+        const jwtToken = await this.getJWTToken();
         if (!jwtToken.canLogin) {
             return {
                 hasError: true,
@@ -715,11 +485,7 @@ class RenaultClient extends CarMakerClient {
     }
 
     launchHVAC = async (vin: string, temperature: number): Promise<boolean> => {
-        const gigyaToken = await this.getGigyaToken();
-        if (!gigyaToken.canLogin) {
-            return false;
-        }
-        const jwtToken = await this.getJWTToken(gigyaToken.cookieValue!);
+        const jwtToken = await this.getJWTToken();
         if (!jwtToken.canLogin) {
             return false;
         }
@@ -728,13 +494,7 @@ class RenaultClient extends CarMakerClient {
     }
 
     getChargesHistory = async (vin: string): Promise<RenaultStatus> => {
-        const gigyaToken = await this.getGigyaToken();
-        if (!gigyaToken.canLogin) {
-            return {
-                hasError: true,
-            };
-        }
-        const jwtToken = await this.getJWTToken(gigyaToken.cookieValue!);
+        const jwtToken = await this.getJWTToken();
         if (!jwtToken.canLogin) {
             return {
                 hasError: true,
@@ -755,9 +515,7 @@ class RenaultClient extends CarMakerClient {
     }
 
     getV2GChargesHistory = async (vin: string): Promise<V2GApiSession[]> => {
-        const gigyaToken = await this.getGigyaToken();
-        if (!gigyaToken.canLogin) throw new Error(CarMakerClientErrors.SERVER_ERROR);
-        const jwtToken = await this.getJWTToken(gigyaToken.cookieValue!);
+        const jwtToken = await this.getJWTToken();
         if (!jwtToken.canLogin) throw new Error(CarMakerClientErrors.SERVER_ERROR);
         const urlArgs = [
             {
@@ -802,13 +560,7 @@ class RenaultClient extends CarMakerClient {
     }
 
     getChargeSettings = async (vin: string): Promise<RenaultStatus> => {
-        const gigyaToken = await this.getGigyaToken();
-        if (!gigyaToken.canLogin) {
-            return {
-                hasError: true,
-            };
-        }
-        const jwtToken = await this.getJWTToken(gigyaToken.cookieValue!);
+        const jwtToken = await this.getJWTToken();
         if (!jwtToken.canLogin) {
             return {
                 hasError: true,

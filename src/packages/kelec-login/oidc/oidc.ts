@@ -63,6 +63,32 @@ export default class OIDC {
         };
     };
 
+    static refreshTokens = async (oidcTokens: OidcTokens): Promise<OidcTokens> => {
+        const res = await fetch(OIDC_CONFIG.ENDPOINT_TOKEN, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+                refresh_token: oidcTokens.refresh_token,
+                scope: 'openid email personId lang renaultGroupFull',
+                redirect_uri: OIDC_CONFIG.REDIRECT_URI,
+                client_id: OIDC_CONFIG.CLIENT_ID,
+                grant_type: 'refresh_token',
+            }).toString(),
+        });
+
+        if (!res.ok) {
+            throw new Error(`Token refresh failed: ${res.status}`);
+        }
+
+        const parsedResponse = await res.json() as OidcTokens;
+
+        return {
+            ...parsedResponse,
+            email: oidcTokens.email,
+            personId: oidcTokens.personId,
+        };
+    };
+
     static async saveTokens(tokens: OidcTokens): Promise<void> {
         const email = tokens.email;
         await setNativeCryptedData(`${email}_tokens`, JSON.stringify(tokens));
