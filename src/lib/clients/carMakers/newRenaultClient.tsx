@@ -4,6 +4,7 @@ import CarMakerClient from "./carMakerClient";
 import { CarMaker } from "../accounts/account";
 import { VehicleLinkApi } from "./renault/vehicleLink";
 import { jwtDecode } from "jwt-decode";
+import ApiError, { ApiErrorEnum } from "./error/apiError";
 
 enum ApiEndpoints {
     V1 = "/myr/api/v1",
@@ -51,7 +52,7 @@ class NewRenaultClient extends CarMakerClient {
             }
             return tokens;
         }
-        throw new Error('No tokens found for user: ' + this.getEmail());
+        throw new ApiError(ApiErrorEnum.NO_TOKENS_FOUND);
     }
 
 
@@ -75,14 +76,14 @@ class NewRenaultClient extends CarMakerClient {
             });
 
             if (!response.ok) {
-                throw new Error(`Failed to get Kamereon account ID: ${response.status}`);
+                throw new ApiError(ApiErrorEnum.FAILED_TO_GET_KAMEREON_ACCOUNT_ID);
             }
 
             const responseData = await response.json() as ApiConnectionResponse;
             const accounts = responseData.currentUser.accounts;
             const account = accounts.find(acc => acc.accountStatus === 'ACTIVE' && acc.accountType === NewRenaultClient.carMakerMapping[carMaker]);
             if (!account) {
-                throw new Error('No active account found for car maker: ' + carMaker);
+                throw new ApiError(ApiErrorEnum.NO_ACTIVE_ACCOUNT_FOUND);
             }
             return {
                 canLogin: true,
@@ -114,7 +115,7 @@ class NewRenaultClient extends CarMakerClient {
             }
         });
         if (!response.ok) {
-            throw new Error(`Failed to get vehicles: ${response.status}`);
+            throw new ApiError(ApiErrorEnum.FAILED_TO_GET_VEHICLES);
         }
         const responseData = await response.json() as { vehicleLinks: VehicleLinkApi[] };
         return responseData.vehicleLinks;

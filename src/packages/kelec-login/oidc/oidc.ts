@@ -1,6 +1,7 @@
 import 'react-native-get-random-values';
 import { OIDC_CONFIG } from "./oidc-conf";
 import { getNativeCryptedData, setNativeCryptedData } from '../../../lib/storage/sharedPlatformsData';
+import ApiError, { ApiErrorEnum } from '../../../lib/clients/carMakers/error/apiError';
 
 export interface OidcTokens {
     access_token: string;
@@ -37,7 +38,7 @@ export default class OIDC {
         });
 
         if (!res.ok) {
-            throw new Error(`Token exchange failed: ${res.status}`);
+            throw new ApiError(ApiErrorEnum.TOKEN_EXCHANGE_FAILED);
         }
 
         const parsedResponse = await res.json() as OidcTokens;
@@ -51,7 +52,7 @@ export default class OIDC {
         });
 
         if (!res_user.ok) {
-            throw new Error(`User info fetch failed: ${res_user.status}`);
+            throw new ApiError(ApiErrorEnum.USER_INFO_FETCH_FAILED);
         }
 
         const parsedUserResponse = await res_user.json();
@@ -77,7 +78,7 @@ export default class OIDC {
         });
 
         if (!res.ok) {
-            throw new Error(`Token refresh failed: ${res.status}`);
+            throw new ApiError(ApiErrorEnum.TOKEN_REFRESH_FAILED);
         }
 
         const parsedResponse = await res.json() as OidcTokens;

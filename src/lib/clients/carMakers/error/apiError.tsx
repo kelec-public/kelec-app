@@ -1,0 +1,18 @@
+export enum ApiErrorEnum {
+    TOKEN_EXCHANGE_FAILED = "TOKEN_EXCHANGE_FAILED",
+    USER_INFO_FETCH_FAILED = "USER_INFO_FETCH_FAILED",
+    TOKEN_REFRESH_FAILED = "TOKEN_REFRESH_FAILED",
+    NO_TOKENS_FOUND = "NO_TOKENS_FOUND",
+    FAILED_TO_GET_KAMEREON_ACCOUNT_ID = "FAILED_TO_GET_KAMEREON_ACCOUNT_ID",
+    NO_ACTIVE_ACCOUNT_FOUND = "NO_ACTIVE_ACCOUNT_FOUND",
+    FAILED_TO_GET_VEHICLES = "FAILED_TO_GET_VEHICLES"
+}
+
+export default class ApiError extends Error {
+    constructor(
+        public readonly code: ApiErrorEnum
+    ) {
+        super(code);
+        this.name = "ApiError";
+    }
+}
