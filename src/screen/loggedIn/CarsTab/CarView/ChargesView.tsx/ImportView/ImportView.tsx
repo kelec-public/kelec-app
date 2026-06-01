@@ -17,6 +17,7 @@ import ImportPreviewSection from "./ImportPreviewSection";
 import Text from "../../../../../Common/CustomText";
 import KelecCard from "../../../../../../packages/kelec-model/view/Card";
 import RenaultChargesHandler, { TotalChargeDuration } from "../../../../../../lib/clients/apiHandlers/renaultChargesHandler";
+import ChargeCard from "../ChargeCard";
 
 export type PendingImportChargeData = {
     charges: RenaultCharge[];
@@ -33,7 +34,7 @@ function ImportChargesView({ navigation, route }: ImportViewProps): React.JSX.El
 
     const [pendingCharges, setPendingCharges] = useState<PendingImportChargeData | null>(null);
 
-    const { charges } = route.params;
+    const { charges, carType } = route.params;
 
     const currentChargesCount = charges.getCharges().length;
     const currentEnergyCount = charges.getTotalEnergyRecovered();
@@ -89,6 +90,7 @@ function ImportChargesView({ navigation, route }: ImportViewProps): React.JSX.El
                                     return;
                                 }
 
+
                                 // parse charges
                                 const rawCharges = data.map((row: any): RenaultCharge | undefined => {
                                     if (
@@ -120,6 +122,19 @@ function ImportChargesView({ navigation, route }: ImportViewProps): React.JSX.El
 
                                 const newCharges: RenaultCharge[] = rawCharges.filter((c): c is RenaultCharge => c !== undefined);
 
+                                const dateStrings = newCharges.flatMap(c => [c.chargeStartDate!, c.chargeEndDate!]);
+                                const parse = buildDateParser(dateStrings);
+
+                                newCharges.forEach(charge => {
+                                    const parsedStart = parse(charge.chargeStartDate ?? '');
+                                    const parsedEnd = parse(charge.chargeEndDate ?? '');
+                                    if (!parsedStart || !parsedEnd) {
+                                        throw new Error('Invalid date format in the Excel file');
+                                    }
+                                    charge.chargeStartDate = parsedStart.toISOString();
+                                    charge.chargeEndDate = parsedEnd.toISOString();
+                                });
+
                                 // ensuite on retire les charges qui sont déjà là pour éviter les duplicats
                                 newCharges.filter(charge => {
                                     return !charges.getCharges().some(existingCharge => (
@@ -146,19 +161,72 @@ function ImportChargesView({ navigation, route }: ImportViewProps): React.JSX.El
                     )
                     }
                     {pendingCharges && pendingCharges.charges.length > 0 && (
-                        <ImportPreviewSection
-                            data={{
-                                charges: { current: currentChargesCount, imported: currentChargesCount + pendingCharges.charges.length },
-                                energy: { current: currentEnergyCount, imported: currentEnergyCount + pendingCharges.addedEnergy },
-                                time: { current: currentTimeCount, imported: computeTotalTime(currentTimeCount, pendingCharges.addedTime) },
-                            }}
-                        />
+
+                        <>
+                            <ImportPreviewSection
+                                data={{
+                                    charges: { current: currentChargesCount, imported: currentChargesCount + pendingCharges.charges.length },
+                                    energy: { current: currentEnergyCount, imported: currentEnergyCount + pendingCharges.addedEnergy },
+                                    time: { current: currentTimeCount, imported: computeTotalTime(currentTimeCount, pendingCharges.addedTime) },
+                                }}
+                            />
+
+                            {pendingCharges.charges.map((charge, index) => (
+                                <ChargeCard
+                                    key={index}
+                                    charge={charge}
+                                    carType={carType}
+                                ></ChargeCard>
+                            ))}
+
+                        </>
                     )}
                 </View>
 
             </ScrollView>
         </SafeAreaView>
     )
+}
+
+type DateOrder = 'DMY' | 'MDY' | 'YMD';
+type DateParser = (raw: string) => Date | null;
+
+function buildDateParser(samples: string[]): DateParser {
+    const norm = (s: string): string => s.replace(/[\u202f\u00a0]/g, ' ').trim();
+    const cleaned = samples.map(norm);
+
+    const hasAmPm = cleaned.some(s => /\b(AM|PM)\b/i.test(s));
+    const usesDash = cleaned.some(s => /^\d{4}-\d{1,2}-\d{1,2}/.test(s)); // ISO / en-CA
+
+    // 1) Détermine l'ordre via une valeur où un nombre > 12 (preuve directe)
+    let order: DateOrder | null = null;
+    for (const s of cleaned) {
+        const m = s.match(/^(\d{1,2})[\/.](\d{1,2})[\/.]\d{4}/);
+        if (m) {
+            if (+m[1] > 12) { order = 'DMY'; break; }
+            if (+m[2] > 12) { order = 'MDY'; break; }
+        }
+    }
+    // 2) Sinon, hypothèse par famille
+    if (usesDash) order = 'YMD';
+    else if (!order) order = hasAmPm ? 'MDY' : 'DMY'; // US 12h vs fr/GB/fi/de
+
+    // Parseur configuré pour CE fichier
+    return function parse(raw: string): Date | null {
+        const s = norm(raw);
+        const n: number[] | undefined = s.match(/\d+/g)?.map(Number);
+        if (!n || n.length < 3) return null;
+
+        let y: number, mo: number, d: number, h = 0, mi = 0, se = 0;
+        if (order === 'YMD') { [y, mo, d, h = 0, mi = 0, se = 0] = n; }
+        else if (order === 'DMY') { [d, mo, y, h = 0, mi = 0, se = 0] = n; }
+        else { [mo, d, y, h = 0, mi = 0, se = 0] = n; }
+
+        if (/\bPM\b/i.test(s) && h < 12) h += 12;  // 12h -> 24h
+        if (/\bAM\b/i.test(s) && h === 12) h = 0;
+
+        return new Date(y, mo - 1, d, h, mi, se);
+    };
 }
 
 const styles = StyleSheet.create({
