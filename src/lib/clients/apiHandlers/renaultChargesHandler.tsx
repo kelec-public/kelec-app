@@ -20,8 +20,13 @@ interface RenaultChargesHandler {
     shouldDisplayChargesCard(): boolean;
     setCharges(charges: RenaultCharge[]): void;
     getTotalEnergyRecovered(): number;
-    getTotalTimeCharging(): (string | number)[];
+    getTotalTimeCharging(): TotalChargeDuration;
     compareIndexCharge(date1: string, date2: string, sortDesc: boolean): number;
+}
+
+type TotalChargeDuration = {
+    hours: number;
+    minutes: number;
 }
 
 class RenaultChargesHandler implements RenaultChargesHandler {
@@ -51,14 +56,17 @@ class RenaultChargesHandler implements RenaultChargesHandler {
         return parseFloat(totalEnergy.toFixed(2));
     }
 
-    getTotalTimeCharging(): (string | number)[] {
+    getTotalTimeCharging(): TotalChargeDuration {
         let totalTimeCharging = 0;
         for (const charge of this.charges) {
             totalTimeCharging += charge.chargeDuration ?? 0;
         }
         let heures = Math.floor(totalTimeCharging / 60);
         let minutes = totalTimeCharging % 60;
-        return [heures, formatNumberWithLeadingZero(minutes)];
+        return {
+            hours: heures,
+            minutes: minutes
+        }
     }
 
     static readonly applyFilters = (filters: Filter[], charges: RenaultCharge[]) => {
@@ -255,4 +263,4 @@ class RenaultChargesHandler implements RenaultChargesHandler {
 }
 
 export default RenaultChargesHandler;
-export type { ChargeIndex };
+export type { ChargeIndex, TotalChargeDuration };

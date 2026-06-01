@@ -208,11 +208,13 @@ function ChargesView({ navigation, route }: ChargesViewProps): React.JSX.Element
                             icon={"file-upload"}
                             text={languageHandler.getTranslation("import")}
                             onPress={() => {
-                                navigation.navigate("ImportChargesView");
+                                navigation.navigate("ImportChargesView", {
+                                    charges: charges,
+                                    carType: carType,
+                                });
                                 setShouldOpenModal(false);
                                 handleModalAnim(false);
                             }}
-                            buttonStyle={theme.buttons.neutral}
                         />
                         <Button
                             testID={'exportButton'}

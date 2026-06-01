@@ -25,7 +25,7 @@ const KelecCard = (props: Props) => {
                 ]
             }
         >
-            {onPress && (
+            {onPress && isSelected !== undefined && (
                 <View
                     style={
                         [

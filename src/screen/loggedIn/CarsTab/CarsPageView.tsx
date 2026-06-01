@@ -37,7 +37,10 @@ export type CarsViewParamList = {
       regToken: string;
       origin: TfaOrigin;
     };
-    ImportChargesView: undefined;
+    ImportChargesView: {
+      charges: RenaultChargesHandler;
+      carType: CarType;
+    };
 }
 
 function CarsPageView(): React.JSX.Element {

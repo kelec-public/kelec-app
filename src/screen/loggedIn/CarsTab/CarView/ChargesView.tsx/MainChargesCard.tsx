@@ -1,6 +1,6 @@
 import { StyleSheet, TouchableOpacity, View, useColorScheme } from "react-native";
 import Text from "../../../../Common/CustomText";
-import { getBlackColour, getGrayBackgroundColour } from "../../../../../lib/graphics/utils";
+import { formatNumberWithLeadingZero, getBlackColour, getGrayBackgroundColour } from "../../../../../lib/graphics/utils";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useContext } from "react";
 import MainContext from "../../../../../lib/Contexts/MainContext";
@@ -48,7 +48,7 @@ function MainChargesCard({ navigation }: MainChargesCardProps): React.JSX.Elemen
                             <View style={{ width: 1, backgroundColor: 'gray' }}></View>
                             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', flex: 1 }}>
                                 <Icon size={20} name="hourglass-empty" color={getBlackColour(isDarkMode)} />
-                                <Text style={{ fontSize: 20, color: getBlackColour(isDarkMode) }} testID="ChargesCardTotalTime">{apiHandler.getChargesHistory().getTotalTimeCharging()[0]}<Text style={{ color: 'gray' }}>h</Text>{apiHandler.getChargesHistory().getTotalTimeCharging()[1]}</Text>
+                                <Text style={{ fontSize: 20, color: getBlackColour(isDarkMode) }} testID="ChargesCardTotalTime">{apiHandler.getChargesHistory().getTotalTimeCharging().hours}<Text style={{ color: 'gray' }}>h</Text>{formatNumberWithLeadingZero(apiHandler.getChargesHistory().getTotalTimeCharging().minutes)}</Text>
                             </View>
                         </View>
                     </View>
