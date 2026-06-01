@@ -421,7 +421,8 @@ class RenaultClient extends CarMakerClient {
                 headers: {
                     'Content-Type': 'application/vnd.api+json',
                     'apikey': RenaultClient.KAMEREON_API_KEY,
-                    'x-gigya-id_token': jwtToken
+                    'x-gigya-id_token': jwtToken,
+                    'Authorization': `Bearer ${jwtToken}`
                 },
                 body: JSON.stringify(body)
             })
