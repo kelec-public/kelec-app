@@ -35,7 +35,7 @@ describe('constructor', () => {
     });
 });
 
-const generateMockJwt = (payload, expiresInSeconds = 3600) => {
+export const generateMockJwt = (payload, expiresInSeconds = 3600) => {
     const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
     const exp = Math.floor(Date.now() / 1000) + expiresInSeconds;
     const body = btoa(JSON.stringify({ ...payload, exp }));
@@ -44,7 +44,7 @@ const generateMockJwt = (payload, expiresInSeconds = 3600) => {
     return `${header}.${body}.${signature}`;
 };
 
-const setTokens = async (userEmail) => {
+export const setTokens = async (userEmail) => {
     const jwtToken = generateMockJwt({});
     const refresh_token = "refreshToken"
     const personId = "personId"
