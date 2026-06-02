@@ -9,7 +9,6 @@ import { WebViewNavigation } from "react-native-webview/lib/WebViewTypes";
 import OIDC from "../../../oidc/oidc";
 import CryptoJS from 'crypto-js';
 import Account, { CarMaker } from "../../../../../lib/clients/accounts/account";
-import RenaultClient from "../../../../../lib/clients/carMakers/renaultClient";
 import RenaultAccount from "../../../../../lib/clients/accounts/renaultAccount";
 import NewRenaultClient from "../../../../../lib/clients/carMakers/newRenaultClient";
 import ApiError, { ApiErrorEnum } from "../../../../../lib/clients/carMakers/error/apiError";

@@ -8,7 +8,6 @@ import LoginDefaultView from "../../LoginDefaultView";
 import KelecCard from "../../../../kelec-model/view/Card";
 import { spacerM, spacerXXL } from "../../../../kelec-model/view/Spacers";
 import { COMPATIBLE_OIDC_CAR_MAKERS } from "../../../oidc/oidc-conf";
-import { OidcTokens } from "../../../oidc/oidc";
 
 type Props = {
     selectedCarMaker?: CarMaker;

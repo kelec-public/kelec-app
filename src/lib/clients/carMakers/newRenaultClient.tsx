@@ -18,7 +18,7 @@ class NewRenaultClient extends CarMakerClient {
     private static readonly API_BASE_URL = "https://apis.renault.com"
     private static readonly API_BASE_URL_KEY = Config.KAMEREON_API_KEY ?? '';
 
-    private kamereonAccountID: string;
+    private readonly kamereonAccountID: string;
 
     // tableau de matching des constructeurs pour kamereon
     private static readonly carMakerMapping: Record<CarMaker, string> = {

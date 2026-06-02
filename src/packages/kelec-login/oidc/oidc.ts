@@ -21,7 +21,7 @@ export default class OIDC {
         return Array.from(array).map(b => chars[b % chars.length]).join('');
     }
 
-    static exchangeToken = async (
+    static readonly exchangeToken = async (
         code: string,
         verifier: string
     ): Promise<OidcTokens> => {
@@ -64,7 +64,7 @@ export default class OIDC {
         };
     };
 
-    static refreshTokens = async (oidcTokens: OidcTokens): Promise<OidcTokens> => {
+    static readonly refreshTokens = async (oidcTokens: OidcTokens): Promise<OidcTokens> => {
         const res = await fetch(OIDC_CONFIG.ENDPOINT_TOKEN, {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
