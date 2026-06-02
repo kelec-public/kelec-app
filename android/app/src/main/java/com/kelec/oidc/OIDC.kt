@@ -5,6 +5,8 @@ import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.google.gson.Gson
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import android.util.Base64
 import android.util.Log
 import com.kelec.BuildConfig
@@ -14,6 +16,11 @@ class OIDC(
     context: Context
 ) {
     private val context: Context = context.applicationContext
+
+    companion object {
+        // Partagé entre l'app et les widgets (même process) — évite les double-refresh
+        private val refreshMutex = Mutex()
+    }
 
     fun getTokenBlocking(email: String): OidcTokens? {
         return runBlocking { getToken(email) }
@@ -30,27 +37,37 @@ class OIDC(
         }
     }
 
+    private fun isExpired(tokens: OidcTokens): Boolean {
+        val exp = getJwtExpiration(tokens.accessToken) ?: return false
+        val now = System.currentTimeMillis() / 1000L
+        return exp < now + 30
+    }
+
     suspend fun getToken(email: String): OidcTokens? {
-        // 1ère étape on récupère le token
         val tokens = getTokenFromSecureStorage(email) ?: return null
+        if (!isExpired(tokens)) {
+            return tokens
+        }
 
-        val accessToken = tokens.accessToken
-        val exp = getJwtExpiration(accessToken)
-        val now = System.currentTimeMillis() / 1000L // unix timestamp
-
-        return if (exp != null && exp < now + 30) {
-            val refreshedTokens = refreshTokens(tokens) ?: return  null
-            saveTokensToSecureStorage(refreshedTokens)
-            refreshedTokens
-        } else {
-            tokens
+        // Double-check sous verrou : un autre thread a peut-être déjà rafraîchi
+        return refreshMutex.withLock {
+            val fresh = getTokenFromSecureStorage(email) ?: return@withLock null
+            if (!isExpired(fresh)) {
+                return@withLock fresh
+            }
+            val rawRefreshed = refreshTokens(fresh) ?: return@withLock null
+            // le endpoint refresh ne retourne pas email/personId, on les préserve
+            val refreshed = rawRefreshed.copy(email = fresh.email, personId = fresh.personId)
+            saveTokensToSecureStorage(refreshed)
+            Log.d("OIDC", "Token refreshed: $refreshed")
+            refreshed
         }
     }
 
     suspend fun refreshTokens(tokens: OidcTokens): OidcTokens? {
         return try {
             val response = OidcApiClient.apiService.refreshToken(
-                url = BuildConfig.OIDC_ENDPOINT_TOKEN,
+                url = BuildConfig.OIDC_ENDPOINT_TOKEN + "/",
                 refreshToken = tokens.refreshToken,
                 scope = "openid email personId lang renaultGroupFull",
                 redirectUri = BuildConfig.OIDC_REDIRECT_URI,

@@ -183,6 +183,17 @@ const getKeyboardAvoidingView = (): 'padding' | 'height' => {
     return Platform.OS === 'ios' ? 'padding' : 'height';
 }
 
+const getValidToken = async (email: string): Promise<string | null> => {
+    if (Platform.OS === 'ios') {
+        return await RNSharedWidget.getValidToken(email);
+    }
+    if (Platform.OS === 'android') {
+        return await SharedStorage.getValidToken(email);
+    }
+
+    return null;
+};
+
 const getNativeBatteryStatus = async (vin: string): Promise<string | null> => {
     try {
         if (Platform.OS === 'ios') {
@@ -214,5 +225,6 @@ export {
     getMileageHistory,
     getKeyboardAvoidingView,
     getNativeBatteryStatus,
-    setNativeCryptedData
+    setNativeCryptedData,
+    getValidToken
 };

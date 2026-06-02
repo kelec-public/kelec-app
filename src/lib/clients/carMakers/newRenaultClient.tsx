@@ -5,6 +5,8 @@ import { CarMaker } from "../accounts/account";
 import { VehicleLinkApi } from "./renault/vehicleLink";
 import { jwtDecode } from "jwt-decode";
 import ApiError, { ApiErrorEnum } from "./error/apiError";
+import { getValidToken } from "../../storage/sharedPlatformsData";
+import { Platform } from "react-native";
 
 enum ApiEndpoints {
     V1 = "/myr/api/v1",
@@ -37,22 +39,9 @@ class NewRenaultClient extends CarMakerClient {
 
     // JWT TOKEN
     private readonly getJWTToken = async (): Promise<OidcTokens> => {
-        let tokens = await OIDC.getTokens(this.getEmail());
-        if (tokens) {
-            // on vérifie que le token est toujours valide
-            const access_token = tokens.access_token;
-            const decoded = jwtDecode(access_token);
-            const now = Date.now() / 1000; // unix timestamp in seconds
-            // on vérifie que le token est encore valide au moins 30 secondes
-            if (decoded.exp && decoded.exp < now + 30) {
-                // on refresh le token
-                const refreshedTokens = await OIDC.refreshTokens(tokens);
-                await OIDC.saveTokens(refreshedTokens);
-                tokens = refreshedTokens;
-            }
-            return tokens;
-        }
-        throw new ApiError(ApiErrorEnum.NO_TOKENS_FOUND);
+        const raw = await getValidToken(this.getEmail());
+        if (!raw) throw new ApiError(ApiErrorEnum.NO_TOKENS_FOUND);
+        return JSON.parse(raw) as OidcTokens;
     }
 
 

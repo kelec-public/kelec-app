@@ -3,7 +3,9 @@ import RenaultCharge from "../apiHandlers/renaultCharges/RenaultCharge";
 import { HVACStatusEnum } from "./renaultEnums";
 import { V2GApiResponse, V2GApiSession } from "./renault/v2gApiResponse";
 import Config from 'react-native-config';
-import OIDC from "../../../packages/kelec-login/oidc/oidc";
+import OIDC, { OidcTokens } from "../../../packages/kelec-login/oidc/oidc";
+import { getValidToken } from "../../storage/sharedPlatformsData";
+import { Platform } from "react-native";
 import { jwtDecode } from "jwt-decode";
 
 enum RenaultEndpoints {
@@ -152,35 +154,17 @@ class RenaultClient extends CarMakerClient {
 
 
     private readonly getJWTToken = async (): Promise<JWTTokenFunctionResponse> => {
-        // on récupère depuis l'oidc
-        let tokens = await OIDC.getTokens(this.getEmail());
-        if (tokens) {
-            // on vérifie que le token est toujours valide
-            try {
-                const access_token = tokens.access_token;
-                const decoded = jwtDecode(access_token);
-                const now = Date.now() / 1000; // unix timestamp in seconds
-                // on vérifie que le token est encore valide au moins 30 secondes
-                if (decoded.exp && decoded.exp < now + 30) {
-                    // on refresh le token
-                    const refreshedTokens = await OIDC.refreshTokens(tokens);
-                    await OIDC.saveTokens(refreshedTokens);
-                    tokens = refreshedTokens;
-                }
-                return {
-                    canLogin: true,
-                    jwtToken: tokens.access_token
-                }
-            } catch (error) {
-                // token invalide 
-                return {
-                    canLogin: false,
-                    errorMessage: 'Invalid token'
-                }
-            }
-        } else {
+        try {
+            let tokens: OidcTokens | null = null;
+            const raw = await getValidToken(this.getEmail());
+            if (raw) tokens = JSON.parse(raw) as OidcTokens;
+
+            if (!tokens) return { canLogin: false };
+            return { canLogin: true, jwtToken: tokens.access_token };
+        } catch (error) {
             return {
-                canLogin: false
+                canLogin: false,
+                errorMessage: 'Invalid token'
             }
         }
     };

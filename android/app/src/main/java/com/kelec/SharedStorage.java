@@ -17,6 +17,10 @@ import android.util.Log;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKey;
 
+import com.google.gson.Gson;
+import com.kelec.oidc.OIDC;
+import com.kelec.oidc.OidcTokens;
+
 public class SharedStorage extends ReactContextBaseJavaModule {
     ReactApplicationContext context;
 
@@ -90,6 +94,23 @@ public class SharedStorage extends ReactContextBaseJavaModule {
             Log.e("getEncrypted", "Error in get method: " + e.getMessage(), e);
             callback.invoke(""); // Invoke callback with empty string in case of error
         }
+    }
+
+    @ReactMethod
+    public void getValidToken(String email, Promise promise) {
+        new Thread(() -> {
+            try {
+                OIDC oidc = new OIDC(context);
+                OidcTokens tokens = oidc.getTokenBlocking(email);
+                if (tokens != null) {
+                    promise.resolve(new Gson().toJson(tokens));
+                } else {
+                    promise.reject("no_token", "No valid token found for " + email);
+                }
+            } catch (Exception e) {
+                promise.reject("token_error", e.getMessage());
+            }
+        }).start();
     }
 
     @ReactMethod
