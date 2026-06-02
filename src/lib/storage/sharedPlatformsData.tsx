@@ -46,7 +46,8 @@ const getNativeCryptedData = async (key: string): Promise<string | null> => {
         if (Platform.OS === 'ios') {
             const cryptedMethod = RNSharedWidget?.getCryptedData;
             if (cryptedMethod == undefined) {
-                reject("getCryptedData method not available"); // for tests
+                resolve(null);
+                return;
             }
             RNSharedWidget.getCryptedData(key)
                 .then((data: string) => {
@@ -60,7 +61,8 @@ const getNativeCryptedData = async (key: string): Promise<string | null> => {
         if (Platform.OS === 'android') {
             const crypedMethod = SharedStorage?.getEncrypted;
             if (crypedMethod == undefined) {
-                reject("getEncrypted method not available"); // for tests
+                resolve(null);
+                return;
             }
             SharedStorage.getEncrypted(key, (data: string | null) => {
                 resolve(data);

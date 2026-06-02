@@ -34,22 +34,6 @@ enum ApiVersion {
     V2 = 'v2'
 }
 
-// dict returned by the api call to get the gigya token
-type GigyaTokenApiResponse = {
-    errorCode: number;
-    errorDetails: string;
-    errorMessage: string;
-    statusCode: number;
-    statusReason: string;
-    data: {
-        personId: string;
-        gigyaDataCenter: string;
-    }
-    sessionInfo: {
-        cookieName: string;
-        cookieValue: string;
-    }
-}
 
 // dict returned by the function getGigyaToken
 export type GigyaTokenFunctionResponse = {
@@ -57,16 +41,6 @@ export type GigyaTokenFunctionResponse = {
     errorMessage?: string;
     cookieValue?: string;
     personId?: string;
-}
-
-// dict returned by the api call to get the JWT token
-type JWTTokenApiResponse = {
-    errorCode: number;
-    errorDetails?: string;
-    errorMessage?: string;
-    statusCode: number;
-    statusReason: string;
-    id_token?: string;
 }
 
 // dict returned by the function getJWTToken
@@ -77,37 +51,6 @@ type JWTTokenFunctionResponse = {
     jwtToken?: string;
 }
 
-// dict returned by the api call to get the kamereon account id
-type KamereonAccountIDApiResponse = {
-    personId: string;
-    firstName: string;
-    lastName: string;
-    accounts: {
-        accountId: string;
-        accountStatus: string;
-        accountType: string;
-    }[]
-}
-
-// dict returned by the function getKamereonAccountID
-type KamereonAccountIDFunctionResponse = {
-    canLogin: boolean;
-    errorMessage?: string;
-    firstName?: string;
-    lastName?: string;
-    kamereonAccountID?: string;
-}
-
-
-
-// dict returned by the function login
-type LoginFunctionReponse = {
-    canLogin: boolean;
-    errorMessage?: string;
-    kamereonAccountID?: string;
-    firstName?: string;
-    lastName?: string;
-}
 
 type BatteryStatusApiResponse = {
     data?: {
@@ -208,13 +151,13 @@ class RenaultClient extends CarMakerClient {
     }
 
 
-    private readonly getJWTToken = async (cookieValue?: string): Promise<JWTTokenFunctionResponse> => {
+    private readonly getJWTToken = async (): Promise<JWTTokenFunctionResponse> => {
         // on récupère depuis l'oidc
         let tokens = await OIDC.getTokens(this.getEmail());
         if (tokens) {
             // on vérifie que le token est toujours valide
-            const access_token = tokens.access_token;
             try {
+                const access_token = tokens.access_token;
                 const decoded = jwtDecode(access_token);
                 const now = Date.now() / 1000; // unix timestamp in seconds
                 // on vérifie que le token est encore valide au moins 30 secondes

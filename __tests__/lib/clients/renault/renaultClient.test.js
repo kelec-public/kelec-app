@@ -2,8 +2,23 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CarMaker } from '../../../../src/lib/clients/accounts/account';
 import RenaultClient from '../../../../src/lib/clients/carMakers/renaultClient';
 import { HVACStatusEnum } from '../../../../src/lib/clients/carMakers/renaultEnums';
+import * as sharedPlatformsData from '../../../../src/lib/storage/sharedPlatformsData';
+import OIDC from '../../../../src/packages/kelec-login/oidc/oidc';
+
 import { describe, it, expect, jest, beforeEach } from '@jest/globals';
 
+const mockGetNativeCryptedData = jest.fn();
+const mockSetNativeCryptedData = jest.fn();
+jest.spyOn(sharedPlatformsData, 'getNativeCryptedData').mockImplementation(mockGetNativeCryptedData);
+jest.spyOn(sharedPlatformsData, 'setNativeCryptedData').mockImplementation(mockSetNativeCryptedData);
+
+mockGetNativeCryptedData.mockImplementation((key) =>
+    AsyncStorage.getItem(key)
+);
+
+mockSetNativeCryptedData.mockImplementation((key, value) =>
+    AsyncStorage.setItem(key, value)
+);
 
 
 const renaultClient = new RenaultClient("email", "password");
@@ -16,617 +31,133 @@ beforeEach(async () => {
 describe('constructor', () => {
     it('should be init with kamereon account id', async () => {
         const renaultClient = new RenaultClient("email", "password", "accountId");
-        const result = await renaultClient.getKamereonAccount();
-        expect(result).toMatchObject({
-            canLogin: true,
-            kamereonAccountID: "accountId"
-        });
+        expect(renaultClient.kamereonAccountID).toBe("accountId");
     });
 });
 
-describe('get kamereon account', () => {
-    beforeEach(async () => {
-        jest.clearAllMocks();
-        await AsyncStorage.clear();
-    });
-    it('should get account', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                id_token: "id_token"
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                firstName: "First name",
-                lastName: "Last name",
-                accounts: [
-                    {
-                        accountId: "account_id1",
-                        accountStatus: "ACTIVE",
-                        accountType: "MYRENAULT"
-                    }
-                ]
+const generateMockJwt = (payload, expiresInSeconds = 3600) => {
+    const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
+    const exp = Math.floor(Date.now() / 1000) + expiresInSeconds;
+    const body = btoa(JSON.stringify({ ...payload, exp }));
+    const signature = 'mock-signature';
 
-            })
-        });
+    return `${header}.${body}.${signature}`;
+};
 
-        const account = await renaultClient.getKamereonAccount();
-        expect(account.canLogin).toBe(true);
-        expect(account.kamereonAccountID).toBe('account_id1');
-        expect(account.firstName).toBe('First name');
-        expect(account.lastName).toBe('Last name');
-    });
+const setTokens = async (userEmail) => {
+    const jwtToken = generateMockJwt({});
+    const refresh_token = "refreshToken"
+    const personId = "personId"
+    const mockOIDC = {
+        access_token: jwtToken,
+        expires_in: 3600,
+        id_token: jwtToken,
+        refresh_token: refresh_token,
+        token_type: "access_token",
+        email: userEmail,
+        personId: personId
+    }
 
-    it('should not get dacia account', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                id_token: "id_token"
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                firstName: "First name",
-                lastName: "Last name",
-                accounts: [
-                    {
-                        accountId: "account_id1",
-                        accountStatus: "ACTIVE",
-                        accountType: "MYRENAULT"
-                    }
-                ]
-
-            })
-        });
-
-        const account = await renaultClient.getKamereonAccount(true);
-        expect(account.canLogin).toBe(false);
-    });
-
-    it('should get dacia or alpine account', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                id_token: "id_token"
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                firstName: "First name",
-                lastName: "Last name",
-                accounts: [
-                    {
-                        accountId: "account_id1",
-                        accountStatus: "ACTIVE",
-                        accountType: "MYDACIA"
-                    },
-                    {
-                        accountId: "account_id2",
-                        accountStatus: "ACTIVE",
-                        accountType: "MYALPINE"
-                    }
-                ]
-
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                id_token: "id_token"
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                firstName: "First name",
-                lastName: "Last name",
-                accounts: [
-                    {
-                        accountId: "account_id1",
-                        accountStatus: "ACTIVE",
-                        accountType: "MYDACIA"
-                    },
-                    {
-                        accountId: "account_id2",
-                        accountStatus: "ACTIVE",
-                        accountType: "MYALPINE"
-                    }
-                ]
-
-            })
-        });
-
-        const account = await renaultClient.getKamereonAccount(CarMaker.DACIA);
-        expect(account.canLogin).toBe(true);
-        expect(account.kamereonAccountID).toBe('account_id1');
-        expect(account.firstName).toBe('First name');
-        expect(account.lastName).toBe('Last name');
-
-        await AsyncStorage.clear();
-
-        const account2 = await renaultClient.getKamereonAccount(CarMaker.ALPINE);
-        expect(account2.canLogin).toBe(true);
-        expect(account2.kamereonAccountID).toBe('account_id2');
-        expect(account2.firstName).toBe('First name');
-        expect(account2.lastName).toBe('Last name');
-    });
-});
-
-describe('getGigyaToken', () => {
-    beforeEach(async () => {
-        jest.clearAllMocks();
-        await AsyncStorage.clear();
-    });
-    it('account should be locked', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 403,
-                errorDetails: "Account temporarily locked out"
-            })
-        });
-        const account = await renaultClient.getKamereonAccount();
-        expect(account.canLogin).toBe(false);
-        expect(account.errorMessage).toBe("account_locked");
-    });
-
-    it('should be invalid credentials', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 403,
-                errorDetails: "invalid id"
-            })
-        });
-        const account = await renaultClient.getKamereonAccount();
-        expect(account.canLogin).toBe(false);
-        expect(account.errorMessage).toBe("invalid_credentials");
-    });
-
-
-    it('should be invalid status', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 500,
-                errorDetails: "server_error"
-            })
-        });
-        const account = await renaultClient.getKamereonAccount();
-        expect(account.canLogin).toBe(false);
-        expect(account.errorMessage).toBe("server_error");
-    });
-
-
-    it('shouldn\'t be fetched', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce("error");
-        const account = await renaultClient.getKamereonAccount();
-        expect(account.canLogin).toBe(false);
-        expect(account.errorMessage).toBe("server_error");
-    });
-
-    it('shouldn\'t be converted to json', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockRejectedValueOnce({
-                statusCode: 500,
-                errorDetails: "server_error"
-            })
-        });
-        const account = await renaultClient.getKamereonAccount();
-        expect(account.canLogin).toBe(false);
-        expect(account.errorMessage).toBe("server_error");
-    })
-
-    it('should return account locked when requesting battery status', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 403,
-                errorDetails: "Account temporarily locked out"
-            })
-        })
-        const data = await renaultClient.getBatteryStatus("vin");
-        expect(data.hasError).toBe(true);
-        expect(data.errorMessage).toBe("account_locked");
-    });
-});
+    await AsyncStorage.setItem(`${userEmail}_tokens`, JSON.stringify(mockOIDC));
+};
 
 describe('getJWTToken', () => {
+    const userEmail = "email@email.com";
+    const personId = "personId";
+
     beforeEach(async () => {
         jest.clearAllMocks();
         await AsyncStorage.clear();
     });
-    it('shouldn\'t be fetched', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce("error");
-        const account = await renaultClient.getKamereonAccount();
-        expect(account.canLogin).toBe(false);
-        expect(account.errorMessage).toBe("server_error");
+    it('should have valid token', async () => {
+        const jwtToken = generateMockJwt({});
+        const refresh_token = "refreshToken"
+        const mockOIDC = {
+            access_token: jwtToken,
+            expires_in: 3600,
+            id_token: jwtToken,
+            refresh_token: refresh_token,
+            token_type: "access_token",
+            email: userEmail,
+            personId: personId
+        }
+        AsyncStorage.setItem(`${userEmail}_tokens`, JSON.stringify(mockOIDC));
+
+        const renaultClient = new RenaultClient(userEmail, '');
+        const collectedToken = renaultClient.getJWTToken();
+
+        expect(collectedToken).resolves.toMatchObject({
+            canLogin: true,
+            jwtToken: jwtToken,
+        });
     });
 
-    it('shouldn\'t be decoded to json', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockRejectedValue("error")
+    it('should have expired token and refresh it', async () => {
+        const expiredJwtToken = generateMockJwt({ status: 'old' }, -3600); // token expiré il y a une heure
+        const newJwtToken = generateMockJwt({ status: 'new' }); // token valide
+
+        jest.spyOn(OIDC, 'refreshTokens').mockResolvedValue({
+            access_token: newJwtToken,
+            expires_in: 3600,
+            id_token: newJwtToken,
+            refresh_token: 'newRefreshToken',
+            token_type: 'access_token',
         });
-        const account = await renaultClient.getKamereonAccount();
-        expect(account.canLogin).toBe(false);
-        expect(account.errorMessage).toBe("server_error");
+
+        const refresh_token = "refreshToken"
+        const mockOIDC = {
+            access_token: expiredJwtToken,
+            expires_in: 3600,
+            id_token: expiredJwtToken,
+            refresh_token: refresh_token,
+            token_type: "access_token",
+            email: userEmail,
+            personId: personId
+        }
+        AsyncStorage.setItem(`${userEmail}_tokens`, JSON.stringify(mockOIDC));
+
+        const renaultClient = new RenaultClient(userEmail, '');
+        const collectedToken = renaultClient.getJWTToken();
+
+        expect(collectedToken).resolves.toMatchObject({
+            canLogin: true,
+            jwtToken: newJwtToken,
+        });
+
     });
 
-    it('should be server side error', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 500,
-                errorMessage: "server_error2"
-            })
+    it('should have no token saved', async () => {
+        const renaultClient = new RenaultClient(userEmail, '');
+        const collectedToken = renaultClient.getJWTToken();
+        expect(collectedToken).resolves.toMatchObject({
+            canLogin: false,
         });
-        const account = await renaultClient.getKamereonAccount();
-        expect(account.canLogin).toBe(false);
-        expect(account.errorMessage).toBe("server_error");
+    });
+
+    it('should have invalid token', async () => {
+        AsyncStorage.setItem(`${userEmail}_tokens`, JSON.stringify("bad data"));
+
+        const renaultClient = new RenaultClient(userEmail, '');
+        const collectedToken = renaultClient.getJWTToken();
+        expect(collectedToken).resolves.toMatchObject({
+            canLogin: false,
+        });
     });
 });
 
-describe('fetch kamareon account ID', () => {
-    beforeEach(() => {
-        jest.clearAllMocks();
-    });
-    it('shouldn\'t find account', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                id_token: "id_token"
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                firstName: "First name",
-                lastName: "Last name",
-                accounts: [
-                    {
-                        accountId: "account_id1",
-                        accountStatus: "ACTIVE",
-                        accountType: "MYDACIA"
-                    }
-                ]
-
-            })
-        });
-
-        const account = await renaultClient.getKamereonAccount();
-        expect(account.canLogin).toBe(false);
-        expect(account.errorMessage).toBe("server_error");
-    });
-
-    it('shouldn\'t fetch', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                id_token: "id_token"
-            })
-        }).mockRejectedValue("error");
-
-        const account = await renaultClient.getKamereonAccount();
-        expect(account.canLogin).toBe(false);
-        expect(account.errorMessage).toBe("server_error");
-    });
-
-    it('should decoe json', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                id_token: "id_token"
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockRejectedValue("error")
-        });
-
-        const account = await renaultClient.getKamereonAccount();
-        expect(account.canLogin).toBe(false);
-        expect(account.errorMessage).toBe("server_error");
-    });
-});
-
-describe('getKamereonVehicles', () => {
-    it('should get vehicles', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                id_token: "id_token"
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                vehicleLinks: [
-                    {
-                        "name": "car1"
-                    }
-                ]
-            })
-        });
-        const vehicles = await renaultClient.getVehicles();
-        expect(vehicles.hasError).toBe(false);
-        expect(vehicles.vehicles.length).toBe(1);
-    });
-
-    it('shoul\'d not connect to gigya', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 401,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        });
-        const vehicles = await renaultClient.getVehicles();
-        expect(vehicles.hasError).toBe(true);
-    });
-
-    it('shoul\'d not connect to jwtToken', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 401,
-                id_token: "id_token"
-            })
-        });
-        const vehicles = await renaultClient.getVehicles();
-        expect(vehicles.hasError).toBe(true);
-    });
-
-    it('should have exeeded quota', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                id_token: "id_token"
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                errorCode: "EXCEEDED_QUOTA"
-            })
-        });
-        const vehicles = await renaultClient.getVehicles();
-        expect(vehicles.hasError).toBe(true);
-    });
-
-    it('should not be able to decode json', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                id_token: "id_token"
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockRejectedValue("json_error")
-        });
-        const vehicles = await renaultClient.getVehicles();
-        expect(vehicles.hasError).toBe(true);
-    });
-
-    it('should not have network', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                id_token: "id_token"
-            })
-        }).mockResolvedValueOnce("error");
-        const vehicles = await renaultClient.getVehicles();
-        expect(vehicles.hasError).toBe(true);
-    });
-});
 
 describe('getBatteryStatus', () => {
-    it('shoul\'d not connect to gigya', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 401,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        });
-        const vehicles = await renaultClient.getBatteryStatus("vin");
-        expect(vehicles.hasError).toBe(true);
-    });
-
     it('shoul\'d not connect to jwtToken', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 401,
-                id_token: "id_token"
-            })
-        });
+        await AsyncStorage.setItem("email_tokens", JSON.stringify("bad data"));
+
         const vehicles = await renaultClient.getBatteryStatus("vin");
         expect(vehicles.hasError).toBe(true);
     });
 
     it('should have fetch battery status', async () => {
+        await setTokens("email");
+
         global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                id_token: "id_token"
-            })
-        }).mockResolvedValueOnce({
             json: jest.fn().mockResolvedValueOnce({
                 data: {
                     attributes: {
@@ -636,29 +167,16 @@ describe('getBatteryStatus', () => {
                 }
             })
         });
+
         const vehicles = await renaultClient.getBatteryStatus("vin");
         expect(vehicles.hasError).toBe(false);
         expect(vehicles.apiData.batteryLevel).toBe(100);
     });
 
     it('should have exeeded quota', async () => {
+        await setTokens("email");
+
         global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                id_token: "id_token"
-            })
-        }).mockResolvedValueOnce({
             json: jest.fn().mockResolvedValueOnce({
                 errorCode: "EXCEEDED_QUOTA"
             })
@@ -668,23 +186,8 @@ describe('getBatteryStatus', () => {
     });
 
     it('should have not authrorized access to the car', async () => {
+        await setTokens("email");
         global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                id_token: "id_token"
-            })
-        }).mockResolvedValueOnce({
             json: jest.fn().mockResolvedValueOnce({
                 "type": "FUNCTIONAL",
                 "messages": [
@@ -708,23 +211,8 @@ describe('getBatteryStatus', () => {
     });
 
     it('should not have timestamp (should never happen ?)', async () => {
+        await setTokens("email");
         global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                id_token: "id_token"
-            })
-        }).mockResolvedValueOnce({
             json: jest.fn().mockResolvedValueOnce({
                 data: {
                     attributes: {
@@ -740,63 +228,17 @@ describe('getBatteryStatus', () => {
 
 
 describe('getCockpit', () => {
-    it('shoul\'d not connect to gigya', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 401,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        });
-        const vehicles = await renaultClient.getCockpit("vin");
-        expect(vehicles.hasError).toBe(true);
-    });
 
     it('shoul\'d not connect to jwtToken', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 401,
-                id_token: "id_token"
-            })
-        });
+        await AsyncStorage.setItem("email_tokens", JSON.stringify("bad data"));
+
         const vehicles = await renaultClient.getCockpit("vin");
         expect(vehicles.hasError).toBe(true);
     });
 
     it('should have fetch cockpit status', async () => {
+        await setTokens("email");
         global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                id_token: "id_token"
-            })
-        }).mockResolvedValueOnce({
             json: jest.fn().mockResolvedValueOnce({
                 data: {
                     attributes: {
@@ -811,23 +253,8 @@ describe('getCockpit', () => {
     });
 
     it('should have exeeded quota', async () => {
+        await setTokens("email");
         global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                id_token: "id_token"
-            })
-        }).mockResolvedValueOnce({
             json: jest.fn().mockResolvedValueOnce({
                 errorCode: "EXCEEDED_QUOTA"
             })
@@ -837,23 +264,8 @@ describe('getCockpit', () => {
     });
 
     it('should not have timestamp (should never happen ?)', async () => {
+        await setTokens("email");
         global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                id_token: "id_token"
-            })
-        }).mockResolvedValueOnce({
             json: jest.fn().mockResolvedValueOnce({
                 data: {
                     attributes: {
@@ -869,63 +281,17 @@ describe('getCockpit', () => {
 
 
 describe('getLocation', () => {
-    it('shoul\'d not connect to gigya', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 401,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        });
-        const vehicles = await renaultClient.getLocation("vin");
-        expect(vehicles.hasError).toBe(true);
-    });
 
     it('shoul\'d not connect to jwtToken', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 401,
-                id_token: "id_token"
-            })
-        });
+        await AsyncStorage.setItem("email_tokens", JSON.stringify("bad data"));
+
         const vehicles = await renaultClient.getLocation("vin");
         expect(vehicles.hasError).toBe(true);
     });
 
     it('should have fetch location status', async () => {
+        await setTokens("email");
         global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                id_token: "id_token"
-            })
-        }).mockResolvedValueOnce({
             json: jest.fn().mockResolvedValueOnce({
                 data: {
                     id: "vin",
@@ -945,23 +311,8 @@ describe('getLocation', () => {
     });
 
     it('should have exeeded quota', async () => {
+        await setTokens("email");
         global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                id_token: "id_token"
-            })
-        }).mockResolvedValueOnce({
             json: jest.fn().mockResolvedValueOnce({
                 errorCode: "EXCEEDED_QUOTA"
             })
@@ -971,23 +322,8 @@ describe('getLocation', () => {
     });
 
     it('should not have timestamp (should never happen ?)', async () => {
+        await setTokens("email");
         global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                id_token: "id_token"
-            })
-        }).mockResolvedValueOnce({
             json: jest.fn().mockResolvedValueOnce({
                 data: {
                     attributes: {
@@ -1004,23 +340,8 @@ describe('getLocation', () => {
 
 describe("no network for kamereon endpoint", () => {
     it('should be an error', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                id_token: "id_token"
-            })
-        }).mockRejectedValueOnce("error");
+        await setTokens("email");
+        global.fetch = jest.fn().mockRejectedValueOnce("error");
 
         const account = await renaultClient.getCockpit("vin");
         expect(account.hasError).toBe(true);
@@ -1029,23 +350,8 @@ describe("no network for kamereon endpoint", () => {
 
 describe("no network for launching hvac", () => {
     it('should be an error', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                id_token: "id_token"
-            })
-        }).mockRejectedValueOnce("error");
+        await setTokens("email");
+        global.fetch = jest.fn().mockRejectedValueOnce("error");
 
         const hasLaunched = await renaultClient.launchHVAC("vin", 21);
         expect(hasLaunched).toBe(false);
@@ -1053,63 +359,17 @@ describe("no network for launching hvac", () => {
 });
 
 describe('launchHVAC', () => {
-    it('shoul\'d not connect to gigya', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 401,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        });
-        const hasLaunched = await renaultClient.launchHVAC("vin", 21);
-        expect(hasLaunched).toBe(false);
-    });
 
     it('shoul\'d not connect to jwtToken', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 401,
-                id_token: "id_token"
-            })
-        });
+        await AsyncStorage.setItem("email_tokens", JSON.stringify("bad data"));
+
         const hasLaunched = await renaultClient.launchHVAC("vin", 21);
         expect(hasLaunched).toBe(false);
     });
 
     it('should have launched HVAC', async () => {
+        await setTokens("email");
         global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                id_token: "id_token"
-            })
-        }).mockResolvedValueOnce({
             json: jest.fn().mockResolvedValueOnce({
                 data: {
                     type: "HvacStart",
@@ -1126,23 +386,8 @@ describe('launchHVAC', () => {
     });
 
     it('should have not launched HVAC', async () => {
+        await setTokens("email");
         global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                id_token: "id_token"
-            })
-        }).mockResolvedValueOnce({
             json: jest.fn().mockResolvedValueOnce({
                 error: true
             })
@@ -1157,64 +402,18 @@ describe('launchHVAC', () => {
 // get charges history
 
 describe('getChargesHistory', () => {
-    it('shoul\'d not connect to gigya', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 401,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        });
-        const charges = await renaultClient.getChargesHistory("vin");
-        expect(charges.hasError).toBe(true);
-    });
 
     it('shoul\'d not connect to jwtToken', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 401,
-                id_token: "id_token"
-            })
-        });
+        await AsyncStorage.setItem("email_tokens", JSON.stringify("bad data"));
+
         const charges = await renaultClient.getChargesHistory("vin");
         expect(charges.hasError).toBe(true);
     });
 
     it('should have fetched charges ', async () => {
         const chargesHistory = require('../../../CarView/mocks/mockRenaultCharges.json');
+        await setTokens("email");
         global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                id_token: "id_token"
-            })
-        }).mockResolvedValueOnce({
             json: jest.fn().mockResolvedValueOnce({
                 data: {
                     id: "vin",
@@ -1234,23 +433,8 @@ describe('getChargesHistory', () => {
 
     it('should have removed invalid charges', async () => {
         const chargesHistory = require('../../../CarView/mocks/mockRenaultChargesInvalid.json');
+        await setTokens("email");
         global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                id_token: "id_token"
-            })
-        }).mockResolvedValueOnce({
             json: jest.fn().mockResolvedValueOnce({
                 data: {
                     id: "vin",
@@ -1269,23 +453,8 @@ describe('getChargesHistory', () => {
     });
 
     it('should have exeeded quota', async () => {
+        await setTokens("email");
         global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                id_token: "id_token"
-            })
-        }).mockResolvedValueOnce({
             json: jest.fn().mockResolvedValueOnce({
                 errorCode: "EXCEEDED_QUOTA"
             })
@@ -1295,23 +464,8 @@ describe('getChargesHistory', () => {
     });
 
     it('should not have charges (should never happen ?)', async () => {
+        await setTokens("email");
         global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                id_token: "id_token"
-            })
-        }).mockResolvedValueOnce({
             json: jest.fn().mockResolvedValueOnce({
                 data: {
                     attributes: {
@@ -1328,64 +482,17 @@ describe('getChargesHistory', () => {
 
 // get charges history
 describe('getChargeSettings', () => {
-    it('shoul\'d not connect to gigya', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 401,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        });
-        const charges = await renaultClient.getChargeSettings("vin");
-        expect(charges.hasError).toBe(true);
-    });
-
     it('shoul\'d not connect to jwtToken', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 401,
-                id_token: "id_token"
-            })
-        });
+        await AsyncStorage.setItem("email_tokens", JSON.stringify("bad data"));
+
         const charges = await renaultClient.getChargeSettings("vin");
         expect(charges.hasError).toBe(true);
     });
 
     it('should have fetched charge settings ', async () => {
         const chargeSettings = require('../../../CarView/mocks/mockRenaultChargeSettings.json');
+        await setTokens("email");
         global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                id_token: "id_token"
-            })
-        }).mockResolvedValueOnce({
             json: jest.fn().mockResolvedValueOnce({
                 data: {
                     id: "vin",
@@ -1402,23 +509,8 @@ describe('getChargeSettings', () => {
     });
 
     it('should have exeeded quota', async () => {
+        await setTokens("email");
         global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                id_token: "id_token"
-            })
-        }).mockResolvedValueOnce({
             json: jest.fn().mockResolvedValueOnce({
                 errorCode: "EXCEEDED_QUOTA"
             })
@@ -1428,23 +520,8 @@ describe('getChargeSettings', () => {
     });
 
     it('should not gave charge settings (should never happen ?)', async () => {
+        await setTokens("email");
         global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                id_token: "id_token"
-            })
-        }).mockResolvedValueOnce({
             json: jest.fn().mockResolvedValueOnce({
                 data: {
                     id: "vin",
@@ -1461,63 +538,17 @@ describe('getChargeSettings', () => {
 
 
 describe('get hvac status', () => {
-    it('shoul\'d not connect to gigya', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 401,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        });
-        const vehicles = await renaultClient.getHVACStatus("vin");
-        expect(vehicles.hasError).toBe(true);
-    });
 
     it('shoul\'d not connect to jwtToken', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 401,
-                id_token: "id_token"
-            })
-        });
+        await AsyncStorage.setItem("email_tokens", JSON.stringify("bad data"));
+
         const vehicles = await renaultClient.getHVACStatus("vin");
         expect(vehicles.hasError).toBe(true);
     });
 
     it('should have fetch hvac status', async () => {
+        await setTokens("email");
         global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                id_token: "id_token"
-            })
-        }).mockResolvedValueOnce({
             json: jest.fn().mockResolvedValueOnce({
                 data: {
                     id: "vin",
@@ -1539,23 +570,8 @@ describe('get hvac status', () => {
     });
 
     it('should have exeeded quota', async () => {
+        await setTokens("email");
         global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                id_token: "id_token"
-            })
-        }).mockResolvedValueOnce({
             json: jest.fn().mockResolvedValueOnce({
                 errorCode: "EXCEEDED_QUOTA"
             })
@@ -1565,23 +581,8 @@ describe('get hvac status', () => {
     });
 
     it('should not have timestamp (should never happen ?)', async () => {
+        await setTokens("email");
         global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                id_token: "id_token"
-            })
-        }).mockResolvedValueOnce({
             json: jest.fn().mockResolvedValueOnce({
                 data: {
                     attributes: {
@@ -1597,45 +598,10 @@ describe('get hvac status', () => {
 
 
 describe('get v2g sessions', () => {
-    it('shoul\'d not connect to gigya', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 401,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        });
-        try {
-            await renaultClient.getV2GChargesHistory("vin");
-            throw new Error('error should have been thrown');
-        } catch (e) {
-            expect(e.message).toBe("server_error");
-        }
-    });
 
     it('shoul\'d not connect to jwtToken', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 401,
-                id_token: "id_token"
-            })
-        });
+        await AsyncStorage.setItem("email_tokens", JSON.stringify("bad data"));
+
         try {
             await renaultClient.getV2GChargesHistory("vin");
             throw new Error('error should have been thrown');
@@ -1646,23 +612,8 @@ describe('get v2g sessions', () => {
 
     it('should have fetched charges ', async () => {
         const chargesHistory = require('../../../CarView/mocks/mockV2GSessions.json');
+        await setTokens("email");
         global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                id_token: "id_token"
-            })
-        }).mockResolvedValueOnce({
             json: jest.fn().mockResolvedValueOnce(
                 chargesHistory
             )
@@ -1672,23 +623,8 @@ describe('get v2g sessions', () => {
     });
 
     it('should have a v2g server error', async () => {
-        global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                id_token: "id_token"
-            })
-        }).mockRejectedValueOnce("server_error");
+        await setTokens("email");
+        global.fetch = jest.fn().mockRejectedValueOnce("server_error");
         try {
             await renaultClient.getV2GChargesHistory("vin");
             throw new Error('error should have been thrown');
@@ -1698,23 +634,8 @@ describe('get v2g sessions', () => {
     });
 
     it('should have no charges', async () => {
+        await setTokens("email");
         global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                id_token: "id_token"
-            })
-        }).mockResolvedValueOnce({
             json: jest.fn().mockResolvedValueOnce({
                 _embedded: {
                     sessions: []
@@ -1730,23 +651,8 @@ describe('get v2g sessions', () => {
     });
 
     it('should have exeeded quota', async () => {
+        await setTokens("email");
         global.fetch = jest.fn().mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                data: {
-                    personId: "personId"
-                },
-                sessionInfo: {
-                    cookieName: "cookieName",
-                    cookieValue: "cookieValue"
-                }
-            })
-        }).mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
-                statusCode: 200,
-                id_token: "id_token"
-            })
-        }).mockResolvedValueOnce({
             json: jest.fn().mockResolvedValueOnce({
                 errors: [
                     {
