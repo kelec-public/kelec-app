@@ -1,12 +1,10 @@
 import Config from "react-native-config";
-import OIDC, { OidcTokens } from "../../../packages/kelec-login/oidc/oidc";
+import { OidcTokens } from "../../../packages/kelec-login/oidc/oidc";
 import CarMakerClient from "./carMakerClient";
 import { CarMaker } from "../accounts/account";
 import { VehicleLinkApi } from "./renault/vehicleLink";
-import { jwtDecode } from "jwt-decode";
 import ApiError, { ApiErrorEnum } from "./error/apiError";
 import { getValidToken } from "../../storage/sharedPlatformsData";
-import { Platform } from "react-native";
 
 enum ApiEndpoints {
     V1 = "/myr/api/v1",

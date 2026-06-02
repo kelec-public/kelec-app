@@ -1,6 +1,6 @@
 import ApiError, { ApiErrorEnum } from "../../../src/lib/clients/carMakers/error/apiError";
 import OIDC, { OidcTokens } from "../../../src/packages/kelec-login/oidc/oidc";
-import { generateMockJwt } from "../clients/renault/renaultClient.test";
+import { generateMockJwt } from "../clients/renault/renaultHelpers";
 
 
 describe('generate random string', () => {

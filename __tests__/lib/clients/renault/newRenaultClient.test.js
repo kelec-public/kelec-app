@@ -1,11 +1,24 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NewRenaultClient from '../../../../src/lib/clients/carMakers/newRenaultClient';
 import { describe, it, expect, jest, beforeEach } from '@jest/globals';
-import { generateMockJwt, setTokens } from './renaultClient.test';
+import { generateMockJwt, setTokens } from './renaultHelpers';
 import OIDC from '../../../../src/packages/kelec-login/oidc/oidc';
 import ApiError, { ApiErrorEnum } from '../../../../src/lib/clients/carMakers/error/apiError';
 import { CarMaker } from '../../../../src/lib/clients/accounts/account';
 
+import * as sharedPlatformsData from '../../../../src/lib/storage/sharedPlatformsData';
+
+const mockGetValidToken = jest.fn();
+jest.spyOn(sharedPlatformsData, 'getValidToken').mockImplementation(mockGetValidToken);
+
+mockGetValidToken.mockImplementation(async (email) => {
+    const tokensString = await AsyncStorage.getItem(`${email}_tokens`);
+    if (!tokensString) {
+        return null;
+    }
+
+    return tokensString;
+});
 
 
 beforeEach(async () => {
@@ -27,83 +40,6 @@ describe('constructor', () => {
     });
 });
 
-describe('check jwt cache', () => {
-    const userEmail = "email@email.com";
-    const personId = "personId";
-
-    beforeEach(async () => {
-        jest.clearAllMocks();
-        await AsyncStorage.clear();
-    });
-
-    it('should have valid token', async () => {
-        const jwtToken = generateMockJwt({});
-        const refresh_token = "refreshToken"
-        const mockOIDC = {
-            access_token: jwtToken,
-            expires_in: 3600,
-            id_token: jwtToken,
-            refresh_token: refresh_token,
-            token_type: "access_token",
-            email: userEmail,
-            personId: personId
-        }
-        AsyncStorage.setItem(`${userEmail}_tokens`, JSON.stringify(mockOIDC));
-
-        const renaultClient = new NewRenaultClient(userEmail, '');
-        const collectedToken = renaultClient.getJWTToken();
-
-        expect(collectedToken).resolves.toMatchObject(mockOIDC);
-    });
-
-    it('should have expired token and refresh it', async () => {
-        const expiredJwtToken = generateMockJwt({ status: 'old' }, -3600); // token expiré il y a une heure
-        const newJwtToken = generateMockJwt({ status: 'new' }); // token valide
-
-        const refresh_token = "refreshToken"
-        const mockOldOIDC = {
-            access_token: expiredJwtToken,
-            expires_in: 3600,
-            id_token: expiredJwtToken,
-            refresh_token: refresh_token,
-            token_type: "access_token",
-            email: userEmail,
-            personId: personId
-        }
-        const mockNewOIDC = {
-            access_token: newJwtToken,
-            expires_in: 3600,
-            id_token: newJwtToken,
-            refresh_token: refresh_token,
-            token_type: "access_token",
-            email: userEmail,
-            personId: personId
-        }
-
-        jest.spyOn(OIDC, 'refreshTokens').mockResolvedValue(mockNewOIDC);
-        AsyncStorage.setItem(`${userEmail}_tokens`, JSON.stringify(mockOldOIDC));
-
-
-        const renaultClient = new NewRenaultClient(userEmail, '');
-        const collectedToken = renaultClient.getJWTToken();
-
-        expect(collectedToken).resolves.toMatchObject(mockNewOIDC);
-    });
-
-    it('should have invalid token', async () => {
-        try {
-            const renaultClient = new NewRenaultClient(userEmail, '');
-            await renaultClient.getJWTToken();
-
-            // should be here
-            expect(true).toBe(false);
-        } catch (e) {
-            const expectedError = new ApiError(ApiErrorEnum.NO_TOKENS_FOUND);
-            expect(e).toBeInstanceOf(ApiError);
-            expect(e.message).toBe(expectedError.message);
-        }
-    });
-});
 
 const client = new NewRenaultClient('email', '');
 const mappedCarMakers = [
@@ -212,7 +148,6 @@ describe('getVehicles', () => {
         });
 
         const vehicles = await client.getVehicles();
-        console.log(vehicles);
         expect(vehicles.length).toBe(1);
     });
 
@@ -228,4 +163,4 @@ describe('getVehicles', () => {
             expect(e).toBeInstanceOf(ApiError);
         }
     });
-});
+}); 

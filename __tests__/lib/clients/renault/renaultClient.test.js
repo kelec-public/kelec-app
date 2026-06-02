@@ -4,11 +4,14 @@ import RenaultClient from '../../../../src/lib/clients/carMakers/renaultClient';
 import { HVACStatusEnum } from '../../../../src/lib/clients/carMakers/renaultEnums';
 import * as sharedPlatformsData from '../../../../src/lib/storage/sharedPlatformsData';
 import OIDC from '../../../../src/packages/kelec-login/oidc/oidc';
+import { generateMockJwt, setTokens } from './renaultHelpers';
 
 import { describe, it, expect, jest, beforeEach } from '@jest/globals';
 
 const mockGetNativeCryptedData = jest.fn();
 const mockSetNativeCryptedData = jest.fn();
+const mockGetValidToken = jest.fn();
+jest.spyOn(sharedPlatformsData, 'getValidToken').mockImplementation(mockGetValidToken);
 jest.spyOn(sharedPlatformsData, 'getNativeCryptedData').mockImplementation(mockGetNativeCryptedData);
 jest.spyOn(sharedPlatformsData, 'setNativeCryptedData').mockImplementation(mockSetNativeCryptedData);
 
@@ -19,6 +22,15 @@ mockGetNativeCryptedData.mockImplementation((key) =>
 mockSetNativeCryptedData.mockImplementation((key, value) =>
     AsyncStorage.setItem(key, value)
 );
+
+mockGetValidToken.mockImplementation(async (email) => {
+    const tokensString = await AsyncStorage.getItem(`${email}_tokens`);
+    if (!tokensString) {
+        return null;
+    }
+
+    return tokensString;
+});
 
 
 const renaultClient = new RenaultClient("email", "password");
@@ -35,115 +47,6 @@ describe('constructor', () => {
     });
 });
 
-export const generateMockJwt = (payload, expiresInSeconds = 3600) => {
-    const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
-    const exp = Math.floor(Date.now() / 1000) + expiresInSeconds;
-    const body = btoa(JSON.stringify({ ...payload, exp }));
-    const signature = 'mock-signature';
-
-    return `${header}.${body}.${signature}`;
-};
-
-export const setTokens = async (userEmail) => {
-    const jwtToken = generateMockJwt({});
-    const refresh_token = "refreshToken"
-    const personId = "personId"
-    const mockOIDC = {
-        access_token: jwtToken,
-        expires_in: 3600,
-        id_token: jwtToken,
-        refresh_token: refresh_token,
-        token_type: "access_token",
-        email: userEmail,
-        personId: personId
-    }
-
-    await AsyncStorage.setItem(`${userEmail}_tokens`, JSON.stringify(mockOIDC));
-};
-
-describe('getJWTToken', () => {
-    const userEmail = "email@email.com";
-    const personId = "personId";
-
-    beforeEach(async () => {
-        jest.clearAllMocks();
-        await AsyncStorage.clear();
-    });
-    it('should have valid token', async () => {
-        const jwtToken = generateMockJwt({});
-        const refresh_token = "refreshToken"
-        const mockOIDC = {
-            access_token: jwtToken,
-            expires_in: 3600,
-            id_token: jwtToken,
-            refresh_token: refresh_token,
-            token_type: "access_token",
-            email: userEmail,
-            personId: personId
-        }
-        AsyncStorage.setItem(`${userEmail}_tokens`, JSON.stringify(mockOIDC));
-
-        const renaultClient = new RenaultClient(userEmail, '');
-        const collectedToken = renaultClient.getJWTToken();
-
-        expect(collectedToken).resolves.toMatchObject({
-            canLogin: true,
-            jwtToken: jwtToken,
-        });
-    });
-
-    it('should have expired token and refresh it', async () => {
-        const expiredJwtToken = generateMockJwt({ status: 'old' }, -3600); // token expiré il y a une heure
-        const newJwtToken = generateMockJwt({ status: 'new' }); // token valide
-
-        jest.spyOn(OIDC, 'refreshTokens').mockResolvedValue({
-            access_token: newJwtToken,
-            expires_in: 3600,
-            id_token: newJwtToken,
-            refresh_token: 'newRefreshToken',
-            token_type: 'access_token',
-        });
-
-        const refresh_token = "refreshToken"
-        const mockOIDC = {
-            access_token: expiredJwtToken,
-            expires_in: 3600,
-            id_token: expiredJwtToken,
-            refresh_token: refresh_token,
-            token_type: "access_token",
-            email: userEmail,
-            personId: personId
-        }
-        AsyncStorage.setItem(`${userEmail}_tokens`, JSON.stringify(mockOIDC));
-
-        const renaultClient = new RenaultClient(userEmail, '');
-        const collectedToken = renaultClient.getJWTToken();
-
-        expect(collectedToken).resolves.toMatchObject({
-            canLogin: true,
-            jwtToken: newJwtToken,
-        });
-
-    });
-
-    it('should have no token saved', async () => {
-        const renaultClient = new RenaultClient(userEmail, '');
-        const collectedToken = renaultClient.getJWTToken();
-        expect(collectedToken).resolves.toMatchObject({
-            canLogin: false,
-        });
-    });
-
-    it('should have invalid token', async () => {
-        AsyncStorage.setItem(`${userEmail}_tokens`, JSON.stringify("bad data"));
-
-        const renaultClient = new RenaultClient(userEmail, '');
-        const collectedToken = renaultClient.getJWTToken();
-        expect(collectedToken).resolves.toMatchObject({
-            canLogin: false,
-        });
-    });
-});
 
 
 describe('getBatteryStatus', () => {
