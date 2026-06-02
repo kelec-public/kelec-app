@@ -80,6 +80,11 @@ class RenaultAccount extends Account {
         }
         return { hasError: true }
     }
+
+    fetchRemoteFeatures = async (vin: string): Promise<CarFetchStatus> => {
+        const client = new RenaultClient(this.getEmail(), this.getPassword(), this.getKamereonAccountID());
+        return await client.getRemoteFeatures(vin)
+    }
 }
 
 export default RenaultAccount;

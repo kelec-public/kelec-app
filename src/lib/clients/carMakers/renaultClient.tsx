@@ -233,6 +233,11 @@ type MapLocationStatus = {
     gpsLongitude?: number;
 }
 
+type RemoteFeature = {
+    featureId: number,
+    securityProtocol: string[]
+}
+
 class RenaultClient extends CarMakerClient {
 
     private static readonly GIGYA_URL = 'https://gigya-prod-eu1.renaultgroup.com';
@@ -650,6 +655,35 @@ class RenaultClient extends CarMakerClient {
         }
     };
 
+    private readonly getMyrVehicleRemotes = async (JWTToken: string, vin: string): Promise<RenaultStatus> => {
+        const url = `https://apis.renault.com/myr/api/v1/accounts/${this.kamereonAccountID}/vehicles/${vin}/remotes?country=FR`;
+        try {
+            const response = await fetch(url, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-gigya-id_token': JWTToken,
+                    'apikey': RenaultClient.KAMEREON_API_KEY
+                }
+            });
+            const data: RemoteFeature[] = await response.json();
+            if (data !== undefined) {
+                return {
+                    hasError: false,
+                    apiData: data
+                }
+            }
+            return {
+                hasError: true,
+                apiData: []
+            }
+        } catch {
+            return {
+                hasError: true,
+                apiData: []
+            }
+        }
+    }
+
     getKamereonAccount = async (carMaker: CarMaker = CarMaker.RENAULT): Promise<LoginFunctionReponse> => {
         if (this.kamereonAccountID !== undefined && this.kamereonAccountID !== '') {
             return {
@@ -895,6 +929,24 @@ class RenaultClient extends CarMakerClient {
         const chargeSettings = await this.getKamereonEndpoint(KamereonEndpoints.CHARGES_SETTINGS, ApiVersion.V1, vin, jwtToken.jwtToken!);
         return chargeSettings;
     }
+
+    getRemoteFeatures = async (vin: string): Promise<RenaultStatus> => {
+        const gigyaToken = await this.getGigyaToken();
+        if (!gigyaToken.canLogin) {
+            return {
+                hasError: true,
+            };
+        }
+        const jwtToken = await this.getJWTToken(gigyaToken.cookieValue!);
+        if (!jwtToken.canLogin) {
+            return {
+                hasError: true,
+            };
+        }
+        const remoteFeatures = await this.getMyrVehicleRemotes(jwtToken.jwtToken!, vin);
+        return remoteFeatures;
+    }
 }
-export type { VehicleLinkApi, RenaultStatus, BatteryStatus, CockpitStatus, MapLocationStatus, ChargesHistory, ChargeSettingsStatus, ChargeSchedule, HVACStatus };
+
+export type { VehicleLinkApi, RenaultStatus, BatteryStatus, CockpitStatus, MapLocationStatus, ChargesHistory, ChargeSettingsStatus, ChargeSchedule, HVACStatus, RemoteFeature };
 export default RenaultClient;

@@ -28,6 +28,7 @@ import CarsViewContext from "../../../../lib/Contexts/CarsViewContext";
 import PagerView from "react-native-pager-view";
 import { SafeAreaView } from "react-native-safe-area-context";
 import RenaultCharge from "../../../../lib/clients/apiHandlers/renaultCharges/RenaultCharge";
+import RenaultAccount from "../../../../lib/clients/accounts/renaultAccount";
 
 type CarViewProps = {
     readonly carModel: CarModel;
@@ -129,7 +130,7 @@ function CarView({ carModel, navigation, account, pagerRef }: CarViewProps): Rea
 
     const loadRenaultCar = async (): Promise<void> => {
         // load from local
-        const localApiHandler: ApiHandler = storageHandler.buildApiHandler(carModel.getCarmaker());
+        const localApiHandler: RenaultApiHandler = storageHandler.buildApiHandler(carModel.getCarmaker()) as RenaultApiHandler;
         // load battery status
         let data = await storageHandler.getStoredApiData(carModel.getVin());
         if (data) {
@@ -185,6 +186,10 @@ function CarView({ carModel, navigation, account, pagerRef }: CarViewProps): Rea
             localApiHandler.setHVACStatus(hvacStatus);
         }
 
+        let remoteFeatures = await storageHandler.getStoredApiData(carModel.getVin(), 'remoteFeatures');
+        if (remoteFeatures) {
+            localApiHandler.setRemoteFeatures(remoteFeatures);
+        }
 
 
         // trigger a re-render
@@ -194,7 +199,7 @@ function CarView({ carModel, navigation, account, pagerRef }: CarViewProps): Rea
         }
 
         // load from api
-        const remoteApiHandler: ApiHandler = new RenaultApiHandler();
+        const remoteApiHandler: RenaultApiHandler = new RenaultApiHandler();
         remoteApiHandler.setApiData(data ?? { hasError: true });
         if (remoteApiHandler.setCockpitStatus)
             remoteApiHandler.setCockpitStatus(cockpitData ?? { hasError: true });
@@ -233,9 +238,9 @@ function CarView({ carModel, navigation, account, pagerRef }: CarViewProps): Rea
             await storageHandler.storeApiData(locationStatus, carModel.getVin(), 'locationStatus');
         }
         // load remote charges history
-        const fecthedChargesHistory = await account.fetchChargesHistory(carModel.getVin());
-        if (!fecthedChargesHistory.hasError && remoteApiHandler.setChargesHistory) {
-            const classChargeHistory = storageHandler.buildCharges(fecthedChargesHistory.apiData);
+        const fetchedChargesHistory = await account.fetchChargesHistory(carModel.getVin());
+        if (!fetchedChargesHistory.hasError && remoteApiHandler.setChargesHistory) {
+            const classChargeHistory = storageHandler.buildCharges(fetchedChargesHistory.apiData);
             const newCharges = await ChargesStorageController.saveNewCharges(carModel.getVin(), classChargeHistory);
             remoteApiHandler.setChargesHistory({
                 hasError: false,
@@ -273,6 +278,16 @@ function CarView({ carModel, navigation, account, pagerRef }: CarViewProps): Rea
             }
             await storageHandler.storeApiData(hvacStatus, carModel.getVin(), 'hvacStatus');
         }
+
+        //check if remoteFeatures are present and whether to update them
+        //official app checks everytime it's started but probably overkill
+        let fetchFeatures = await (account as RenaultAccount).fetchRemoteFeatures(carModel.getVin());
+        if (!fetchFeatures.hasError) {
+            remoteFeatures = fetchFeatures;
+            remoteApiHandler.setRemoteFeatures(remoteFeatures);
+            await storageHandler.storeApiData(remoteFeatures, carModel.getVin(), 'remoteFeatures');
+        }
+
 
         // trigger a re-render
         setApiHandler(remoteApiHandler);
