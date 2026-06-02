@@ -386,7 +386,7 @@ class RenaultClient extends CarMakerClient {
         if (!jwtToken.canLogin) {
             return {
                 hasError: true,
-                errorMessage: CarMakerClientErrors.SERVER_ERROR
+                errorMessage: CarMakerClientErrors.INVALID_CREDENTIALS
             };
         }
         const batteryStatus = await this.getKamereonEndpoint(KamereonEndpoints.BATTERY_STATUS, ApiVersion.V2, vin, jwtToken.jwtToken!);

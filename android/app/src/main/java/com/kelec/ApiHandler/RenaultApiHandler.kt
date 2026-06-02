@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.kelec.batteryStatusHandler.BatteryStatusHandler
 import com.kelec.mileageHistory.MileageHandler
+import com.kelec.oidc.OidcTokens
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -12,7 +13,7 @@ import java.util.concurrent.CompletableFuture
 
 class RenaultApiHandler(
     private val email: String,
-    private val password: String,
+    private val oidcTokens: OidcTokens,
     private val kamereonAccountID: String,
 ) {
     private var debugMode: Boolean = true
@@ -27,30 +28,11 @@ class RenaultApiHandler(
 
     private suspend fun getBatteryStatusInternal(context: Context, vin: String): BatteryStatusAttributes? =
         withContext(Dispatchers.IO){
-
-                logDebug("Fetching gigya token")
-                val cookieValue: String
-                try {
-                    val gigyaResponse = GigyaApiClient.apiService.getGigyaToken(email, password)
-                    cookieValue = gigyaResponse.sessionInfo.cookieValue
-                } catch (e: Exception) {
-                    throw RuntimeException("Unable to get login cookie")
-                }
-
-                logDebug("Fetching JWT token")
-                val jwt: String
-                try {
-                    val jwtResponse = GigyaApiClient.apiService.getJWTToken(cookieValue)
-                    jwt = jwtResponse.id_token
-                } catch (e: Exception) {
-                    throw RuntimeException("Unable to get login token")
-                }
-
                 logDebug("Fetching battery status...")
                 val batteryStatus: BatteryStatusAttributes
                 try {
                     val batteryResponse = KamereonApiClient.apiService.getBatteryStatus(
-                        kamereonAccountID, vin, jwt
+                        kamereonAccountID, vin, oidcTokens.accessToken
                     )
                     batteryStatus = batteryResponse.data.attributes!!
                     BatteryStatusHandler.saveBatteryStatus(context, vin, batteryStatus)
@@ -59,10 +41,9 @@ class RenaultApiHandler(
                 }
 
 
-
                 logDebug("Fetching cockpit status...")
                 val cockpitResponse = KamereonCockpitApiClient.apiService.getCockpitStatus(
-                    kamereonAccountID, vin, jwt
+                    kamereonAccountID, vin, oidcTokens.accessToken
                 )
                 cockpitResponse.data.attributes?.let {
                     if (it.totalMileage != null)

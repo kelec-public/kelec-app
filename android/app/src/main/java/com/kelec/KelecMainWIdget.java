@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 
 import com.kelec.ApiHandler.BatteryStatusAttributes;
 import com.kelec.ApiHandler.RenaultApiHandler;
+import com.kelec.oidc.OidcTokens;
 import com.kelec.widgets.CarDataRepository;
 import com.kelec.ApiHandler.AppPreferences;
 import com.kelec.widgets.KelecWidgetViews;
@@ -98,13 +99,13 @@ public class KelecMainWIdget extends AppWidgetProvider {
             return done();
         }
 
-        String password = repo.loadPassword(car.getVin());
-        if (password == null) {
-            return renderError(mgr, appWidgetId, context, "Unable to decrpyt password");
+        OidcTokens oidcTokens =  repo.getOidc().getTokenBlocking(car.getEmail());
+        if (oidcTokens == null) {
+            return renderError(mgr, appWidgetId, context, "Unable to load OIDC tokens");
         }
 
         BatteryStatusAttributes cached = repo.loadCachedBatteryStatus(car.getVin());
-        RenaultApiHandler api = new RenaultApiHandler(car.getEmail(), password, car.getKamereonAccountID());
+        RenaultApiHandler api = new RenaultApiHandler(car.getEmail(), oidcTokens, car.getKamereonAccountID());
 
         return api.getBatteryStatus(context, car.getVin())
                 .thenAccept(fresh -> {

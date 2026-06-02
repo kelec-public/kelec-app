@@ -102,7 +102,6 @@ export default class OIDC {
         }
         const parsedTokens = JSON.parse(tokensString) as OidcTokens;
 
-        // TODO: vérifier si expiré et refresh si besoin
         return parsedTokens;
     }
 }

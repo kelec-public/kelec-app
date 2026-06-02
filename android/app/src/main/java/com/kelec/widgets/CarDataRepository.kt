@@ -9,11 +9,14 @@ import com.kelec.ApiHandler.AppPreferences
 import org.json.JSONException
 import org.json.JSONObject
 import com.kelec.ApiHandler.BatteryStatusAttributes
+import com.kelec.oidc.OIDC
+import com.kelec.oidc.OidcTokens
 import java.time.Instant
 
 class CarDataRepository(context: Context) {
     private val context: Context = context.applicationContext
     private val prefs: SharedPreferences = this.context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+    private val oidc: OIDC = OIDC(context)
 
     // account
     fun loadAccount(): AccountSnapshot {
@@ -110,24 +113,27 @@ class CarDataRepository(context: Context) {
     }
 
     // password
-    fun loadPassword(vin: String): String? {
-        return try {
-            val masterKey = MasterKey.Builder(context)
-                .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-                .build()
+    fun loadPassword(vin: String): String? {    return try {
+        val masterKey = MasterKey.Builder(context)
+            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+            .build()
 
-            val secure = EncryptedSharedPreferences.create(
-                context,
-                SECURE_PREFS_NAME,
-                masterKey,
-                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-            )
+        val secure = EncryptedSharedPreferences.create(
+            context,
+            SECURE_PREFS_NAME,
+            masterKey,
+            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+        )
 
-            secure.getString(vin + PASSWORD_SUFFIX, "") ?.takeIf { it.isNotEmpty() }
-        } catch (e: Exception) {
-            null
-        }
+        secure.getString(vin + PASSWORD_SUFFIX, "") ?.takeIf { it.isNotEmpty() }
+    } catch (e: Exception) {
+        null
+    }
+    }
+
+    fun getOidc(): OIDC {
+        return this.oidc;
     }
 
     // types
