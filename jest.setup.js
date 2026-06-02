@@ -22,6 +22,9 @@ jest.mock('./src/lib/model/localization/languageHandler', () => ({
             getTranslation: jest.fn().mockImplementation((key) => {
                 return fr[key] || key;
             }),
+            getMappedLanguage: jest.fn().mockImplementation(() => {
+                return "fr-FR";
+            }),
         };
     })
 }));

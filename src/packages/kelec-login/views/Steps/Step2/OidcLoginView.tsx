@@ -2,7 +2,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { LoginEntryParamList } from "../../LoginEntryView";
 import { ActivityIndicator, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { OIDC_CONFIG, OIDCAuthState } from "../../../oidc/oidc-conf";
 import WebView from "react-native-webview";
 import { WebViewNavigation } from "react-native-webview/lib/WebViewTypes";
@@ -12,6 +12,7 @@ import Account, { CarMaker } from "../../../../../lib/clients/accounts/account";
 import RenaultAccount from "../../../../../lib/clients/accounts/renaultAccount";
 import NewRenaultClient from "../../../../../lib/clients/carMakers/newRenaultClient";
 import ApiError, { ApiErrorEnum } from "../../../../../lib/clients/carMakers/error/apiError";
+import MainContext from "../../../../../lib/Contexts/MainContext";
 
 type Props = NativeStackScreenProps<LoginEntryParamList, 'OidcLoginView'> & {
     selectedCarMaker: CarMaker;
@@ -27,7 +28,8 @@ function generateCodeChallenge(verifier: string): string {
         .replace(/=+$/, '');
 }
 
-const buildAuthState = async (): Promise<OIDCAuthState> => {
+
+const buildAuthState = async (language: string): Promise<OIDCAuthState> => {
     const verifier = OIDC.generateRandomString(64);
     const challenge = generateCodeChallenge(verifier);
     const state = OIDC.generateRandomString(32);
@@ -44,7 +46,7 @@ const buildAuthState = async (): Promise<OIDCAuthState> => {
         nonce,
         prompt: 'login',
         accountType: 'MYRENAULT',
-        ui_locales: 'fr-FR',
+        ui_locales: language
     })
 
     return {
@@ -60,8 +62,10 @@ const OidcLoginView = ({ navigation, route, selectedCarMaker, setAccount }: Prop
 
     const { onError } = route.params;
 
+    const { languageHandler } = useContext(MainContext);
+
     useEffect(() => {
-        buildAuthState().then(setAuthState)
+        buildAuthState(languageHandler.getMappedLanguage()).then(setAuthState)
     }, []);
 
     if (!authState) {

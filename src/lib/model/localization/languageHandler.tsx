@@ -6,6 +6,27 @@ interface NestedDictionary {
 }
 
 const ACCEPTED_LANGUAGES: string[] = ["en", "fr", "es", "sv", "it", "de", "pt", "da", "bg", "nl", "hu", "pl", "ro", "cs", "nb", "sl", "hr", "fi", "ca"];
+const MAPPED_LANGUAGES = {
+    "en": "en-GB",
+    "fr": "fr-FR",
+    "es": "es-ES",
+    "sv": "sv-SE",
+    "it": "it-IT",
+    "de": "de-DE",
+    "pt": "pt-PT",
+    "da": "da-DK",
+    "bg": "bg-BG",
+    "nl": "nl-NL",
+    "hu": "hu-HU",
+    "pl": "pl-PL",
+    "ro": "ro-RO",
+    "cs": "cs-CZ",
+    "nb": "no-NO",
+    "sl": "sl-SI",
+    "hr": "hr-HR",
+    "fi": "fi-FI",
+    "ca": "es-ES"
+}
 const DEFAULT_LANGUAGE = "en";
 
 class LanguageHandler {
@@ -56,6 +77,10 @@ class LanguageHandler {
     getTranslation(key: string): string {
         // Get the translation for the given key
         return this.languageFile[key] || key;
+    }
+
+    getMappedLanguage(): string {
+        return MAPPED_LANGUAGES[this.language as keyof typeof MAPPED_LANGUAGES] ?? DEFAULT_LANGUAGE;
     }
 }
 
