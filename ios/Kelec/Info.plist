@@ -10,6 +10,12 @@
 	<string>$(KAMEREON_API_KEY)</string>
 	<key>RTE_BASIC_AUTH</key>
 	<string>$(RTE_BASIC_AUTH)</string>
+	<key>OIDC_ENDPOINT_TOKEN</key>
+	<string>$(OIDC_ENDPOINT_TOKEN)</string>
+	<key>OIDC_CLIENT_ID</key>
+	<string>$(OIDC_CLIENT_ID)</string>
+	<key>OIDC_REDIRECT_URI</key>
+	<string>$(OIDC_REDIRECT_URI)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
