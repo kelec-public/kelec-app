@@ -248,7 +248,7 @@ struct BatteryCardView: View{
     let client = getCarMakerApiClient(usercar: carAccount)
     
     do {
-      let hvacLaunchStatus = try await client.launchHvac(vin: vin)
+      let hvacLaunchStatus = try await client.launchHvac(vin: vin, jwt: "")
       return hvacLaunchStatus == true
     } catch {
       print("Failed to launch HVAC: \(error)")

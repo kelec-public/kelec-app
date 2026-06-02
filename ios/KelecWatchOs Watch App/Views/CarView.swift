@@ -111,7 +111,7 @@ struct CarView: View {
     let client = getCarMakerApiClient(usercar: carAccount)
     let semaphore = DispatchSemaphore(value: 0)
     do{
-      let fetchedApiHandler = try await client.getVehicleInfo(vin: vin)
+      let fetchedApiHandler = try await client.getVehicleInfo(vin: vin, jwt: "")
       zeServices.saveLoadedCar(vin: vin, zecar: fetchedApiHandler)
       self.apiHandler = fetchedApiHandler
       

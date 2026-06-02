@@ -46,8 +46,11 @@ struct LaunchHVACIntent: AppIntent {
               client.setPassword(password: userCar.password)
             }
             
+            // try to get oidc tokens from keychain
+            let token = await getValidToken(email: userCar.getEmail())
+
             
-            let hvacLaunchStatus = try await client.launchHvac(vin: vin)
+            let hvacLaunchStatus = try await client.launchHvac(vin: vin, jwt: token?.access_token ?? "")
             if(hvacLaunchStatus == true){
               isASuccess = true
             }

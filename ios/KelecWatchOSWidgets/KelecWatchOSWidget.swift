@@ -81,7 +81,7 @@ struct Provider: TimelineProvider {
           let client = getCarMakerApiClient(usercar: userCar)
           let semaphore = DispatchSemaphore(value: 0)
           do {
-            let fetchedApiHandler = try await client.getVehicleInfo(vin: userCar.car?.vin ?? "")
+            let fetchedApiHandler = try await client.getVehicleInfo(vin: userCar.car?.vin ?? "", jwt: "")
             apiHandler = fetchedApiHandler
             zeServices.saveLoadedCar(vin: userCar.car?.vin ?? "", zecar: fetchedApiHandler)
             semaphore.signal()

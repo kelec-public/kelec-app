@@ -74,7 +74,7 @@ struct MapView: View {
     let client = getCarMakerApiClient(usercar: carAccount)
     
     do{
-      let fetchedApiLocation = try await client.getMapCoordinates(vin: vin)
+      let fetchedApiLocation = try await client.getMapCoordinates(vin: vin, jwt: "")
       zeServices.saveLoadedLocation(vin: vin, latitude: fetchedApiLocation.0, longitude: fetchedApiLocation.1)
       self.mapLatitude = fetchedApiLocation.0
       self.mapLongitude = fetchedApiLocation.1

@@ -83,7 +83,12 @@ struct Provider: AppIntentTimelineProvider {
             let passwordFromKeychain = try getPasswordFromKeychain(key: "\(userCar.car?.vin ?? "")_password")
             client.setPassword(password: passwordFromKeychain)
             writeWidgetLog(message: "Crypted password loaded")
-            let fetchedApiHandler = try await client.getVehicleInfo(vin: userCar.car?.vin ?? "")
+            // try to get oidc tokens
+            guard let tokenJson = await getValidToken(email: userCar.getEmail()) else {
+              throw NSError(domain: "OidcToken", code: 0)
+            }
+            writeWidgetLog(message: "OIDC tokens loaded")
+            let fetchedApiHandler = try await client.getVehicleInfo(vin: userCar.car?.vin ?? "", jwt: tokenJson.access_token)
             apiHandler = fetchedApiHandler
             writeWidgetLog(message: "Data successfully fecthed")
             zeServices.saveLoadedCar(vin: userCar.car?.vin ?? "", zecar: fetchedApiHandler)
