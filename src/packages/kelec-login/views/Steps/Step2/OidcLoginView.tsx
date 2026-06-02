@@ -1,8 +1,7 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { LoginEntryParamList } from "../../LoginEntryView";
-import { ActivityIndicator, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useContext, useEffect, useState } from "react";
+import { ActivityIndicator, Animated, View } from "react-native";
+import { useContext, useEffect, useRef, useState } from "react";
 import { OIDC_CONFIG, OIDCAuthState } from "../../../oidc/oidc-conf";
 import WebView from "react-native-webview";
 import { WebViewNavigation } from "react-native-webview/lib/WebViewTypes";
@@ -13,6 +12,8 @@ import RenaultAccount from "../../../../../lib/clients/accounts/renaultAccount";
 import NewRenaultClient from "../../../../../lib/clients/carMakers/newRenaultClient";
 import ApiError, { ApiErrorEnum } from "../../../../../lib/clients/carMakers/error/apiError";
 import MainContext from "../../../../../lib/Contexts/MainContext";
+import LoginDefaultView from "../../LoginDefaultView";
+import { capitlizeFirstLetter } from "../../../../../lib/graphics/utils";
 
 type Props = NativeStackScreenProps<LoginEntryParamList, 'OidcLoginView'> & {
     selectedCarMaker: CarMaker;
@@ -59,10 +60,20 @@ const buildAuthState = async (language: string): Promise<OIDCAuthState> => {
 const OidcLoginView = ({ navigation, route, selectedCarMaker, setAccount }: Props) => {
 
     const [authState, setAuthState] = useState<OIDCAuthState | null>(null);
+    const [isPageLoading, setIsPageLoading] = useState(true);
+    const animatedPercent = useRef(new Animated.Value(0)).current;
 
     const { onError } = route.params;
 
     const { languageHandler } = useContext(MainContext);
+
+    function handleLoadProgress({ nativeEvent }: { nativeEvent: { progress: number } }) {
+        Animated.timing(animatedPercent, {
+            toValue: nativeEvent.progress,
+            duration: 200,
+            useNativeDriver: false
+        }).start();
+    }
 
     useEffect(() => {
         buildAuthState(languageHandler.getMappedLanguage()).then(setAuthState)
@@ -126,26 +137,53 @@ const OidcLoginView = ({ navigation, route, selectedCarMaker, setAccount }: Prop
 
     };
 
-    return <SafeAreaView style={{ flex: 1 }}>
-        <WebView
-            source={{ uri: authState.url }}
-            originWhitelist={['*']}
-            onNavigationStateChange={handleNavigationStateChange}
-            onShouldStartLoadWithRequest={request => {
-                if (request.url.startsWith(OIDC_CONFIG.REDIRECT_URI)) {
-                    handleRedirect(request.url);
-                    return false;
-                }
-                return true;
-            }}
-            onError={syntheticEvent => {
-                const { nativeEvent } = syntheticEvent;
-                if (nativeEvent.url?.startsWith(OIDC_CONFIG.REDIRECT_URI)) {
-                    handleRedirect(nativeEvent.url);
-                }
-            }}
-        />
-    </SafeAreaView>
+
+    return <LoginDefaultView
+        testID="oidcLoginView"
+        title="addCar"
+        subtitle={languageHandler.getTranslation("loginWith") + " " + capitlizeFirstLetter(selectedCarMaker)}
+        helpText="loginToCarMakerAccountInOrderToFetchInfo"
+        onPrevious={() => {
+            navigation.goBack();
+        }}
+    >
+        <View style={{ flex: 1 }}>
+            {isPageLoading && (
+                <View style={{ height: 3, backgroundColor: '#e5e7eb' }}>
+                    <Animated.View style={{
+                        height: 3,
+                        backgroundColor: '#3b82f6',
+                        width: animatedPercent.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: ['0%', '100%'],
+                        }),
+                    }} />
+                </View>
+            )}
+
+            <WebView
+                source={{ uri: authState.url }}
+                originWhitelist={['*']}
+                onNavigationStateChange={handleNavigationStateChange}
+                onShouldStartLoadWithRequest={request => {
+                    if (request.url.startsWith(OIDC_CONFIG.REDIRECT_URI)) {
+                        handleRedirect(request.url);
+                        return false;
+                    }
+                    return true;
+                }}
+                onLoadProgress={handleLoadProgress}
+                onLoadStart={() => setIsPageLoading(true)}
+                onLoadEnd={() => setIsPageLoading(false)}
+                onError={syntheticEvent => {
+                    const { nativeEvent } = syntheticEvent;
+                    if (nativeEvent.url?.startsWith(OIDC_CONFIG.REDIRECT_URI)) {
+                        handleRedirect(nativeEvent.url);
+                    }
+                }}
+            />
+        </View>
+    </LoginDefaultView>
 };
 
 export default OidcLoginView;
