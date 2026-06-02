@@ -114,6 +114,15 @@
             ReferencedContainer = "container:Kelec.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "89E47DC02C2EDB8B00CD1A27"
+            BuildableName = "KelecWatchOSWidgetsExtension.appex"
+            BlueprintName = "KelecWatchOSWidgetsExtension"
+            ReferencedContainer = "container:Kelec.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

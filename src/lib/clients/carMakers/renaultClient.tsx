@@ -3,10 +3,8 @@ import RenaultCharge from "../apiHandlers/renaultCharges/RenaultCharge";
 import { HVACStatusEnum } from "./renaultEnums";
 import { V2GApiResponse, V2GApiSession } from "./renault/v2gApiResponse";
 import Config from 'react-native-config';
-import OIDC, { OidcTokens } from "../../../packages/kelec-login/oidc/oidc";
+import { OidcTokens } from "../../../packages/kelec-login/oidc/oidc";
 import { getValidToken } from "../../storage/sharedPlatformsData";
-import { Platform } from "react-native";
-import { jwtDecode } from "jwt-decode";
 
 enum RenaultEndpoints {
     // 1st step, get gigya token
