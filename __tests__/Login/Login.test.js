@@ -51,27 +51,6 @@ it('renders correctly', async () => {
     let connectTo = instance.findByProps({ testID: 'credentialsStepViewSubtitle' });
     expect(connectTo.props.children).toBe("Je me connecte avec un compte Hyundai");
 
-    // go back to manufacturer selection
-    const backToStep1 = instance.findByProps({ testID: 'previousButton' });
-    await act(async () => {
-        backToStep1.props.onPress();
-    });
-
-    // touch on renault logo
-    const renaultLogo = instance.findByProps({ testID: 'renaultLogo' });
-    await act(async () => {
-        renaultLogo.props.onPress();
-    });
-    nextStepButton = instance.findByProps({ testID: 'nextStepButton' });
-    expect(nextStepButton).toBeTruthy();
-    await act(async () => {
-        nextStepButton.props.onPress();
-    });
-    connectTo = instance.findByProps({ testID: 'credentialsStepViewSubtitle' });
-    // check the text at the top is correct
-    expect(connectTo.props.children).toBe("Je me connecte avec un compte Renault");
-
-
 });
 
 

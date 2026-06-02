@@ -1,4 +1,4 @@
-import { useColorScheme, View, Image } from "react-native";
+import { useColorScheme, View, Image, Alert } from "react-native";
 import Text from "../../../../../screen/Common/CustomText";
 import Account, { CarMaker } from "../../../../../lib/clients/accounts/account";
 import { getCarMakerLogo } from "../../../../kelec-model/lib/logos";
@@ -84,7 +84,7 @@ const CarMakerSelectView = (props: Props) => {
                             {
                                 onError: (error: Error) => {
                                     navigation.goBack();
-                                    alert(error.message);
+                                    Alert.alert(error.message);
                                 },
                                 onSuccess: (account: Account) => {
                                     navigation.navigate("SelectACarView", {

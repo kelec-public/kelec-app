@@ -77,8 +77,8 @@ test('Should use the demo account', async () => {
     await waitFor(() => {
         // wait for app to load
     });
-    const renaultLogo = getByTestId('renaultLogo');
-    await fireEventAsync.press(renaultLogo);
+    const hyundaiLogo = getByTestId('hyundaiLogo');
+    await fireEventAsync.press(hyundaiLogo);
     const nextStepButton = getByTestId('nextStepButton');
     await fireEventAsync.press(nextStepButton);
 

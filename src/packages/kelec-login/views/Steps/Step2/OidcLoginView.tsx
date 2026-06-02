@@ -12,6 +12,7 @@ import Account, { CarMaker } from "../../../../../lib/clients/accounts/account";
 import RenaultClient from "../../../../../lib/clients/carMakers/renaultClient";
 import RenaultAccount from "../../../../../lib/clients/accounts/renaultAccount";
 import NewRenaultClient from "../../../../../lib/clients/carMakers/newRenaultClient";
+import ApiError, { ApiErrorEnum } from "../../../../../lib/clients/carMakers/error/apiError";
 
 type Props = NativeStackScreenProps<LoginEntryParamList, 'OidcLoginView'> & {
     selectedCarMaker: CarMaker;
@@ -91,12 +92,12 @@ const OidcLoginView = ({ navigation, route, selectedCarMaker, setAccount }: Prop
         }
 
         if (!code || !authState) {
-            onError(new Error('Missing code or auth state'));
+            onError(new ApiError(ApiErrorEnum.MISSING_CODE_OR_STATE));
             return;
         }
 
         if (returnedState !== authState.state) {
-            onError(new Error('Invalid state returned'));
+            onError(new ApiError(ApiErrorEnum.INVALID_RETURNED_STATE));
             return;
         }
 
