@@ -12,6 +12,11 @@ enum RenaultTfaEndpoints {
 
 }
 
+export enum TFA_ERRORS {
+    WRONG_VERIFICATION_CODE = 'Wrong verification code',
+    MAXIMUM_VERIFICATION_EXCEEDED = 'Maximum allowed tries exceeded'
+}
+
 class RenaultTfaClient {
     private static readonly GIGYA_URL = 'https://gigya-prod-eu1.renaultgroup.com';
     private static readonly GIGYA_API_KEY = Config.GIGYA_API_KEY ?? '';
@@ -166,7 +171,7 @@ class RenaultTfaClient {
         const data = await response.json() as TfaCompleteVerificationApiResponse;
 
         if (data.statusCode !== 200 || !data.providerAssertion) {
-            throw new Error(`Validate TFA code failed: ${data.errorDetails ?? 'Unknown error'}`);
+            throw new Error(`${data.errorDetails}`);
         }
 
         this.providerAssertion = data.providerAssertion;

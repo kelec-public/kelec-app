@@ -4,7 +4,7 @@ import LoginDefaultView from "../../../LoginDefaultView";
 import { useContext, useEffect, useRef, useState } from "react";
 import MainContext from "../../../../../../lib/Contexts/MainContext";
 import Text from "../../../../../../screen/Common/CustomText";
-import RenaultTfaClient from "../../../../../../lib/clients/carMakers/renault/renaultTfaClient";
+import RenaultTfaClient, { TFA_ERRORS } from "../../../../../../lib/clients/carMakers/renault/renaultTfaClient";
 import { Alert, StyleSheet, View } from "react-native";
 import { TfaEmail } from "../../../../../../lib/clients/carMakers/renault/renaultTfaModels";
 import InfoPopup from "../../../../../../screen/Common/InfoPopup";
@@ -57,6 +57,11 @@ const TfaView = ({ navigation, route, onTfaCompleted }: Props) => {
         launchTfaSequence();
     }, []);
 
+    const onGoBack = () => {
+        onTfaCompleted?.();
+        navigation.goBack();
+    };
+
     const launchTfaSequence = async () => {
         const tfaClient = tfaClientRef.current!;
         setStepStatus(TfaStepStatus.LOADING);
@@ -106,8 +111,20 @@ const TfaView = ({ navigation, route, onTfaCompleted }: Props) => {
             await tfaClient.finalizeRegistration();
 
         } catch (error) {
-            setStepStatus(TfaStepStatus.ERROR);
-            setErrorMessage(error instanceof Error ? error.message : 'Unknown error');
+            const message = error instanceof Error ? error.message : 'Unknown error';
+            switch (message) {
+                case TFA_ERRORS.WRONG_VERIFICATION_CODE:
+                    Alert.alert(languageHandler.getTranslation('incorrectCode'));
+                    break;
+                case TFA_ERRORS.MAXIMUM_VERIFICATION_EXCEEDED:
+                    Alert.alert(languageHandler.getTranslation('maximumAllowedTriesExceeded'));
+                    onGoBack();
+                    break;
+                default:
+                    setStepStatus(TfaStepStatus.ERROR);
+                    setErrorMessage(message);
+            }
+            setIsLightLoading(false);
             return;
         }
 
@@ -119,8 +136,7 @@ const TfaView = ({ navigation, route, onTfaCompleted }: Props) => {
             Alert.alert(languageHandler.getTranslation('pullToRefreshCarData'));
         }
         
-        onTfaCompleted?.();
-        navigation.goBack();
+        onGoBack();
     };
 
     const getViewDisplay = () => {
@@ -155,8 +171,7 @@ const TfaView = ({ navigation, route, onTfaCompleted }: Props) => {
             subtitle={languageHandler.getTranslation("tfaRequired")}
             isLightLoading={isLightLoading}
             onPrevious={() => {
-                onTfaCompleted?.();
-                navigation.goBack();
+                onGoBack();
             }}
             onNext={() => {
                 onValidateCode();
