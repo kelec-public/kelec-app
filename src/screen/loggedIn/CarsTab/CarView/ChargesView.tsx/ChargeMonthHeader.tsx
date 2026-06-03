@@ -1,6 +1,6 @@
 import { TouchableOpacity, useColorScheme, View } from "react-native";
 import Text from "../../../../Common/CustomText";
-import { formatNumberWithLeadingZero, getBlackColour, getGrayWhiteBackgroundColour } from "../../../../../lib/graphics/utils";
+import { formatNumberWithLeadingZero, getBlackColour} from "../../../../../lib/graphics/utils";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useContext } from "react";
 import MainContext from "../../../../../lib/Contexts/MainContext";
@@ -8,6 +8,7 @@ import { ChargeIndex } from "../../../../../lib/clients/apiHandlers/renaultCharg
 import { fontFamilyBold, fontWeightBold } from "../../../../../lib/graphics/commonStyle";
 import RenaultCharge from "../../../../../lib/clients/apiHandlers/renaultCharges/RenaultCharge";
 import AppPreferences from "../../../../../lib/appPreferences/model/appPreferences";
+import { useTheme } from '@react-navigation/native';
 
 type ChargeMonthHeaderProps = {
     readonly chargeIndex: ChargeIndex;
@@ -160,7 +161,7 @@ function ChargeMonthHeader({ chargeIndex, shouldDisplayCharges, setShouldDisplay
                 </View>
             </View>
             <View style={{
-                backgroundColor: getGrayWhiteBackgroundColour(isDarkMode),
+                backgroundColor: useTheme().colors.secondaryContainer,
                 padding: 15,
                 marginTop: 10,
                 borderRadius: 7,

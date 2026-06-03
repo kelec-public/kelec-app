@@ -1,7 +1,6 @@
 import { CarMaker } from "../../src/lib/clients/accounts/account";
 import {
     getBlackColour,
-    getBlackGrayBackgroundColour,
     getWhiteColour, getGrayBackgroundColour,
     getGrayColour,
     getBlueText,
@@ -12,7 +11,6 @@ import {
     formatNumberWithLeadingZero,
     getCarMakerLogo,
     getAccentOrange,
-    getGrayWhiteBackgroundColour,
     getChargingBarColour
 } from "../../src/lib/graphics/utils";
 
@@ -27,15 +25,6 @@ describe('getBlackColour', () => {
     });
 });
 
-describe('getBlackGrayBackgroundColour', () => {
-    it('should return grey when isDarkMode is true', () => {
-        expect(getBlackGrayBackgroundColour(true)).toBe('rgb(28,28,28)');
-    });
-    it('should return black when isDarkMode is false', () => {
-        expect(getBlackGrayBackgroundColour(false)).toBe('black');
-    });
-});
-
 describe('getWhiteColour', () => {
     it('should return black when isDarkMode is true', () => {
         expect(getWhiteColour(true)).toBe('black');
@@ -47,7 +36,7 @@ describe('getWhiteColour', () => {
 
 describe('getGrayBackgroundColour', () => {
     it('should return grey when isDarkMode is true', () => {
-        expect(getGrayBackgroundColour(true)).toBe('rgb(28,28,28)');
+        expect(getGrayBackgroundColour(true)).toBe('#1c1c1c'); // gray_200
     });
     it('should return white when isDarkMode is false', () => {
         expect(getGrayBackgroundColour(false)).toBe('white');
@@ -78,15 +67,6 @@ describe('getLightGray', () => {
     });
     it('should return lightgray when isDarkMode is false', () => {
         expect(getLightGray(false)).toBe('lightgray');
-    });
-});
-
-describe('getGrayWhiteBackgroundColour', () => {
-    it('should return grey background when isDarkMode is true', () => {
-        expect(getGrayWhiteBackgroundColour(true)).toBe(coloursAssets.greyBackground);
-    });
-    it('should return white when isDarkMode is false', () => {
-        expect(getGrayWhiteBackgroundColour(false)).toBe('rgb(240,241,243)');
     });
 });
 
