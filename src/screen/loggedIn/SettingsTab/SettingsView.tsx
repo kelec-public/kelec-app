@@ -17,7 +17,6 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import {
     getBlackColour,
     getGrayBackgroundColour,
-    getMainInterfaceBackground,
     getTopDarkColour,
 } from '../../../lib/graphics/utils';
 
@@ -38,6 +37,7 @@ import DebugZoneView from "./DebugZone/DebugZoneView";
 import BigButton, { ButtonColours } from "../../Common/BigButton";
 import TopSettingsView from "./TopSettingsView";
 import { RenaultCredentials } from "../../../lib/clients/carMakers/renaultCredentials";
+import { useTheme } from '@react-navigation/native';
 
 type Setting = {
     title: string;
@@ -409,9 +409,9 @@ function SettingsView(): React.JSX.Element {
             </Modal>
             <View
                 testID='settingsView'
-                style={[commonStyles.flex, { backgroundColor: getMainInterfaceBackground(isDarkMode) }]}>
+                style={[commonStyles.flex, { backgroundColor: useTheme().colors.background }]}>
 
-                <ScrollView style={[commonStyles.flex, styles.mainWrapper, { backgroundColor: getMainInterfaceBackground(isDarkMode) }]}>
+                <ScrollView style={[commonStyles.flex, styles.mainWrapper, { backgroundColor: useTheme().colors.background  }]}>
                     <TopSettingsView />
 
                     <View style={[styles.elements, { paddingHorizontal: 15 }]}>

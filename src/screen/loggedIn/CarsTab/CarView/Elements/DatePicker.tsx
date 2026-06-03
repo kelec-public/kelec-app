@@ -1,10 +1,11 @@
 import { Platform, TouchableOpacity, useColorScheme, View } from "react-native";
 import Text from "../../../../Common/CustomText";
-import { getBlackColour, getMainInterfaceBackground } from "../../../../../lib/graphics/utils";
+import { getBlackColour } from "../../../../../lib/graphics/utils";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useContext, useState } from "react";
 import MainContext from "../../../../../lib/Contexts/MainContext";
 import DateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
+import { useTheme } from '@react-navigation/native';
 
 type Props = {
     readonly updateDate: (date: Date) => void;
@@ -37,7 +38,7 @@ function DatePickerField({ updateDate, dateValue, placeholder }: Props): React.J
                     justifyContent: 'space-between',
                     padding: 15,
                     borderRadius: 5,
-                    backgroundColor: getMainInterfaceBackground(isDarkMode)
+                    backgroundColor: useTheme().colors.background
 
                 }}>
                     <Text

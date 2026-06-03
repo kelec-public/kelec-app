@@ -1,10 +1,10 @@
 import React, { useContext, useMemo, useRef, useState } from 'react';
 import { Animated, View, SafeAreaView, useColorScheme, StyleSheet } from 'react-native';
-import { getMainInterfaceBackground } from '../../../lib/graphics/utils';
 import MainContext from '../../../lib/Contexts/MainContext';
 import CarsPageView from './CarsPageView';
 import CarsViewContext from '../../../lib/Contexts/CarsViewContext';
 import Text from '../../Common/CustomText';
+import { useTheme } from '@react-navigation/native';
 
 function CarsView(): React.JSX.Element {
     const isDarkMode = useColorScheme() === 'dark';
@@ -57,7 +57,7 @@ function CarsView(): React.JSX.Element {
     return (
         <CarsViewContext.Provider value={carsViewContextValues}>
             <View testID='carsView' style={styles.container}>
-                <View style={[styles.flex, styles.fullWidth, { backgroundColor: getMainInterfaceBackground(isDarkMode) }]}>
+                <View style={[styles.flex, styles.fullWidth, { backgroundColor: useTheme().colors.background }]}>
                     {getCurrentView()}
                 </View>
                 {/* overlay when modal is open */}

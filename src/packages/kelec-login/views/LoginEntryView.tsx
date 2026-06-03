@@ -1,7 +1,7 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import {
   NavigationContainer,
-  NavigationIndependentTree,
+  NavigationIndependentTree, useTheme,
 } from '@react-navigation/native';
 import CarMakerSelectView from "./Steps/Step1/CarMakerSelectView";
 import Account, { CarMaker } from "../../../lib/clients/accounts/account";
@@ -52,7 +52,7 @@ const LoginEntryView = () => {
   return (
     <View testID="loginView" style={{ flex: 1 }}>
       <NavigationIndependentTree>
-        <NavigationContainer>
+          <NavigationContainer theme={useTheme()}>
           <Stack.Navigator
             screenOptions={{
               headerShown: false,

@@ -6,12 +6,18 @@
  */
 
 import React from 'react';
-
 import Main from './src/Main';
-
+import { ThemeProvider } from '@react-navigation/native';
+import { useAutoTheme } from './theme/theme';
 
 function App(): React.JSX.Element {
-  return <Main />;
+  const autoTheme = useAutoTheme();
+
+  return (
+    <ThemeProvider value={autoTheme}>
+        <Main />
+    </ThemeProvider>
+  );
 }
 
 
