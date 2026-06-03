@@ -1,7 +1,7 @@
 import { ActivityIndicator, FlatList, Modal, Platform, ScrollView, Share, StyleSheet, TouchableOpacity, View, useColorScheme } from "react-native";
 import Text from "../../../../Common/CustomText";
 import commonStyles, { fontFamilyBold, fontWeightBold } from "../../../../../lib/graphics/commonStyle";
-import { getBlackColour, getGrayWhiteBackgroundColour, getWhiteColour } from "../../../../../lib/graphics/utils";
+import { getBlackColour, getWhiteColour } from "../../../../../lib/graphics/utils";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import MainContext from "../../../../../lib/Contexts/MainContext";
@@ -18,6 +18,7 @@ import ChargeMonthContent from "./ChargeMonthContent";
 import { Filter, FilterName } from "../../../../../lib/model/filters/FiltersStruct";
 import ChargesViewContext from "../../../../../lib/Contexts/ChargesViewContext";
 import { getFilterMax, getFilterMin, getFilterUnit } from "../../../../../lib/model/filters/FiltersHandlers";
+import { useTheme } from '@react-navigation/native';
 import BottomSheet from "../../../../Common/bottomSheet/BottomSheet";
 
 
@@ -106,7 +107,7 @@ function ChargesView({ navigation, route }: ChargesViewProps): React.JSX.Element
                             handleModalAnim(true);
                         }}
                         style={{
-                            backgroundColor: getGrayWhiteBackgroundColour(isDarkMode),
+                            backgroundColor: useTheme().colors.secondaryContainer,
                             flexDirection: 'row',
                             justifyContent: 'center',
                             alignItems: 'center',
@@ -115,12 +116,12 @@ function ChargesView({ navigation, route }: ChargesViewProps): React.JSX.Element
                             borderRadius: 15
                         }}
                     >
-                        <Icon name="filter-list" size={15} color={getBlackColour(isDarkMode)} />
+                        <Icon name="filter-list" size={15} color={useTheme().colors.onSecondaryContainer} />
                         <Text
                             numberOfLines={1}
                             style={{
                                 fontSize: 15,
-                                color: getBlackColour(isDarkMode),
+                                color: useTheme().colors.onSecondaryContainer,
                                 marginLeft: 10
                             }}>
                             {languageHandler.getTranslation("filters")}
@@ -150,7 +151,7 @@ function ChargesView({ navigation, route }: ChargesViewProps): React.JSX.Element
                                 }}
                                 testID="filterListButton"
                                 style={{
-                                    backgroundColor: getGrayWhiteBackgroundColour(isDarkMode),
+                                    backgroundColor: useTheme().colors.secondaryContainer,
                                     flexDirection: 'row',
                                     justifyContent: 'center',
                                     alignItems: 'center',
@@ -163,11 +164,11 @@ function ChargesView({ navigation, route }: ChargesViewProps): React.JSX.Element
 
                                 <Text style={{
                                     fontSize: 15,
-                                    color: getBlackColour(isDarkMode),
+                                    color:useTheme().colors.onSecondaryContainer,
                                     marginLeft: 10
                                 }}>{formatFilterDisplay()}
                                 </Text>
-                                <Icon name="close" size={15} color={getBlackColour(isDarkMode)} style={{ marginTop: 2 }} />
+                                <Icon name="close" size={15} color={useTheme().colors.onSecondaryContainer} style={{ marginTop: 2 }} />
                             </TouchableOpacity>
                         )
 
@@ -292,12 +293,10 @@ function ChargesView({ navigation, route }: ChargesViewProps): React.JSX.Element
                         handleModalAnim(false);
                     }}
                 >
-                    <SafeAreaProvider>
                         <ChargesFiltersView
                             setShouldOpenModal={setShowFiltersModal}
                             handleModalAnim={handleModalAnim}
                         />
-                    </SafeAreaProvider>
                 </Modal>
                 <View>
                     <View style={
