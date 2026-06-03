@@ -20,7 +20,7 @@ const getBarColour = (appPreferences: AppPreferences, thereisCharge: RenaultChar
     if (appPreferences.highlightDCCharges && hasDCCharge) {
         return 'rgba(0,142,255,1)';
     }
-    return thereisCharge ? 'rgb(39,205,65)' : 'lightgray';
+    return thereisCharge ? useTheme().colors.powerGreen : 'lightgray';
 };
 
 function ChargeMonthHeader({ chargeIndex, shouldDisplayCharges, setShouldDisplayCharges }: ChargeMonthHeaderProps): React.JSX.Element {
@@ -174,7 +174,7 @@ function ChargeMonthHeader({ chargeIndex, shouldDisplayCharges, setShouldDisplay
                     <Text style={{ fontWeight: fontWeightBold, fontFamily: fontFamilyBold, fontSize: 20, flex: 1 }}>{chargeIndex.charges.length}</Text>
                     <View style={{ flexDirection: 'row', gap: 0, flex: 1, flexWrap: "wrap" }}>
                         <Text numberOfLines={1} adjustsFontSizeToFit>{languageHandler.getTranslation("charges")}</Text>
-                        <Icon name="bolt" size={20} color={'rgb(39,205,65)'} />
+                        <Icon name="bolt" size={20} color={useTheme().colors.powerGreen} />
                     </View>
                 </View>
                 <View

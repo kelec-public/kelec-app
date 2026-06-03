@@ -19,6 +19,7 @@ declare module '@react-navigation/native' {
       onPrimaryContainer: string;
       secondaryContainer: string;
       onSecondaryContainer: string;
+      powerGreen: string;
     };
   }
 }
@@ -34,6 +35,7 @@ const KLightTheme = {
     onPrimaryContainer: Palette.black,
     secondaryContainer: Palette.gray_950, //getGrayWhiteBackgroundColour
     onSecondaryContainer: Palette.black,
+    powerGreen: Palette.green_500, // rgb(39,205,65)
   },
   sysBar: {
     status: 'dark-content',
@@ -51,6 +53,7 @@ const KDarkTheme = {
     onPrimaryContainer: Palette.white,
     secondaryContainer: Palette.gray_200, // getGrayWhiteBackgroundColour
     onSecondaryContainer: Palette.white,
+    powerGreen: Palette.green_500, // rgb(39,205,65)
   },
   sysBar: {
     status: 'light-content',
