@@ -1,9 +1,10 @@
 import { TextInput, useColorScheme, View } from "react-native";
-import { getBlackColour, getMainInterfaceBackground } from "../../../../../../../lib/graphics/utils";
+import { getBlackColour } from "../../../../../../../lib/graphics/utils";
 import Text from "../../../../../../Common/CustomText";
 import { useContext, useEffect, useState } from "react";
 import { Filter, FilterNumerical } from "../../../../../../../lib/model/filters/FiltersStruct";
 import ChargesViewContext from "../../../../../../../lib/Contexts/ChargesViewContext";
+import { useTheme } from '@react-navigation/native';
 
 type FilterCardProps = {
     readonly filter: Filter;
@@ -44,7 +45,7 @@ function FilterNumericalCard({ filter, filterValueMin, filterValueMax }: FilterC
                     justifyContent: 'space-between',
                     padding: 15,
                     borderRadius: 5,
-                    backgroundColor: getMainInterfaceBackground(isDarkMode)
+                    backgroundColor: useTheme().colors.background
                 }}>
                     <TextInput
                         style={{
@@ -94,7 +95,7 @@ function FilterNumericalCard({ filter, filterValueMin, filterValueMax }: FilterC
                     justifyContent: 'space-between',
                     padding: 15,
                     borderRadius: 5,
-                    backgroundColor: getMainInterfaceBackground(isDarkMode)
+                    backgroundColor: useTheme().colors.background
 
                 }}>
                     <TextInput

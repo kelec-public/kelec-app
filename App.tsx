@@ -6,16 +6,18 @@
  */
 
 import React from 'react';
-
 import Main from './src/Main';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { ThemeProvider } from '@react-navigation/native';
+import { useAutoTheme } from './theme/theme';
 
 
 function App(): React.JSX.Element {
+  const autoTheme = useAutoTheme();
+
   return (
-    <SafeAreaProvider>
-      <Main />
-    </SafeAreaProvider>
+    <ThemeProvider value={autoTheme}>
+        <Main />
+    </ThemeProvider>
   );
 }
 

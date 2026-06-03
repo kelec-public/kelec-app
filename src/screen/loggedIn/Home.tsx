@@ -1,6 +1,6 @@
 
 import React, { useContext } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import CarsView from './CarsTab/CarsView';
 import ProfileView from './ProfileTab/ProfileView';
@@ -39,7 +39,7 @@ function Home(): React.JSX.Element {
     }
 
     return (
-        <NavigationContainer>
+        <NavigationContainer theme={useTheme()}>
             <Tab.Navigator
                 screenOptions={({ route }) => ({
                     tabBarIcon: ({ focused, color, size }) => getTabBarIcon(route.name, focused, color, size),

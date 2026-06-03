@@ -4,7 +4,6 @@ import {
     getBlackGrayBackgroundColour,
     getWhiteColour, getGrayBackgroundColour,
     getGrayColour,
-    getMainInterfaceBackground,
     getBlueText,
     getDisplayDate,
     getLightGray,
@@ -61,15 +60,6 @@ describe('getGrayColour', () => {
     });
     it('should return gray when isDarkMode is false', () => {
         expect(getGrayColour(false)).toBe('gray');
-    });
-});
-
-describe('getMainInterfaceBackground', () => {
-    it('should return black when isDarkMode is true', () => {
-        expect(getMainInterfaceBackground(true)).toBe('black');
-    });
-    it('should return rgb(240,241,243) when isDarkMode is false', () => {
-        expect(getMainInterfaceBackground(false)).toBe('rgb(240,241,243)');
     });
 });
 

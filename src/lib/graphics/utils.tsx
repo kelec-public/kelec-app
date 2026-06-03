@@ -31,11 +31,6 @@ const getBlackColour = (isDarkMode: boolean) => {
     return isDarkMode ? 'white' : 'black';
 }
 
-const getMainInterfaceBackground = (isDarkMode: boolean) => {
-    // main screen background
-    return isDarkMode ? 'black' : coloursAssets.interfaceBackground;
-}
-
 const getBlueText = (isDarkMode: boolean) => {
     return isDarkMode ? 'lightblue' : 'blue';
 }
@@ -179,7 +174,6 @@ export {
     getWhiteColour,
     getGrayBackgroundColour,
     getGrayColour,
-    getMainInterfaceBackground,
     coloursAssets,
     formatPlate,
     getBlueText,

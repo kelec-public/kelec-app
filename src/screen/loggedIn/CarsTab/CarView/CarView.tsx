@@ -4,7 +4,7 @@ import { useContext, useEffect, useMemo, useState } from "react";
 import MainContext from "../../../../lib/Contexts/MainContext";
 import CarModel from "../../../../lib/clients/cars/carModel";
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { getBlackColour, getDisplayDate, getMainInterfaceBackground } from "../../../../lib/graphics/utils";
+import { getBlackColour, getDisplayDate } from "../../../../lib/graphics/utils";
 import SummaryCard from "./Elements/SummaryCard";
 import CarViewContext from "../../../../lib/Contexts/CarViewContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -31,6 +31,7 @@ import { CarMakerClientErrors } from "../../../../lib/clients/carMakers/carMaker
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { CarsViewParamList } from "../CarsPageView";
 import { TfaOrigin } from "../../../../packages/kelec-login/views/Steps/Step2/Tfa/TfaView";
+import { useTheme } from '@react-navigation/native';
 import BottomSheet from "../../../Common/bottomSheet/BottomSheet";
 import QuickSwitchView from "./Elements/QuickSwitch/QuickSwitchView";
 
@@ -219,7 +220,7 @@ function CarView({ carModel, navigation, account, pagerRef, tfaInProgress }: Car
         } else {
             setErrorMessage(data.errorMessage ?? '');
             if (data.errorMessage == CarMakerClientErrors.PENDING_TFA) {
-                // il faut refaire le TFA 
+                // il faut refaire le TFA
                 if (!tfaInProgress.current) {
                     tfaInProgress.current = true;
                     navigation.navigate("TfaView", {
@@ -363,7 +364,7 @@ function CarView({ carModel, navigation, account, pagerRef, tfaInProgress }: Car
     return (
         <CarViewContext.Provider value={carViewContextValues} >
             <SafeAreaView style={[styles.flex, {
-                backgroundColor: getMainInterfaceBackground(isDarkMode)
+                backgroundColor: useTheme().colors.background
             }]}
             edges={['top']}>
                 <ScrollView

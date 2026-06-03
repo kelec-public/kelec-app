@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
-import { View, StyleSheet, useColorScheme, TouchableOpacity, ScrollView, Modal } from 'react-native';
-import { getBlackColour, getGrayBackgroundColour, getMainInterfaceBackground, getWhiteColour } from '../../../lib/graphics/utils';
+import { View, StyleSheet, useColorScheme, TouchableOpacity, ScrollView } from 'react-native';
+import { getBlackColour, getGrayBackgroundColour,  getWhiteColour } from '../../../lib/graphics/utils';
 import Text from '../../Common/CustomText';
 import MainContext from '../../../lib/Contexts/MainContext';
 import commonStyles from '../../../lib/graphics/commonStyle';
@@ -8,6 +8,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import CarRow from './CarRow';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ViewsAvailable } from '../../../Main';
+import { useTheme } from '@react-navigation/native';
 
 
 function ProfileView(): React.JSX.Element {
@@ -21,7 +22,7 @@ function ProfileView(): React.JSX.Element {
     return (
         <View
             testID='profileView'
-            style={[commonStyles.flex, { backgroundColor: getMainInterfaceBackground(isDarkMode) }]}
+            style={[commonStyles.flex, { backgroundColor: useTheme().colors.background }]}
         >
             <SafeAreaView style={[commonStyles.flex]} edges={['top']}>
                 <View style={[commonStyles.paddingHorizontal, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }]}>
@@ -75,7 +76,7 @@ function ProfileView(): React.JSX.Element {
 
                 </View >
                 <View style={commonStyles.navSeparator}></View>
-                <View style={[commonStyles.flex, styles.mainWrapper, { backgroundColor: getMainInterfaceBackground(isDarkMode) }]}>
+                <View style={[commonStyles.flex, styles.mainWrapper, { backgroundColor: useTheme().colors.background }]}>
                     {/* car list */}
                     <ScrollView
                         style={commonStyles.flex}
