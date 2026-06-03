@@ -9,6 +9,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import commonStyles, { fontFamilyBold, fontWeightBold } from "../../../../../lib/graphics/commonStyle";
 import CarsViewContext from "../../../../../lib/Contexts/CarsViewContext";
 import BigButton, { ButtonColours } from "../../../../Common/BigButton";
+import { useTheme } from '@react-navigation/native';
 import { SafeAreaView } from "react-native-safe-area-context";
 import BottomSheet from "../../../../Common/bottomSheet/BottomSheet";
 
@@ -138,7 +139,7 @@ function ChargeCard({ charge, carType }: ChargeCardProps): React.JSX.Element {
                 <View style={{ backgroundColor: 'lightgray', width: '100%', borderRadius: 100, height: 10 }} />
                 <View testID={'chargingBar'} style={
                     {
-                        backgroundColor: charge.isV2G ? 'rgb(255,165,0)' : 'rgb(39,205,65)',
+                        backgroundColor: charge.isV2G ? 'rgb(255,165,0)' : useTheme().colors.powerGreen,
                         borderRadius: 100, position: 'absolute', height: 10,
                         width: getBarWidth(Math.max(charge.getEndPercentage(), charge.getStartPercentage()))
                     }} />
