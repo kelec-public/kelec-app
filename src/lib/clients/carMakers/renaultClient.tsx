@@ -164,6 +164,7 @@ type RenaultStatus = {
     hasError: boolean;
     errorMessage?: string;
     apiData?: any;
+    regToken?: string;
 }
 
 type BatteryStatus = {
@@ -744,6 +745,12 @@ class RenaultClient extends CarMakerClient {
                     return {
                         hasError: true,
                         errorMessage: CarMakerClientErrors.INVALID_CREDENTIALS
+                    }
+                case CarMakerClientErrors.PENDING_TFA:
+                    return {
+                        hasError: true,
+                        errorMessage: CarMakerClientErrors.PENDING_TFA,
+                        regToken: gigyaToken.regToken
                     }
                 default:
                     return {
