@@ -319,7 +319,7 @@ class RenaultClient extends CarMakerClient {
                                 default:
                                     resolve({
                                         canLogin: false,
-                                        errorMessage: CarMakerClientErrors.SERVER_ERROR
+                                        errorMessage: typedData.errorMessage ?? CarMakerClientErrors.SERVER_ERROR
                                     })
                                     break;
                             }
@@ -327,7 +327,7 @@ class RenaultClient extends CarMakerClient {
                         default:
                             resolve({
                                 canLogin: false,
-                                errorMessage: typedData.errorDetails
+                                errorMessage: typedData.errorMessage ?? CarMakerClientErrors.SERVER_ERROR
                             });
                             break;
                     }
@@ -755,7 +755,7 @@ class RenaultClient extends CarMakerClient {
                 default:
                     return {
                         hasError: true,
-                        errorMessage: CarMakerClientErrors.SERVER_ERROR
+                        errorMessage: gigyaToken.errorMessage ?? CarMakerClientErrors.SERVER_ERROR
                     }
             }
         }

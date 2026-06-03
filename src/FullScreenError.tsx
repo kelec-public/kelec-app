@@ -21,7 +21,7 @@ const getErrorMessage = (message: string) => {
         case "pending_tfa":
             return "pendingTFA";
         default:
-            return "impossibleToConnectToServer";
+            return message;
     }
 };
 interface FullScreenErrorProps {
