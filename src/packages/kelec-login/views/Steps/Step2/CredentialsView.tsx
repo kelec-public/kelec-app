@@ -125,6 +125,10 @@ const CredentialsView = (props: Props) => {
             case CarMakerClientErrors.INVALID_CREDENTIALS:
                 errorMessage = languageHandler.getTranslation('invalidPassWord');
                 break;
+            case CarMakerClientErrors.PENDING_TFA:
+                // TODO: redirect vers TFA view
+                errorMessage = languageHandler.getTranslation('pendingTFA');
+                break;
         }
 
         Alert.alert(

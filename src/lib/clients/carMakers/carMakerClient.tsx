@@ -2,7 +2,8 @@
 enum CarMakerClientErrors {
     SERVER_ERROR = "server_error",
     INVALID_CREDENTIALS = "invalid_credentials",
-    ACCOUNT_LOCKED = "account_locked"
+    ACCOUNT_LOCKED = "account_locked",
+    PENDING_TFA = "pending_tfa"
 }
 
 class CarMakerClient {

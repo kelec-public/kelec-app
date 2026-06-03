@@ -292,15 +292,32 @@ class RenaultClient extends CarMakerClient {
                         }
                         // bad creds
                         case 403:
-                            typedData.errorDetails == "Account temporarily locked out" ?
-                                resolve({
-                                    canLogin: false,
-                                    errorMessage: CarMakerClientErrors.ACCOUNT_LOCKED
-                                }) :
-                                resolve({
-                                    canLogin: false,
-                                    errorMessage: CarMakerClientErrors.INVALID_CREDENTIALS
-                                });
+                            switch (typedData.errorDetails) {
+                                case "Pending Two-Factor Authentication":
+                                    resolve({
+                                        canLogin: false,
+                                        errorMessage: CarMakerClientErrors.PENDING_TFA
+                                    });
+                                    break;
+                                case "Account temporarily locked out":
+                                    resolve({
+                                        canLogin: false,
+                                        errorMessage: CarMakerClientErrors.ACCOUNT_LOCKED
+                                    });
+                                    break;
+                                case "invalid loginID or password":
+                                    resolve({
+                                        canLogin: false,
+                                        errorMessage: CarMakerClientErrors.INVALID_CREDENTIALS
+                                    });
+                                    break;
+                                default:
+                                    resolve({
+                                        canLogin: false,
+                                        errorMessage: CarMakerClientErrors.SERVER_ERROR
+                                    })
+                                    break;
+                            }
                             break;
                         default:
                             resolve({
