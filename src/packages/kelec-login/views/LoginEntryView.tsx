@@ -12,7 +12,7 @@ import CarModel from "../../../lib/clients/cars/carModel";
 import MainContext from "../../../lib/Contexts/MainContext";
 import { View } from "react-native";
 import CarModelSelector, { CarModelSelectorParamList } from "./Steps/Step4/CarModelSelector";
-import TfaView from "./Steps/Step2/Tfa/TfaView";
+import TfaView, { TfaOrigin } from "./Steps/Step2/Tfa/TfaView";
 
 export type LoginEntryParamList = {
   CarMakerSelectView: undefined;
@@ -22,6 +22,7 @@ export type LoginEntryParamList = {
   }
   TfaView: {
     regToken: string;
+    origin: TfaOrigin;
   }
   CarModelChoiceStep: {
     vin: string;

@@ -12,7 +12,7 @@ import { WeatherApiHandler } from "../../../lib/clients/weather/weatherClient";
 import CarModel from "../../../lib/clients/cars/carModel";
 import CarModelSelector, { CarModelSelectorParamList } from "../../../packages/kelec-login/views/Steps/Step4/CarModelSelector";
 import { SafeAreaView } from "react-native-safe-area-context";
-import TfaView from "../../../packages/kelec-login/views/Steps/Step2/Tfa/TfaView";
+import TfaView, { TfaOrigin } from "../../../packages/kelec-login/views/Steps/Step2/Tfa/TfaView";
 
 
 export type CarsViewParamList = {
@@ -30,6 +30,7 @@ export type CarsViewParamList = {
     ChargesView: undefined;
     TfaView: {
       regToken: string;
+      origin: TfaOrigin;
   } ;
 }
 

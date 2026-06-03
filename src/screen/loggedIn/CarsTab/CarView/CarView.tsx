@@ -31,6 +31,7 @@ import RenaultCharge from "../../../../lib/clients/apiHandlers/renaultCharges/Re
 import { CarMakerClientErrors } from "../../../../lib/clients/carMakers/carMakerClient";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { CarsViewParamList } from "../CarsPageView";
+import { TfaOrigin } from "../../../../packages/kelec-login/views/Steps/Step2/Tfa/TfaView";
 
 enum ViewState {
     LOADING = 'LOADING',
@@ -221,7 +222,8 @@ function CarView({ carModel, navigation, account, pagerRef, tfaInProgress }: Car
                 if (!tfaInProgress.current) {
                     tfaInProgress.current = true;
                     navigation.navigate("TfaView", {
-                        regToken: data.regToken ?? ''
+                        regToken: data.regToken ?? '',
+                        origin: TfaOrigin.CAR_PAGE
                     });
                 }
                 

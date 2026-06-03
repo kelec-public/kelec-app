@@ -7,10 +7,14 @@ import Text from "../../../../../../screen/Common/CustomText";
 import RenaultTfaClient from "../../../../../../lib/clients/carMakers/renault/renaultTfaClient";
 import { Alert, StyleSheet, View } from "react-native";
 import { TfaEmail } from "../../../../../../lib/clients/carMakers/renault/renaultTfaModels";
-import TextInput from "../../../../../../screen/Common/TextInput";
 import InfoPopup from "../../../../../../screen/Common/InfoPopup";
 import FullScreenLoading from "../../../../../../FullScreenLoading";
 import TfaCodeView from "./TfaCodeView";
+
+export enum TfaOrigin {
+    CAR_PAGE,
+    ADD_CAR_FLOW
+}
 
 type Props = NativeStackScreenProps<LoginEntryParamList, 'TfaView'> & {
     onTfaCompleted?: () => void;
@@ -43,7 +47,7 @@ const TfaView = ({ navigation, route, onTfaCompleted }: Props) => {
 
     const [userInputCode, setUserInputCode] = useState<string>('');
 
-    const { regToken } = route.params;
+    const { regToken, origin } = route.params;
     const tfaClientRef = useRef<RenaultTfaClient | null>(null);
     if (!tfaClientRef.current) {
         tfaClientRef.current = new RenaultTfaClient(regToken);
@@ -108,7 +112,13 @@ const TfaView = ({ navigation, route, onTfaCompleted }: Props) => {
         }
 
         // si on est là c'est que le process est terminé
-        Alert.alert(languageHandler.getTranslation('youLlBeRedirectedToPreviousScreen'));
+        if (origin === TfaOrigin.ADD_CAR_FLOW) {
+            Alert.alert(languageHandler.getTranslation('youLlBeRedirectedToPreviousScreenClickNext'));
+        } else {
+            // depuis la car page
+            Alert.alert(languageHandler.getTranslation('pullToRefreshCarData'));
+        }
+        
         onTfaCompleted?.();
         navigation.goBack();
     };
