@@ -12,7 +12,9 @@ import InfoPopup from "../../../../../../screen/Common/InfoPopup";
 import FullScreenLoading from "../../../../../../FullScreenLoading";
 import TfaCodeView from "./TfaCodeView";
 
-type Props = NativeStackScreenProps<LoginEntryParamList, 'TfaView'>;
+type Props = NativeStackScreenProps<LoginEntryParamList, 'TfaView'> & {
+    onTfaCompleted?: () => void;
+}
 
 enum TfaSteps {
     GETTING_DEVICE_ID = "getting_device_id",
@@ -29,7 +31,7 @@ enum TfaStepStatus {
     ERROR
 }
 
-const TfaView = ({ navigation, route }: Props) => {
+const TfaView = ({ navigation, route, onTfaCompleted }: Props) => {
 
     const { languageHandler } = useContext(MainContext);
 
@@ -107,6 +109,7 @@ const TfaView = ({ navigation, route }: Props) => {
 
         // si on est là c'est que le process est terminé
         Alert.alert(languageHandler.getTranslation('youLlBeRedirectedToPreviousScreen'));
+        onTfaCompleted?.();
         navigation.goBack();
     };
 
@@ -142,6 +145,7 @@ const TfaView = ({ navigation, route }: Props) => {
             subtitle={languageHandler.getTranslation("tfaRequired")}
             isLightLoading={isLightLoading}
             onPrevious={() => {
+                onTfaCompleted?.();
                 navigation.goBack();
             }}
             onNext={() => {

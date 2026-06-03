@@ -28,13 +28,9 @@ import CarsViewContext from "../../../../lib/Contexts/CarsViewContext";
 import PagerView from "react-native-pager-view";
 import { SafeAreaView } from "react-native-safe-area-context";
 import RenaultCharge from "../../../../lib/clients/apiHandlers/renaultCharges/RenaultCharge";
-
-type CarViewProps = {
-    readonly carModel: CarModel;
-    readonly account: Account;
-    readonly navigation: any;
-    readonly pagerRef: React.RefObject<PagerView | null>;
-}
+import { CarMakerClientErrors } from "../../../../lib/clients/carMakers/carMakerClient";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { CarsViewParamList } from "../CarsPageView";
 
 enum ViewState {
     LOADING = 'LOADING',
@@ -42,7 +38,14 @@ enum ViewState {
     LOADED = 'LOADED',
 }
 
-function CarView({ carModel, navigation, account, pagerRef }: CarViewProps): React.JSX.Element {
+type CarViewProps = NativeStackScreenProps<CarsViewParamList, "CarView"> & {
+    carModel: CarModel;
+    account: Account;
+    pagerRef: React.RefObject<PagerView | null>;
+    tfaInProgress: React.RefObject<boolean>;
+}
+
+function CarView({ carModel, navigation, account, pagerRef, tfaInProgress }: CarViewProps): React.JSX.Element {
     const isDarkMode = useColorScheme() === 'dark';
 
     useEffect(() => {
@@ -213,13 +216,25 @@ function CarView({ carModel, navigation, account, pagerRef }: CarViewProps): Rea
             await storageHandler.storeApiData(data, carModel.getVin());
         } else {
             setErrorMessage(data.errorMessage ?? '');
-            if (!localApiHandler.hasError()) {
-                // remote failed but data have been fetched one time
-                Alert.alert(languageHandler.getTranslation("error"), languageHandler.getTranslation(getErrorMessage(data.errorMessage ?? '')));
+            if (data.errorMessage == CarMakerClientErrors.PENDING_TFA) {
+                // il faut refaire le TFA 
+                if (!tfaInProgress.current) {
+                    tfaInProgress.current = true;
+                    navigation.navigate("TfaView", {
+                        regToken: data.regToken ?? ''
+                    });
+                }
+                
+            } else {
+                if (!localApiHandler.hasError()) {
+                    // remote failed but data have been fetched one time
+                    Alert.alert(languageHandler.getTranslation("error"), languageHandler.getTranslation(getErrorMessage(data.errorMessage ?? '')));
+                }
             }
+            return;
         }
 
-        cockpitData = await account.fetchCarCockpit(carModel.getVin());
+        /* cockpitData = await account.fetchCarCockpit(carModel.getVin());
         if (!cockpitData.hasError) {
             if (remoteApiHandler.setCockpitStatus)
                 remoteApiHandler.setCockpitStatus(cockpitData);
@@ -272,7 +287,7 @@ function CarView({ carModel, navigation, account, pagerRef }: CarViewProps): Rea
                 remoteApiHandler.setHVACStatus(hvacStatus);
             }
             await storageHandler.storeApiData(hvacStatus, carModel.getVin(), 'hvacStatus');
-        }
+        } */
 
         // trigger a re-render
         setApiHandler(remoteApiHandler);

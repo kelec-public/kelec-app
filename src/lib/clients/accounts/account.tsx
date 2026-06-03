@@ -5,6 +5,7 @@ type CarFetchStatus = {
     hasError: boolean;
     errorMessage?: string;
     apiData?: any;
+    regToken?: string;
 };
 
 enum CarMaker {

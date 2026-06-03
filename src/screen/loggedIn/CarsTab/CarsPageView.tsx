@@ -12,6 +12,7 @@ import { WeatherApiHandler } from "../../../lib/clients/weather/weatherClient";
 import CarModel from "../../../lib/clients/cars/carModel";
 import CarModelSelector, { CarModelSelectorParamList } from "../../../packages/kelec-login/views/Steps/Step4/CarModelSelector";
 import { SafeAreaView } from "react-native-safe-area-context";
+import TfaView from "../../../packages/kelec-login/views/Steps/Step2/Tfa/TfaView";
 
 
 export type CarsViewParamList = {
@@ -27,6 +28,9 @@ export type CarsViewParamList = {
     CarModelSelector: CarModelSelectorParamList;
     CarView: undefined;
     ChargesView: undefined;
+    TfaView: {
+      regToken: string;
+  } ;
 }
 
 function CarsPageView(): React.JSX.Element {
@@ -35,7 +39,7 @@ function CarsPageView(): React.JSX.Element {
     const Stack = createNativeStackNavigator<CarsViewParamList>();
 
     const ref = useRef<PagerView>(null);
-
+    const tfaInProgress = useRef(false);
 
     return (
         <View style={styles.flex} testID="carsPageView">
@@ -57,8 +61,17 @@ function CarsPageView(): React.JSX.Element {
                                   carModel={carModel}
                                   account={account}
                                   pagerRef={ref}
+                                  tfaInProgress={tfaInProgress}
                                 />
                               )}
+                            </Stack.Screen>
+                            <Stack.Screen name="TfaView">
+                              {props =>
+                                <TfaView {...props}
+                                  onTfaCompleted={() => {
+                                    tfaInProgress.current = false;
+                                  }} />
+                              }
                             </Stack.Screen>
                             <Stack.Screen name="ChargesView">
                               {props => <ChargesView {...props} />}
