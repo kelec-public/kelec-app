@@ -5,10 +5,12 @@ import { useContext, useEffect, useRef, useState } from "react";
 import MainContext from "../../../../../../lib/Contexts/MainContext";
 import Text from "../../../../../../screen/Common/CustomText";
 import RenaultTfaClient from "../../../../../../lib/clients/carMakers/renault/renaultTfaClient";
-import { ActivityIndicator, Alert, StyleSheet, View } from "react-native";
-import commonStyles from "../../../../../../lib/graphics/commonStyle";
+import { Alert, StyleSheet, View } from "react-native";
 import { TfaEmail } from "../../../../../../lib/clients/carMakers/renault/renaultTfaModels";
 import TextInput from "../../../../../../screen/Common/TextInput";
+import InfoPopup from "../../../../../../screen/Common/InfoPopup";
+import FullScreenLoading from "../../../../../../FullScreenLoading";
+import TfaCodeView from "./TfaCodeView";
 
 type Props = NativeStackScreenProps<LoginEntryParamList, 'TfaView'>;
 
@@ -32,9 +34,10 @@ const TfaView = ({ navigation, route }: Props) => {
     const { languageHandler } = useContext(MainContext);
 
     const [isLightLoading, setIsLightLoading] = useState<boolean>(false);
-    const [currentStep, setCurrentStep] = useState<TfaSteps>(TfaSteps.GETTING_DEVICE_ID);
+    //const [currentStep, setCurrentStep] = useState<TfaSteps>(TfaSteps.GETTING_DEVICE_ID);
     const [stepStatus, setStepStatus] = useState<TfaStepStatus>(TfaStepStatus.LOADING);
     const [tfaEmail, setTfaEmail] = useState<TfaEmail | null>(null);
+    const [errorMessage, setErrorMessage] = useState<string>('');
 
     const [userInputCode, setUserInputCode] = useState<string>('');
 
@@ -50,87 +53,55 @@ const TfaView = ({ navigation, route }: Props) => {
 
     const launchTfaSequence = async () => {
         const tfaClient = tfaClientRef.current!;
+        setStepStatus(TfaStepStatus.LOADING);
+
         // 1ère étape on récupère le token du device
         try {
-            setCurrentStep(TfaSteps.GETTING_DEVICE_ID);
-            setStepStatus(TfaStepStatus.LOADING);
-            const deviceId = await tfaClient.getDeviceId();
-            console.log("Device ID obtained for TFA:", deviceId);
-        } catch (error) {
-            console.error("Error during TFA device ID retrieval:", error);
-            setStepStatus(TfaStepStatus.ERROR);
-            return;
-        }
+            //setCurrentStep(TfaSteps.GETTING_DEVICE_ID);
+            await tfaClient.getDeviceId();
 
-
-        // 2ème étape on lance la séquence de TFA
-        try {
-            setCurrentStep(TfaSteps.TFA_INIT);
-            setStepStatus(TfaStepStatus.LOADING);
+            // 2ème étape on lance la séquence de TFA
+            //setCurrentStep(TfaSteps.TFA_INIT);
             await tfaClient.initTfaSequence();
-        } catch (error) {
-            setStepStatus(TfaStepStatus.ERROR);
-            return;
-        }
 
-        // 3ème étape on récupère les emails disponibles pour le TFA
-        try {
-            setCurrentStep(TfaSteps.GET_TFA_EMAILS);
-            setStepStatus(TfaStepStatus.LOADING);
+            // 3ème étape on récupère les emails disponibles pour le TFA
+            //setCurrentStep(TfaSteps.GET_TFA_EMAILS);
             const tfaEmail = await tfaClient.getTfaEmails();
             setTfaEmail(tfaEmail);
-        } catch (error) {
-            setStepStatus(TfaStepStatus.ERROR);
-            return;
-        }
 
-        // 4ème étape on envoie le mail
-        try {
-            setCurrentStep(TfaSteps.SENDING_VERIFICATION_CODE);
-            setStepStatus(TfaStepStatus.LOADING);
+            // 4ème étape on envoie le mail
+            //setCurrentStep(TfaSteps.SENDING_VERIFICATION_CODE);
             await tfaClient.sendTfaCode();
             setStepStatus(TfaStepStatus.DONE);
+
         } catch (error) {
+            setErrorMessage(error instanceof Error ? error.message : 'Unknown error');
             setStepStatus(TfaStepStatus.ERROR);
             return;
         }
-
     };
 
     const onValidateCode = async () => {
         const tfaClient = tfaClientRef.current!;
+        setIsLightLoading(true);
 
-        // 1ère étape on valide le code 
+
         try {
-            setCurrentStep(TfaSteps.COMPLETE_VERIFICATION);
-            setStepStatus(TfaStepStatus.LOADING);
+            // 1ère étape on valide le code 
+            //setCurrentStep(TfaSteps.COMPLETE_VERIFICATION);
             await tfaClient.validateTfaCode(userInputCode);
-        } catch (error) {
-            console.error("Error during TFA code validation:", error);
-            setStepStatus(TfaStepStatus.ERROR);
-            return;
-        }
 
-        // 2ème étape on finalise le flow TFA
-        try {
-            setCurrentStep(TfaSteps.FINALIZE_TFA);
-            setStepStatus(TfaStepStatus.LOADING);
+            // 2ème étape on finalise le flow TFA
+            //setCurrentStep(TfaSteps.FINALIZE_TFA);
             await tfaClient.finalizeTfa();
-        } catch (error) {
-            console.error("Error during TFA finalization:", error);
-            setStepStatus(TfaStepStatus.ERROR);
-            return;
-        }
 
-        // 3ème on finalise la registration
-        try {
-            setCurrentStep(TfaSteps.FINALIZE_TFA);
-            setStepStatus(TfaStepStatus.LOADING);
+            // 3ème on finalise la registration
+            //setCurrentStep(TfaSteps.FINALIZE_TFA);
             await tfaClient.finalizeRegistration();
-            setStepStatus(TfaStepStatus.DONE);
+
         } catch (error) {
-            console.error("Error during TFA finalization:", error);
             setStepStatus(TfaStepStatus.ERROR);
+            setErrorMessage(error instanceof Error ? error.message : 'Unknown error');
             return;
         }
 
@@ -138,6 +109,31 @@ const TfaView = ({ navigation, route }: Props) => {
         Alert.alert(languageHandler.getTranslation('youLlBeRedirectedToPreviousScreen'));
         navigation.goBack();
     };
+
+    const getViewDisplay = () => {
+        switch (stepStatus) {
+            case TfaStepStatus.ERROR:
+                return <InfoPopup
+                    testID="TFAErrorPopUp"
+                    icon={'error'}
+                    backgroundColour={'#FFCCB3'}
+                    iconColour={'#7A1F1F'}
+                >
+                    <Text>{languageHandler.getTranslation('error')} : {errorMessage}</Text>
+                </InfoPopup>;
+            case TfaStepStatus.LOADING:
+                return <View style={styles.stepRow}>
+                    <FullScreenLoading ></FullScreenLoading>
+                </View>;
+            case TfaStepStatus.DONE:
+                return <View style={styles.stepRow}>
+                    <TfaCodeView
+                        email={tfaEmail?.obfuscated ?? ''}
+                        onChangeCode={(code) => setUserInputCode(code)}
+                    ></TfaCodeView>
+                </View>;
+        }
+    }
 
     return (
         <LoginDefaultView
@@ -155,32 +151,7 @@ const TfaView = ({ navigation, route }: Props) => {
             disableNext={userInputCode.length != 6}
         >
             <View style={styles.container}>
-                <Text style={commonStyles.navTitle}>{languageHandler.getTranslation("firstStep")}</Text>
-                <View style={styles.stepRow}>
-                    {stepStatus === TfaStepStatus.LOADING && (
-                        <ActivityIndicator size="large" />
-                    )}
-
-                    <Text>{languageHandler.getTranslation(currentStep)}</Text>
-                </View>
-                {stepStatus === TfaStepStatus.DONE && currentStep === TfaSteps.SENDING_VERIFICATION_CODE && (
-                    <TextInput
-                        value={userInputCode}
-                        onChangeText={setUserInputCode}
-                        placeholder={languageHandler.getTranslation("enterVerificationCode")}
-                        keyboardType="numeric"
-                        testID="tfaCodeInput"
-                    >
-
-                    </TextInput>
-                )}
-                <View style={styles.stepRow}>
-                    {stepStatus === TfaStepStatus.LOADING && (
-                        <ActivityIndicator size="large" />
-                    )}
-
-                    <Text>{languageHandler.getTranslation(currentStep)}</Text>
-                </View>
+                {getViewDisplay()}
             </View>
         </LoginDefaultView>
 

@@ -141,8 +141,6 @@ class RenaultTfaClient {
         }
 
         this.phvToken = data.phvToken;
-        console.log('PHV FROM VARIABLE:', this.phvToken);
-        console.log('PHV FROM API', data.phvToken);
     };
 
     public validateTfaCode = async (code: string): Promise<void> => {
@@ -152,8 +150,6 @@ class RenaultTfaClient {
             code: code,
             APIKey: RenaultTfaClient.GIGYA_API_KEY,
         })
-
-        const fullUrl = `${RenaultTfaClient.GIGYA_URL}${RenaultTfaEndpoints.COMPLETE_EMAIL_VERIFICATION}?${urlParams.toString()}`;
 
         const response = await fetch(`${RenaultTfaClient.GIGYA_URL}${RenaultTfaEndpoints.COMPLETE_EMAIL_VERIFICATION}?${urlParams.toString()}`, {
             method: 'GET',
@@ -222,7 +218,6 @@ class RenaultTfaClient {
         }
 
         const data = await response.json();
-        console.log('Finalize registration response:', data);
 
         if (data.statusCode !== 200) {
             throw new Error(`Finalize registration failed: ${data.errorDetails ?? 'Unknown error'}`);
