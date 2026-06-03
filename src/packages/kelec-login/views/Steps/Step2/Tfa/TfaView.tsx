@@ -5,7 +5,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import MainContext from "../../../../../../lib/Contexts/MainContext";
 import Text from "../../../../../../screen/Common/CustomText";
 import RenaultTfaClient, { TFA_ERRORS } from "../../../../../../lib/clients/carMakers/renault/renaultTfaClient";
-import { Alert, StyleSheet, View } from "react-native";
+import { Alert, Button, StyleSheet, View } from "react-native";
 import { TfaEmail } from "../../../../../../lib/clients/carMakers/renault/renaultTfaModels";
 import InfoPopup from "../../../../../../screen/Common/InfoPopup";
 import FullScreenLoading from "../../../../../../FullScreenLoading";
@@ -83,6 +83,7 @@ const TfaView = ({ navigation, route, onTfaCompleted }: Props) => {
             // 4ème étape on envoie le mail
             //setCurrentStep(TfaSteps.SENDING_VERIFICATION_CODE);
             await tfaClient.sendTfaCode();
+            startCooldown();
             setStepStatus(TfaStepStatus.DONE);
 
         } catch (error) {
@@ -90,6 +91,34 @@ const TfaView = ({ navigation, route, onTfaCompleted }: Props) => {
             setStepStatus(TfaStepStatus.ERROR);
             return;
         }
+    };
+
+    const reSendCode = () => {
+        setUserInputCode('');
+        setStepStatus(TfaStepStatus.LOADING);
+        try {
+            tfaClientRef.current!.sendTfaCode();
+            startCooldown();
+            setStepStatus(TfaStepStatus.DONE);
+        } catch (error) {
+            setErrorMessage(error instanceof Error ? error.message : 'Unknown error');
+            setStepStatus(TfaStepStatus.ERROR);
+            return;
+        }
+    };
+
+    const [resendCooldown, setResendCooldown] = useState<number>(0);
+    const startCooldown = () => {
+        setResendCooldown(10);
+        const interval = setInterval(() => {
+            setResendCooldown(prev => {
+                if (prev <= 1) {
+                    clearInterval(interval);
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
     };
 
     const onValidateCode = async () => {
@@ -135,7 +164,7 @@ const TfaView = ({ navigation, route, onTfaCompleted }: Props) => {
             // depuis la car page
             Alert.alert(languageHandler.getTranslation('pullToRefreshCarData'));
         }
-        
+
         onGoBack();
     };
 
@@ -151,15 +180,25 @@ const TfaView = ({ navigation, route, onTfaCompleted }: Props) => {
                     <Text>{languageHandler.getTranslation('error')} : {errorMessage}</Text>
                 </InfoPopup>;
             case TfaStepStatus.LOADING:
-                return <View style={styles.stepRow}>
-                    <FullScreenLoading ></FullScreenLoading>
-                </View>;
+                return <FullScreenLoading ></FullScreenLoading>;
             case TfaStepStatus.DONE:
                 return <View style={styles.stepRow}>
                     <TfaCodeView
                         email={tfaEmail?.obfuscated ?? ''}
                         onChangeCode={(code) => setUserInputCode(code)}
                     ></TfaCodeView>
+                    <Button
+                        testID="resendCodeButton"
+                        onPress={() => {
+                            reSendCode();
+                        }}
+                        title={
+                            resendCooldown > 0
+                                ? `${languageHandler.getTranslation('resendCode')} (${resendCooldown}s)`
+                                : languageHandler.getTranslation('resendCode')
+                        }
+                        disabled={resendCooldown > 0}
+                    ></Button>
                 </View>;
         }
     }
@@ -192,9 +231,8 @@ const styles = StyleSheet.create({
         gap: 10,
     },
     stepRow: {
-        flexDirection: 'row',
-        gap: 10,
-        alignItems: 'center',
+        flexDirection: 'column',
+        gap: 10
     }
 });
 
