@@ -41,6 +41,7 @@ type GigyaTokenApiResponse = {
     errorMessage: string;
     statusCode: number;
     statusReason: string;
+    regToken?: string;
     data: {
         personId: string;
         gigyaDataCenter: string;
@@ -57,6 +58,7 @@ export type GigyaTokenFunctionResponse = {
     errorMessage?: string;
     cookieValue?: string;
     personId?: string;
+    regToken?: string;
 }
 
 // dict returned by the api call to get the JWT token
@@ -107,6 +109,7 @@ type LoginFunctionReponse = {
     kamereonAccountID?: string;
     firstName?: string;
     lastName?: string;
+    regToken?: string;
 }
 
 type VehiclesFunctionResponse = {
@@ -296,7 +299,8 @@ class RenaultClient extends CarMakerClient {
                                 case "Pending Two-Factor Authentication":
                                     resolve({
                                         canLogin: false,
-                                        errorMessage: CarMakerClientErrors.PENDING_TFA
+                                        errorMessage: CarMakerClientErrors.PENDING_TFA,
+                                        regToken: typedData.regToken
                                     });
                                     break;
                                 case "Account temporarily locked out":
@@ -327,12 +331,14 @@ class RenaultClient extends CarMakerClient {
                             break;
                     }
                 }).catch((error: Error) => {
+                    console.error("Error parsing gigya token response:", error);
                     resolve({
                         canLogin: false,
                         errorMessage: CarMakerClientErrors.SERVER_ERROR
                     });
                 });
             }).catch((error) => {
+                console.error("Error fetching gigya token:", error);
                 resolve({
                     canLogin: false,
                     errorMessage: CarMakerClientErrors.SERVER_ERROR
@@ -678,7 +684,8 @@ class RenaultClient extends CarMakerClient {
         if (!gigyaToken.canLogin) {
             return {
                 canLogin: false,
-                errorMessage: gigyaToken.errorMessage
+                errorMessage: gigyaToken.errorMessage,
+                regToken: gigyaToken.regToken
             };
         }
         const jwtToken = await this.getJWTToken(gigyaToken.cookieValue!);

@@ -126,9 +126,11 @@ const CredentialsView = (props: Props) => {
                 errorMessage = languageHandler.getTranslation('invalidPassWord');
                 break;
             case CarMakerClientErrors.PENDING_TFA:
-                // TODO: redirect vers TFA view
-                errorMessage = languageHandler.getTranslation('pendingTFA');
-                break;
+                // redirect to tfa view
+                navigation.navigate("TfaView", {
+                    regToken: kamereonAccountID.regToken ?? ''
+                });
+                return; // pas besoin d'afficher l'erreur
         }
 
         Alert.alert(
