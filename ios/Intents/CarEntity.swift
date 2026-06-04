@@ -29,8 +29,11 @@ struct CarQuery: EntityQuery{
     if let userBundle = UserDefaults.init(suiteName: "group.kelyanselme.MyRenaultPlus"){
       // try to get the account
       let userAccount = getUserAccount(userBundle: userBundle)
-      let toReturn = buildCarWidgetEntityFromUserCars(userCars: userAccount?.cars ?? [])
-      return toReturn
+      let allCars = buildCarWidgetEntityFromUserCars(userCars: userAccount?.cars ?? [])
+      
+      return identifiers.compactMap { id in
+        allCars.first(where: {$0.id == id}) ?? allCars.first
+      }
     }
     return []
   }
@@ -39,8 +42,7 @@ struct CarQuery: EntityQuery{
     if let userBundle = UserDefaults.init(suiteName: "group.kelyanselme.MyRenaultPlus"){
       // try to get the account
       let userAccount = getUserAccount(userBundle: userBundle)
-      let toReturn = buildCarWidgetEntityFromUserCars(userCars: userAccount?.cars ?? [])
-      return toReturn
+      return buildCarWidgetEntityFromUserCars(userCars: userAccount?.cars ?? [])
     }
     return []
   }

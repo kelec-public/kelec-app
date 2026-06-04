@@ -72,7 +72,17 @@ struct TempoProvider: AppIntentTimelineProvider {
     if (userAccount != nil){
       // first, find which car is selected for widgets
       let cars = userAccount?.cars ?? []
-      userCar = cars.first{ $0.car?.vin == configuration.car?.id }
+      
+      if let configuredVin = configuration.car?.id {
+        userCar = cars.first{ $0.car?.vin == configuredVin }
+        if userCar == nil {
+          writeWidgetLog(message: "Configured car not found (vin: \(configuredVin), falling back to first car")
+          userCar = cars.first
+        }
+      } else {
+        writeWidgetLog(message: "No car configured, using first available car")
+        userCar = cars.first
+      }
       // then update the car name
       carName = userCar?.car?.model ?? "ERROR"
       // then get the image
