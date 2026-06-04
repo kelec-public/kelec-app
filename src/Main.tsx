@@ -132,8 +132,19 @@ function Main(): React.JSX.Element {
                     transparent
                     onRequestClose={() => { }}
                 >
-                    <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' }}>
-                        <View style={{ backgroundColor: 'white', padding: 20, borderRadius: 10 }}>
+                    <View
+                        testID="messageView"
+                        style={{
+                            flex: 1,
+                            backgroundColor: 'rgba(0,0,0,0.5)',
+                            justifyContent: 'center',
+                            alignItems: 'center'
+                        }}>
+                        <View style={{
+                            backgroundColor: 'white',
+                            padding: 20,
+                            borderRadius: 10
+                        }}>
                             <Text>{message}</Text>
                         </View>
                     </View>
