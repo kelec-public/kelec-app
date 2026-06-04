@@ -45,13 +45,13 @@ const saveNativeAccount = async (account: UserAccount | null): Promise<void> => 
     }
 };
 
-const getNativeCryptedPassword = async (vin: string): Promise<string | null> => {
+const getNativeCryptedData = async (key: string): Promise<string | null> => {
     return new Promise((resolve, reject) => {
         if (Platform.OS === 'ios') {
             const cryptedMethod = RNSharedWidget?.getCryptedData;
             if (cryptedMethod == undefined) {
                 resolve(""); // for tests
-            } RNSharedWidget.getCryptedData(vin + '_password')
+            } RNSharedWidget.getCryptedData(key)
                 .then((password: string) => {
                     resolve(password);
                 })
@@ -65,7 +65,7 @@ const getNativeCryptedPassword = async (vin: string): Promise<string | null> => 
             if (cryptedMethod == undefined) {
                 resolve(""); // for tests
             }
-            SharedStorage.getEncrypted(vin + '_password', (password: string | null) => {
+            SharedStorage.getEncrypted(key, (password: string | null) => {
                 resolve(password);
             });
         }
@@ -195,7 +195,7 @@ export {
     refreshWidget,
     getWidgetsLogs,
     saveNativePreferences,
-    getNativeCryptedPassword,
+    getNativeCryptedData,
     getMileageHistory,
     getKeyboardAvoidingView,
     getNativeBatteryStatus

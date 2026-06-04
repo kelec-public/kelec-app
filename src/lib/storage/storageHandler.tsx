@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AccountInterface, CarFetchStatus, CarMaker } from "../clients/accounts/account";
-import { getNativeCryptedPassword, saveNativeAccount, saveNativeImage } from "./sharedPlatformsData";
+import { getNativeCryptedData, saveNativeAccount, saveNativeImage } from "./sharedPlatformsData";
 import RenaultAccount from "../../lib/clients/accounts/renaultAccount";
 import HyundaiAccount from "../../lib/clients/accounts/hyundaiAccount";
 import ApiHandler from "../clients/apiHandlers/apiHandler";
@@ -69,7 +69,7 @@ class StorageHandler {
             let carToAdd: CarModel;
 
             // get password from crypted storage
-            let password = await getNativeCryptedPassword(typedCar.vin);
+            let password = await getNativeCryptedData(typedCar.vin + '_password');
             if (password == null || password == "") { // happens if password hasn't been stored to crypted storage yet
                 toMigrate = true;
                 password = typedAccout.password;
