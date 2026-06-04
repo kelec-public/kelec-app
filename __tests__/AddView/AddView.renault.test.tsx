@@ -434,7 +434,7 @@ test('Should have a server error', async () => {
             })
         });
 
-    const { getByTestId } = render(<App />);
+    const { getByTestId, queryByTestId } = render(<App />);
     await waitFor(() => {
         expect(getByTestId('loginView')).toBeTruthy();
     });
@@ -466,5 +466,54 @@ test('Should have a server error', async () => {
     await waitFor(async () => {
         expect(Alert.alert).toHaveBeenCalledTimes(1);
         expect(Alert.alert).toHaveBeenCalledWith("Erreur", "Erreur serveur", [{ "text": "ok" }]);
+        // la vue tfa ne doit pas être affichée
+        expect(queryByTestId('TfaView')).toBeNull();
+    });
+});
+
+test('Should open TFA view', async () => {
+    const mockFetch = jest.fn();
+
+    // mock fetch
+    global.fetch = mockFetch
+        // to log in
+        .mockResolvedValueOnce({
+            json: jest.fn().mockResolvedValueOnce({
+                statusCode: 403,
+                errorDetails: "Pending Two-Factor Authentication"
+            })
+        });
+
+    const { getByTestId } = render(<App />);
+    await waitFor(() => {
+        expect(getByTestId('loginView')).toBeTruthy();
+    });
+
+    // try to log in with renault
+    const renaultLogo = getByTestId('renaultLogo');
+    await fireEventAsync.press(renaultLogo);
+    // then go to next step
+    const nextStepButton = getByTestId('nextStepButton');
+    await fireEventAsync.press(nextStepButton);
+    await waitFor(() => {
+        expect(getByTestId('credentialsStepView')).toBeTruthy();
+    });
+
+    // fill the credentials
+    const emailInput = getByTestId('emailInput');
+    const passwordInput = getByTestId('passwordInput');
+    expect(emailInput).toBeTruthy();
+    await fireEventAsync.changeText(emailInput, 'email');
+    await fireEventAsync.changeText(passwordInput, 'password');
+    await waitFor(async () => {
+        expect(emailInput.props.value).toBe('email');
+        expect(passwordInput.props.value).toBe('password');
+    });
+
+    // try to log in 
+    const loginButton = getByTestId('loginButton');
+    await fireEventAsync.press(loginButton);
+    await waitFor(async () => {
+        expect(getByTestId('TfaView')).toBeTruthy();
     });
 });
