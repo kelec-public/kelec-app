@@ -20,15 +20,6 @@ type Props = NativeStackScreenProps<LoginEntryParamList, 'TfaView'> & {
     onTfaCompleted?: () => void;
 }
 
-enum TfaSteps {
-    GETTING_DEVICE_ID = "getting_device_id",
-    TFA_INIT = "tfa_init",
-    GET_TFA_EMAILS = "get_tfa_emails",
-    SENDING_VERIFICATION_CODE = "sending_verification_code",
-    COMPLETE_VERIFICATION = "complete_verification",
-    FINALIZE_TFA = "finalize_tfa"
-}
-
 enum TfaStepStatus {
     LOADING,
     DONE,
@@ -40,7 +31,6 @@ const TfaView = ({ navigation, route, onTfaCompleted }: Props) => {
     const { languageHandler } = useContext(MainContext);
 
     const [isLightLoading, setIsLightLoading] = useState<boolean>(false);
-    //const [currentStep, setCurrentStep] = useState<TfaSteps>(TfaSteps.GETTING_DEVICE_ID);
     const [stepStatus, setStepStatus] = useState<TfaStepStatus>(TfaStepStatus.LOADING);
     const [tfaEmail, setTfaEmail] = useState<TfaEmail | null>(null);
     const [errorMessage, setErrorMessage] = useState<string>('');
@@ -74,20 +64,16 @@ const TfaView = ({ navigation, route, onTfaCompleted }: Props) => {
 
         // 1ère étape on récupère le token du device
         try {
-            //setCurrentStep(TfaSteps.GETTING_DEVICE_ID);
             await tfaClient.getDeviceId();
 
             // 2ème étape on lance la séquence de TFA
-            //setCurrentStep(TfaSteps.TFA_INIT);
             await tfaClient.initTfaSequence();
 
             // 3ème étape on récupère les emails disponibles pour le TFA
-            //setCurrentStep(TfaSteps.GET_TFA_EMAILS);
             const tfaEmail = await tfaClient.getTfaEmails();
             setTfaEmail(tfaEmail);
 
             // 4ème étape on envoie le mail
-            //setCurrentStep(TfaSteps.SENDING_VERIFICATION_CODE);
             await tfaClient.sendTfaCode();
             startCooldown();
             setStepStatus(TfaStepStatus.DONE);
@@ -120,7 +106,7 @@ const TfaView = ({ navigation, route, onTfaCompleted }: Props) => {
         intervalRef.current = setInterval(() => {
             setResendCooldown(prev => {
                 if (prev <= 1) {
-                    clearInterval(intervalRef.current!);
+                    clearInterval(intervalRef.current);
                     return 0;
                 }
                 return prev - 1;
@@ -135,15 +121,12 @@ const TfaView = ({ navigation, route, onTfaCompleted }: Props) => {
 
         try {
             // 1ère étape on valide le code 
-            //setCurrentStep(TfaSteps.COMPLETE_VERIFICATION);
             await tfaClient.validateTfaCode(userInputCode);
 
             // 2ème étape on finalise le flow TFA
-            //setCurrentStep(TfaSteps.FINALIZE_TFA);
             await tfaClient.finalizeTfa();
 
             // 3ème on finalise la registration
-            //setCurrentStep(TfaSteps.FINALIZE_TFA);
             await tfaClient.finalizeRegistration();
 
         } catch (error) {
