@@ -14,30 +14,13 @@ class RenaultApiHandler(
     private val email: String,
     private val password: String,
     private val kamereonAccountID: String,
+    private val cookieValue: String,
 ) {
-    private var debugMode: Boolean = true
 
-    companion object {
-        private const val TAG = "RenaultApiHandler"
-    }
-
-    private fun logDebug(msg: String){
-        if (debugMode) Log.d(TAG, msg);
-    }
 
     private suspend fun getBatteryStatusInternal(context: Context, vin: String): BatteryStatusAttributes? =
         withContext(Dispatchers.IO){
 
-                logDebug("Fetching gigya token")
-                val cookieValue: String
-                try {
-                    val gigyaResponse = GigyaApiClient.apiService.getGigyaToken(email, password)
-                    cookieValue = gigyaResponse.sessionInfo.cookieValue
-                } catch (e: Exception) {
-                    throw RuntimeException("Unable to get login cookie")
-                }
-
-                logDebug("Fetching JWT token")
                 val jwt: String
                 try {
                     val jwtResponse = GigyaApiClient.apiService.getJWTToken(cookieValue)
@@ -46,7 +29,6 @@ class RenaultApiHandler(
                     throw RuntimeException("Unable to get login token")
                 }
 
-                logDebug("Fetching battery status...")
                 val batteryStatus: BatteryStatusAttributes
                 try {
                     val batteryResponse = KamereonApiClient.apiService.getBatteryStatus(
@@ -58,9 +40,6 @@ class RenaultApiHandler(
                     throw RuntimeException("Unable to get battery status")
                 }
 
-
-
-                logDebug("Fetching cockpit status...")
                 val cockpitResponse = KamereonCockpitApiClient.apiService.getCockpitStatus(
                     kamereonAccountID, vin, jwt
                 )

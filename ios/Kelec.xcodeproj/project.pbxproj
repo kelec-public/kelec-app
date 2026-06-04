@@ -105,6 +105,10 @@
 		EB94F8802FB3C22F004E0BB4 /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = EB94F87D2FB3C22F004E0BB4 /* Config.xcconfig */; };
 		EB94F8812FB3C22F004E0BB4 /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = EB94F87D2FB3C22F004E0BB4 /* Config.xcconfig */; };
 		EB9690752D105B800034D1AB /* KelecWatchOSWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 89E47DC12C2EDB8B00CD1A27 /* KelecWatchOSWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		EBAE10632FD17363000AD9D7 /* storageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAE10622FD17363000AD9D7 /* storageHandler.swift */; };
+		EBAE10642FD17363000AD9D7 /* storageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAE10622FD17363000AD9D7 /* storageHandler.swift */; };
+		EBAE10652FD17363000AD9D7 /* storageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAE10622FD17363000AD9D7 /* storageHandler.swift */; };
+		EBAE10662FD17363000AD9D7 /* storageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAE10622FD17363000AD9D7 /* storageHandler.swift */; };
 		EBB5E25E2CEB4711005F9A44 /* widgetHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBB5E25D2CEB470C005F9A44 /* widgetHelper.swift */; };
 		EBB5E25F2CEB4711005F9A44 /* widgetHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBB5E25D2CEB470C005F9A44 /* widgetHelper.swift */; };
 		EBB5E2602CEB4711005F9A44 /* widgetHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBB5E25D2CEB470C005F9A44 /* widgetHelper.swift */; };
@@ -304,6 +308,7 @@
 		EB94F8742FB3B702004E0BB4 /* ApiClients.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiClients.swift; sourceTree = "<group>"; };
 		EB94F87D2FB3C22F004E0BB4 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		EB94F8822FB3C47B004E0BB4 /* KelecWatchOs-Watch-App-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "KelecWatchOs-Watch-App-Info.plist"; sourceTree = SOURCE_ROOT; };
+		EBAE10622FD17363000AD9D7 /* storageHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = storageHandler.swift; sourceTree = "<group>"; };
 		EBB5E25D2CEB470C005F9A44 /* widgetHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = widgetHelper.swift; sourceTree = "<group>"; };
 		EBBEC8B92C5EC18900539BC6 /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = da; path = da.lproj/Localizable.strings; sourceTree = "<group>"; };
 		EBBEC8BA2C5EC19000539BC6 /* pt-PT */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-PT"; path = "pt-PT.lproj/Localizable.strings"; sourceTree = "<group>"; };
@@ -588,6 +593,7 @@
 			children = (
 				EBB5E25D2CEB470C005F9A44 /* widgetHelper.swift */,
 				893FFED62BA8677F006D7475 /* zeServices.swift */,
+				EBAE10622FD17363000AD9D7 /* storageHandler.swift */,
 			);
 			path = helpers;
 			sourceTree = "<group>";
@@ -1145,6 +1151,7 @@
 				EB334B612D523E65007CB65D /* widgetHelper.swift in Sources */,
 				EB334B622D523E7B007CB65D /* zeServices.swift in Sources */,
 				EB2EC5602D9DBC7D001C6DD8 /* AppDelegare.swift in Sources */,
+				EBAE10632FD17363000AD9D7 /* storageHandler.swift in Sources */,
 				893FFEAE2BA85164006D7475 /* RNSharedRefreshWidget.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1161,6 +1168,7 @@
 				8931F4152C2EB5E30088CD21 /* zeServices.swift in Sources */,
 				8931F41C2C2EB7380088CD21 /* BatteryCardView.swift in Sources */,
 				8931F3E82C2EB57B0088CD21 /* KelecWatchOsApp.swift in Sources */,
+				EBAE10662FD17363000AD9D7 /* storageHandler.swift in Sources */,
 				EB94F8772FB3BAB9004E0BB4 /* ApiClients.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1188,6 +1196,7 @@
 			files = (
 				EB94F8762FB3BAB9004E0BB4 /* ApiClients.swift in Sources */,
 				895B27862C2CAF3F009A9366 /* rectangularView.swift in Sources */,
+				EBAE10642FD17363000AD9D7 /* storageHandler.swift in Sources */,
 				EBB5E2602CEB4711005F9A44 /* widgetHelper.swift in Sources */,
 				EB8576692C9B5F6200DA2F7E /* MediumTempoWidget.swift in Sources */,
 				893FFEDB2BA86806006D7475 /* SmallWidgets.swift in Sources */,
@@ -1215,6 +1224,7 @@
 			files = (
 				89E47DD42C2EE18E00CD1A27 /* KelecWatchOSWidget.swift in Sources */,
 				EB08B30C2D411E1C00ABB3A9 /* circularView.swift in Sources */,
+				EBAE10652FD17363000AD9D7 /* storageHandler.swift in Sources */,
 				EB08B30D2D411E1F00ABB3A9 /* inlineView.swift in Sources */,
 				EB08B30E2D411E2300ABB3A9 /* rectangularView.swift in Sources */,
 				EB08B3102D416FD000ABB3A9 /* KelecWatchOSWidgetBundle.swift in Sources */,

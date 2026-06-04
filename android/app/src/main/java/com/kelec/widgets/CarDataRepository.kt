@@ -11,6 +11,7 @@ import org.json.JSONObject
 import com.kelec.ApiHandler.BatteryStatusAttributes
 import java.time.Instant
 
+
 class CarDataRepository(context: Context) {
     private val context: Context = context.applicationContext
     private val prefs: SharedPreferences = this.context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -109,8 +110,17 @@ class CarDataRepository(context: Context) {
             .apply()
     }
 
-    // password
-    fun loadPassword(vin: String): String? {
+    // crypted data
+    fun loadCryptedPassword(vin: String): String? = loadCryptedData(vin + PASSWORD_SUFFIX)
+    fun loadCryptedCookieValue(email: String): String? {
+        val raw = loadCryptedData(COOKIEVALUE_PREFIX + email) ?: return null
+        return try {
+            Gson().fromJson(raw, GigyaToken::class.java).cookieValue
+        } catch (e: Exception) {
+            null
+        }
+    }
+    private fun loadCryptedData(key: String): String? {
         return try {
             val masterKey = MasterKey.Builder(context)
                 .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
@@ -124,7 +134,7 @@ class CarDataRepository(context: Context) {
                 EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             )
 
-            secure.getString(vin + PASSWORD_SUFFIX, "") ?.takeIf { it.isNotEmpty() }
+            secure.getString(key, "") ?.takeIf { it.isNotEmpty() }
         } catch (e: Exception) {
             null
         }
@@ -140,6 +150,11 @@ class CarDataRepository(context: Context) {
     ) {
         fun isDemo(): Boolean = DEMO_CAR_MAKER == maker
     }
+
+    data class GigyaToken(
+        val canLogin: Boolean = false,
+        val cookieValue: String? = null
+    )
 
     sealed class AccountSnapshot {
 
@@ -163,6 +178,7 @@ class CarDataRepository(context: Context) {
         private const val APP_PREFERENCES_KEY = "appPreferences"
         private const val CAR_DATA_SUFFIX = "/carData"
         private const val PASSWORD_SUFFIX = "_password"
+        private const val COOKIEVALUE_PREFIX = "cookieValue_"
         private const val DEMO_CAR_MAKER = "demo"
 
         fun demoBatteryStatus(): BatteryStatusAttributes =

@@ -26,16 +26,6 @@ public object GigyaApiClient {
 private const val GIGYA_API_KEY = BuildConfig.GIGYA_API_KEY;
 interface GigyaApiService {
 
-    // to get the account cookieValue
-    @FormUrlEncoded
-    @POST("accounts.login")
-    suspend fun getGigyaToken(
-        @Field("loginID") loginID: String,
-        @Field("password") password: String,
-        @Field("include") include: String = "data",
-        @Field("APIKey") apiKey: String = GIGYA_API_KEY
-    ): getGigyaTokenResponse;
-
     @FormUrlEncoded
     @POST("accounts.getJWT")
     suspend fun getJWTToken(
@@ -45,27 +35,6 @@ interface GigyaApiService {
         @Field("APIKey") apiKey: String = GIGYA_API_KEY
     ): getJWTTokenResponse;
 }
-
-
-data class getGigyaTokenResponse(
-    // to get the cookieValue (gigya token)
-    val errorCode: Int,
-    val errorDetails: String,
-    val errorMessage: String,
-    val statusCode: Int,
-    val statusReason: String,
-    var data: GigyaTokenData,
-    var sessionInfo: GigyaTokenSessionInfo
-)
-data class GigyaTokenData(
-    val personId: String,
-    var gigyaDataCenter: String,
-)
-
-data class GigyaTokenSessionInfo(
-    val cookieName: String,
-    val cookieValue: String,
-)
 
 data class getJWTTokenResponse(
     //  to get the JWT token

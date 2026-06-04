@@ -98,13 +98,18 @@ public class KelecMainWIdget extends AppWidgetProvider {
             return done();
         }
 
-        String password = repo.loadPassword(car.getVin());
+        String password = repo.loadCryptedPassword(car.getVin());
         if (password == null) {
             return renderError(mgr, appWidgetId, context, "Unable to decrpyt password");
         }
 
+        String cookieValue = repo.loadCryptedCookieValue(car.getEmail());
+        if (cookieValue == null) {
+            return renderError(mgr, appWidgetId, context, "Unable to decrypt cookie value");
+        }
+
         BatteryStatusAttributes cached = repo.loadCachedBatteryStatus(car.getVin());
-        RenaultApiHandler api = new RenaultApiHandler(car.getEmail(), password, car.getKamereonAccountID());
+        RenaultApiHandler api = new RenaultApiHandler(car.getEmail(), password, car.getKamereonAccountID(), cookieValue);
 
         return api.getBatteryStatus(context, car.getVin())
                 .thenAccept(fresh -> {

@@ -21,13 +21,21 @@ public func getCarMakerApiClient(usercar: UserCar) -> ApiClient{
   case "renault", "dacia", "alpine":
     let gigyaApiKey = envVar("GIGYA_API_KEY")
     let kamareonApiKey = envVar("KAMEREON_API_KEY")
-    return RenaultApiClient(
+    
+    var apiClient = RenaultApiClient(
       username: usercar.getEmail(),
       password: usercar.getPassword(),
       kamereonAccountId: usercar.kamereonAccountID ?? "",
       gigyaApiKey: gigyaApiKey,
       kamareonApiKey: kamareonApiKey
-  )
+    )
+      
+    // try to get cookie value from keychain
+      if let cookieValueFromKeychain = getCryptedCookieValue(email: usercar.getEmail()) {
+        apiClient.setCookieValue(cookieValue: cookieValueFromKeychain.cookieValue)
+        writeWidgetLog(message: "Crypted cookie value loaded")
+      }
+    return apiClient
   case "hyundai":
     return HyundaiApiClient(email: usercar.getEmail(), password: usercar.getPassword(), pin: usercar.pinCode ?? "")
   default:
