@@ -9,6 +9,8 @@ import UserAccount from "../../src/lib/clients/accounts/userAccount";
 jest.useFakeTimers();
 beforeEach(async () => {
     jest.useFakeTimers();
+    mockGetBatteryStatus.mockReset();
+    mockGetCockpitStatus.mockReset();
     await AsyncStorage.clear();
     const car1 = new RenaultCar('vin1', 'model1', 'image1', CarMaker.RENAULT, 'AA0001AA');
     const account: Account = new Account('email', 'passwod', CarMaker.RENAULT, car1);
@@ -16,6 +18,7 @@ beforeEach(async () => {
     await AsyncStorage.setItem('account', JSON.stringify(userAccount));
     await AsyncStorage.setItem('kelecNextGen', "true");
 });
+
 
 
 const mockGetBatteryStatus = jest.fn();

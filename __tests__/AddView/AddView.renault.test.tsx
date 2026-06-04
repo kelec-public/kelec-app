@@ -93,7 +93,7 @@ const getKamareonAccountBrandName = (carmaker: CarMaker): string => {
 describe('Should add renault group cars', () => {
     const renaultGroupCarMakers = [
         CarMaker.ALPINE,
-         CarMaker.DACIA,
+        CarMaker.DACIA,
         CarMaker.RENAULT
     ]
     for (const renaultGroupCarMaker of renaultGroupCarMakers) {
@@ -163,7 +163,7 @@ describe('Should add renault group cars', () => {
             expect(queryAllByTestId('addBackButton').length).toBe(0);
 
             // try to log in with brand
-            const brandLogo = getByTestId(renaultGroupCarMaker+'Logo');
+            const brandLogo = getByTestId(renaultGroupCarMaker + 'Logo');
             await fireEventAsync.press(brandLogo);
             // then go to next step
             const nextStepButton = getByTestId('nextStepButton');
@@ -382,7 +382,7 @@ test('Should have entered incorrect crendetials', async () => {
         .mockResolvedValueOnce({
             json: jest.fn().mockResolvedValueOnce({
                 statusCode: 403,
-                errorDetails: "invalid creds"
+                errorDetails: "invalid loginID or password"
             })
         });
 

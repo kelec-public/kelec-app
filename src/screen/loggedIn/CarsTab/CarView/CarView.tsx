@@ -231,8 +231,13 @@ function CarView({ carModel, navigation, account, pagerRef, tfaInProgress }: Car
                 if (!localApiHandler.hasError()) {
                     // remote failed but data have been fetched one time
                     Alert.alert(languageHandler.getTranslation("error"), languageHandler.getTranslation(getErrorMessage(data.errorMessage ?? '')));
+                } else {
+                    // remote failed and no data have been fetched
+                    setViewState(ViewState.ERROR);
                 }
             }
+
+
             return;
         }
 

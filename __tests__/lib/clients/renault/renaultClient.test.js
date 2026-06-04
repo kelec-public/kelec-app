@@ -212,7 +212,7 @@ describe('getGigyaToken', () => {
         global.fetch = jest.fn().mockResolvedValueOnce({
             json: jest.fn().mockResolvedValueOnce({
                 statusCode: 403,
-                errorDetails: "invalid id"
+                errorDetails: "invalid loginID or password"
             })
         });
         const account = await renaultClient.getKamereonAccount();
