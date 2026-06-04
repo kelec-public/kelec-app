@@ -87,13 +87,9 @@ function Main(): React.JSX.Element {
     // to check if there is a message to display
     const pkg = require('../package.json');
     const checkForMessages = async (): Promise<void> => {
-        try {
-            const message = await kelecApiHandler.getMessage(pkg.version, languageHandler.getLanguage());
-            if (message) {
-                setMessage(message);
-            }
-        } catch (e) {
-            // nothing to do
+        const message = await kelecApiHandler.getMessage(pkg.version, languageHandler.getLanguage());
+        if (message) {
+            setMessage(message);
         }
     };
 
