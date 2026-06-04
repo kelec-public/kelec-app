@@ -1,5 +1,5 @@
 import { Modal, View } from "react-native";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import FullScreenLoading from "./FullScreenLoading";
 import MainContext from "./lib/Contexts/MainContext";
 import LanguageHandler from "./lib/model/localization/languageHandler";
@@ -10,6 +10,8 @@ import WelcomeScreen from "./WelcomeScreen";
 import { AppErrorBoundary } from "./AppErrorBoundary";
 import LoginEntryView from "./packages/kelec-login/views/LoginEntryView";
 import AppPreferences from "./lib/appPreferences/model/appPreferences";
+import KelecApiHandler from "./lib/clients/kelec-api/kelecApiHandler";
+import Text from "./screen/Common/CustomText";
 
 export enum ViewsAvailable {
     LOGIN = 'LOGIN',
@@ -27,19 +29,25 @@ function Main(): React.JSX.Element {
     const [currentView, setCurrentView] = useState(ViewsAvailable.LOADING);
 
     // to current user on the app
-    const [currentUser, setCurrentUser] = useState<UserAccount>(new UserAccount("", []));
+    const [currentUser, setCurrentUser] = useState<UserAccount>(() => new UserAccount("", []));
     // to store the app preferences
-    const [appPreferences, setAppPreferences] = useState<AppPreferences>(new AppPreferences());
+    const [appPreferences, setAppPreferences] = useState<AppPreferences>(() => new AppPreferences());
+
+    // to store message from kelec api
+    const [message, setMessage] = useState<string | null>(null);
 
     // to handle the storage of the app
-    const storageHandler = new StorageHandler();
+    const storageHandler = useRef(new StorageHandler()).current;
 
     // to handle the language of the app
-    const languageHandler = new LanguageHandler();
+    const languageHandler = useRef(new LanguageHandler()).current;
 
+    // to handle kelec api
+    const kelecApiHandler = useRef(new KelecApiHandler()).current;
 
 
     useEffect(() => {
+        checkForMessages();
         checkOnboarding();
         reloadUser();
         reloadAppPreferences();
@@ -76,6 +84,19 @@ function Main(): React.JSX.Element {
         }
     };
 
+    // to check if there is a message to display
+    const pkg = require('../package.json');
+    const checkForMessages = async (): Promise<void> => {
+        try {
+            const message = await kelecApiHandler.getMessage(pkg.version, languageHandler.getLanguage());
+            if (message) {
+                setMessage(message);
+            }
+        } catch (e) {
+            // nothing to do
+        }
+    };
+
 
 
     // to get the current view of the app according to the current state
@@ -105,6 +126,18 @@ function Main(): React.JSX.Element {
     return (
         <AppErrorBoundary>
             <MainContext.Provider value={mainContextValues}>
+                <Modal
+                    visible={!!message}
+                    animationType='fade'
+                    transparent
+                    onRequestClose={() => { }}
+                >
+                    <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' }}>
+                        <View style={{ backgroundColor: 'white', padding: 20, borderRadius: 10 }}>
+                            <Text>{message}</Text>
+                        </View>
+                    </View>
+                </Modal>
                 <Modal visible={showOnboarding} animationType='slide'>
                     <WelcomeScreen />
                 </Modal>

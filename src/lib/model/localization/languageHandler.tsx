@@ -57,6 +57,10 @@ class LanguageHandler {
         // Get the translation for the given key
         return this.languageFile[key] || key;
     }
+
+    getLanguage(): string {
+        return this.language;
+    }
 }
 
 export default LanguageHandler;
