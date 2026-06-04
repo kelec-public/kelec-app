@@ -23,7 +23,18 @@ jest.mock('./src/lib/model/localization/languageHandler', () => ({
             getTranslation: jest.fn().mockImplementation((key) => {
                 return fr[key] || key;
             }),
+            getLanguage: jest.fn().mockImplementation(() => { return "fr"; })
         };
+    })
+}));
+
+
+jest.mock('./src/lib/clients/kelec-api/kelecApiHandler', () => ({
+    __esModule: true,
+    default: jest.fn().mockImplementation(() => {
+        return {
+            getMessage: jest.fn().mockResolvedValue(null)
+        }
     })
 }));
 

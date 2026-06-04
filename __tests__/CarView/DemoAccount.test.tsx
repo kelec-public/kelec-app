@@ -1,3 +1,4 @@
+jest.unmock('../../src/lib/clients/kelec-api/kelecApiHandler');
 import React from "react";
 import { fireEventAsync, render, waitFor } from "@testing-library/react-native";
 import App from "../../App";
@@ -63,7 +64,8 @@ jest.mock('../../src/lib/clients/kelec-api/kelecApiHandler', () => {
         return {
             getBrands: jest.fn().mockResolvedValue(mockBrands()),
             getModels: jest.fn().mockResolvedValue(mockModels()),
-            getBatteries: jest.fn().mockResolvedValue(mockBatteries())
+            getBatteries: jest.fn().mockResolvedValue(mockBatteries()),
+            getMessage: jest.fn().mockResolvedValue(null)
         }
     });
 });

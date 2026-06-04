@@ -1,3 +1,4 @@
+jest.unmock('../../src/lib/clients/kelec-api/kelecApiHandler');
 import App from "../../App";
 import { render, waitFor, screen, userEvent } from "@testing-library/react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -23,7 +24,8 @@ jest.mock('../../src/lib/clients/kelec-api/kelecApiHandler', () => {
         return {
             getBrands: mockBrands,
             getModels: mockModels,
-            getBatteries: mockBatteries
+            getBatteries: mockBatteries,
+            getMessage: jest.fn().mockResolvedValue(null)
         }
     });
 });

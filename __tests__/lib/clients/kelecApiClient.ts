@@ -1,4 +1,6 @@
+jest.unmock('../../../src/lib/clients/kelec-api/kelecApiHandler');
 import KelecApiHandler from "../../../src/lib/clients/kelec-api/kelecApiHandler";
+
 
 const kelecApiClient = new KelecApiHandler();
 
