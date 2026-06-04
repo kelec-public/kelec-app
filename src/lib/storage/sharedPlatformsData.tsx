@@ -6,44 +6,58 @@ const { RNSharedWidget } = NativeModules;
 const SharedStorage = NativeModules.SharedStorage;
 
 const saveNativeAccount = async (account: UserAccount | null): Promise<void> => {
+    //set password crypted
+    account?.getCars().forEach(async car => {
+        const password = car.getPassword();
+        if (password) {
+            await setNativeCryptedData(car.getCar()?.getVin() + '_password', password);
+            // remove password from clear storage
+            car.password = '';
+        }
+    });
 
     if (Platform.OS === 'ios') {
-        //set password crypted
-        account?.getCars().forEach(car => {
-            const password = car.getPassword();
-            if (password) {
-                const cryptedMethod = RNSharedWidget?.setCryptedData;
-                if (cryptedMethod != undefined)
-                    RNSharedWidget.setCryptedData(car.getCar()?.getVin() + '_password', password);
-                // remove password from clear storage
-                car.password = '';
-            }
-        });
-
-        const cryptedMethod = RNSharedWidget?.setData;
-        if (cryptedMethod != undefined)
+        const setMethod = RNSharedWidget?.setData;
+        if (setMethod != undefined)
             RNSharedWidget.setData('account', JSON.stringify(account), (status: any) => {
             });
     }
     if (Platform.OS === 'android') {
-        //set password crypted
-        account?.getCars().forEach(async car => {
-
-            const password = car.getPassword();
-            if (password) {
-                const cryptedMethod = SharedStorage?.setEncrypted;
-                if (cryptedMethod != undefined)
-                    await SharedStorage.setEncrypted(car.getCar()?.getVin() + '_password', password);
-                // remove password from clear storage
-                car.password = '';
-            }
-        });
-
-        const cryptedMethod = SharedStorage?.set;
-        if (cryptedMethod != undefined)
+        const setMethod = SharedStorage?.set;
+        if (setMethod != undefined)
             SharedStorage.set('account', JSON.stringify(account));
     }
 };
+
+const setNativeCryptedData = async (key: string, value: string): Promise<void> => {
+    if (Platform.OS === 'ios') {
+        const cryptedMethod = RNSharedWidget?.setCryptedData;
+        if (cryptedMethod != undefined) {
+            await RNSharedWidget.setCryptedData(key, value);
+        }
+
+    }
+    if (Platform.OS === 'android') {
+        const cryptedMethod = SharedStorage?.setEncrypted;
+        if (cryptedMethod != undefined)
+            await SharedStorage.setEncrypted(key, value);
+    }
+}
+
+const clearNativeCryptedData = async (key: string): Promise<void> => {
+    if (Platform.OS === 'ios') {
+        const cryptedMethod = RNSharedWidget?.clearCryptedData;
+        if (cryptedMethod != undefined) {
+            await RNSharedWidget.clearCryptedData(key);
+        }
+    };
+
+    if (Platform.OS === 'android') {
+        const cryptedMethod = SharedStorage?.clearEncrypted;
+        if (cryptedMethod != undefined)
+            await SharedStorage.clearEncrypted(key);
+    }
+}
 
 const getNativeCryptedData = async (key: string): Promise<string | null> => {
     return new Promise((resolve, reject) => {
@@ -196,7 +210,9 @@ export {
     getWidgetsLogs,
     saveNativePreferences,
     getNativeCryptedData,
+    setNativeCryptedData,
     getMileageHistory,
     getKeyboardAvoidingView,
-    getNativeBatteryStatus
+    getNativeBatteryStatus,
+    clearNativeCryptedData
 };

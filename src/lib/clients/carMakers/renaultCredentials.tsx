@@ -1,5 +1,5 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { GigyaTokenFunctionResponse } from "./renaultClient";
+import { clearNativeCryptedData, getNativeCryptedData, setNativeCryptedData } from "../../storage/sharedPlatformsData";
 
 
 class RenaultCredentials {
@@ -39,7 +39,7 @@ class RenaultCredentials {
      * Checks if a JWT valid token is stored.
      */
     static readonly getJWTStored = async (email: string): Promise<string | null> => {
-        const storedToken = await AsyncStorage.getItem(`jwt_${email}`);
+        const storedToken = await getNativeCryptedData(`jwt_${email}`);
         if (storedToken && !RenaultCredentials.isJwtExpired(storedToken)) {
             return storedToken;
         }
@@ -50,26 +50,26 @@ class RenaultCredentials {
      * Stores a JWT token
      */
     static readonly storeJWT = async (email: string, token: string): Promise<void> => {
-        await AsyncStorage.setItem(`jwt_${email}`, token);
+        await setNativeCryptedData(`jwt_${email}`, token);
     }
 
     static readonly getCookieValue = async (email: string): Promise<GigyaTokenFunctionResponse | null> => {
-        const storedValue = await AsyncStorage.getItem(`cookieValue_${email}`);
+        const storedValue = await getNativeCryptedData(`cookieValue_${email}`);
         if (storedValue) {
             return JSON.parse(storedValue);
         }
+
         return null;
     }
 
     static readonly storeCookieValue = async (email: string, cookieValue: GigyaTokenFunctionResponse): Promise<void> => {
-        await AsyncStorage.setItem(`cookieValue_${email}`, JSON.stringify(cookieValue));
+        await setNativeCryptedData(`cookieValue_${email}`, JSON.stringify(cookieValue));
     }
 
     static readonly clearCredentials = async (email: string): Promise<void> => {
-        await AsyncStorage.removeItem(`jwt_${email}`);
-        await AsyncStorage.removeItem(`cookieValue_${email}`);
+        await clearNativeCryptedData(`jwt_${email}`);
+        await clearNativeCryptedData(`cookieValue_${email}`);
     }
-
 }
 
 

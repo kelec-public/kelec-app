@@ -240,9 +240,9 @@ type MapLocationStatus = {
 class RenaultClient extends CarMakerClient {
 
     private static readonly GIGYA_URL = 'https://gigya-prod-eu1.renaultgroup.com';
-    private static readonly GIGYA_API_KEY = Config.GIGYA_API_KEY;
+    private static readonly GIGYA_API_KEY = Config.GIGYA_API_KEY ?? '';
     private static readonly KAMEREON_URL = 'https://api-wired-prod-1-euw1.wrd-aws.com';
-    private static readonly KAMEREON_API_KEY = Config.KAMEREON_API_KEY;
+    private static readonly KAMEREON_API_KEY = Config.KAMEREON_API_KEY ?? '';
 
     kamereonAccountID: string;
 
@@ -256,12 +256,10 @@ class RenaultClient extends CarMakerClient {
         // d'abord on vérifie si l'utilisateur n'a pas déjà un cookieValue stocké
         const storedCookieValue = await RenaultCredentials.getCookieValue(this.getEmail());
         if (storedCookieValue !== null) {
-            return {
-                canLogin: true,
-                cookieValue: storedCookieValue.cookieValue,
-                personId: storedCookieValue.personId
-            };
+            return storedCookieValue
         }
+
+        // sinon on le récupère
         const url = RenaultClient.GIGYA_URL + RenaultEndpoints.GET_GIGYA_TOKEN;
         const body = {
             loginID: this.getEmail(),
@@ -282,6 +280,7 @@ class RenaultClient extends CarMakerClient {
                     switch (typedData.statusCode) {
                         // good creds
                         case 200: {
+                            // on stocke le cookieValue pour les prochaines connexions
                             RenaultCredentials.storeCookieValue(this.getEmail(), {
                                 canLogin: true,
                                 cookieValue: typedData.sessionInfo.cookieValue,
@@ -332,14 +331,12 @@ class RenaultClient extends CarMakerClient {
                             break;
                     }
                 }).catch((error: Error) => {
-                    console.error("Error parsing gigya token response:", error);
                     resolve({
                         canLogin: false,
                         errorMessage: CarMakerClientErrors.SERVER_ERROR
                     });
                 });
             }).catch((error) => {
-                console.error("Error fetching gigya token:", error);
                 resolve({
                     canLogin: false,
                     errorMessage: CarMakerClientErrors.SERVER_ERROR
@@ -375,13 +372,17 @@ class RenaultClient extends CarMakerClient {
             }).then((response) => {
                 response.json().then((data: unknown) => {
                     const typedData = data as JWTTokenApiResponse
-                    if (typedData.statusCode === 200) {
-                        RenaultCredentials.storeJWT(this.getEmail(), typedData.id_token ?? "");
+                    if (typedData.statusCode === 200 && typedData.id_token !== undefined) {
+                        RenaultCredentials.storeJWT(this.getEmail(), typedData.id_token);
                         resolve({
                             canLogin: true,
                             jwtToken: typedData.id_token
                         });
                     } else {
+                        if (typedData.errorDetails == "Unauthorized user") {
+                            // le cookie value a probablement expiré il faut le supprimer pour le regénérer
+                            RenaultCredentials.clearCredentials(this.getEmail());
+                        }
                         resolve({
                             canLogin: false,
                             errorMessage: CarMakerClientErrors.SERVER_ERROR

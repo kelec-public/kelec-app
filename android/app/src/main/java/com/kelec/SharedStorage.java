@@ -43,9 +43,8 @@ public class SharedStorage extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void setEncrypted(String key, String message){
+    public void setEncrypted(String key, String message, Promise promise){
         try {
-            Log.d("setEncrypted", "Setting key: " + key + " with message: " + message);
             MasterKey masterKey = new MasterKey.Builder(context)
                     .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
                     .build();
@@ -60,17 +59,16 @@ public class SharedStorage extends ReactContextBaseJavaModule {
 
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString(key, message);
-            editor.commit(); // Use apply() instead of commit() for asynchronous writing
-            Log.d("setEncrypted", "Successfully set key: " + key);
+            editor.commit();
+            promise.resolve(true);
         } catch (Exception e) {
-            Log.e("setEncrypted", "Error in set method: " + e.getMessage(), e);
+            promise.reject("SET_ERROR", e.getMessage(), e);
         }
     }
 
     @ReactMethod
     public void getEncrypted(String key, Callback callback){
         try {
-            Log.d("getEncrypted", "Getting value for key: " + key);
             MasterKey masterKey = new MasterKey.Builder(context)
                     .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
                     .build();
@@ -84,11 +82,32 @@ public class SharedStorage extends ReactContextBaseJavaModule {
             );
 
             String message = sharedPreferences.getString(key, "");
-            Log.d("getEncrypted", "Retrieved value for key " + key + ": " + message);
             callback.invoke(message);
         } catch (Exception e) {
-            Log.e("getEncrypted", "Error in get method: " + e.getMessage(), e);
-            callback.invoke(""); // Invoke callback with empty string in case of error
+            callback.invoke("ERROR: " + e.getMessage(), e);
+        }
+    }
+
+    @ReactMethod void clearEncrypted(String key, Promise promise) {
+        try {
+            MasterKey masterKey = new MasterKey.Builder(context)
+                    .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                    .build();
+
+            SharedPreferences sharedPreferences = EncryptedSharedPreferences.create(
+                    context,
+                    "DATA",
+                    masterKey,
+                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            );
+
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.remove(key);
+            editor.commit();
+            promise.resolve(true);
+        } catch (Exception e) {
+            promise.reject("CLEAR_ERROR", e.getMessage(), e);
         }
     }
 
