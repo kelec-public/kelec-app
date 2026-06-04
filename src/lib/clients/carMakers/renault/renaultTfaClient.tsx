@@ -21,7 +21,7 @@ class RenaultTfaClient {
     private static readonly GIGYA_URL = 'https://gigya-prod-eu1.renaultgroup.com';
     private static readonly GIGYA_API_KEY = Config.GIGYA_API_KEY ?? '';
 
-    private regToken: string;
+    private readonly regToken: string;
     private deviceId: string = '';
     private gigyaAssertion: string = '';
     private tfaEmail: TfaEmail | null = null;
