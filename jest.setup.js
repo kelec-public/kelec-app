@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as sharedPlatformsData from './src/lib/storage/sharedPlatformsData';
 import mockSafeAreaContext from 'react-native-safe-area-context/jest/mock';
 
@@ -46,6 +47,23 @@ jest.mock('react-native-share', () => {
         open: jest.fn()
     };
 })
+
+jest.spyOn(sharedPlatformsData, 'setNativeCryptedData').mockImplementation(
+    async (key, value) => {
+        await AsyncStorage.setItem(key, value);
+    }
+);
+jest.spyOn(sharedPlatformsData, 'getNativeCryptedData').mockImplementation(
+    async (key) => {
+        return await AsyncStorage.getItem(key) ?? null;
+    }
+);
+jest.spyOn(sharedPlatformsData, 'clearNativeCryptedData').mockImplementation(
+    async (key) => {
+        await AsyncStorage.removeItem(key);
+    }
+);
+
 
 jest.spyOn(sharedPlatformsData, 'refreshWidget').mockImplementation(jest.fn());
 

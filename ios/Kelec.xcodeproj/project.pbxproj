@@ -1030,6 +1030,8 @@
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Kelec/Pods-Kelec-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
+			outputPaths = (
+			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Kelec/Pods-Kelec-frameworks.sh\"\n";
