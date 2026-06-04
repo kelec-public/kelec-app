@@ -37,6 +37,7 @@ import { DocumentDirectoryPath, writeFile } from 'react-native-fs';
 import DebugZoneView from "./DebugZone/DebugZoneView";
 import BigButton, { ButtonColours } from "../../Common/BigButton";
 import TopSettingsView from "./TopSettingsView";
+import { RenaultCredentials } from "../../../lib/clients/carMakers/renaultCredentials";
 
 type Setting = {
     title: string;
@@ -103,7 +104,10 @@ function SettingsView(): React.JSX.Element {
                     description: languageHandler.getTranslation("watchOnForeground"),
                     onPress: () => {
                         (async () => {
-                            sendDataToAppleWatch(currentUser, appPreferences);
+                            // on récupère le cookieValue d'abord
+                            const allEmails: string[] = currentUser.getCars().map(car => car.getEmail());
+                            const cookieValue = await RenaultCredentials.getAllCookieValues(allEmails);
+                            sendDataToAppleWatch(currentUser, appPreferences, cookieValue);
                         })();
                     }
                 },

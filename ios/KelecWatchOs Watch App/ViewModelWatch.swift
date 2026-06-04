@@ -39,26 +39,14 @@ class ViewModelWatch: NSObject, WCSessionDelegate, ObservableObject{
   func session(_ session: WCSession, didReceiveMessage message: [String: Any], replyHandler: @escaping([String: Any]) -> Void) {
      print("Message reçu")
     let decoder = JSONDecoder()
-     if let jsonData = message["message"]{
-       if let decoded = try? decoder.decode(UserAccount.self, from: Data((jsonData as! String).utf8)){
-         print("message reçu et décodé")
-         let accountRecieved = decoded
-         let currentAccount = getAccountFromUserDefaults()
-         if(currentAccount == nil || currentAccount != accountRecieved){
-           if #available(watchOS 9, *){
-             WidgetCenter.shared.reloadAllTimelines()
-           }
-           saveAccountToUserDefaults(account: accountRecieved)
-           DispatchQueue.main.async {
-             self.shouldRefreshView = true
-           }
-         }
-       }else{
-         print("impossible de décoder")
-       }
-     }else{
-       print("le message n'existe pas")
-     }
+    
+    if let cookieMapJson = message["cookieValue"] {
+      let data = Data((cookieMapJson as! String).utf8)
+      if let cookieMap = try? decoder.decode(CookieMap.self, from: data) {
+          saveCookieMapToKeychain(cookieMap: cookieMap)
+      }
+    }
+    
     if let appPreferencesData = message["appPreferences"]{
       if let decoded = try? decoder.decode(AppPreferences.self, from:  Data((appPreferencesData as! String).utf8)){
         print("app preferences recieved an decoded")
@@ -77,6 +65,57 @@ class ViewModelWatch: NSObject, WCSessionDelegate, ObservableObject{
         print("impossible de décoder les app preferences")
       }
     }
+    
+     if let jsonData = message["message"]{
+       if let decoded = try? decoder.decode(UserAccount.self, from: Data((jsonData as! String).utf8)){
+         print("message reçu et décodé")
+         let accountRecieved = decoded
+         let currentAccount = getAccountFromUserDefaults()
+         if(currentAccount == nil || currentAccount != accountRecieved){
+           if #available(watchOS 9, *){
+             WidgetCenter.shared.reloadAllTimelines()
+           }
+           saveAccountToUserDefaults(account: accountRecieved)
+           DispatchQueue.main.async {
+             self.shouldRefreshView = true
+           }
+         }
+       }
+     }
+    
+    replyHandler([:])
+  }
+  
+  func saveCookieMapToKeychain(cookieMap: CookieMap) {
+      for (email, entry) in cookieMap {
+          guard let data = try? JSONEncoder().encode(entry),
+                let value = String(data: data, encoding: .utf8) else { continue }
+          
+          saveToKeychain(key: "cookieValue_\(email)", value: value)
+      }
+  }
+  
+  func saveToKeychain(key: String, value: String) {
+      guard let data = value.data(using: .utf8) else { return }
+      
+      // Supprime l'ancien si existe
+      let deleteQuery: [String: Any] = [
+          kSecClass as String: kSecClassGenericPassword,
+          kSecAttrAccount as String: key,
+          kSecAttrAccessGroup as String: "group.kelyanselme.MyRenaultPlus"
+      ]
+      SecItemDelete(deleteQuery as CFDictionary)
+      
+      // Sauvegarde le nouveau
+      let addQuery: [String: Any] = [
+          kSecClass as String: kSecClassGenericPassword,
+          kSecAttrAccount as String: key,
+          kSecValueData as String: data,
+          kSecAttrAccessGroup as String: "group.kelyanselme.MyRenaultPlus",
+          kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlock
+      ]
+      
+      let status = SecItemAdd(addQuery as CFDictionary, nil)
   }
   
   

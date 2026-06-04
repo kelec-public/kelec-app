@@ -13,6 +13,8 @@ public struct GigyaTokenFunctionResponse: Codable {
   public var cookieValue: String
 }
 
+public typealias CookieMap = [String: GigyaTokenFunctionResponse]
+
 public func getCryptedCookieValue(email: String)->GigyaTokenFunctionResponse? {
   do {
     let rawCookieValue = try getPasswordFromKeychain(key: "cookieValue_\(email)")

@@ -226,7 +226,7 @@ function CarView({ carModel, navigation, account, pagerRef, tfaInProgress }: Car
                         origin: TfaOrigin.CAR_PAGE
                     });
                 }
-                
+
             } else {
                 if (!localApiHandler.hasError()) {
                     // remote failed but data have been fetched one time
@@ -236,7 +236,7 @@ function CarView({ carModel, navigation, account, pagerRef, tfaInProgress }: Car
             return;
         }
 
-        /* cockpitData = await account.fetchCarCockpit(carModel.getVin());
+        cockpitData = await account.fetchCarCockpit(carModel.getVin());
         if (!cockpitData.hasError) {
             if (remoteApiHandler.setCockpitStatus)
                 remoteApiHandler.setCockpitStatus(cockpitData);
@@ -289,7 +289,7 @@ function CarView({ carModel, navigation, account, pagerRef, tfaInProgress }: Car
                 remoteApiHandler.setHVACStatus(hvacStatus);
             }
             await storageHandler.storeApiData(hvacStatus, carModel.getVin(), 'hvacStatus');
-        } */
+        }
 
         // trigger a re-render
         setApiHandler(remoteApiHandler);

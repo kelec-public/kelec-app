@@ -2,6 +2,7 @@ import { NativeModules, Platform } from "react-native";
 import * as Watch from 'react-native-watch-connectivity';
 import UserAccount from "../clients/accounts/userAccount";
 import AppPreferences from "../appPreferences/model/appPreferences";
+import { GigyaTokenFunctionResponse } from "../clients/carMakers/renaultClient";
 const { RNSharedWidget } = NativeModules;
 const SharedStorage = NativeModules.SharedStorage;
 
@@ -107,16 +108,16 @@ const saveNativeImage = async (image: string, car_vin: string): Promise<void> =>
     }
 }
 
-const sendDataToAppleWatch = async (account: UserAccount, appPreferences: AppPreferences): Promise<void> => {
+const sendDataToAppleWatch = async (account: UserAccount, appPreferences: AppPreferences, cookieValue: Record<string, GigyaTokenFunctionResponse>): Promise<void> => {
     if (Platform.OS === 'ios') {
         const payload = {
             "message": JSON.stringify(account),
-            "appPreferences": JSON.stringify(appPreferences)
+            "appPreferences": JSON.stringify(appPreferences),
+            "cookieValue": JSON.stringify(cookieValue)
         }
-        console.log(payload);
         try {
             Watch.sendMessage(payload, error => {
-
+                console.log("Error sending message to watch: ", error);
             });
         } catch {
             console.log("Error sending data to apple watch");

@@ -62,6 +62,25 @@ class RenaultCredentials {
         return null;
     }
 
+    /**
+     * Collect 
+     * @param email all emails on the app
+     * @returns a record of cookie values associated to emails
+     */
+    static readonly getAllCookieValues = async (email: string[]): Promise<Record<string, GigyaTokenFunctionResponse>> => {
+        const uniqueEmails = email.filter((value, index, self) => self.indexOf(value) === index);
+        const cookieValues: Record<string, GigyaTokenFunctionResponse> = {};
+
+        for (const email of uniqueEmails) {
+            const cookieValue = await RenaultCredentials.getCookieValue(email);
+            if (cookieValue) {
+                cookieValues[email] = cookieValue;
+            }
+        }
+
+        return cookieValues;
+    }
+
     static readonly storeCookieValue = async (email: string, cookieValue: GigyaTokenFunctionResponse): Promise<void> => {
         await setNativeCryptedData(`cookieValue_${email}`, JSON.stringify(cookieValue));
     }
