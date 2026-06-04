@@ -6,6 +6,7 @@ import { render, waitFor, screen } from "@testing-library/react-native";
 import { CarTypeInterface } from "../../src/lib/clients/cars/carTypes/carType";
 import RenaultCar from "../../src/lib/clients/cars/renaultCar";
 import UserAccount from "../../src/lib/clients/accounts/userAccount";
+import { CarMakerClientErrors } from "../../src/lib/clients/carMakers/carMakerClient";
 jest.useFakeTimers();
 beforeEach(async () => {
     jest.useFakeTimers();
@@ -89,6 +90,17 @@ test('should render the car view from cache', async () => {
         expect(screen.getByTestId('summaryCardEstimatedEnergyText').props.children[0]).toBe(0);
         expect(screen.getByTestId('lastUpdateText').props.children[1]).toBe(' le 30/03/2024 à 20:28');
     });
+});
+
+test('should open TFA view when token is expired', async () => {
+    mockGetBatteryStatus.mockResolvedValueOnce({ hasError: true, errorMessage: CarMakerClientErrors.PENDING_TFA });
+
+    render(<App />);
+
+    await waitFor(() => {
+        expect(screen.getByTestId('TfaView')).toBeDefined();
+    });
+
 });
 
 test('should render the car view from cache AND update the ui', async () => {

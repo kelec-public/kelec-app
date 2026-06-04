@@ -53,8 +53,14 @@ const TfaView = ({ navigation, route, onTfaCompleted }: Props) => {
         tfaClientRef.current = new RenaultTfaClient(regToken);
     }
 
+    const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
     useEffect(() => {
         launchTfaSequence();
+
+        return (() => {
+            if (intervalRef.current) clearInterval(intervalRef.current);
+        })
     }, []);
 
     const onGoBack = () => {
@@ -93,11 +99,11 @@ const TfaView = ({ navigation, route, onTfaCompleted }: Props) => {
         }
     };
 
-    const reSendCode = () => {
+    const reSendCode = async () => {
         setUserInputCode('');
         setStepStatus(TfaStepStatus.LOADING);
         try {
-            tfaClientRef.current!.sendTfaCode();
+            await tfaClientRef.current!.sendTfaCode();
             startCooldown();
             setStepStatus(TfaStepStatus.DONE);
         } catch (error) {
@@ -109,11 +115,12 @@ const TfaView = ({ navigation, route, onTfaCompleted }: Props) => {
 
     const [resendCooldown, setResendCooldown] = useState<number>(0);
     const startCooldown = () => {
+        if (intervalRef.current) clearInterval(intervalRef.current);
         setResendCooldown(10);
-        const interval = setInterval(() => {
+        intervalRef.current = setInterval(() => {
             setResendCooldown(prev => {
                 if (prev <= 1) {
-                    clearInterval(interval);
+                    clearInterval(intervalRef.current!);
                     return 0;
                 }
                 return prev - 1;

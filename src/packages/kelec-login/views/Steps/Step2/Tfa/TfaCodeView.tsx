@@ -70,6 +70,7 @@ const TfaCodeView = ({ email, onChangeCode }: Props) => {
                     textContentType="oneTimeCode"
                     style={styles.hiddenInput}
                     caretHidden
+                    testID="tfaCodeInput"
                 />
                 <Text style={styles.mainTitle}>{languageHandler.getTranslation("aCodeHasBeenSentToYourEmail")}</Text>
                 <Text>{email}</Text>
