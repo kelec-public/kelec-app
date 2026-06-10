@@ -3,7 +3,7 @@ import { LoginEntryParamList } from "../../LoginEntryView";
 import { CarMaker } from "../../../../../lib/clients/accounts/account";
 import { useContext, useEffect, useState } from "react";
 import CarModel from "../../../../../lib/clients/cars/carModel";
-import { Alert } from "react-native";
+import { Alert, Keyboard } from "react-native";
 import MainContext from "../../../../../lib/Contexts/MainContext";
 import FullScreenError from "../../../../../FullScreenError";
 import FullScreenLoading from "../../../../../FullScreenLoading";
@@ -35,6 +35,11 @@ const SelectACarView = (props: Props) => {
     // store fetched cars
     const [cars, setCars] = useState<CarModel[]>([]);
     const [viewState, setViewState] = useState<ViewState>(ViewState.LOADING);
+
+    useEffect(() => {
+        // on ferme le clavier s'il est resté ouvert après le TFA
+        Keyboard.dismiss();
+    }, []);
 
 
     // get cars
