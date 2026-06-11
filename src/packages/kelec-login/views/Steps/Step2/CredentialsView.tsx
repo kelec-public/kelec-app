@@ -1,4 +1,7 @@
 import React, { useContext, useState } from "react";
+import { findNodeHandle, NativeModules, TextInput } from 'react-native';
+import { RefObject, useRef } from 'react';
+import { FieldType } from '../../../../kelec-model/view/Field';
 import MainContext from "../../../../../lib/Contexts/MainContext";
 import { Alert, KeyboardAvoidingView, Platform, View } from "react-native";
 import { capitlizeFirstLetter } from "../../../../../lib/graphics/utils";
@@ -43,7 +46,7 @@ const CredentialsView = (props: Props) => {
     const onLoginSuccess = () => AutofillModule?.commit();
     const onLoginError = () => AutofillModule?.cancel();
 
-    // login 
+    // login
     const handleLogin = async () => {
         setIsLightLoading(true);
 
@@ -83,6 +86,7 @@ const CredentialsView = (props: Props) => {
         navigation.navigate("SelectACarView", {
             account: account
         });
+        onLoginSuccess();
     };
 
     /**
@@ -99,6 +103,7 @@ const CredentialsView = (props: Props) => {
                 [
                     { text: languageHandler.getTranslation('ok') }
                 ]);
+            onLoginError();
             return;
         }
 
@@ -114,6 +119,7 @@ const CredentialsView = (props: Props) => {
                 [
                     { text: languageHandler.getTranslation('ok') }
                 ]);
+            onLoginError();
         }
 
     };
@@ -158,6 +164,7 @@ const CredentialsView = (props: Props) => {
                 { text: languageHandler.getTranslation('ok') }
             ]
         );
+        onLoginError();
     };
 
     return (
@@ -188,21 +195,25 @@ const CredentialsView = (props: Props) => {
                         ]
                     }
                 >
-                    <Field
-                        testID="emailInput"
-                        label={languageHandler.getTranslation("email")}
-                        placeholder={languageHandler.getTranslation("email")}
-                        value={email}
-                        onChangeText={setEmail}
-                    />
-                    <Field
-                        testID="passwordInput"
-                        label={languageHandler.getTranslation("password")}
-                        placeholder={languageHandler.getTranslation("password")}
-                        value={password}
-                        onChangeText={setPassword}
-                        isPrivate={true}
-                    />
+                  <Field
+                    ref={emailRef}
+                    testID="emailInput"
+                    fieldType={FieldType.Email}
+                    label={languageHandler.getTranslation('email')}
+                    placeholder={languageHandler.getTranslation('email')}
+                    value={email}
+                    onFocus={handleFocus}
+                    onChangeText={setEmail}
+                  />
+                  <Field
+                    ref={passwordRef}
+                    fieldType={FieldType.Password}
+                    label={languageHandler.getTranslation('password')}
+                    placeholder={languageHandler.getTranslation('password')}
+                    value={password}
+                    onFocus={handleFocus}
+                    onChangeText={setPassword}
+                  />
 
                 </View>
             </LoginDefaultView>
