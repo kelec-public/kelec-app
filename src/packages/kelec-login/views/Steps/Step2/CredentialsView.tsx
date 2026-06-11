@@ -28,6 +28,21 @@ const CredentialsView = (props: Props) => {
     const [password, setPassword] = useState<string>("");
 
     const [isLightLoading, setIsLightLoading] = useState<boolean>(false);
+
+  const { AutofillModule } = NativeModules;
+
+  const emailRef = useRef<TextInput>(null);
+  const passwordRef = useRef<TextInput>(null);
+
+  const handleFocus = (ref: RefObject<TextInput> | undefined) => {
+    if (!ref?.current) return;
+    const tag = findNodeHandle(ref.current);
+    if (tag) AutofillModule?.notifyViewEntered(tag);
+  };
+
+    const onLoginSuccess = () => AutofillModule?.commit();
+    const onLoginError = () => AutofillModule?.cancel();
+
     // login 
     const handleLogin = async () => {
         setIsLightLoading(true);
