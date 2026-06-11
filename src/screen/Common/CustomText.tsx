@@ -1,6 +1,6 @@
-import { PropsWithoutRef } from "react";
-import { Text as RNText, StyleSheet, useColorScheme } from "react-native";
-import { getBlackColour } from "../../lib/graphics/utils";
+import React, { PropsWithoutRef } from "react";
+import { Text as RNText, StyleSheet } from "react-native";
+import { useTheme } from '@react-navigation/native';
 
 
 type TextProps = PropsWithoutRef<{
@@ -12,8 +12,8 @@ type TextProps = PropsWithoutRef<{
 }>;
 
 function Text({ style, ...otherProps }: TextProps): React.JSX.Element {
-    const isDarkMode = useColorScheme() === 'dark';
-    const mergedStyles = [{ color: getBlackColour(isDarkMode) }, styles.defaultFont, style,];
+    const theme = useTheme()
+    const mergedStyles = [{ color: theme.colors.text }, styles.defaultFont, style,];
     return <RNText testID={otherProps.testID} style={mergedStyles} {...otherProps} />;
 };
 
