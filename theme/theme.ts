@@ -1,6 +1,7 @@
 import { StatusBarStyle, useColorScheme } from 'react-native';
 import { DarkTheme, DefaultTheme } from '@react-navigation/native';
 import { Palette } from './_palette';
+import { NavigationBarStyle } from '@zoontek/react-native-navigation-bar';
 
 declare module '@react-navigation/native' {
   export interface Theme {
@@ -21,6 +22,10 @@ declare module '@react-navigation/native' {
       onSecondaryContainer: string;
       powerGreen: string;
     };
+    sysBar: {
+      status: StatusBarStyle;
+      navigation: NavigationBarStyle;
+    };
   }
 }
 
@@ -38,8 +43,8 @@ const KLightTheme = {
     powerGreen: Palette.green_500, // rgb(39,205,65)
   },
   sysBar: {
-    status: 'dark-content',
-    navigation: 'dark-content',
+    status: 'dark-content' as StatusBarStyle,
+    navigation: 'dark-content' as NavigationBarStyle,
   },
 };
 
@@ -56,8 +61,8 @@ const KDarkTheme = {
     powerGreen: Palette.green_500, // rgb(39,205,65)
   },
   sysBar: {
-    status: 'light-content',
-    navigation: 'light-content',
+    status: 'light-content'as StatusBarStyle,
+    navigation: 'light-content' as NavigationBarStyle,
   },
 };
 
