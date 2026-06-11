@@ -6,12 +6,13 @@ import { useContext, useEffect, useRef, useState } from "react";
 import MainContext from "../../../../../lib/Contexts/MainContext";
 import CarsViewContext from "../../../../../lib/Contexts/CarsViewContext";
 import commonStyles, { fontFamilyBold, fontWeightBold } from "../../../../../lib/graphics/commonStyle";
-import BigButton, { ButtonColours } from "../../../../Common/BigButton";
+import BigButton from "../../../../Common/BigButton";
 import CarViewContext from "../../../../../lib/Contexts/CarViewContext";
 import LinearGradient from "react-native-linear-gradient";
 import TemperatureHandler from "../../../../../lib/model/TemperatureHandler";
 import InfoPopup from "../../../../Common/InfoPopup";
 import BottomSheet from "../../../../Common/bottomSheet/BottomSheet";
+import Button from '../../../../../packages/kelec-model/view/Button';
 
 
 function HVACCard(): React.JSX.Element {
@@ -175,7 +176,7 @@ function HVACCard(): React.JSX.Element {
                 )}
 
                 <View style={[commonStyles.navSeparator, { marginBottom: 10 }]}></View>
-                <BigButton
+                <Button
                     disabled={isLoadingHVAC}
                     testID={'confirmButton'}
                     isLoading={isLoadingHVAC}
@@ -196,7 +197,6 @@ function HVACCard(): React.JSX.Element {
                     }}
                     icon={"ac-unit"}
                     text={languageHandler.getTranslation("launchPreHeat")}
-                    colour={ButtonColours.PRIMARY}
                 />
             </BottomSheet>
             <TouchableOpacity

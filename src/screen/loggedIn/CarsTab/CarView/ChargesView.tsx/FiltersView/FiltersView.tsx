@@ -1,6 +1,6 @@
 import { KeyboardAvoidingView, ScrollView, StyleSheet, useColorScheme, View } from "react-native";
 import Text from "../../../../../Common/CustomText";
-import BigButton, { ButtonColours } from "../../../../../Common/BigButton";
+import BigButton from "../../../../../Common/BigButton";
 import { useContext } from "react";
 import MainContext from "../../../../../../lib/Contexts/MainContext";
 import { getGrayBackgroundColour } from "../../../../../../lib/graphics/utils";
@@ -10,6 +10,7 @@ import { Filter, getFiltersAvailable } from "../../../../../../lib/model/filters
 import { getFilterMax, getFilterMin } from "../../../../../../lib/model/filters/FiltersHandlers";
 import FilterEntryCard from "./FiltersCard/FilterEntryCard";
 import { getKeyboardAvoidingView } from "../../../../../../lib/storage/sharedPlatformsData";
+import Button from '../../../../../../packages/kelec-model/view/Button';
 
 
 
@@ -65,7 +66,7 @@ function ChargesFiltersView({ setShouldOpenModal, handleModalAnim }: ChargesFilt
                             })}
                         </View>
                     </ScrollView>
-                    <BigButton
+                    <Button
                         testID={'confirmButton'}
                         onPress={async () => {
                             setShouldOpenModal(false);
@@ -73,13 +74,12 @@ function ChargesFiltersView({ setShouldOpenModal, handleModalAnim }: ChargesFilt
                         }}
                         icon={"check"}
                         text={languageHandler.getTranslation("confirm")}
-                        colour={ButtonColours.PRIMARY}
                     />
                 </View>
             </KeyboardAvoidingView>
         </SafeAreaView>
     )
-};
+}
 
 const styles = StyleSheet.create({
     modalView: {

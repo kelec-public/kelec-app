@@ -9,22 +9,16 @@ import {
     useColorScheme,
     View
 } from "react-native";
-
 import commonStyles from '../../../lib/graphics/commonStyle';
 import Icon from "react-native-vector-icons/MaterialIcons";
-
 import {
     getBlackColour,
     getGrayBackgroundColour,
     getTopDarkColour,
 } from '../../../lib/graphics/utils';
-
 import MainContext from '../../../lib/Contexts/MainContext';
-
 import Text from '../../Common/CustomText';
-
 import SettingRow, { OptionType } from './SettingRow';
-
 import {
     getWidgetsLogs,
     saveNativePreferences,
@@ -33,11 +27,12 @@ import {
 
 import { DocumentDirectoryPath, writeFile } from 'react-native-fs';
 import DebugZoneView from "./DebugZone/DebugZoneView";
-import BigButton, { ButtonColours } from "../../Common/BigButton";
+import BigButton from "../../Common/BigButton";
 import TopSettingsView from "./TopSettingsView";
 import { RenaultCredentials } from "../../../lib/clients/carMakers/renaultCredentials";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from '@react-navigation/native';
+import Button from '../../../packages/kelec-model/view/Button';
 
 type Setting = {
     title: string;
@@ -400,11 +395,10 @@ function SettingsView(): React.JSX.Element {
                             </ScrollView>
                         </View>
                         <View style={{ paddingHorizontal: 15, marginBottom: 20 }}>
-                            <BigButton
+                            <Button
                                 testID='addBackButton'
                                 text={languageHandler.getTranslation("back")}
                                 onPress={() => setShowSelectTimeZoneModal(false)}
-                                colour={ButtonColours.PRIMARY}
                             />
                         </View>
                     </SafeAreaView>

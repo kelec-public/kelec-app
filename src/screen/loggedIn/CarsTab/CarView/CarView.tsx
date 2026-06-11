@@ -342,8 +342,8 @@ function CarView({ carModel, navigation, account, pagerRef, tfaInProgress }: Car
     const [isScrollViewLoading, setIsScrollViewLoading] = useState<boolean>(false);
     const [image, setImage] = useState<string>('');
     const [apiHandler, setApiHandler] = useState<ApiHandler>(new RenaultApiHandler());
-
-    const mockCarType = new CarType({
+    
+  const mockCarType = new CarType({
         brand: { name: '', display_name: '' },
         model: { name: '', display_name: '', engine_type: '' },
         battery: { size: 0, max_ac_power: 0, max_dc_power: -1 },
@@ -468,7 +468,7 @@ function CarView({ carModel, navigation, account, pagerRef, tfaInProgress }: Car
             </SafeAreaView>
         </CarViewContext.Provider>
     )
-};
+}
 
 const styles = StyleSheet.create({
     flex: {

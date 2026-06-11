@@ -1,13 +1,14 @@
 import { Platform, ScrollView, StyleSheet, useColorScheme, View } from "react-native";
 import Text from "./screen/Common/CustomText";
-import { useContext, useState } from "react";
+import React, { useContext, useState } from "react";
 import MainContext from "./lib/Contexts/MainContext";
 import commonStyles, { fontFamilyBold, fontWeightBold } from "./lib/graphics/commonStyle";
-import BigButton, { ButtonColours } from "./screen/Common/BigButton";
+import BigButton from "./screen/Common/BigButton";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import { getAccentOrange, getBlackColour, getWhiteColour } from "./lib/graphics/utils";
 import LazyRender from "./LazyRenderer";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Button from './packages/kelec-model/view/Button';
 
 function WelcomeScreen(): React.JSX.Element {
 
@@ -83,8 +84,7 @@ function WelcomeScreen(): React.JSX.Element {
                     </View>
                     <View style={styles.bottomView}>
                         {getCheckbox("iUnderstand", 0)}
-                        <BigButton
-                            colour={ButtonColours.PRIMARY}
+                        <Button
                             onPress={handleButtonPress}
                             text={languageHandler.getTranslation("letsGo")}
                             testID="letsGoButton"

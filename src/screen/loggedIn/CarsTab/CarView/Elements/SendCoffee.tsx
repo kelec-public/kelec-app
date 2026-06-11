@@ -1,11 +1,13 @@
 import { View, TouchableOpacity, useColorScheme, Linking } from "react-native";
 import Text from "../../../../Common/CustomText";
-import { useContext } from "react";
+import React, { useContext } from "react";
 import MainContext from "../../../../../lib/Contexts/MainContext";
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { fontFamilyBold, fontWeightBold } from "../../../../../lib/graphics/commonStyle";
 import { getBlackColour, getWhiteColour } from "../../../../../lib/graphics/utils";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Button from '../../../../../packages/kelec-model/view/Button';
+import { ThemeContext } from '@react-navigation/native';
 
 type SendCoffeeCardProps = {
     readonly navigation: any;
@@ -13,6 +15,7 @@ type SendCoffeeCardProps = {
 
 function SendCoffeeCard({ navigation }: SendCoffeeCardProps): React.JSX.Element {
     const isDarkMode = useColorScheme() === 'dark';
+    const useTheme = useContext(ThemeContext);
 
     const { languageHandler } = useContext(MainContext);
     return (
@@ -29,62 +32,23 @@ function SendCoffeeCard({ navigation }: SendCoffeeCardProps): React.JSX.Element 
                     }}>{languageHandler.getTranslation('buyMeACoffee')}</Text>
                 </View>
                 <Text style={{ textAlign: 'center', fontSize: 15, color: getBlackColour(isDarkMode) }}>{languageHandler.getTranslation('donationDescription')}</Text>
-                <TouchableOpacity
+                <Button
+                    text={languageHandler.getTranslation('makeADonation')}
                     testID="openDonation"
+                    buttonStyle={useTheme?.buttons.donate}
                     onPress={() => {
-
                         Linking.openURL('https://www.paypal.com/donate/?hosted_button_id=8ZZMKEA6NTCDC');
                     }
-                    }>
-                    <View
-                        style={{
-                            backgroundColor: 'rgb(238,192,84)',
-                            borderRadius: 10,
-                            marginHorizontal: 10,
-                            height: 50,
-                            justifyContent: 'center',
-
-                        }}>
-                        <Text style={[{
-                            fontSize: 16,
-                            color: 'black',
-                            textAlign: 'center',
-                            fontFamily: fontFamilyBold,
-                            fontWeight: fontWeightBold
-                        }]}>
-                            {languageHandler.getTranslation('makeADonation')}
-                        </Text>
-
-                    </View>
-                </TouchableOpacity>
+                    }/>
                 <View style={{ flex: 1 }}></View>
-                <TouchableOpacity
+                <Button
                     testID="closeSendCoffeeView"
+                    text={languageHandler.getTranslation('back')}
+                    buttonStyle={useTheme?.buttons.neutral}
                     onPress={() => {
                         navigation.goBack();
                     }
-                    }>
-                    <View
-                        style={{
-                            backgroundColor: getBlackColour(isDarkMode),
-                            borderRadius: 10,
-                            marginHorizontal: 10,
-                            height: 50,
-                            justifyContent: 'center',
-
-                        }}>
-                        <Text style={[{
-                            fontSize: 16,
-                            color: getWhiteColour(isDarkMode),
-                            textAlign: 'center',
-                            fontFamily: fontFamilyBold,
-                            fontWeight: fontWeightBold
-                        }]}>
-                            {languageHandler.getTranslation('back')}
-                        </Text>
-
-                    </View>
-                </TouchableOpacity>
+                    }/>
             </SafeAreaView>
         </View>)
 }

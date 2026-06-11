@@ -13,6 +13,7 @@ import { useTheme } from '@react-navigation/native';
 
 function ProfileView(): React.JSX.Element {
     const isDarkMode = useColorScheme() === 'dark';
+    const theme = useTheme();
 
     const { languageHandler, currentUser, setCurrentView } = useContext(MainContext);
 
@@ -22,7 +23,7 @@ function ProfileView(): React.JSX.Element {
     return (
         <View
             testID='profileView'
-            style={[commonStyles.flex, { backgroundColor: useTheme().colors.background }]}
+            style={[commonStyles.flex, { backgroundColor: theme.colors.background }]}
         >
             <SafeAreaView style={[commonStyles.flex]} edges={['top']}>
                 <View style={[commonStyles.paddingHorizontal, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }]}>
@@ -76,7 +77,7 @@ function ProfileView(): React.JSX.Element {
 
                 </View >
                 <View style={commonStyles.navSeparator}></View>
-                <View style={[commonStyles.flex, styles.mainWrapper, { backgroundColor: useTheme().colors.background }]}>
+                <View style={[commonStyles.flex, styles.mainWrapper, { backgroundColor: theme.colors.background }]}>
                     {/* car list */}
                     <ScrollView
                         style={commonStyles.flex}

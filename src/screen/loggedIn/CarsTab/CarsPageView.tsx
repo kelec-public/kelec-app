@@ -35,6 +35,7 @@ export type CarsViewParamList = {
 
 function CarsPageView(): React.JSX.Element {
     const { currentUser } = useContext(MainContext);
+    const theme = useTheme()
 
     const Stack = createNativeStackNavigator<CarsViewParamList>();
 
@@ -48,7 +49,7 @@ function CarsPageView(): React.JSX.Element {
                     const carModel = account.getCar()!;
                     return (
                       <NavigationIndependentTree key={carModel.getVin()}>
-                        <NavigationContainer theme={useTheme()}>
+                        <NavigationContainer theme={theme}>
                           <Stack.Navigator
                             screenOptions={{
                               headerShown: false,

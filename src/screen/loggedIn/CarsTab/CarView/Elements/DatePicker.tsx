@@ -15,6 +15,7 @@ type Props = {
 
 function DatePickerField({ updateDate, dateValue, placeholder }: Props): React.JSX.Element {
     const isDarkMode = useColorScheme() === 'dark';
+    const theme = useTheme()
     const { languageHandler } = useContext(MainContext);
 
     const [datePickerVisible, setDatePickerVisible] = useState<boolean>(false);
@@ -38,7 +39,7 @@ function DatePickerField({ updateDate, dateValue, placeholder }: Props): React.J
                     justifyContent: 'space-between',
                     padding: 15,
                     borderRadius: 5,
-                    backgroundColor: useTheme().colors.background
+                    backgroundColor: theme.colors.background
 
                 }}>
                     <Text

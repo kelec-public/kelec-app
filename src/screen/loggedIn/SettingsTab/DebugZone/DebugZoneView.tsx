@@ -2,13 +2,14 @@ import React, { useContext, useState } from "react";
 import { TouchableOpacity, useColorScheme, View } from "react-native";
 import Text from "../../../Common/CustomText";
 import { getWhiteColour } from "../../../../lib/graphics/utils";
-import BigButton, { ButtonColours } from "../../../Common/BigButton";
+import BigButton from "../../../Common/BigButton";
 import MainContext from "../../../../lib/Contexts/MainContext";
 import { CarMakerClientErrors } from "../../../../lib/clients/carMakers/carMakerClient";
 import RenaultAccount from "../../../../lib/clients/accounts/renaultAccount";
 import { BatteryStatus, RenaultStatus } from "../../../../lib/clients/carMakers/renaultClient";
 import Config from 'react-native-config';
 import { SafeAreaView } from "react-native-safe-area-context";
+import Button from '../../../../packages/kelec-model/view/Button';
 import { RenaultCredentials } from "../../../../lib/clients/carMakers/renaultCredentials";
 
 type DebugZoneProps = {
@@ -246,7 +247,7 @@ const DebugZoneView = ({ setShowDebugZone }: DebugZoneProps): React.JSX.Element 
                     headers: {
                         'Content-Type': 'application/json',
                         'x-gigya-id_token': JWTToken,
-                        'apikey': MiniRenaultClient.KAMEREON_API_KEY
+                        'apikey': MiniRenaultClient.KAMEREON_API_KEY ?? ""
                     }
                 });
                 writeLog(`Successfully fetched ${endpoint} for ${vin}`);
@@ -381,12 +382,11 @@ const DebugZoneView = ({ setShowDebugZone }: DebugZoneProps): React.JSX.Element 
                         <Text>Logs :</Text>
                         {displayLogs()}
                     </View>
-                    <BigButton
+                    <Button
                         text="Close"
                         onPress={() => {
                             setShowDebugZone(false);
                         }}
-                        colour={ButtonColours.PRIMARY}
                     />
                 </View>
             </SafeAreaView>

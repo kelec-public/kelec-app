@@ -8,23 +8,23 @@ import { ChargeIndex } from "../../../../../lib/clients/apiHandlers/renaultCharg
 import { fontFamilyBold, fontWeightBold } from "../../../../../lib/graphics/commonStyle";
 import RenaultCharge from "../../../../../lib/clients/apiHandlers/renaultCharges/RenaultCharge";
 import AppPreferences from "../../../../../lib/appPreferences/model/appPreferences";
-import { useTheme } from '@react-navigation/native';
+import { Theme, useTheme } from '@react-navigation/native';
 
 type ChargeMonthHeaderProps = {
     readonly chargeIndex: ChargeIndex;
     readonly shouldDisplayCharges: boolean;
     readonly setShouldDisplayCharges: (shouldDisplay: boolean) => void;
 }
-
-const getBarColour = (appPreferences: AppPreferences, thereisCharge: RenaultCharge | undefined, hasDCCharge: RenaultCharge | undefined): string => {
+const getBarColour = (appPreferences: AppPreferences, thereisCharge: RenaultCharge | undefined, hasDCCharge: RenaultCharge | undefined, theme:Theme): string => {
     if (appPreferences.highlightDCCharges && hasDCCharge) {
         return 'rgba(0,142,255,1)';
     }
-    return thereisCharge ? useTheme().colors.powerGreen : 'lightgray';
+    return thereisCharge ? theme.colors.powerGreen : 'lightgray';
 };
 
 function ChargeMonthHeader({ chargeIndex, shouldDisplayCharges, setShouldDisplayCharges }: ChargeMonthHeaderProps): React.JSX.Element {
     const isDarkMode = useColorScheme() === 'dark';
+    const theme = useTheme()
 
     const { languageHandler, appPreferences } = useContext(MainContext);
 
@@ -64,7 +64,7 @@ function ChargeMonthHeader({ chargeIndex, shouldDisplayCharges, setShouldDisplay
                         height: '100%',
                         width: 4,
                         borderRadius: 10,
-                        backgroundColor: getBarColour(appPreferences, thereIsCharge, hasDCCharge),
+                        backgroundColor: getBarColour(appPreferences, thereIsCharge, hasDCCharge, theme),
                         opacity: dayIsFuture ? 0.3 : 1
                     }}></View>
                     {i == 0 && <Text style={{ fontSize: 10, color: 'gray' }}>{1}</Text>}
@@ -161,7 +161,7 @@ function ChargeMonthHeader({ chargeIndex, shouldDisplayCharges, setShouldDisplay
                 </View>
             </View>
             <View style={{
-                backgroundColor: useTheme().colors.secondaryContainer,
+                backgroundColor: theme.colors.secondaryContainer,
                 padding: 15,
                 marginTop: 10,
                 borderRadius: 7,
@@ -174,7 +174,7 @@ function ChargeMonthHeader({ chargeIndex, shouldDisplayCharges, setShouldDisplay
                     <Text style={{ fontWeight: fontWeightBold, fontFamily: fontFamilyBold, fontSize: 20, flex: 1 }}>{chargeIndex.charges.length}</Text>
                     <View style={{ flexDirection: 'row', gap: 0, flex: 1, flexWrap: "wrap" }}>
                         <Text numberOfLines={1} adjustsFontSizeToFit>{languageHandler.getTranslation("charges")}</Text>
-                        <Icon name="bolt" size={20} color={useTheme().colors.powerGreen} />
+                        <Icon name="bolt" size={20} color={theme.colors.powerGreen} />
                     </View>
                 </View>
                 <View

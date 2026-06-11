@@ -26,7 +26,6 @@ export type CarModelSelectorParamList = {
     title: string;
     subTitle?: string
     nextButtonText?: string;
-    backButtonText?: string;
     safeAreaEdges?: Edge[];
 }
 
@@ -38,7 +37,7 @@ const CarModelSelector = (props: Props) => {
     const { languageHandler, storageHandler } = useContext(MainContext);
 
     const { navigation, route } = props;
-    const { carModel, onConfirmUpdate, title, subTitle, nextButtonText, backButtonText, safeAreaEdges } = route.params;
+    const { carModel, onConfirmUpdate, title, subTitle, nextButtonText, safeAreaEdges } = route.params;
 
 
 
@@ -144,7 +143,6 @@ const CarModelSelector = (props: Props) => {
                 onConfirmUpdate();
             }}
             nextButtonText={nextButtonText}
-            backButtonText={backButtonText}
 
         >
             <View

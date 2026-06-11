@@ -19,7 +19,7 @@ module.exports = {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   setupFiles: ['./jest.setup.js'],
   transformIgnorePatterns: [
-    'node_modules/(?!(jest-)?@?react-native|@react-native-community|@react-navigation|react-native-config)',
+    'node_modules/(?!(jest-)?@?react-native|@react-native-community|@react-navigation|react-native-config|color|color-string|color-convert|color-name|@zoontek)',
   ],
   reporters: [
     'default',

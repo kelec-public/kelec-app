@@ -3,15 +3,14 @@ import MainContext from "../../../lib/Contexts/MainContext";
 import { Edge, SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAvoidingView, LayoutChangeEvent, Platform, ScrollView, StyleSheet, TouchableOpacity, useColorScheme, View } from "react-native";
 import Button from "../../kelec-model/view/Button";
-import { BLACK_COLOUR, WHITE_COLOUR } from "../../kelec-model/lib/colours";
+import { BLACK_COLOUR } from "../../kelec-model/lib/colours";
 import Text from "../../../screen/Common/CustomText";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { ViewsAvailable } from "../../../Main";
 import { subTitle, textBody, title1 } from "../../kelec-model/view/Titles";
 import { spacerL, spacerM, spacerS, spacerXXL } from "../../kelec-model/view/Spacers";
 import { CommonStyles } from "../../kelec-model/view/Styles";
-import { ButtonColours } from "../../kelec-model/lib/buttonTypes";
-import LinearGradient from "react-native-linear-gradient";
+import { useTheme } from '@react-navigation/native';
 
 type Props = {
     testID?: string;
@@ -33,6 +32,7 @@ type Props = {
 const LoginDefaultView = ({ children, ...props }: Props) => {
     const { languageHandler, setCurrentView } = useContext(MainContext);
     const isDarkMode = useColorScheme() === 'dark';
+    const theme = useTheme();
 
     const { testID, title, subtitle, onNext, onPrevious, isLightLoading, disableNext, shouldDisplayDismissButton, helpText, nextButtonTestID, nextButtonText, backButtonText, safeAreaEdges } = props;
 
@@ -47,14 +47,7 @@ const LoginDefaultView = ({ children, ...props }: Props) => {
     return (
         <SafeAreaView
             edges={safeAreaEdges}
-            style={
-                [
-                    {
-                        backgroundColor: WHITE_COLOUR(isDarkMode)
-                    },
-                    CommonStyles.container
-                ]
-            }
+            style={CommonStyles.container}
             testID={testID}
         >
             <KeyboardAvoidingView
@@ -91,7 +84,7 @@ const LoginDefaultView = ({ children, ...props }: Props) => {
                             </Text>
                             {shouldDisplayDismissButton && (
                                 <TouchableOpacity
-                                    testID='addBackButton'
+                                    testID="addBackButton"
                                     onPress={() => {
                                         setCurrentView(ViewsAvailable.LOGGEDIN);
                                     }}>
@@ -126,7 +119,7 @@ const LoginDefaultView = ({ children, ...props }: Props) => {
                         showsVerticalScrollIndicator={false}
                         contentContainerStyle={{
                             flexGrow: 1,
-                            paddingBottom: hasButtons ? buttonContainerHeight : spacerM
+                            paddingBottom: hasButtons ? buttonContainerHeight : spacerM,
                         }}
                     >
                         {children}
@@ -144,24 +137,8 @@ const LoginDefaultView = ({ children, ...props }: Props) => {
                 >
                     <View
                         style={{
-                            position: 'relative'
-                        }}>
-                        <LinearGradient
-                            colors={[
-                                'rgba(255, 255, 255, 0)',
-                                'rgba(255, 255, 255, 1)',
-                            ]}
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 0, y: 1 }}
-                            style={{
-                                position: 'absolute',
-                                top: 0,
-                                left: 0,
-                                width: '100%',
-                                height: '100%',
-                            }}
-                        >
-                        </LinearGradient>
+                            position: 'relative',
+                            }}>
                         <View
                             style={{
                                 gap: spacerS,
@@ -174,9 +151,8 @@ const LoginDefaultView = ({ children, ...props }: Props) => {
                                 <View>
                                     <Button
                                         testID={'previousButton'}
-                                        buttonColour={ButtonColours.SECONDARY}
-                                        text={languageHandler.getTranslation(backButtonText ?? "backToPreviousStep")}
-                                        iconName="arrow-back"
+                                        buttonStyle={theme.buttons.neutral}
+                                        icon="arrow-back"
                                         onPress={onPrevious}
                                     />
                                 </View>
@@ -188,8 +164,7 @@ const LoginDefaultView = ({ children, ...props }: Props) => {
                                         flex: 1
                                     }}>
                                     <Button
-                                        testID={nextButtonTestID ?? 'nextStepButton'}
-                                        buttonColour={ButtonColours.PRIMARY}
+                                        testID={nextButtonTestID ?? "nextStepButton"}
                                         text={languageHandler.getTranslation(nextButtonText ?? "next")}
                                         onPress={onNext}
                                         disabled={disableNext}

@@ -1,73 +1,166 @@
-import React from "react";
-import Text from "../../../screen/Common/CustomText";
-import { ActivityIndicator, TouchableOpacity, View } from "react-native";
-import Icon from "react-native-vector-icons/MaterialIcons";
-import { subTitle } from "./Titles";
-import { spacerL, spacerM, spacerXL } from "./Spacers";
-import { ButtonColours, ButtonColoursPalettes } from "../lib/buttonTypes";
-import LinearGradient from "react-native-linear-gradient";
+import React, { useRef } from 'react';
+import Text from '../../../screen/Common/CustomText';
+import { ActivityIndicator, Animated, Pressable, StyleSheet } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { spacerL, spacerM, spacerXL } from './Spacers';
+import { useTheme } from '@react-navigation/native';
+import { ButtonStyle, Gradient } from '../../../../theme/buttonStyles';
+import LinearGradient from 'react-native-linear-gradient';
 
 type ButtonProps = {
-    buttonColour: ButtonColours;
-    text: string;
-    onPress: () => void;
-    disabled?: boolean;
-    isLoading?: boolean;
-    testID?: string;
-    iconName?: string;
+    readonly buttonStyle?: ButtonStyle;
+    readonly text?: string;
+    readonly onPress: () => void;
+    readonly disabled?: boolean;
+    readonly isLoading?: boolean;
+    readonly testID?: string;
+    readonly icon?: string;
 }
 
-const Button = (props: ButtonProps): React.JSX.Element => {
-    const { buttonColour, text, onPress, disabled, isLoading, testID, iconName } = props;
+const isGradient = (value: unknown): value is Gradient =>
+    typeof value === 'object' && value !== null && 'startColor' in value;
 
-    const colourToApply = disabled ? ButtonColours.DISABLED : buttonColour;
-    const getCurrentColour = ButtonColoursPalettes[colourToApply];
+const getGradientProps = (gradient: Gradient) => ({
+    colors: [gradient.startColor, gradient.endColor],
+    start: { x: 0, y: 0 },
+    end: gradient.orientation === 'horizontal' ? { x: 1, y: 0 } : { x: 0, y: 1 },
+});
+
+const Button = (props: ButtonProps): React.JSX.Element => {
+    const { buttonStyle, text, onPress, disabled, isLoading, testID, icon } = props;
+
+    const theme = useTheme();
+    const finalStyle = buttonStyle ?? theme.buttons.primary;
+
+    const pressAnim = useRef(new Animated.Value(0)).current;
+
+    const bg = !disabled ? finalStyle.colors.background : finalStyle.colors.backgroundDisabled;
+    const bgPressed = finalStyle.colors.backgroundPressed ?? finalStyle.colors.background;
+
+    const txtColors = {
+        color: !disabled ? finalStyle.colors.text : finalStyle.colors.textDisabled,
+    };
+
+    // common container
+    const containerStyle = {
+        borderRadius: finalStyle.radius ?? 0,
+        borderColor: finalStyle.border?.color,
+        borderWidth: finalStyle.border?.width ?? 0,
+        minHeight: 50,
+        paddingVertical: spacerM,
+        paddingHorizontal: spacerXL,
+        alignItems: 'center' as const,
+        justifyContent: 'center' as const,
+        flexDirection: 'row' as const,
+    };
+
+    // opacity for animated gradient
+    const pressedOpacity = pressAnim.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, 1],
+    });
+
+    const renderBackground = () => {
+        if (isGradient(bg)) {
+            return (
+                <>
+                    {/* default gradient */}
+                    <LinearGradient
+                        {...getGradientProps(bg)}
+                        style={StyleSheet.absoluteFill}
+                    />
+                    {/* Gradient pressed, overlapped and animated */}
+                    {isGradient(bgPressed) && (
+                        <Animated.View
+                            style={[StyleSheet.absoluteFill, { opacity: pressedOpacity }]}
+                        >
+                            <LinearGradient
+                                {...getGradientProps(bgPressed)}
+                                style={StyleSheet.absoluteFill}
+                            />
+                        </Animated.View>
+                    )}
+                </>
+            );
+        }
+
+        // Fallback single color
+        const backgroundColor = pressAnim.interpolate({
+            inputRange: [0, 1],
+            outputRange: [
+                bg as string,
+                isGradient(bgPressed) ? (bg as string) : (bgPressed as string),
+            ],
+        });
+        return <Animated.View style={[StyleSheet.absoluteFill, { backgroundColor }]} />;
+    };
 
     const getButtonContent = () => {
         if (isLoading) {
-            return <ActivityIndicator />;
+            return <ActivityIndicator color={finalStyle.colors.loader} />;
         }
-        if (iconName) {
-            return <Icon name={iconName} size={spacerL} color={getCurrentColour.textColour} />;
-        } else {
-            return <Text style={[subTitle, { color: getCurrentColour.textColour, fontWeight: '400' }]}>{text}</Text>;
-        }
+        return (
+            <>
+                {icon && (
+                    <Icon
+                        testID={'buttonIcon'}
+                        name={icon}
+                        size={spacerL}
+                        color={finalStyle.colors.iconTint}
+                        style={{ position: text ? 'absolute' : 'relative', right: text ? 10 : 0 }}
+                    />
+                )}
+                {text && (
+                    <Text
+                        testID={'buttonText'}
+                        style={[finalStyle.textStyle, {
+                            ...txtColors,
+                            flexWrap: 'wrap',
+                            paddingHorizontal: 50,
+                        }]}
+                    >
+                        {text}
+                    </Text>
+                )}
+            </>
+        );
     };
 
     return (
-
-        <TouchableOpacity
+        <Pressable
             onPress={onPress}
+            onPressIn={() =>
+                Animated.timing(pressAnim, {
+                    toValue: 1,
+                    duration: 100,
+                    useNativeDriver: false,
+                }).start()
+            }
+            onPressOut={() =>
+                Animated.timing(pressAnim, {
+                    toValue: 0,
+                    duration: 300,
+                    useNativeDriver: false,
+                }).start()
+            }
             style={{
-                borderRadius: spacerM,
-                borderWidth: getCurrentColour.borderWidth,
-                borderColor: '#CCCCCC',
+                alignItems: 'stretch',
+                justifyContent: 'center',
                 alignSelf: 'stretch',
                 overflow: 'hidden',
-
             }}
             disabled={disabled || isLoading}
             testID={testID}
         >
-            <LinearGradient
-                colors={getCurrentColour.backgroundColour}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
+            <Animated.View
+                testID={'buttonStyle'}
+                style={[containerStyle, { overflow: 'hidden' }]}
             >
-                <View style={{
-                    paddingVertical: spacerM,
-                    paddingHorizontal: spacerXL,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexDirection: 'row',
-
-                }}>
-                    {getButtonContent()}
-                </View>
-            </LinearGradient>
-
-        </TouchableOpacity>
-    )
+                {renderBackground()}
+                {getButtonContent()}
+            </Animated.View>
+        </Pressable>
+    );
 };
 
 export default Button;

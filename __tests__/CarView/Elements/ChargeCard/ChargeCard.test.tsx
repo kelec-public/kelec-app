@@ -6,6 +6,24 @@ import LanguageHandler from "../../../../src/lib/model/localization/languageHand
 import AppPreferences from "../../../../src/lib/appPreferences/model/appPreferences";
 import MainContext, { MainContextType } from "../../../../src/lib/Contexts/MainContext";
 import { V2GApiSession } from "../../../../src/lib/clients/carMakers/renault/v2gApiResponse";
+import { setupThemes } from '../../../../__mocks__/theme-mock-helper';
+
+const mockUseTheme = jest.fn();
+jest.mock('@react-navigation/native', () => ({
+  ...jest.requireActual('@react-navigation/native'),
+  useTheme: () => mockUseTheme(),
+}));
+
+const mockUseColorScheme = jest.fn();
+jest.mock('react-native/Libraries/Utilities/useColorScheme', () => ({
+  __esModule: true,
+  default: () => mockUseColorScheme(),
+}));
+
+const themes = setupThemes(mockUseColorScheme);
+beforeEach(() => {
+  mockUseTheme.mockReturnValue(themes.getLight());
+});
 
 const carInterface: CarTypeInterface = {
     brand: {

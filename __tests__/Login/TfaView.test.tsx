@@ -6,6 +6,24 @@ import MainContext from "../../src/lib/Contexts/MainContext";
 import { act } from "react";
 import { Alert } from "react-native";
 import { TFA_ERRORS } from "../../src/lib/clients/carMakers/renault/renaultTfaClient";
+import { setupThemes } from '../../__mocks__/theme-mock-helper';
+
+const mockUseTheme = jest.fn();
+jest.mock('@react-navigation/native', () => ({
+  ...jest.requireActual('@react-navigation/native'),
+  useTheme: () => mockUseTheme(),
+}));
+
+const mockUseColorScheme = jest.fn();
+jest.mock('react-native/Libraries/Utilities/useColorScheme', () => ({
+  __esModule: true,
+  default: () => mockUseColorScheme(),
+}));
+
+const themes = setupThemes(mockUseColorScheme);
+beforeEach(() => {
+  mockUseTheme.mockReturnValue(themes.getLight());
+});
 
 jest.spyOn(Alert, 'alert');
 
@@ -63,6 +81,10 @@ const mockRoute = {
         origin: TfaOrigin.ADD_CAR_FLOW,
     },
 };
+
+afterEach(() => {
+    jest.useRealTimers();
+});
 
 describe('TfaView', () => {
     beforeEach(() => {
@@ -286,7 +308,6 @@ describe('TfaView', () => {
             expect(tfaClientMock.sendTfaCode).toHaveBeenCalledTimes(2);
         });
 
-        jest.useRealTimers();
     });
 
 });
