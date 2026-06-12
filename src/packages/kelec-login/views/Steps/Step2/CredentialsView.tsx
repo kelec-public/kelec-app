@@ -207,6 +207,7 @@ const CredentialsView = (props: Props) => {
                   />
                   <Field
                     ref={passwordRef}
+                    testID="passwordInput"
                     fieldType={FieldType.Password}
                     label={languageHandler.getTranslation('password')}
                     placeholder={languageHandler.getTranslation('password')}
