@@ -49,10 +49,10 @@ type FieldProps = {
   placeholder: string;
   value: string;
   onChangeText: (text: string) => void;
-  onFocus?: ((ref: RefObject<TextInput> | undefined) => void) | undefined;
+  onFocus?: ((ref: RefObject<TextInput> | undefined) => void);
   fieldType?: FieldTypeConfig;
   testID?: string;
-  ref?: RefObject<any> | undefined;
+  ref?: RefObject<any>;
 };
 
 const Field = (props: FieldProps) => {

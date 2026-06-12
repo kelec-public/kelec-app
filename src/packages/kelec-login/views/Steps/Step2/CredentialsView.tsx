@@ -1,11 +1,8 @@
-import React, { useContext, useState } from "react";
-import { findNodeHandle, NativeModules, TextInput } from 'react-native';
-import { RefObject, useRef } from 'react';
-import { FieldType } from '../../../../kelec-model/view/Field';
+import React, { useContext, useState, RefObject, useRef } from "react";
+import { findNodeHandle, NativeModules, TextInput, Alert, KeyboardAvoidingView, Platform, View } from 'react-native';
 import MainContext from "../../../../../lib/Contexts/MainContext";
-import { Alert, KeyboardAvoidingView, Platform, View } from "react-native";
 import { capitlizeFirstLetter } from "../../../../../lib/graphics/utils";
-import Field from "../../../../kelec-model/view/Field";
+import Field, { FieldType } from "../../../../kelec-model/view/Field";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { LoginEntryParamList } from "../../LoginEntryView";
 import DemoAccount from "../../../../../lib/clients/accounts/demoAccount";
