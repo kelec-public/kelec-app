@@ -1,10 +1,11 @@
 import React, { useContext, useMemo, useRef, useState } from 'react';
-import { Animated, View, SafeAreaView, useColorScheme, StyleSheet } from 'react-native';
+import { Animated, View, useColorScheme, StyleSheet } from 'react-native';
 import { getMainInterfaceBackground } from '../../../lib/graphics/utils';
 import MainContext from '../../../lib/Contexts/MainContext';
 import CarsPageView from './CarsPageView';
 import CarsViewContext from '../../../lib/Contexts/CarsViewContext';
 import Text from '../../Common/CustomText';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 function CarsView(): React.JSX.Element {
     const isDarkMode = useColorScheme() === 'dark';

@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { SafeAreaView, TouchableOpacity, useColorScheme, View } from "react-native";
+import { TouchableOpacity, useColorScheme, View } from "react-native";
 import Text from "../../../Common/CustomText";
 import { getWhiteColour } from "../../../../lib/graphics/utils";
 import BigButton, { ButtonColours } from "../../../Common/BigButton";
@@ -8,6 +8,7 @@ import { CarMakerClientErrors } from "../../../../lib/clients/carMakers/carMaker
 import RenaultAccount from "../../../../lib/clients/accounts/renaultAccount";
 import { BatteryStatus, RenaultStatus } from "../../../../lib/clients/carMakers/renaultClient";
 import Config from 'react-native-config';
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type DebugZoneProps = {
     readonly setShowDebugZone: (showDebugZone: boolean) => void;
@@ -287,9 +288,11 @@ const DebugZoneView = ({ setShowDebugZone }: DebugZoneProps): React.JSX.Element 
     const listCars = (): React.ReactNode => {
         let return_node = []
         return_node.push(
-            <Text style={{
-                fontSize: 20
-            }}>Cars available</Text>
+            <Text
+                key={'carsAvailable'}
+                style={{
+                    fontSize: 20
+                }}>Cars available</Text>
         )
         for (const car of currentUser.getCars()) {
             return_node.push(
@@ -338,7 +341,7 @@ const DebugZoneView = ({ setShowDebugZone }: DebugZoneProps): React.JSX.Element 
         let return_node = []
         for (const log of logs) {
             return_node.push(
-                <Text>{log}</Text>
+                <Text key={log}>{log}</Text>
             )
         }
         return (

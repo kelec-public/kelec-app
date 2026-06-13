@@ -26,7 +26,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import BigButton, { ButtonColours } from "../../../Common/BigButton";
 import CarsViewContext from "../../../../lib/Contexts/CarsViewContext";
 import PagerView from "react-native-pager-view";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import RenaultCharge from "../../../../lib/clients/apiHandlers/renaultCharges/RenaultCharge";
 import { CarMakerClientErrors } from "../../../../lib/clients/carMakers/carMakerClient";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -445,37 +445,41 @@ function CarView({ carModel, navigation, account, pagerRef, tfaInProgress }: Car
                                     }}
                                 >
                                     {/* modal to choose the car displayed */}
-                                    <View style={[commonStyles.flex, commonStyles.flexEnd]}>
-                                        <SafeAreaView
-                                            style={
-                                                [
-                                                    {
-                                                        backgroundColor: getGrayBackgroundColour(isDarkMode),
-                                                    },
-                                                    styles.mainView,
-                                                ]}>
-                                            <View style={styles.mainViewContent}>
-                                                <View style={[commonStyles.gap15, commonStyles.marginVertical]}>
-                                                    <Text style={{ fontFamily: fontFamilyBold, fontWeight: fontWeightBold, fontSize: 30 }}>{languageHandler.getTranslation("your_cars")}</Text>
-                                                    <View>
-                                                        {displayCarsAvailable()}
+                                    <SafeAreaProvider>
+                                        <View style={[commonStyles.flex, commonStyles.flexEnd]}>
+                                            <SafeAreaView
+                                                style={
+                                                    [
+                                                        {
+                                                            backgroundColor: getGrayBackgroundColour(isDarkMode),
+                                                        },
+                                                        styles.mainView,
+                                                    ]}
+                                                edges={['bottom']}
+                                            >
+                                                <View style={styles.mainViewContent}>
+                                                    <View style={[commonStyles.gap15, commonStyles.marginVertical]}>
+                                                        <Text style={{ fontFamily: fontFamilyBold, fontWeight: fontWeightBold, fontSize: 30 }}>{languageHandler.getTranslation("your_cars")}</Text>
+                                                        <View>
+                                                            {displayCarsAvailable()}
+                                                        </View>
+                                                    </View>
+                                                    <View style={[commonStyles.marginVertical]}>
+                                                        <BigButton
+                                                            testID={'carChoiceModalClose'}
+                                                            onPress={() => {
+                                                                setShouldDisplayCarChoice(false);
+                                                                handleModalAnim(false);
+                                                            }}
+                                                            colour={ButtonColours.PRIMARY}
+                                                            icon={"close"}
+                                                            text={languageHandler.getTranslation("cancel")}
+                                                        />
                                                     </View>
                                                 </View>
-                                                <View style={[commonStyles.marginVertical]}>
-                                                    <BigButton
-                                                        testID={'carChoiceModalClose'}
-                                                        onPress={() => {
-                                                            setShouldDisplayCarChoice(false);
-                                                            handleModalAnim(false);
-                                                        }}
-                                                        colour={ButtonColours.PRIMARY}
-                                                        icon={"close"}
-                                                        text={languageHandler.getTranslation("cancel")}
-                                                    />
-                                                </View>
-                                            </View>
-                                        </SafeAreaView>
-                                    </View>
+                                            </SafeAreaView>
+                                        </View>
+                                    </SafeAreaProvider>
                                 </Modal>
                             </View>
                         </TouchableOpacity>

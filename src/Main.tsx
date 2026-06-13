@@ -13,6 +13,7 @@ import AppPreferences from "./lib/appPreferences/model/appPreferences";
 import KelecApiHandler from "./lib/clients/kelec-api/kelecApiHandler";
 import Text from "./screen/Common/CustomText";
 import { getWhiteColour } from "./lib/graphics/utils";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 export enum ViewsAvailable {
     LOGIN = 'LOGIN',
@@ -131,25 +132,29 @@ function Main(): React.JSX.Element {
                     transparent
                     onRequestClose={() => { }}
                 >
-                    <View
-                        testID="messageView"
-                        style={{
-                            flex: 1,
-                            backgroundColor: 'rgba(0,0,0,0.8)',
-                            justifyContent: 'center',
-                            alignItems: 'center'
-                        }}>
-                        <View style={{
-                            backgroundColor: getWhiteColour(isDarkMode),
-                            padding: 20,
-                            borderRadius: 10
-                        }}>
-                            <Text>{message}</Text>
+                    <SafeAreaProvider>
+                        <View
+                            testID="messageView"
+                            style={{
+                                flex: 1,
+                                backgroundColor: 'rgba(0,0,0,0.8)',
+                                justifyContent: 'center',
+                                alignItems: 'center'
+                            }}>
+                            <View style={{
+                                backgroundColor: getWhiteColour(isDarkMode),
+                                padding: 20,
+                                borderRadius: 10
+                            }}>
+                                <Text>{message}</Text>
+                            </View>
                         </View>
-                    </View>
+                    </SafeAreaProvider>
                 </Modal>
                 <Modal visible={showOnboarding} animationType='slide'>
-                    <WelcomeScreen />
+                    <SafeAreaProvider>
+                        <WelcomeScreen />
+                    </SafeAreaProvider>
                 </Modal>
                 <View testID='appView' style={{ flex: 1 }} >
                     {getCurrentView()}

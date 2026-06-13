@@ -13,7 +13,7 @@ import { DocumentDirectoryPath, writeFile } from "react-native-fs";
 import XLSX from 'xlsx';
 import ChargesFiltersView from "./FiltersView/FiltersView";
 import ShareThirdPart from 'react-native-share';
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import ChargeMonthContent from "./ChargeMonthContent";
 import { Filter, FilterName } from "../../../../../lib/model/filters/FiltersStruct";
 import ChargesViewContext from "../../../../../lib/Contexts/ChargesViewContext";
@@ -313,10 +313,12 @@ function ChargesView({ navigation, route }: ChargesViewProps): React.JSX.Element
                         handleModalAnim(false);
                     }}
                 >
-                    <ChargesFiltersView
-                        setShouldOpenModal={setShowFiltersModal}
-                        handleModalAnim={handleModalAnim}
-                    />
+                    <SafeAreaProvider>
+                        <ChargesFiltersView
+                            setShouldOpenModal={setShowFiltersModal}
+                            handleModalAnim={handleModalAnim}
+                        />
+                    </SafeAreaProvider>
                 </Modal>
                 <View>
                     <View style={

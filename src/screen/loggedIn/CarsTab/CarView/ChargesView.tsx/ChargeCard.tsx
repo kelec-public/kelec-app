@@ -1,4 +1,4 @@
-import { Alert, DimensionValue, Modal, TouchableOpacity, View, useColorScheme, SafeAreaView, StyleSheet, ScrollView, Dimensions } from "react-native";
+import { Alert, DimensionValue, Modal, TouchableOpacity, View, useColorScheme, StyleSheet, ScrollView, Dimensions } from "react-native";
 import Text from "../../../../Common/CustomText";
 import RenaultCharge from "../../../../../lib/clients/apiHandlers/renaultCharges/RenaultCharge";
 import CarType from "../../../../../lib/clients/cars/carTypes/carType";
@@ -9,6 +9,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import commonStyles, { fontFamilyBold, fontWeightBold } from "../../../../../lib/graphics/commonStyle";
 import CarsViewContext from "../../../../../lib/Contexts/CarsViewContext";
 import BigButton, { ButtonColours } from "../../../../Common/BigButton";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type ChargeCardProps = {
     readonly charge: RenaultCharge;

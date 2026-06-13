@@ -1,4 +1,4 @@
-import { Modal, StyleSheet, TouchableOpacity, View, useColorScheme, SafeAreaView, Alert, Animated, Easing } from "react-native";
+import { Modal, StyleSheet, TouchableOpacity, View, useColorScheme, Alert, Animated, Easing } from "react-native";
 import Text from "../../../../Common/CustomText";
 import { getAccentOrange, getBlackColour, getGrayBackgroundColour, getWhiteColour } from "../../../../../lib/graphics/utils";
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -11,6 +11,7 @@ import CarViewContext from "../../../../../lib/Contexts/CarViewContext";
 import LinearGradient from "react-native-linear-gradient";
 import TemperatureHandler from "../../../../../lib/model/TemperatureHandler";
 import InfoPopup from "../../../../Common/InfoPopup";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 
 function HVACCard(): React.JSX.Element {
@@ -105,127 +106,131 @@ function HVACCard(): React.JSX.Element {
                     handleModalAnim(false);
                 }}
             >
-                <View style={[commonStyles.flex, commonStyles.flexEnd]}>
-                    <SafeAreaView
-                        style={
-                            [
-                                {
-                                    backgroundColor: getGrayBackgroundColour(isDarkMode),
-                                },
-                                styles.mainView,
-                            ]}>
-                        <View style={styles.mainViewContent}>
-                            {/* temperature pickers */}
-                            <View style={[commonStyles.rowFlex, commonStyles.spaceBetween, styles.marginVertical]}>
-                                {/* + button */}
-                                <View style={[commonStyles.centerFlex]}>
-                                    <TouchableOpacity
-                                        testID="HVACCardLowButton"
-                                        disabled={index == 0}
-                                        onPress={async () => {
-                                            if (index > 0) {
-                                                setIndex(index - 1)
-                                                await TemperatureHandler.setTemperature(account.car?.getVin() ?? '', temperatures[index - 1]);
-                                            }
+                <SafeAreaProvider>
+                    <View style={[commonStyles.flex, commonStyles.flexEnd]}>
+                        <SafeAreaView
+                            style={
+                                [
+                                    {
+                                        backgroundColor: getGrayBackgroundColour(isDarkMode),
+                                    },
+                                    styles.mainView,
+                                ]}
+                            edges={['bottom']}
+                        >
+                            <View style={styles.mainViewContent}>
+                                {/* temperature pickers */}
+                                <View style={[commonStyles.rowFlex, commonStyles.spaceBetween, styles.marginVertical]}>
+                                    {/* + button */}
+                                    <View style={[commonStyles.centerFlex]}>
+                                        <TouchableOpacity
+                                            testID="HVACCardLowButton"
+                                            disabled={index == 0}
+                                            onPress={async () => {
+                                                if (index > 0) {
+                                                    setIndex(index - 1)
+                                                    await TemperatureHandler.setTemperature(account.car?.getVin() ?? '', temperatures[index - 1]);
+                                                }
 
-                                        }}
-                                        style={[styles.temperatureButton, { opacity: index == 0 ? 0.4 : 1 }]}
+                                            }}
+                                            style={[styles.temperatureButton, { opacity: index == 0 ? 0.4 : 1 }]}
+                                        >
+                                            <Icon name="remove" size={25} color='black' />
+                                        </TouchableOpacity>
+                                    </View>
+                                    {/* middle text */}
+                                    <View style={commonStyles.rowFlex}>
+                                        <Text
+                                            testID="temperatureText"
+                                            numberOfLines={1}
+                                            adjustsFontSizeToFit
+                                            style={{
+                                                color: getTemperatureTextColour(), fontFamily: fontFamilyBold,
+                                                fontWeight: fontWeightBold, fontSize: 60,
+                                            }}>{getTemperatureText()}</Text>
+                                        {index > 0 && index < temperatures.length - 1 && <Text testID="degreeText" style={{
+                                            color: getBlackColour(isDarkMode), fontFamily: fontFamilyBold,
+                                            fontWeight: fontWeightBold, fontSize: 60
+                                        }}>°C</Text>}
+                                    </View>
+                                    {/* - button */}
+                                    <View style={[commonStyles.centerFlex]}>
+                                        <TouchableOpacity
+                                            testID="HVACCardHighButton"
+                                            disabled={index == temperatures.length - 1}
+                                            onPress={async () => {
+                                                if (index < temperatures.length - 1) {
+                                                    setIndex(index + 1)
+                                                    await TemperatureHandler.setTemperature(account.car?.getVin() ?? '', temperatures[index + 1]);
+                                                }
+                                            }}
+                                            style={[styles.temperatureButton, { opacity: index == temperatures.length - 1 ? 0.4 : 1 }]}
+                                        >
+                                            <Icon name="add" size={25} color='black' />
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                                {((apiHandler.getMinimumHvacSOC() ?? Infinity) >= apiHandler.getBatteryLevel()) && (
+                                    <InfoPopup
+                                        backgroundColour={apiHandler.getMinimumHvacSOC() == null ? '#FFCCB3' : '#F4B6B6'}
+                                        icon={"warning"}
+                                        iconColour={'#7A1F1F'}
                                     >
-                                        <Icon name="remove" size={25} color='black' />
-                                    </TouchableOpacity>
-                                </View>
-                                {/* middle text */}
-                                <View style={commonStyles.rowFlex}>
-                                    <Text
-                                        testID="temperatureText"
-                                        numberOfLines={1}
-                                        adjustsFontSizeToFit
-                                        style={{
-                                            color: getTemperatureTextColour(), fontFamily: fontFamilyBold,
-                                            fontWeight: fontWeightBold, fontSize: 60,
-                                        }}>{getTemperatureText()}</Text>
-                                    {index > 0 && index < temperatures.length - 1 && <Text testID="degreeText" style={{
-                                        color: getBlackColour(isDarkMode), fontFamily: fontFamilyBold,
-                                        fontWeight: fontWeightBold, fontSize: 60
-                                    }}>°C</Text>}
-                                </View>
-                                {/* - button */}
-                                <View style={[commonStyles.centerFlex]}>
-                                    <TouchableOpacity
-                                        testID="HVACCardHighButton"
-                                        disabled={index == temperatures.length - 1}
-                                        onPress={async () => {
-                                            if (index < temperatures.length - 1) {
-                                                setIndex(index + 1)
-                                                await TemperatureHandler.setTemperature(account.car?.getVin() ?? '', temperatures[index + 1]);
-                                            }
-                                        }}
-                                        style={[styles.temperatureButton, { opacity: index == temperatures.length - 1 ? 0.4 : 1 }]}
-                                    >
-                                        <Icon name="add" size={25} color='black' />
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-                            {((apiHandler.getMinimumHvacSOC() ?? Infinity) >= apiHandler.getBatteryLevel()) && (
-                                <InfoPopup
-                                    backgroundColour={apiHandler.getMinimumHvacSOC() == null ? '#FFCCB3' : '#F4B6B6'}
-                                    icon={"warning"}
-                                    iconColour={'#7A1F1F'}
-                                >
-                                    <>
-                                        {apiHandler.getMinimumHvacSOC() == null && (
-                                            <Text style={{ color: 'black', flexShrink: 1, }}>{languageHandler.getTranslation("hvacMinSocUnknown")}</Text>
-                                        )}
-                                        {apiHandler.getMinimumHvacSOC() != null && (
-                                            <Text style={{ color: 'black', flexShrink: 1, }}>{languageHandler.getTranslation("hvacUnderMinSoc")} {apiHandler.getMinimumHvacSOC()}%</Text>
-                                        )}
-                                    </>
-                                </InfoPopup>
-                            )}
+                                        <>
+                                            {apiHandler.getMinimumHvacSOC() == null && (
+                                                <Text style={{ color: 'black', flexShrink: 1, }}>{languageHandler.getTranslation("hvacMinSocUnknown")}</Text>
+                                            )}
+                                            {apiHandler.getMinimumHvacSOC() != null && (
+                                                <Text style={{ color: 'black', flexShrink: 1, }}>{languageHandler.getTranslation("hvacUnderMinSoc")} {apiHandler.getMinimumHvacSOC()}%</Text>
+                                            )}
+                                        </>
+                                    </InfoPopup>
+                                )}
 
-                            <View style={commonStyles.navSeparator}></View>
-                            <View style={[commonStyles.rowFlex, commonStyles.gap15, commonStyles.marginVertical]}>
+                                <View style={commonStyles.navSeparator}></View>
+                                <View style={[commonStyles.rowFlex, commonStyles.gap15, commonStyles.marginVertical]}>
 
-                                <View style={commonStyles.flex}>
-                                    <BigButton
-                                        testID={'HVACModalCloseButton'}
-                                        onPress={() => {
-                                            setShouldOpenHVACModal(false);
-                                            handleModalAnim(false);
-                                        }}
-                                        colour={ButtonColours.DELETE}
-                                        icon={"close"}
-                                    />
-                                </View>
-                                <View style={{ flex: 5 }}>
-                                    <BigButton
-                                        disabled={isLoadingHVAC}
-                                        testID={'confirmButton'}
-                                        isLoading={isLoadingHVAC}
-                                        onPress={async () => {
-                                            // launch hvac
-                                            setIsLoadingHVAC(true);
-                                            const hasLaunchedHVAC = await account.launchHVAC(temperatures[index]);
-                                            if (hasLaunchedHVAC) {
-                                                Alert.alert(languageHandler.getTranslation("informationSent"), languageHandler.getTranslation("preHeatLaunched"));
-                                                // close modal
+                                    <View style={commonStyles.flex}>
+                                        <BigButton
+                                            testID={'HVACModalCloseButton'}
+                                            onPress={() => {
                                                 setShouldOpenHVACModal(false);
                                                 handleModalAnim(false);
-                                            } else {
-                                                Alert.alert(languageHandler.getTranslation("error"), languageHandler.getTranslation("commandSendError"));
-                                            }
-                                            setIsLoadingHVAC(false);
+                                            }}
+                                            colour={ButtonColours.DELETE}
+                                            icon={"close"}
+                                        />
+                                    </View>
+                                    <View style={{ flex: 5 }}>
+                                        <BigButton
+                                            disabled={isLoadingHVAC}
+                                            testID={'confirmButton'}
+                                            isLoading={isLoadingHVAC}
+                                            onPress={async () => {
+                                                // launch hvac
+                                                setIsLoadingHVAC(true);
+                                                const hasLaunchedHVAC = await account.launchHVAC(temperatures[index]);
+                                                if (hasLaunchedHVAC) {
+                                                    Alert.alert(languageHandler.getTranslation("informationSent"), languageHandler.getTranslation("preHeatLaunched"));
+                                                    // close modal
+                                                    setShouldOpenHVACModal(false);
+                                                    handleModalAnim(false);
+                                                } else {
+                                                    Alert.alert(languageHandler.getTranslation("error"), languageHandler.getTranslation("commandSendError"));
+                                                }
+                                                setIsLoadingHVAC(false);
 
-                                        }}
-                                        icon={"ac-unit"}
-                                        text={languageHandler.getTranslation("launchPreHeat")}
-                                        colour={ButtonColours.PRIMARY}
-                                    />
+                                            }}
+                                            icon={"ac-unit"}
+                                            text={languageHandler.getTranslation("launchPreHeat")}
+                                            colour={ButtonColours.PRIMARY}
+                                        />
+                                    </View>
                                 </View>
                             </View>
-                        </View>
-                    </SafeAreaView>
-                </View>
+                        </SafeAreaView>
+                    </View>
+                </SafeAreaProvider>
             </Modal>
 
             <TouchableOpacity

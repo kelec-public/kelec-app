@@ -2,7 +2,6 @@ import React, { useContext, useState } from "react";
 import {
     Alert,
     Linking, Modal,
-    SafeAreaView,
     ScrollView,
     Share,
     StyleSheet,
@@ -38,6 +37,7 @@ import DebugZoneView from "./DebugZone/DebugZoneView";
 import BigButton, { ButtonColours } from "../../Common/BigButton";
 import TopSettingsView from "./TopSettingsView";
 import { RenaultCredentials } from "../../../lib/clients/carMakers/renaultCredentials";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 type Setting = {
     title: string;
@@ -368,7 +368,9 @@ function SettingsView(): React.JSX.Element {
                     setShowDebugZone(false);
                 }}
             >
-                <DebugZoneView setShowDebugZone={setShowDebugZone} />
+                <SafeAreaProvider>
+                    <DebugZoneView setShowDebugZone={setShowDebugZone} />
+                </SafeAreaProvider>
             </Modal>
             {/* temp for debug zone*/}
             {/* modal for timezime selection */}

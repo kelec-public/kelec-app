@@ -8,10 +8,15 @@
 import React from 'react';
 
 import Main from './src/Main';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 
 function App(): React.JSX.Element {
-  return <Main />;
+  return (
+    <SafeAreaProvider>
+      <Main />
+    </SafeAreaProvider>
+  );
 }
 
 

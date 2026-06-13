@@ -1,11 +1,11 @@
-import { KeyboardAvoidingView, SafeAreaView, ScrollView, StyleSheet, useColorScheme, View } from "react-native";
+import { KeyboardAvoidingView, ScrollView, StyleSheet, useColorScheme, View } from "react-native";
 import Text from "../../../../../Common/CustomText";
 import BigButton, { ButtonColours } from "../../../../../Common/BigButton";
 import { useContext } from "react";
 import MainContext from "../../../../../../lib/Contexts/MainContext";
 import { getGrayBackgroundColour } from "../../../../../../lib/graphics/utils";
 import commonStyles, { fontFamilyBold, fontWeightBold } from "../../../../../../lib/graphics/commonStyle";
-
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Filter, getFiltersAvailable } from "../../../../../../lib/model/filters/FiltersStruct";
 import { getFilterMax, getFilterMin } from "../../../../../../lib/model/filters/FiltersHandlers";
 import FilterEntryCard from "./FiltersCard/FilterEntryCard";

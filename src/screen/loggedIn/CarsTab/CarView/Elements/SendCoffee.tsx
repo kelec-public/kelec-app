@@ -1,10 +1,11 @@
-import { View, SafeAreaView, TouchableOpacity, useColorScheme, Linking } from "react-native";
+import { View, TouchableOpacity, useColorScheme, Linking } from "react-native";
 import Text from "../../../../Common/CustomText";
 import { useContext } from "react";
 import MainContext from "../../../../../lib/Contexts/MainContext";
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { fontFamilyBold, fontWeightBold } from "../../../../../lib/graphics/commonStyle";
 import { getBlackColour, getWhiteColour } from "../../../../../lib/graphics/utils";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type SendCoffeeCardProps = {
     readonly navigation: any;

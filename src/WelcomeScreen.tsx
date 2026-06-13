@@ -1,4 +1,4 @@
-import { Platform, SafeAreaView, ScrollView, StyleSheet, useColorScheme, View } from "react-native";
+import { Platform, ScrollView, StyleSheet, useColorScheme, View } from "react-native";
 import Text from "./screen/Common/CustomText";
 import { useContext, useState } from "react";
 import MainContext from "./lib/Contexts/MainContext";
@@ -7,6 +7,7 @@ import BigButton, { ButtonColours } from "./screen/Common/BigButton";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import { getAccentOrange, getBlackColour, getWhiteColour } from "./lib/graphics/utils";
 import LazyRender from "./LazyRenderer";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 function WelcomeScreen(): React.JSX.Element {
 
