@@ -262,13 +262,19 @@ describe('TfaView', () => {
             </MainContext.Provider>
         );
 
+        // le bouton ne doit pas être visible au début
         await waitFor(() => {
-            expect(getByTestId('resendCodeButton')).toBeTruthy();
+            expect(() => getByTestId('resendCodeButton')).toThrow();
         });
+
 
         // Avancer le temps pour écouler le cooldown de 10s
         await act(async () => {
             jest.advanceTimersByTime(11000);
+        });
+
+        await waitFor(() => {
+            expect(getByTestId('resendCodeButton')).toBeTruthy();
         });
 
         const resendButton = getByTestId('resendCodeButton');
