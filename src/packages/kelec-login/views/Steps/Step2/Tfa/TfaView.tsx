@@ -177,18 +177,16 @@ const TfaView = ({ navigation, route, onTfaCompleted }: Props) => {
                         email={tfaEmail?.obfuscated ?? ''}
                         onChangeCode={(code) => setUserInputCode(code)}
                     ></TfaCodeView>
-                    <Button
-                        testID="resendCodeButton"
-                        onPress={() => {
-                            reSendCode();
-                        }}
-                        title={
-                            resendCooldown > 0
-                                ? `${languageHandler.getTranslation('resendCode')} (${resendCooldown}s)`
-                                : languageHandler.getTranslation('resendCode')
-                        }
-                        disabled={resendCooldown > 0}
-                    ></Button>
+                    {resendCooldown <= 1 && (
+                        <Button
+                            testID="resendCodeButton"
+                            onPress={() => {
+                                reSendCode();
+                            }}
+                            title={languageHandler.getTranslation('resendCode')}
+                        ></Button>
+                    )}
+
                 </View>;
         }
     }
