@@ -1,4 +1,4 @@
-import { Modal, View } from "react-native";
+import { Modal, useColorScheme, View } from "react-native";
 import { useEffect, useMemo, useRef, useState } from "react";
 import FullScreenLoading from "./FullScreenLoading";
 import MainContext from "./lib/Contexts/MainContext";
@@ -12,6 +12,7 @@ import LoginEntryView from "./packages/kelec-login/views/LoginEntryView";
 import AppPreferences from "./lib/appPreferences/model/appPreferences";
 import KelecApiHandler from "./lib/clients/kelec-api/kelecApiHandler";
 import Text from "./screen/Common/CustomText";
+import { getWhiteColour } from "./lib/graphics/utils";
 
 export enum ViewsAvailable {
     LOGIN = 'LOGIN',
@@ -20,6 +21,8 @@ export enum ViewsAvailable {
 }
 
 function Main(): React.JSX.Element {
+    const isDarkMode = useColorScheme() === 'dark';
+
     const [_, setTest] = useState<string>(''); // NOSONAR
 
     // if the onboarding modal should be shown
@@ -132,12 +135,12 @@ function Main(): React.JSX.Element {
                         testID="messageView"
                         style={{
                             flex: 1,
-                            backgroundColor: 'rgba(0,0,0,0.5)',
+                            backgroundColor: 'rgba(0,0,0,0.8)',
                             justifyContent: 'center',
                             alignItems: 'center'
                         }}>
                         <View style={{
-                            backgroundColor: 'white',
+                            backgroundColor: getWhiteColour(isDarkMode),
                             padding: 20,
                             borderRadius: 10
                         }}>
