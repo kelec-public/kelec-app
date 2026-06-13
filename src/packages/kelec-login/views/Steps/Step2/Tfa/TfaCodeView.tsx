@@ -99,20 +99,17 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#FFFFFF",
     },
     filledInputBox: {
         borderColor: "#888780",
     },
     activeInputBox: {
         borderColor: "#378ADD",
-        backgroundColor: "#E6F1FB",
     },
     inputText: {
         fontSize: 22,
         fontWeight: fontWeightBold,
         fontFamily: fontFamilyBold,
-        color: "#1A1A1A",
     },
     placeholderText: {
         color: "#D3D1C7",
