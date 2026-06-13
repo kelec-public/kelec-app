@@ -1,5 +1,6 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { LoginEntryParamList } from "../../LoginEntryView";
+import { Edge } from "react-native-safe-area-context";
 import { Image, Linking, StyleSheet, Switch, TouchableOpacity, TouchableWithoutFeedback, useColorScheme, View } from "react-native";
 import { useContext, useEffect, useState } from "react";
 import MainContext from "../../../../../lib/Contexts/MainContext";
@@ -26,6 +27,7 @@ export type CarModelSelectorParamList = {
     subTitle?: string
     nextButtonText?: string;
     backButtonText?: string;
+    safeAreaEdges?: Edge[];
 }
 
 type Props = NativeStackScreenProps<LoginEntryParamList, 'CarModelSelector'>;
@@ -36,7 +38,7 @@ const CarModelSelector = (props: Props) => {
     const { languageHandler, storageHandler } = useContext(MainContext);
 
     const { navigation, route } = props;
-    const { carModel, onConfirmUpdate, title, subTitle, nextButtonText, backButtonText } = route.params;
+    const { carModel, onConfirmUpdate, title, subTitle, nextButtonText, backButtonText, safeAreaEdges } = route.params;
 
 
 
@@ -118,6 +120,7 @@ const CarModelSelector = (props: Props) => {
             testID="carModelChoiceStep"
             title={title}
             subtitle={subTitle}
+            safeAreaEdges={safeAreaEdges}
             onPrevious={() => {
                 navigation.goBack();
             }}

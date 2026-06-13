@@ -31,6 +31,7 @@ function SummaryCard({ navigation }: SummaryCardProps): React.JSX.Element {
                     title: "carModel",
                     nextButtonText: "confirm",
                     backButtonText: "cancel",
+                    safeAreaEdges: ['top'],
                 });
 
             }}

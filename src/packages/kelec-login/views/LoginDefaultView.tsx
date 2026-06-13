@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import MainContext from "../../../lib/Contexts/MainContext";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Edge, SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView, StyleSheet, TouchableOpacity, useColorScheme, View } from "react-native";
 import Button from "../../kelec-model/view/Button";
 import { BLACK_COLOUR, NEUTRAL_ZERO, PRIMARY_COLOUR, WHITE_COLOUR } from "../../kelec-model/lib/colours";
@@ -25,16 +25,18 @@ type Props = {
     nextButtonTestID?: string;
     nextButtonText?: string;
     backButtonText?: string;
+    safeAreaEdges?: Edge[];
 };
 
 const LoginDefaultView = ({ children, ...props }: Props) => {
     const { languageHandler, setCurrentView } = useContext(MainContext);
     const isDarkMode = useColorScheme() === 'dark';
 
-    const { testID, title, subtitle, onNext, onPrevious, isLightLoading, disableNext, shouldDisplayDismissButton, helpText, nextButtonTestID, nextButtonText, backButtonText } = props;
+    const { testID, title, subtitle, onNext, onPrevious, isLightLoading, disableNext, shouldDisplayDismissButton, helpText, nextButtonTestID, nextButtonText, backButtonText, safeAreaEdges } = props;
 
     return (
         <SafeAreaView
+            edges={safeAreaEdges}
             style={
                 [
                     {

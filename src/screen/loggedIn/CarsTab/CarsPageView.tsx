@@ -11,7 +11,6 @@ import FullScreenMapView from "./CarView/Elements/Map/FullScreenMapView";
 import { WeatherApiHandler } from "../../../lib/clients/weather/weatherClient";
 import CarModel from "../../../lib/clients/cars/carModel";
 import CarModelSelector, { CarModelSelectorParamList } from "../../../packages/kelec-login/views/Steps/Step4/CarModelSelector";
-import { SafeAreaView } from "react-native-safe-area-context";
 import TfaView, { TfaOrigin } from "../../../packages/kelec-login/views/Steps/Step2/Tfa/TfaView";
 
 
@@ -78,16 +77,7 @@ function CarsPageView(): React.JSX.Element {
                               {props => <ChargesView {...props} />}
                             </Stack.Screen>
                             <Stack.Screen name="CarModelSelector">
-                              {props => {
-                                return (
-                                  <SafeAreaView
-                                    edges={['top']}
-                                    style={{ flex: 1 }}
-                                  >
-                                    <CarModelSelector {...props} />
-                                  </SafeAreaView>
-                                );
-                              }}
+                              {props => <CarModelSelector {...props} />}
                             </Stack.Screen>
                             <Stack.Screen
                               name="DonationScreen"
