@@ -16,6 +16,11 @@ const commonStyles = StyleSheet.create({
         fontFamily: fontFamilyBold,
         fontWeight: fontWeightBold
     },
+    bottomSheetTitle: {
+        fontSize: 30,
+        fontFamily: fontFamilyBold,
+        fontWeight: fontWeightBold
+    },
     navSeparator: {
         height: StyleSheet.hairlineWidth,
         backgroundColor: 'lightgray'
