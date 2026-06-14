@@ -381,33 +381,35 @@ function SettingsView(): React.JSX.Element {
                     setShowSelectTimeZoneModal(false);
                 }}
             >
-                <SafeAreaView
-                    style={
-                        [
-                            {
-                                backgroundColor: getGrayBackgroundColour(isDarkMode),
-                                flex: 1,
-                                justifyContent: 'space-between',
+                <SafeAreaProvider>
+                    <SafeAreaView
+                        style={
+                            [
+                                {
+                                    backgroundColor: getGrayBackgroundColour(isDarkMode),
+                                    flex: 1,
+                                    justifyContent: 'space-between',
 
-                            },
-                        ]}>
-                    <View style={styles.mainViewContent}>
-                        <Text style={styles.topTitleMedium}>{languageHandler.getTranslation("timezoneOffset")}</Text>
-                        <ScrollView >
-                            <View style={{ gap: 5 }}>
-                                {buildTimeZoneRows()}
-                            </View>
-                        </ScrollView>
-                    </View>
-                    <View style={{ paddingHorizontal: 15, marginBottom: 20 }}>
-                        <BigButton
-                            testID='addBackButton'
-                            text={languageHandler.getTranslation("back")}
-                            onPress={() => setShowSelectTimeZoneModal(false)}
-                            colour={ButtonColours.PRIMARY}
-                        />
-                    </View>
-                </SafeAreaView>
+                                },
+                            ]}>
+                        <View style={styles.mainViewContent}>
+                            <Text style={styles.topTitleMedium}>{languageHandler.getTranslation("timezoneOffset")}</Text>
+                            <ScrollView >
+                                <View style={{ gap: 5 }}>
+                                    {buildTimeZoneRows()}
+                                </View>
+                            </ScrollView>
+                        </View>
+                        <View style={{ paddingHorizontal: 15, marginBottom: 20 }}>
+                            <BigButton
+                                testID='addBackButton'
+                                text={languageHandler.getTranslation("back")}
+                                onPress={() => setShowSelectTimeZoneModal(false)}
+                                colour={ButtonColours.PRIMARY}
+                            />
+                        </View>
+                    </SafeAreaView>
+                </SafeAreaProvider>
             </Modal>
             <View
                 testID='settingsView'
