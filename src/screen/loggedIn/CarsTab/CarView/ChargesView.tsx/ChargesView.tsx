@@ -1,7 +1,7 @@
 import { ActivityIndicator, FlatList, Modal, Platform, ScrollView, Share, StyleSheet, TouchableOpacity, View, useColorScheme } from "react-native";
 import Text from "../../../../Common/CustomText";
 import commonStyles, { fontFamilyBold, fontWeightBold } from "../../../../../lib/graphics/commonStyle";
-import { getBlackColour, getGrayBackgroundColour, getGrayWhiteBackgroundColour, getWhiteColour } from "../../../../../lib/graphics/utils";
+import { getBlackColour, getGrayWhiteBackgroundColour, getWhiteColour } from "../../../../../lib/graphics/utils";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import MainContext from "../../../../../lib/Contexts/MainContext";
@@ -18,6 +18,7 @@ import ChargeMonthContent from "./ChargeMonthContent";
 import { Filter, FilterName } from "../../../../../lib/model/filters/FiltersStruct";
 import ChargesViewContext from "../../../../../lib/Contexts/ChargesViewContext";
 import { getFilterMax, getFilterMin, getFilterUnit } from "../../../../../lib/model/filters/FiltersHandlers";
+import BottomSheet from "../../../../Common/bottomSheet/BottomSheet";
 
 
 type ChargesViewProps = {
@@ -185,125 +186,102 @@ function ChargesView({ navigation, route }: ChargesViewProps): React.JSX.Element
             testID="ChargesView"
         >
             <ChargesViewContext.Provider value={chargesViewContextValues}>
-                <Modal
-                    transparent={true}
-                    animationType="slide"
-                    visible={shouldOpenModal}
+                <BottomSheet
+                    title={languageHandler.getTranslation("chargeHistory")}
                     testID="chargesViewModal"
-                    onRequestClose={() => {
+                    onClose={() => {
                         setShouldOpenModal(false);
                         handleModalAnim(false);
                     }}
+                    visible={shouldOpenModal}
                 >
-                    <View style={[commonStyles.flex, commonStyles.flexEnd]}>
-                        <SafeAreaView
-                            style={
-                                [
-                                    {
-                                        backgroundColor: getGrayBackgroundColour(isDarkMode),
-                                    },
-                                    styles.modalView,
-                                ]}>
-                            <View style={styles.modalContent}>
-                                <BigButton
-                                    testID={'sortButton'}
-                                    onPress={async () => {
-                                        setSortDesc(!sortDesc);
-                                        setDisplayedMonths(2);
-                                    }}
-                                    icon="sort"
-                                    text={sortDesc ? languageHandler.getTranslation("sortNewerToOlder")
-                                        : languageHandler.getTranslation("sortOlderToNewer")}
-                                    colour={ButtonColours.SECONDARY}
-                                />
-                                <BigButton
-                                    testID={'exportButton'}
-                                    onPress={async () => {
+                    <View style={styles.modalContent}>
+                        <BigButton
+                            testID={'sortButton'}
+                            onPress={async () => {
+                                setSortDesc(!sortDesc);
+                                setDisplayedMonths(2);
+                            }}
+                            icon="sort"
+                            text={sortDesc ? languageHandler.getTranslation("sortNewerToOlder")
+                                : languageHandler.getTranslation("sortOlderToNewer")}
+                            colour={ButtonColours.SECONDARY}
+                        />
+                        <BigButton
+                            testID={'exportButton'}
+                            onPress={async () => {
 
-                                        let toExport: any[] = [];
-                                        toExport = charges.getCharges();
-                                        // filter charges
-                                        toExport = RenaultChargesHandler.applyFilters(filters, toExport);
-                                        // sort charges  by chargeStartDate
-                                        toExport.sort((a, b) => {
-                                            return sortDesc ? b.getStartDate().getTime() - a.getStartDate().getTime() : a.getStartDate().getTime() - b.getStartDate().getTime();
-                                        });
+                                let toExport: any[] = [];
+                                toExport = charges.getCharges();
+                                // filter charges
+                                toExport = RenaultChargesHandler.applyFilters(filters, toExport);
+                                // sort charges  by chargeStartDate
+                                toExport.sort((a, b) => {
+                                    return sortDesc ? b.getStartDate().getTime() - a.getStartDate().getTime() : a.getStartDate().getTime() - b.getStartDate().getTime();
+                                });
 
-                                        // edit chargeStartDate to match local time
-                                        toExport = toExport.map(charge => {
-                                            return {
-                                                ...charge,
-                                                chargeStartDate: charge.getStartDate().toLocaleString(),
-                                                chargeEndDate: charge.getEndDate().toLocaleString(),
-                                            }
-                                        });
-                                        const wb = XLSX.utils.book_new();
-                                        const ws = XLSX.utils.json_to_sheet(toExport);
-                                        XLSX.utils.book_append_sheet(wb, ws, "Charges");
-                                        const wbout = XLSX.write(wb, { type: 'binary', bookType: "xlsx" });
+                                // edit chargeStartDate to match local time
+                                toExport = toExport.map(charge => {
+                                    return {
+                                        ...charge,
+                                        chargeStartDate: charge.getStartDate().toLocaleString(),
+                                        chargeEndDate: charge.getEndDate().toLocaleString(),
+                                    }
+                                });
+                                const wb = XLSX.utils.book_new();
+                                const ws = XLSX.utils.json_to_sheet(toExport);
+                                XLSX.utils.book_append_sheet(wb, ws, "Charges");
+                                const wbout = XLSX.write(wb, { type: 'binary', bookType: "xlsx" });
 
-                                        if (Platform.OS === 'ios') {
-                                            const path = `${DocumentDirectoryPath}/export${Date.now()}.xlsx`;
-                                            try {
-                                                await writeFile(path, wbout, 'ascii');
+                                if (Platform.OS === 'ios') {
+                                    const path = `${DocumentDirectoryPath}/export${Date.now()}.xlsx`;
+                                    try {
+                                        await writeFile(path, wbout, 'ascii');
 
-                                                Share.share({
-                                                    url: 'file://' + path,
-                                                })
-                                                    .then(res => {
-                                                        console.log(res);
-                                                    })
-                                                    .catch(err => {
-                                                        err && console.log(err);
-                                                    });
+                                        Share.share({
+                                            url: 'file://' + path,
+                                        })
+                                            .then(res => {
+                                                console.log(res);
+                                            })
+                                            .catch(err => {
+                                                err && console.log(err);
+                                            });
 
-                                            } catch (e) {
-                                                console.log('error', e);
-                                            }
-                                        } else {
-                                            const path = `${DocumentDirectoryPath}/export${Date.now()}.xlsx`;
-                                            try {
-                                                await writeFile(path, wbout, 'ascii');
+                                    } catch (e) {
+                                        console.log('error', e);
+                                    }
+                                } else {
+                                    const path = `${DocumentDirectoryPath}/export${Date.now()}.xlsx`;
+                                    try {
+                                        await writeFile(path, wbout, 'ascii');
 
-                                                const fileUri = `file://${path}`;
-                                                const shareOptions = {
-                                                    title: 'Share Excel File',
-                                                    url: fileUri, // content:// URI for external sharing
-                                                    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                                                };
-                                                ShareThirdPart.open(shareOptions)
-                                                    .then((res) => {
-                                                        console.log(res);
-                                                    })
-                                                    .catch((err) => {
-                                                        err && console.log(err);
-                                                    });
+                                        const fileUri = `file://${path}`;
+                                        const shareOptions = {
+                                            title: 'Share Excel File',
+                                            url: fileUri, // content:// URI for external sharing
+                                            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                                        };
+                                        ShareThirdPart.open(shareOptions)
+                                            .then((res) => {
+                                                console.log(res);
+                                            })
+                                            .catch((err) => {
+                                                err && console.log(err);
+                                            });
 
-                                            } catch (e) {
-                                                console.log('error', e);
-                                            }
-                                        }
+                                    } catch (e) {
+                                        console.log('error', e);
+                                    }
+                                }
 
-                                    }}
-                                    icon={"ios-share"}
-                                    text={languageHandler.getTranslation("export")}
-                                    colour={ButtonColours.SECONDARY}
-                                />
-                                <View style={commonStyles.navSeparator}></View>
-                                <BigButton
-                                    testID={'confirmButton'}
-                                    onPress={async () => {
-                                        setShouldOpenModal(false);
-                                        handleModalAnim(false);
-                                    }}
-                                    icon={"close"}
-                                    text={languageHandler.getTranslation("cancel")}
-                                    colour={ButtonColours.PRIMARY}
-                                />
-                            </View>
-                        </SafeAreaView>
+                            }}
+                            icon={"ios-share"}
+                            text={languageHandler.getTranslation("export")}
+                            colour={ButtonColours.SECONDARY}
+                        />
                     </View>
-                </Modal>
+                </BottomSheet>
                 <Modal
                     animationType="slide"
                     transparent={true}
@@ -384,7 +362,7 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 20,
     },
     modalContent: {
-        padding: 15,
+        marginTop: 10,
         gap: 10
     },
 });

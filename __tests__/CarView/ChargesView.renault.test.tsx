@@ -128,11 +128,11 @@ test('should render the charges view', async () => {
 
 
     // close the modal
-    const closeModal = await screen.findByTestId('confirmButton');
+    const closeModal = await screen.findByTestId('chargesViewModalCloseButton');
     await user.press(closeModal);
 
     await waitFor(() => {
-        expect(screen.queryAllByTestId('confirmButton')).toHaveLength(0);
+        expect(screen.queryAllByTestId('chargesViewModalCloseButton')).toHaveLength(0);
     });
 
 

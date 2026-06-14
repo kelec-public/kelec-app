@@ -24,6 +24,7 @@ const BottomSheet = (props: Props) => {
             transparent={true}
             visible={visible}
             onRequestClose={onClose}
+            testID={testID}
         >
             <SafeAreaProvider>
                 <View style={[commonStyles.flex, commonStyles.flexEnd]}>
