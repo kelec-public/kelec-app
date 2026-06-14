@@ -33,7 +33,9 @@ jest.mock('../../../src/lib/clients/carMakers/renaultClient', () => {
             getLocation: jest.fn().mockResolvedValue({
                 hasError: true
             }),
-            getChargesHistory: mockGetChargesHistory
+            getChargesHistory: mockGetChargesHistory,
+            getChargeSettings: jest.fn().mockResolvedValue({ hasError: true }),
+            getHVACStatus: jest.fn().mockResolvedValue({ hasError: true }),
         }
     });
 });

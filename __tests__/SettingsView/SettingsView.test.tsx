@@ -48,6 +48,7 @@ jest.mock('../../src/lib/clients/carMakers/renaultClient', () => {
                 hasError: false,
                 apiData: require('../CarView/mocks/mockRenaultHVACStatus.json')
             }),
+            getChargeSettings: jest.fn().mockResolvedValue({ hasError: true }),
         }
     });
 });

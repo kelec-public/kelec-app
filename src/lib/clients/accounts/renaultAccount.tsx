@@ -7,11 +7,15 @@ class RenaultAccount extends Account {
     kamereonAccountID: string;
     firstName?: string;
     lastName?: string;
+
+    private _client: RenaultClient;
+
     constructor(email: string, password: string, kamereonAccountID: string, car?: CarModel, firstName?: string, lastName?: string, carMaker: CarMaker = CarMaker.RENAULT) {
         super(email, password, carMaker, car);
         this.kamereonAccountID = kamereonAccountID;
         this.firstName = firstName;
         this.lastName = lastName;
+        this._client = new RenaultClient(email, password, kamereonAccountID);
     }
 
     getKamereonAccountID(): string {
@@ -27,38 +31,28 @@ class RenaultAccount extends Account {
     }
 
     fetchCarStatus = async (vin: string): Promise<CarFetchStatus> => {
-        const client = new RenaultClient(this.getEmail(), this.getPassword(), this.getKamereonAccountID());
-        const data = await client.getBatteryStatus(vin);
-        return data;
+        return await this._client.getBatteryStatus(vin);
     }
 
     fetchCarCockpit = async (vin: string): Promise<CarFetchStatus> => {
-        const client = new RenaultClient(this.getEmail(), this.getPassword(), this.getKamereonAccountID());
-        const data = await client.getCockpit(vin);
-        return data;
+        return await this._client.getCockpit(vin);
     }
 
     fetchLocationStatus = async (vin: string): Promise<CarFetchStatus> => {
-        const client = new RenaultClient(this.getEmail(), this.getPassword(), this.getKamereonAccountID());
-        const data = await client.getLocation(vin);
-        return data;
+        return await this._client.getLocation(vin);
     }
 
     launchHVAC = async (temperature: number): Promise<boolean> => {
-        const client = new RenaultClient(this.getEmail(), this.getPassword(), this.getKamereonAccountID());
-        return await client.launchHVAC(this.getCar()?.getVin() ?? "", temperature);
+        return await this._client.launchHVAC(this.getCar()?.getVin() ?? "", temperature);
     }
 
     fetchChargesHistory = async (vin: string): Promise<CarFetchStatus> => {
-        const client = new RenaultClient(this.getEmail(), this.getPassword(), this.getKamereonAccountID());
-        const data = await client.getChargesHistory(vin);
-        return data;
+        return await this._client.getChargesHistory(vin);
     }
 
     fetchV2GSessions = async (vin: string): Promise<V2GApiSession[] | null> => {
         try {
-            const client = new RenaultClient(this.getEmail(), this.getPassword(), this.getKamereonAccountID());
-            const chargesHistory = await client.getV2GChargesHistory(vin);
+            const chargesHistory = await this._client.getV2GChargesHistory(vin);
             return chargesHistory;
         } catch {
             return null;
@@ -66,19 +60,11 @@ class RenaultAccount extends Account {
     }
 
     fetchChargesSettings = async (vin: string): Promise<CarFetchStatus> => {
-        const client = new RenaultClient(this.getEmail(), this.getPassword(), this.getKamereonAccountID());
-        if (client.getChargeSettings) {
-            return await client.getChargeSettings(vin);
-        }
-        return { hasError: true }
+        return await this._client.getChargeSettings(vin);
     }
 
     fetchHVACStatus = async (vin: string): Promise<CarFetchStatus> => {
-        const client = new RenaultClient(this.getEmail(), this.getPassword(), this.getKamereonAccountID());
-        if (client.getHVACStatus) {
-            return await client.getHVACStatus(vin);
-        }
-        return { hasError: true }
+        return await this._client.getHVACStatus(vin);
     }
 }
 
