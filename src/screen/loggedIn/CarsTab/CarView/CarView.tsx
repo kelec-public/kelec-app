@@ -32,6 +32,7 @@ import { CarMakerClientErrors } from "../../../../lib/clients/carMakers/carMaker
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { CarsViewParamList } from "../CarsPageView";
 import { TfaOrigin } from "../../../../packages/kelec-login/views/Steps/Step2/Tfa/TfaView";
+import BottomSheet from "../../../Common/bottomSheet/BottomSheet";
 
 enum ViewState {
     LOADING = 'LOADING',
@@ -434,53 +435,21 @@ function CarView({ carModel, navigation, account, pagerRef, tfaInProgress }: Car
                                         style={{ marginLeft: 10 }}
                                     />
                                 )}
-
-                                <Modal
-                                    animationType='slide'
-                                    transparent={true}
+                                <BottomSheet
+                                    testID="carChoiceModal"
+                                    title={languageHandler.getTranslation("your_cars")}
                                     visible={shouldDisplayCarChoice}
-                                    onRequestClose={() => {
+                                    onClose={() => {
                                         setShouldDisplayCarChoice(false);
                                         handleModalAnim(false);
                                     }}
                                 >
-                                    {/* modal to choose the car displayed */}
-                                    <SafeAreaProvider>
-                                        <View style={[commonStyles.flex, commonStyles.flexEnd]}>
-                                            <SafeAreaView
-                                                style={
-                                                    [
-                                                        {
-                                                            backgroundColor: getGrayBackgroundColour(isDarkMode),
-                                                        },
-                                                        styles.mainView,
-                                                    ]}
-                                                edges={['bottom']}
-                                            >
-                                                <View style={styles.mainViewContent}>
-                                                    <View style={[commonStyles.gap15, commonStyles.marginVertical]}>
-                                                        <Text style={{ fontFamily: fontFamilyBold, fontWeight: fontWeightBold, fontSize: 30 }}>{languageHandler.getTranslation("your_cars")}</Text>
-                                                        <View>
-                                                            {displayCarsAvailable()}
-                                                        </View>
-                                                    </View>
-                                                    <View style={[commonStyles.marginVertical]}>
-                                                        <BigButton
-                                                            testID={'carChoiceModalClose'}
-                                                            onPress={() => {
-                                                                setShouldDisplayCarChoice(false);
-                                                                handleModalAnim(false);
-                                                            }}
-                                                            colour={ButtonColours.PRIMARY}
-                                                            icon={"close"}
-                                                            text={languageHandler.getTranslation("cancel")}
-                                                        />
-                                                    </View>
-                                                </View>
-                                            </SafeAreaView>
+                                    <View style={[commonStyles.gap15, commonStyles.marginVertical]}>
+                                        <View>
+                                            {displayCarsAvailable()}
                                         </View>
-                                    </SafeAreaProvider>
-                                </Modal>
+                                    </View>
+                                </BottomSheet>
                             </View>
                         </TouchableOpacity>
 

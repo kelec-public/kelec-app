@@ -63,7 +63,7 @@ test('should display the quick car switch button and change the car', async () =
     });
 
     // now close the modal 
-    const carChoiceModalClose = screen.getByTestId("carChoiceModalClose");
+    const carChoiceModalClose = screen.getByTestId("carChoiceModalCloseButton");
     await user.press(carChoiceModalClose);
     await waitFor(() => {
         expect(() => { screen.getByTestId("carChoice0"); }).toThrow();
