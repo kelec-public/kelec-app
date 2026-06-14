@@ -17,7 +17,7 @@ const QuickSwitchView = (props: Props) => {
         return cars.map((car, index) => {
             return (
                 <QuickSwitchElementView
-                    key={`carChoice${index}`}
+                    key={`carChoice${car.car?.getVin()}`}
                     car={car}
                     onSelect={() => {
                         pagerRef.current?.setPage(index);
