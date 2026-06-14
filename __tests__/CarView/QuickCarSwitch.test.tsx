@@ -58,28 +58,28 @@ test('should display the quick car switch button and change the car', async () =
     let carChoiceButton = screen.getByTestId("carChoiceIconvin2");
     await user.press(carChoiceButton);
     await waitFor(() => {
-        expect(screen.getByTestId("carChoice0")).toBeDefined();
-        expect(screen.getByTestId("carChoice1")).toBeDefined();
+        expect(screen.getByTestId("carChoicevin1")).toBeDefined();
+        expect(screen.getByTestId("carChoicevin2")).toBeDefined();
     });
 
     // now close the modal 
     const carChoiceModalClose = screen.getByTestId("carChoiceModalCloseButton");
     await user.press(carChoiceModalClose);
     await waitFor(() => {
-        expect(() => { screen.getByTestId("carChoice0"); }).toThrow();
-        expect(() => { screen.getByTestId("carChoice1"); }).toThrow();
+        expect(() => { screen.getByTestId("carChoicevin1"); }).toThrow();
+        expect(() => { screen.getByTestId("carChoicevin2"); }).toThrow();
     });
 
     // open it again 
     carChoiceButton = await screen.findByTestId("carChoiceIconvin2");
     await user.press(carChoiceButton);
     await waitFor(() => {
-        expect(screen.getByTestId("carChoice0")).toBeDefined();
-        expect(screen.getByTestId("carChoice1")).toBeDefined();
+        expect(screen.getByTestId("carChoicevin1")).toBeDefined();
+        expect(screen.getByTestId("carChoicevin2")).toBeDefined();
     });
 
 
-    carChoiceButton = screen.getByTestId("carChoice1");
+    carChoiceButton = screen.getByTestId("carChoicevin2");
     await user.press(carChoiceButton);
 
 });

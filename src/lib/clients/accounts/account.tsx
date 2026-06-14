@@ -17,6 +17,14 @@ enum CarMaker {
     ALPINE = 'alpine',
 };
 
+const CAR_MAKER_DISPLAY: Record<CarMaker, string> = {
+    [CarMaker.RENAULT]: 'Renault',
+    [CarMaker.HYUNDAI]: 'Hyundai',
+    [CarMaker.DACIA]: 'Dacia',
+    [CarMaker.DEMO]: 'Demo',
+    [CarMaker.ALPINE]: 'Alpine',
+};
+
 enum MoveDirection {
     UP = 'UP',
     DOWN = 'DOWN'
@@ -131,5 +139,5 @@ interface AccountInterface {
 }
 
 export default Account;
-export { CarMaker, MoveDirection };
+export { CarMaker, MoveDirection, CAR_MAKER_DISPLAY };
 export type { AccountInterface, CarFetchStatus };

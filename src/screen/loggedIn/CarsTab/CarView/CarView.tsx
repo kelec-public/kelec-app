@@ -1,15 +1,15 @@
-import { StyleSheet, View, ScrollView, useColorScheme, RefreshControl, Modal, TouchableOpacity, Alert } from "react-native";
+import { StyleSheet, View, ScrollView, useColorScheme, RefreshControl, TouchableOpacity, Alert } from "react-native";
 import Text from "../../../../screen/Common/CustomText";
 import { useContext, useEffect, useMemo, useState } from "react";
 import MainContext from "../../../../lib/Contexts/MainContext";
 import CarModel from "../../../../lib/clients/cars/carModel";
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { getBlackColour, getDisplayDate, getGrayBackgroundColour, getMainInterfaceBackground } from "../../../../lib/graphics/utils";
+import { getBlackColour, getDisplayDate, getMainInterfaceBackground } from "../../../../lib/graphics/utils";
 import SummaryCard from "./Elements/SummaryCard";
 import CarViewContext from "../../../../lib/Contexts/CarViewContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ApiHandler from "../../../../lib/clients/apiHandlers/apiHandler";
-import commonStyles, { fontFamilyBold, fontWeightBold } from "../../../../lib/graphics/commonStyle";
+import commonStyles from "../../../../lib/graphics/commonStyle";
 import CarType from "../../../../lib/clients/cars/carTypes/carType";
 import Account, { CarMaker } from "../../../../lib/clients/accounts/account";
 import FullScreenError, { getErrorMessage } from "../../../../FullScreenError";
@@ -23,16 +23,16 @@ import BatteryCard from "./Elements/BatteryCard";
 import { getNativeBatteryStatus, refreshWidget } from "../../../../lib/storage/sharedPlatformsData";
 import ChargesStorageController from "../../../../lib/storage/chargesHandler";
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import BigButton, { ButtonColours } from "../../../Common/BigButton";
 import CarsViewContext from "../../../../lib/Contexts/CarsViewContext";
 import PagerView from "react-native-pager-view";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native-safe-area-context";
 import RenaultCharge from "../../../../lib/clients/apiHandlers/renaultCharges/RenaultCharge";
 import { CarMakerClientErrors } from "../../../../lib/clients/carMakers/carMakerClient";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { CarsViewParamList } from "../CarsPageView";
 import { TfaOrigin } from "../../../../packages/kelec-login/views/Steps/Step2/Tfa/TfaView";
 import BottomSheet from "../../../Common/bottomSheet/BottomSheet";
+import QuickSwitchView from "./Elements/QuickSwitch/QuickSwitchView";
 
 enum ViewState {
     LOADING = 'LOADING',
@@ -360,37 +360,6 @@ function CarView({ carModel, navigation, account, pagerRef, tfaInProgress }: Car
     }), [carModel, image, apiHandler, carType, account]);
 
 
-    const displayCarsAvailable = () => {
-        const cars = currentUser.getCars();
-        return cars.map((car, index) => {
-            return (
-                <TouchableOpacity
-                    key={`carChoice${car.getCar()?.getVin()}`}
-                    onPress={() => {
-                        pagerRef.current?.setPage(index);
-                        setShouldDisplayCarChoice(false);
-                        handleModalAnim(false);
-                    }}
-                    testID={`carChoice${index}`}
-                >
-                    <View style={{ justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }}>
-                        <Text>{car.car?.getModel()}</Text>
-                        <Icon
-                            name="keyboard-arrow-right"
-                            size={25}
-                            color={getBlackColour(isDarkMode)}
-                            style={{ marginLeft: 10 }}
-                        />
-                    </View>
-                    {index < cars.length - 1 && (
-                        <View style={[commonStyles.navSeparator, { marginVertical: 15 }]}></View>
-                    )}
-
-                </TouchableOpacity>
-            )
-        })
-    };
-
     return (
         <CarViewContext.Provider value={carViewContextValues} >
             <SafeAreaView style={[styles.flex, {
@@ -444,11 +413,14 @@ function CarView({ carModel, navigation, account, pagerRef, tfaInProgress }: Car
                                         handleModalAnim(false);
                                     }}
                                 >
-                                    <View style={[commonStyles.gap15, commonStyles.marginVertical]}>
-                                        <View>
-                                            {displayCarsAvailable()}
-                                        </View>
-                                    </View>
+                                    <QuickSwitchView
+                                        cars={currentUser.getCars()}
+                                        onClose={() => {
+                                            setShouldDisplayCarChoice(false);
+                                            handleModalAnim(false);
+                                        }}
+                                        pagerRef={pagerRef}
+                                    />
                                 </BottomSheet>
                             </View>
                         </TouchableOpacity>
