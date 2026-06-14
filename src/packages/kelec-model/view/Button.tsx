@@ -1,10 +1,11 @@
 import React from "react";
 import Text from "../../../screen/Common/CustomText";
-import { ActivityIndicator, TouchableOpacity } from "react-native";
+import { ActivityIndicator, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { subTitle } from "./Titles";
 import { spacerL, spacerM, spacerXL } from "./Spacers";
 import { ButtonColours, ButtonColoursPalettes } from "../lib/buttonTypes";
+import LinearGradient from "react-native-linear-gradient";
 
 type ButtonProps = {
     buttonColour: ButtonColours;
@@ -29,7 +30,7 @@ const Button = (props: ButtonProps): React.JSX.Element => {
         if (iconName) {
             return <Icon name={iconName} size={spacerL} color={getCurrentColour.textColour} />;
         } else {
-            return <Text style={[subTitle, { color: getCurrentColour.textColour }]}>{text}</Text>;
+            return <Text style={[subTitle, { color: getCurrentColour.textColour, fontWeight: '400' }]}>{text}</Text>;
         }
     };
 
@@ -38,21 +39,33 @@ const Button = (props: ButtonProps): React.JSX.Element => {
         <TouchableOpacity
             onPress={onPress}
             style={{
-                backgroundColor: getCurrentColour.backgroundColour,
                 borderRadius: spacerM,
-                alignItems: 'center',
-                justifyContent: 'center',
-                paddingVertical: spacerM,
-                paddingHorizontal: spacerXL,
                 borderWidth: getCurrentColour.borderWidth,
                 borderColor: '#CCCCCC',
                 alignSelf: 'stretch',
                 flexGrow: 1,
+                overflow: 'hidden',
+
             }}
             disabled={disabled || isLoading}
             testID={testID}
         >
-            {getButtonContent()}
+            <LinearGradient
+                colors={getCurrentColour.backgroundColour}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+            >
+                <View style={{
+                    paddingVertical: spacerM,
+                    paddingHorizontal: spacerXL,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexDirection: 'row',
+                    width: '100%',
+                }}>
+                    {getButtonContent()}
+                </View>
+            </LinearGradient>
 
         </TouchableOpacity>
     )
