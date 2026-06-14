@@ -1,16 +1,17 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import MainContext from "../../../lib/Contexts/MainContext";
 import { Edge, SafeAreaView } from "react-native-safe-area-context";
-import { ScrollView, StyleSheet, TouchableOpacity, useColorScheme, View } from "react-native";
+import { LayoutChangeEvent, ScrollView, StyleSheet, TouchableOpacity, useColorScheme, View } from "react-native";
 import Button from "../../kelec-model/view/Button";
-import { BLACK_COLOUR, NEUTRAL_ZERO, PRIMARY_COLOUR, WHITE_COLOUR } from "../../kelec-model/lib/colours";
+import { BLACK_COLOUR, WHITE_COLOUR } from "../../kelec-model/lib/colours";
 import Text from "../../../screen/Common/CustomText";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { ViewsAvailable } from "../../../Main";
 import { subTitle, textBody, title1 } from "../../kelec-model/view/Titles";
-import { spacerM, spacerS, spacerXXL } from "../../kelec-model/view/Spacers";
+import { spacerL, spacerM, spacerS, spacerXXL } from "../../kelec-model/view/Spacers";
 import { CommonStyles } from "../../kelec-model/view/Styles";
 import { ButtonColours } from "../../kelec-model/lib/buttonTypes";
+import LinearGradient from "react-native-linear-gradient";
 
 type Props = {
     testID?: string;
@@ -35,6 +36,14 @@ const LoginDefaultView = ({ children, ...props }: Props) => {
 
     const { testID, title, subtitle, onNext, onPrevious, isLightLoading, disableNext, shouldDisplayDismissButton, helpText, nextButtonTestID, nextButtonText, backButtonText, safeAreaEdges } = props;
 
+    const hasButtons = !!onNext || !!onPrevious;
+    const [buttonContainerHeight, setButtonContainerHeight] = useState(0);
+
+    const handleButtonContainerLayout = (event: LayoutChangeEvent) => {
+        const { height } = event.nativeEvent.layout;
+        setButtonContainerHeight(height);
+    };
+
     return (
         <SafeAreaView
             edges={safeAreaEdges}
@@ -49,13 +58,22 @@ const LoginDefaultView = ({ children, ...props }: Props) => {
             testID={testID}
         >
             <View
-                style={CommonStyles.containerView}
+                style={
+                    [
+                        {
+                            position: 'relative'
+                        },
+                        CommonStyles.container
+
+                    ]
+                }
             >
                 <View
                     style={
                         [
                             CommonStyles.container,
-                            CommonStyles.subView
+                            CommonStyles.subView,
+                            CommonStyles.containerView,
                         ]
                     }
                 >
@@ -102,53 +120,86 @@ const LoginDefaultView = ({ children, ...props }: Props) => {
                     {/* the child view */}
                     <ScrollView
                         showsVerticalScrollIndicator={false}
-                        contentContainerStyle={{ flexGrow: 1 }}
+                        contentContainerStyle={{
+                            flexGrow: 1,
+                            paddingBottom: hasButtons ? buttonContainerHeight : spacerM
+                        }}
                     >
                         {children}
                     </ScrollView>
                 </View>
                 {/* the bottom buttons */}
                 <View
+                    onLayout={handleButtonContainerLayout}
                     style={{
-                        gap: spacerS,
-                        flexDirection: 'row',
-                        paddingTop: spacerM,
-                        alignItems: 'stretch',
+                        position: 'absolute',
+                        bottom: 0,
+                        flex: 1,
+                        width: '100%',
                     }}
                 >
-                    {onPrevious && (
-                        <View
+                    <View
+                        style={{
+                            position: 'relative'
+                        }}>
+                        <LinearGradient
+                            colors={[
+                                'rgba(255, 255, 255, 0)',
+                                'rgba(255, 255, 255, 1)',
+                            ]}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 0, y: 1 }}
                             style={{
-                                flex: 1,
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                width: '100%',
+                                height: '100%',
                             }}
                         >
-                            <Button
-                                testID={'previousButton'}
-                                buttonColour={ButtonColours.SECONDARY}
-                                text={languageHandler.getTranslation(backButtonText ?? "backToPreviousStep")}
-                                iconName="arrow-back"
-                                onPress={onPrevious}
-                            />
-                        </View>
-                    )}
-
-                    {onNext && (
+                        </LinearGradient>
                         <View
                             style={{
-                                flex: 2,
-                            }}
-                        >
-                            <Button
-                                testID={nextButtonTestID ?? 'nextStepButton'}
-                                buttonColour={ButtonColours.PRIMARY}
-                                text={languageHandler.getTranslation(nextButtonText ?? "next")}
-                                onPress={onNext}
-                                disabled={disableNext}
-                                isLoading={isLightLoading}
-                            />
-                        </View>
-                    )}
+                                gap: spacerS,
+                                flexDirection: 'row',
+                                paddingVertical: spacerL,
+                                alignItems: 'stretch',
+                                paddingHorizontal: spacerL,
+                            }}>
+                            {onPrevious && (
+                                <View
+                                    style={{
+                                        flex: 1,
+                                    }}
+                                >
+                                    <Button
+                                        testID={'previousButton'}
+                                        buttonColour={ButtonColours.SECONDARY}
+                                        text={languageHandler.getTranslation(backButtonText ?? "backToPreviousStep")}
+                                        iconName="arrow-back"
+                                        onPress={onPrevious}
+                                    />
+                                </View>
+                            )}
 
+                            {onNext && (
+                                <View
+                                    style={{
+                                        flex: 2,
+                                    }}
+                                >
+                                    <Button
+                                        testID={nextButtonTestID ?? 'nextStepButton'}
+                                        buttonColour={ButtonColours.PRIMARY}
+                                        text={languageHandler.getTranslation(nextButtonText ?? "next")}
+                                        onPress={onNext}
+                                        disabled={disableNext}
+                                        isLoading={isLightLoading}
+                                    />
+                                </View>
+                            )}
+                        </View>
+                    </View>
                 </View>
             </View>
         </SafeAreaView>

@@ -150,7 +150,6 @@ const CarModelSelector = (props: Props) => {
             <View
                 style={{
                     gap: spacerM,
-                    paddingBottom: spacerXL
                 }}
             >
 

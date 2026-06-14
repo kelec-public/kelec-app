@@ -7,7 +7,7 @@ export const CommonStyles = StyleSheet.create({
     },
     containerView: {
         flex: 1,
-        padding: spacerL,
+        paddingHorizontal: spacerL,
     },
     subView: {
         gap: spacerXL
