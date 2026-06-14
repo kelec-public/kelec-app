@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import {
     Alert,
     Linking, Modal,
+    Platform,
     ScrollView,
     Share,
     StyleSheet,
@@ -37,7 +38,8 @@ import DebugZoneView from "./DebugZone/DebugZoneView";
 import BigButton, { ButtonColours } from "../../Common/BigButton";
 import TopSettingsView from "./TopSettingsView";
 import { RenaultCredentials } from "../../../lib/clients/carMakers/renaultCredentials";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { useBottomTabBarHeight } from 'react-native-bottom-tabs';
 
 type Setting = {
     title: string;
@@ -58,6 +60,9 @@ function SettingsView(): React.JSX.Element {
     const isDarkMode = useColorScheme() === 'dark';
     const { currentUser, languageHandler, reloadUser, storageHandler, appPreferences, reloadAppPreferences, checkOnboarding } = useContext(MainContext);
 
+    const tabBarHeight = useBottomTabBarHeight();
+    const insets = useSafeAreaInsets();
+    const bottomPadding = Platform.OS === 'android' ? 0 : tabBarHeight - insets.bottom;
     const [showDebugZone, setShowDebugZone] = useState(false);
     const pkg = require('../../../../package.json');
 
@@ -415,7 +420,7 @@ function SettingsView(): React.JSX.Element {
                 testID='settingsView'
                 style={[commonStyles.flex, { backgroundColor: getMainInterfaceBackground(isDarkMode) }]}>
 
-                <ScrollView style={[commonStyles.flex, styles.mainWrapper, { backgroundColor: getMainInterfaceBackground(isDarkMode) }]}>
+                <ScrollView style={[commonStyles.flex, styles.mainWrapper, { backgroundColor: getMainInterfaceBackground(isDarkMode) }]} contentContainerStyle={{ paddingBottom: bottomPadding }}>
                     <TopSettingsView />
 
                     <View style={[styles.elements, { paddingHorizontal: 15 }]}>
