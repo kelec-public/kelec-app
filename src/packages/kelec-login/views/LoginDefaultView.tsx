@@ -10,6 +10,7 @@ import { ViewsAvailable } from "../../../Main";
 import { subTitle, textBody, title1 } from "../../kelec-model/view/Titles";
 import { spacerM, spacerS, spacerXXL } from "../../kelec-model/view/Spacers";
 import { CommonStyles } from "../../kelec-model/view/Styles";
+import { ButtonColours } from "../../kelec-model/lib/buttonTypes";
 
 type Props = {
     testID?: string;
@@ -123,7 +124,7 @@ const LoginDefaultView = ({ children, ...props }: Props) => {
                         >
                             <Button
                                 testID={'previousButton'}
-                                colour={NEUTRAL_ZERO}
+                                buttonColour={ButtonColours.SECONDARY}
                                 text={languageHandler.getTranslation(backButtonText ?? "backToPreviousStep")}
                                 iconName="arrow-back"
                                 onPress={onPrevious}
@@ -139,7 +140,7 @@ const LoginDefaultView = ({ children, ...props }: Props) => {
                         >
                             <Button
                                 testID={nextButtonTestID ?? 'nextStepButton'}
-                                colour={PRIMARY_COLOUR}
+                                buttonColour={ButtonColours.PRIMARY}
                                 text={languageHandler.getTranslation(nextButtonText ?? "next")}
                                 onPress={onNext}
                                 disabled={disableNext}

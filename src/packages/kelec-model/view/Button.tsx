@@ -1,13 +1,13 @@
 import React from "react";
-import { NEUTRAL_200, NEUTRAL_ZERO } from "../lib/colours";
 import Text from "../../../screen/Common/CustomText";
 import { ActivityIndicator, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import { subTitle2 } from "./Titles";
-import { spacerL, spacerM, spacerS, spacerXL } from "./Spacers";
+import { subTitle } from "./Titles";
+import { spacerL, spacerM, spacerXL } from "./Spacers";
+import { ButtonColours, ButtonColoursPalettes } from "../lib/buttonTypes";
 
 type ButtonProps = {
-    colour: string;
+    buttonColour: ButtonColours;
     text: string;
     onPress: () => void;
     disabled?: boolean;
@@ -17,16 +17,19 @@ type ButtonProps = {
 }
 
 const Button = (props: ButtonProps): React.JSX.Element => {
-    const { colour, text, onPress, disabled, isLoading, testID, iconName } = props;
+    const { buttonColour, text, onPress, disabled, isLoading, testID, iconName } = props;
+
+    const colourToApply = disabled ? ButtonColours.DISABLED : buttonColour;
+    const getCurrentColour = ButtonColoursPalettes[colourToApply];
 
     const getButtonContent = () => {
         if (isLoading) {
             return <ActivityIndicator />;
         }
         if (iconName) {
-            return <Icon name={iconName} size={spacerL} color={colour === NEUTRAL_ZERO ? 'black' : 'white'} />;
+            return <Icon name={iconName} size={spacerL} color={getCurrentColour.textColour} />;
         } else {
-            return <Text style={subTitle2}>{text}</Text>;
+            return <Text style={[subTitle, { color: getCurrentColour.textColour }]}>{text}</Text>;
         }
     };
 
@@ -35,16 +38,16 @@ const Button = (props: ButtonProps): React.JSX.Element => {
         <TouchableOpacity
             onPress={onPress}
             style={{
-                backgroundColor: disabled ? NEUTRAL_200 : colour,
-                borderRadius: spacerS,
+                backgroundColor: getCurrentColour.backgroundColour,
+                borderRadius: spacerM,
                 alignItems: 'center',
                 justifyContent: 'center',
                 paddingVertical: spacerM,
                 paddingHorizontal: spacerXL,
-                borderWidth: colour === NEUTRAL_ZERO ? 1 : 0,
+                borderWidth: getCurrentColour.borderWidth,
                 borderColor: '#CCCCCC',
                 alignSelf: 'stretch',
-                flexGrow: 1
+                flexGrow: 1,
             }}
             disabled={disabled || isLoading}
             testID={testID}
