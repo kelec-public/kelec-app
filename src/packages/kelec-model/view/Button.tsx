@@ -42,7 +42,9 @@ const Button = (props: ButtonProps): React.JSX.Element => {
                 paddingVertical: spacerM,
                 paddingHorizontal: spacerXL,
                 borderWidth: colour === NEUTRAL_ZERO ? 1 : 0,
-                borderColor: '#CCCCCC'
+                borderColor: '#CCCCCC',
+                alignSelf: 'stretch',
+                flexGrow: 1
             }}
             disabled={disabled || isLoading}
             testID={testID}
