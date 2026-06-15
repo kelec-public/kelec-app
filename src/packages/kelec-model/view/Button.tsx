@@ -43,7 +43,6 @@ const Button = (props: ButtonProps): React.JSX.Element => {
                 borderWidth: getCurrentColour.borderWidth,
                 borderColor: '#CCCCCC',
                 alignSelf: 'stretch',
-                flexGrow: 1,
                 overflow: 'hidden',
 
             }}
@@ -61,7 +60,7 @@ const Button = (props: ButtonProps): React.JSX.Element => {
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexDirection: 'row',
-                    width: '100%',
+
                 }}>
                     {getButtonContent()}
                 </View>

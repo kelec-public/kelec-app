@@ -167,11 +167,7 @@ const LoginDefaultView = ({ children, ...props }: Props) => {
                                 paddingHorizontal: spacerL,
                             }}>
                             {onPrevious && (
-                                <View
-                                    style={{
-                                        flex: 1,
-                                    }}
-                                >
+                                <View>
                                     <Button
                                         testID={'previousButton'}
                                         buttonColour={ButtonColours.SECONDARY}
@@ -185,9 +181,8 @@ const LoginDefaultView = ({ children, ...props }: Props) => {
                             {onNext && (
                                 <View
                                     style={{
-                                        flex: 2,
-                                    }}
-                                >
+                                        flex: 1
+                                    }}>
                                     <Button
                                         testID={nextButtonTestID ?? 'nextStepButton'}
                                         buttonColour={ButtonColours.PRIMARY}
