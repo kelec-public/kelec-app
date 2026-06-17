@@ -28,3 +28,28 @@ If you face some issues with generating the package-lock.json file, you can use 
 ```bash
 docker run --rm -v $(pwd):/app -w /app node:24.16.0 npm install
 ```
+
+# Local Sonar test
+
+Run a SonarQube scan locally with Docker, without going through GitHub Actions.
+
+## Usage
+
+```bash
+chmod +x test-sonar-local.sh
+./test-sonar-local.sh
+```
+
+On first run: starts Docker if needed, launches SonarQube, asks for a token (generate one at `http://localhost:9000` → My Account → Security → Generate Tokens), then runs the scan.
+
+## Commands
+
+```bash
+./test-sonar-local.sh              # everything: start SonarQube if needed + scan
+./test-sonar-local.sh --scan-only  # SonarQube already running, just re-run the scan
+./test-sonar-local.sh --stop       # stop and remove the SonarQube container
+```
+
+## Results
+
+`http://localhost:9000/dashboard?id=Kelec_Nextgen`

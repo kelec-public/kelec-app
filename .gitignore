@@ -76,3 +76,4 @@ ios/tmp.xcconfig
 test-report.html
 
 .env
+/.sonar-local-token
