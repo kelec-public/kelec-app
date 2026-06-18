@@ -94,7 +94,7 @@ test('should render the charges view', async () => {
     expect(kwgChargedText[2].props.children[1]).toBe("32.25");
 
     // now close the modal
-    const MergeChargeModalCloseButton = await screen.findByTestId('MergeChargeModalCloseButton');
+    const MergeChargeModalCloseButton = await screen.findByTestId('mergeViewBottomSheetCloseButton');
     await user.press(MergeChargeModalCloseButton);
 
     chargesCards = await screen.findAllByTestId('ChargeCard');

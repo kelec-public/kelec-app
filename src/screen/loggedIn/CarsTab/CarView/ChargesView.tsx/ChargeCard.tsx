@@ -10,6 +10,7 @@ import commonStyles, { fontFamilyBold, fontWeightBold } from "../../../../../lib
 import CarsViewContext from "../../../../../lib/Contexts/CarsViewContext";
 import BigButton, { ButtonColours } from "../../../../Common/BigButton";
 import { SafeAreaView } from "react-native-safe-area-context";
+import BottomSheet from "../../../../Common/bottomSheet/BottomSheet";
 
 type ChargeCardProps = {
     readonly charge: RenaultCharge;
@@ -39,51 +40,26 @@ function ChargeCard({ charge, carType }: ChargeCardProps): React.JSX.Element {
 
     return (
         <View testID={'ChargeCard'} style={{ padding: 15, backgroundColor: getBackgroundColour(), marginHorizontal: 10, marginTop: 0, borderRadius: 7 }}>
-            <Modal
-                testID={'subChargesModal'}
-                animationType="slide"
-                transparent={true}
-                visible={shouldOpenSubChargesModal}
-                onRequestClose={() => {
+            <BottomSheet
+                testID="mergeViewBottomSheet"
+                onClose={() => {
                     setShouldOpenSubChargesModal(false);
                     handleModalAnim(false);
                 }}
+                visible={shouldOpenSubChargesModal}
+                title={languageHandler.getTranslation('mergeCharges')}
             >
-                <View style={[commonStyles.flex, commonStyles.flexEnd]}>
-                    <SafeAreaView
-                        style={
-                            [
-                                {
-                                    backgroundColor: getGrayBackgroundColour(isDarkMode),
-                                },
-                                styles.mainView,
-                            ]}>
-                        <View style={[styles.mainViewContent, { maxHeight: Dimensions.get('window').height * 0.8 }]}>
-                            <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
-                                {charge.getSubCharges().map((subCharge) => (
-                                    <ChargeCard
-                                        key={subCharge.getStartDate().toISOString()}
-                                        charge={subCharge}
-                                        carType={carType}
-                                    />
-                                ))}
-                            </ScrollView>
-                            <View style={[commonStyles.rowFlex, commonStyles.gap15, commonStyles.marginVertical]}>
-                                <BigButton
-                                    testID={'MergeChargeModalCloseButton'}
-                                    onPress={() => {
-                                        setShouldOpenSubChargesModal(false);
-                                        handleModalAnim(false);
-                                    }}
-                                    colour={ButtonColours.PRIMARY}
-                                    icon={"close"}
-                                />
-                            </View>
-                        </View>
-                    </SafeAreaView>
-                </View>
 
-            </Modal>
+                <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
+                    {charge.getSubCharges().map((subCharge) => (
+                        <ChargeCard
+                            key={subCharge.getStartDate().toISOString()}
+                            charge={subCharge}
+                            carType={carType}
+                        />
+                    ))}
+                </ScrollView>
+            </BottomSheet>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 {charge.getIsSameDay() && (
                     <View style={{
