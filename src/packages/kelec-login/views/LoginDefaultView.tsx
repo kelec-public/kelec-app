@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import MainContext from "../../../lib/Contexts/MainContext";
 import { Edge, SafeAreaView } from "react-native-safe-area-context";
-import { LayoutChangeEvent, ScrollView, StyleSheet, TouchableOpacity, useColorScheme, View } from "react-native";
+import { KeyboardAvoidingView, LayoutChangeEvent, Platform, ScrollView, StyleSheet, TouchableOpacity, useColorScheme, View } from "react-native";
 import Button from "../../kelec-model/view/Button";
 import { BLACK_COLOUR, WHITE_COLOUR } from "../../kelec-model/lib/colours";
 import Text from "../../../screen/Common/CustomText";
@@ -57,6 +57,10 @@ const LoginDefaultView = ({ children, ...props }: Props) => {
             }
             testID={testID}
         >
+            <KeyboardAvoidingView
+                style={CommonStyles.container}
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            >
             <View
                 style={
                     [
@@ -197,6 +201,7 @@ const LoginDefaultView = ({ children, ...props }: Props) => {
                     </View>
                 </View>
             </View>
+            </KeyboardAvoidingView>
         </SafeAreaView>
     );
 };

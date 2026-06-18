@@ -23,7 +23,7 @@ function ProfileView(): React.JSX.Element {
             testID='profileView'
             style={[commonStyles.flex, { backgroundColor: getMainInterfaceBackground(isDarkMode) }]}
         >
-            <SafeAreaView style={[commonStyles.flex]} >
+            <SafeAreaView style={[commonStyles.flex]} edges={['top']}>
                 <View style={[commonStyles.paddingHorizontal, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }]}>
                     <Text style={[commonStyles.navTitle]}>{languageHandler.getTranslation("account")}</Text>
                     {/* display compact buttons if there are multiple cars added */}

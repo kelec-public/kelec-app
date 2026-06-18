@@ -364,7 +364,8 @@ function CarView({ carModel, navigation, account, pagerRef, tfaInProgress }: Car
         <CarViewContext.Provider value={carViewContextValues} >
             <SafeAreaView style={[styles.flex, {
                 backgroundColor: getMainInterfaceBackground(isDarkMode)
-            }]}>
+            }]}
+            edges={['top']}>
                 <ScrollView
                     style={[styles.mainScrollView]}
                     refreshControl={

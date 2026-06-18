@@ -1,5 +1,5 @@
 import React, { useContext, useState, RefObject, useRef } from "react";
-import { findNodeHandle, NativeModules, TextInput, Alert, KeyboardAvoidingView, Platform, View } from 'react-native';
+import { findNodeHandle, NativeModules, TextInput, Alert, View } from 'react-native';
 import MainContext from "../../../../../lib/Contexts/MainContext";
 import { capitlizeFirstLetter } from "../../../../../lib/graphics/utils";
 import Field, { FieldType } from "../../../../kelec-model/view/Field";
@@ -165,11 +165,7 @@ const CredentialsView = (props: Props) => {
     };
 
     return (
-        <KeyboardAvoidingView
-            style={CommonStyles.container}
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        >
-            <LoginDefaultView
+        <LoginDefaultView
                 testID='credentialsStepView'
                 title="addCar"
                 subtitle={languageHandler.getTranslation("loginWith") + " " + capitlizeFirstLetter(selectedCarMaker)}
@@ -215,7 +211,6 @@ const CredentialsView = (props: Props) => {
 
                 </View>
             </LoginDefaultView>
-        </KeyboardAvoidingView >
     );
 };
 

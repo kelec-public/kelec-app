@@ -1,9 +1,8 @@
-import { Keyboard, KeyboardAvoidingView, Platform, Pressable, StyleSheet, TextInput, View } from "react-native";
+import { Keyboard, Pressable, StyleSheet, TextInput, View } from "react-native";
 import Text from "../../../../../../screen/Common/CustomText";
 import { useContext, useRef, useState } from "react";
 import MainContext from "../../../../../../lib/Contexts/MainContext";
 import { fontFamilyBold, fontWeightBold } from "../../../../../kelec-model/lib/fonts";
-import { CommonStyles } from "../../../../../kelec-model/view/Styles";
 
 type Props = {
     email: string;
@@ -53,30 +52,25 @@ const TfaCodeView = ({ email, onChangeCode }: Props) => {
         });
 
     return (
-        <KeyboardAvoidingView
-            style={CommonStyles.container}
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        >
-            <Pressable style={styles.container} onPress={() => inputRef.current?.focus()}>
+        <Pressable style={styles.container} onPress={() => inputRef.current?.focus()}>
 
-                {/* input réel masqué */}
-                <TextInput
-                    ref={inputRef}
-                    value={userInputCode}
-                    onChangeText={handleCodeChange}
-                    keyboardType="number-pad"
-                    maxLength={AMOUNT_OF_CHARACTERS}
-                    autoComplete="one-time-code"
-                    textContentType="oneTimeCode"
-                    style={styles.hiddenInput}
-                    caretHidden
-                    testID="tfaCodeInput"
-                />
-                <Text style={styles.mainTitle}>{languageHandler.getTranslation("aCodeHasBeenSentToYourEmail")}</Text>
-                <Text>{email}</Text>
-                <View style={styles.inputBoxes}>{renderInputBoxes()}</View>
-            </Pressable >
-        </KeyboardAvoidingView>
+            {/* input réel masqué */}
+            <TextInput
+                ref={inputRef}
+                value={userInputCode}
+                onChangeText={handleCodeChange}
+                keyboardType="number-pad"
+                maxLength={AMOUNT_OF_CHARACTERS}
+                autoComplete="one-time-code"
+                textContentType="oneTimeCode"
+                style={styles.hiddenInput}
+                caretHidden
+                testID="tfaCodeInput"
+            />
+            <Text style={styles.mainTitle}>{languageHandler.getTranslation("aCodeHasBeenSentToYourEmail")}</Text>
+            <Text>{email}</Text>
+            <View style={styles.inputBoxes}>{renderInputBoxes()}</View>
+        </Pressable>
     )
 };
 

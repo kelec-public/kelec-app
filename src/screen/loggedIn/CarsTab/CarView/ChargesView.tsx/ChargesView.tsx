@@ -184,6 +184,7 @@ function ChargesView({ navigation, route }: ChargesViewProps): React.JSX.Element
         <SafeAreaView
             style={[commonStyles.flex, { backgroundColor: getWhiteColour(isDarkMode), position: 'relative' }]}
             testID="ChargesView"
+            edges={['top']}
         >
             <ChargesViewContext.Provider value={chargesViewContextValues}>
                 <BottomSheet
