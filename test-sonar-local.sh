@@ -23,45 +23,26 @@ TOKEN_FILE=".sonar-local-token"
 PROJECT_KEY="Kelec_Nextgen"
 PROJECT_NAME="Kelec_Nextgen"
 
-# --- 0. Make sure Docker Desktop is running, start it otherwise ---
-ensure_docker_running() {
-  if docker info > /dev/null 2>&1; then
-    echo "✓ Docker is already running."
-    return 0
-  fi
-
-  echo "→ Docker Desktop doesn't seem to be running, starting it..."
-
-  # Locate the Docker.app bundle rather than assuming it's named "Docker"
-  local docker_app
-  docker_app=$(mdfind "kMDItemCFBundleIdentifier == 'com.docker.docker'" 2>/dev/null | head -n1)
-
-  if [ -n "${docker_app}" ]; then
-    open "${docker_app}"
-  elif [ -d "/Applications/Docker.app" ]; then
-    open "/Applications/Docker.app"
-  else
-    echo "✗ Could not find Docker Desktop in /Applications."
-    echo "  Please start Docker Desktop manually, then re-run this script."
+# --- 0. Check that Docker is installed and running ---
+check_docker_running() {
+  if ! command -v docker > /dev/null 2>&1; then
+    echo "✗ Docker does not seem to be installed."
+    echo "  macOS: Docker Desktop (brew install --cask docker), OrbStack, or Colima"
+    echo "  Windows: Docker Desktop (requires WSL2)"
+    echo "  Linux: Docker Engine (https://docs.docker.com/engine/install/)"
     exit 1
   fi
 
-  echo "→ Waiting for the Docker daemon to become ready (this can take a minute)..."
-  for i in $(seq 1 90); do
-    if docker info > /dev/null 2>&1; then
-      echo "✓ Docker is ready."
-      return 0
-    fi
-    if [ "$i" = "90" ]; then
-      echo "✗ Timeout: Docker did not start after 3 minutes."
-      echo "  Open Docker Desktop manually and check its status, then re-run this script."
-      exit 1
-    fi
-    sleep 2
-  done
+  if ! docker info > /dev/null 2>&1; then
+    echo "✗ Docker is installed but doesn't seem to be running."
+    echo "  Start Docker Desktop / OrbStack / 'colima start', then re-run this script."
+    exit 1
+  fi
+
+  echo "✓ Docker is running."
 }
 
-ensure_docker_running
+check_docker_running
 
 # --- 1. Argument handling ---
 if [ "${1:-}" = "--stop" ]; then
