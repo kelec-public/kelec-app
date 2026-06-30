@@ -1,6 +1,5 @@
 import { KeyboardAvoidingView, ScrollView, StyleSheet, useColorScheme, View } from "react-native";
 import Text from "../../../../../Common/CustomText";
-import BigButton from "../../../../../Common/BigButton";
 import { useContext } from "react";
 import MainContext from "../../../../../../lib/Contexts/MainContext";
 import { getGrayBackgroundColour } from "../../../../../../lib/graphics/utils";

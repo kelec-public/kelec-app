@@ -1,4 +1,4 @@
-import { Modal, useColorScheme, View } from "react-native";
+import { Modal, View } from "react-native";
 import { useEffect, useMemo, useRef, useState } from "react";
 import FullScreenLoading from "./FullScreenLoading";
 import MainContext from "./lib/Contexts/MainContext";
@@ -22,7 +22,6 @@ export enum ViewsAvailable {
 }
 
 function Main(): React.JSX.Element {
-    const isDarkMode = useColorScheme() === 'dark';
     const theme = useTheme();
 
     const [_, setTest] = useState<string>(''); // NOSONAR

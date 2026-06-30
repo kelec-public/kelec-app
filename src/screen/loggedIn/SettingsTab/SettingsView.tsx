@@ -27,7 +27,6 @@ import {
 
 import { DocumentDirectoryPath, writeFile } from 'react-native-fs';
 import DebugZoneView from "./DebugZone/DebugZoneView";
-import BigButton from "../../Common/BigButton";
 import TopSettingsView from "./TopSettingsView";
 import { RenaultCredentials } from "../../../lib/clients/carMakers/renaultCredentials";
 import { SafeAreaView } from "react-native-safe-area-context";

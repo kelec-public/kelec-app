@@ -3,7 +3,6 @@ import Text from "./screen/Common/CustomText";
 import React, { useContext, useState } from "react";
 import MainContext from "./lib/Contexts/MainContext";
 import commonStyles, { fontFamilyBold, fontWeightBold } from "./lib/graphics/commonStyle";
-import BigButton from "./screen/Common/BigButton";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import { getAccentOrange, getBlackColour, getWhiteColour } from "./lib/graphics/utils";
 import LazyRender from "./LazyRenderer";

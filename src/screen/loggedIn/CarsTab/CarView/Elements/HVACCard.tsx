@@ -6,7 +6,6 @@ import { useContext, useEffect, useRef, useState } from "react";
 import MainContext from "../../../../../lib/Contexts/MainContext";
 import CarsViewContext from "../../../../../lib/Contexts/CarsViewContext";
 import commonStyles, { fontFamilyBold, fontWeightBold } from "../../../../../lib/graphics/commonStyle";
-import BigButton from "../../../../Common/BigButton";
 import CarViewContext from "../../../../../lib/Contexts/CarViewContext";
 import LinearGradient from "react-native-linear-gradient";
 import TemperatureHandler from "../../../../../lib/model/TemperatureHandler";

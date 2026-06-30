@@ -6,11 +6,9 @@ import { useContext, useState } from "react";
 import MainContext from "../../../../../lib/Contexts/MainContext";
 import { convertDateForChargeHistory, convertHoursForChargeHistory, formatNumberWithSpaces, getBlackColour, getDistance, getGrayBackgroundColour, getWhiteColour } from "../../../../../lib/graphics/utils";
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import commonStyles, { fontFamilyBold, fontWeightBold } from "../../../../../lib/graphics/commonStyle";
+import { fontFamilyBold, fontWeightBold } from "../../../../../lib/graphics/commonStyle";
 import CarsViewContext from "../../../../../lib/Contexts/CarsViewContext";
-import BigButton from "../../../../Common/BigButton";
 import { useTheme } from '@react-navigation/native';
-import { SafeAreaView } from "react-native-safe-area-context";
 import BottomSheet from "../../../../Common/bottomSheet/BottomSheet";
 
 type ChargeCardProps = {
