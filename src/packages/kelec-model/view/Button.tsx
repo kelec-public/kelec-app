@@ -115,8 +115,7 @@ const Button = (props: ButtonProps): React.JSX.Element => {
                         testID={'buttonText'}
                         style={[finalStyle.textStyle, {
                             ...txtColors,
-                            flexWrap: 'wrap',
-                            paddingHorizontal: 50,
+                            flexWrap: 'wrap'
                         }]}
                     >
                         {text}
