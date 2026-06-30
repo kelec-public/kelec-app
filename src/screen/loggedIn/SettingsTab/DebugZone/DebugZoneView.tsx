@@ -9,6 +9,7 @@ import RenaultAccount from "../../../../lib/clients/accounts/renaultAccount";
 import { BatteryStatus, RenaultStatus } from "../../../../lib/clients/carMakers/renaultClient";
 import Config from 'react-native-config';
 import { SafeAreaView } from "react-native-safe-area-context";
+import { RenaultCredentials } from "../../../../lib/clients/carMakers/renaultCredentials";
 
 type DebugZoneProps = {
     readonly setShowDebugZone: (showDebugZone: boolean) => void;
@@ -94,9 +95,9 @@ type BatteryStatusApiResponse = {
 const DebugZoneView = ({ setShowDebugZone }: DebugZoneProps): React.JSX.Element => {
     class MiniRenaultClient {
         private static readonly GIGYA_URL = 'https://gigya-prod-eu1.renaultgroup.com';
-        private static readonly GIGYA_API_KEY = Config.GIGYA_API_KEY;
+        private static readonly GIGYA_API_KEY = Config.GIGYA_API_KEY ?? '';
         private static readonly KAMEREON_URL = 'https://api-wired-prod-1-euw1.wrd-aws.com';
-        private static readonly KAMEREON_API_KEY = Config.KAMEREON_API_KEY;
+        private static readonly KAMEREON_API_KEY = Config.KAMEREON_API_KEY ?? '';
 
         email: string;
         password: string;
@@ -108,6 +109,14 @@ const DebugZoneView = ({ setShowDebugZone }: DebugZoneProps): React.JSX.Element 
         }
 
         getGigyaToken = async (): Promise<GigyaTokenFunctionResponse> => {
+            writeLog('Getting gigya cookie value');
+
+            const storedCookieValue = await RenaultCredentials.getCookieValue(this.email);
+            if (storedCookieValue !== null) {
+                writeLog('Found stored cookie value. Returning it');
+                return storedCookieValue;
+            }
+            writeLog('No stored cookie value found. Fetching it from the server');
             const url = MiniRenaultClient.GIGYA_URL + RenaultEndpoints.GET_GIGYA_TOKEN;
             const body = {
                 loginID: this.email,
