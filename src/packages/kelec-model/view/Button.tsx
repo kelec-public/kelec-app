@@ -34,7 +34,7 @@ const Button = (props: ButtonProps): React.JSX.Element => {
 
     const pressAnim = useRef(new Animated.Value(0)).current;
 
-    const bg = !disabled ? finalStyle.colors.background : finalStyle.colors.backgroundDisabled;
+    const bg = disabled ? finalStyle.colors.backgroundDisabled : finalStyle.colors.background;
     const bgPressed = finalStyle.colors.backgroundPressed ?? finalStyle.colors.background;
 
     const txtColors = {
@@ -88,8 +88,8 @@ const Button = (props: ButtonProps): React.JSX.Element => {
         const backgroundColor = pressAnim.interpolate({
             inputRange: [0, 1],
             outputRange: [
-                bg as string,
-                isGradient(bgPressed) ? (bg as string) : (bgPressed as string),
+                bg,
+                isGradient(bgPressed) ? bg : bgPressed,
             ],
         });
         return <Animated.View style={[StyleSheet.absoluteFill, { backgroundColor }]} />;
