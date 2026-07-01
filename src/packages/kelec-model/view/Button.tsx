@@ -147,13 +147,14 @@ const Button = (props: ButtonProps): React.JSX.Element => {
                 justifyContent: 'center',
                 alignSelf: 'stretch',
                 overflow: 'hidden',
+                flex: 1,
             }}
             disabled={disabled || isLoading}
             testID={testID}
         >
             <Animated.View
                 testID={'buttonStyle'}
-                style={[containerStyle, { overflow: 'hidden' }]}
+                style={[containerStyle, { overflow: 'hidden', flex: 1 }]}
             >
                 {renderBackground()}
                 {getButtonContent()}
