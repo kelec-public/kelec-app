@@ -154,8 +154,6 @@ test('should open the car model choice screen with filled values', async () => {
         // the batteryDropdown should be truthy
         expect(screen.getByTestId('batteryDropdown')).toBeDefined();
         expect(screen.getByTestId('batteryDropdown-label').props.children).toBe('60 kWh / AC 7.4 kW / DC 130 kW');
-
-        expect(screen.getByTestId('chargingLimitText').props.children[0]).toBe(80);
     });
 
     // now decide to change the car model 
@@ -186,128 +184,6 @@ test('should open the car model choice screen with filled values', async () => {
     expect(data?.getBattery().size).toBe(60);
     expect(data?.getBattery().max_ac_power).toBe(22);
     expect(data?.getBattery().max_dc_power).toBe(-1);
-    expect(data?.getChargingLimit()).toBe(80);
-
-
-    // now go back and raise the charging limit
-
-    openModalButton = screen.getByTestId('openModalButton'); // open the car model choice screen
-    await user.press(openModalButton);
-    await waitFor(() => {
-        expect(screen.getByTestId('carModelChoiceStep')).toBeDefined();
-    });
-
-    jest.mock('react-native', () => {
-        const RN = jest.requireActual('react-native');
-        RN.PanResponder = {
-            create: (handlers: any) => ({
-                panHandlers: handlers
-            })
-        };
-        return RN;
-    });
-
-    const chargingLimitSlider = screen.getByTestId('chargingLimitSlider');
-    expect(screen.getByTestId('chargingLimitText').props.children[0]).toBe(80);
-    /* test with pan responder */
-    fireEvent(chargingLimitSlider, 'layout', {
-        nativeEvent: {
-            layout: { width: 300, height: 50, x: 0, y: 0 },
-        },
-        target: {
-            measure: (callback: (fx: number, fy: number, w: number, h: number, px: number, py: number) => void) => {
-                callback(0, 0, 300, 50, 10, 20); // largeur fixe 300px
-            },
-        },
-    });
-
-    fireEvent(chargingLimitSlider, "responderGrant", {
-        nativeEvent: {
-            touches: [{ pageX: 0, pageY: 0 }], // Initial touch position
-            changedTouches: [],
-            target: chargingLimitSlider,
-            identifier: 1,
-        },
-        touchHistory: { mostRecentTimeStamp: "2", touchBank: [] },
-    });
-
-    fireEvent(chargingLimitSlider, "responderMove", {
-        touchHistory: {
-            mostRecentTimeStamp: "1",
-            touchBank: [
-                {
-                    touchActive: true,
-                    currentTimeStamp: 1,
-                    currentPageX: 260, // 85% * 300 = 255
-                    previousPageX: 0,
-                },
-            ],
-            numberActiveTouches: 1,
-            indexOfSingleActiveTouch: 0, // for touchBank[0]
-        },
-    });
-
-
-
-    expect(screen.getByTestId('chargingLimitText').props.children[0]).toBe(85);
-
-    // confirm
-
-    confirmCarModelChoice = screen.getByTestId('confirmCarModelChoice');
-    await user.press(confirmCarModelChoice);
-    await waitFor(async () => {
-        expect(() => screen.getByTestId('carModelChoiceStep')).toThrow();
-    });
-
-    const data2 = await storageHandler.getCarType("vin1");
-    expect(data2).not.toBeNull();
-    expect(data2?.getChargingLimit()).toBe(85);
-});
-
-test('charging limit slider should not be displayed with hyundai cars', async () => {
-    const carTypeInterface: CarTypeInterface = {
-        brand: {
-            "display_name": "HyundaiBrandToAdd",
-            "name": "hyundai",
-        },
-        model: {
-            "display_name": "ZOEModelToAdd",
-            "name": "ZOE",
-            "engine_type": "ELEC",
-        },
-        battery: {
-            "size": 60,
-            "max_ac_power": 7.4,
-            "max_dc_power": 130
-        },
-        chargingLimit: 80
-    }
-    const carType = new CarType(carTypeInterface);
-    const storageHandler = new StorageHandler();
-    await storageHandler.setCarType("vin1", carType);
-
-    const user = userEvent.setup();
-    render(<App />);
-    mockGetCarStatus.mockResolvedValueOnce({
-        hasError: false,
-        apiData: mockApiData
-    });
-
-    await waitFor(async () => {
-        expect(screen.getByTestId('summaryCard')).toBeDefined();
-    });
-
-
-    const openModalButton = screen.getByTestId('openModalButton'); // open the car model choice screen
-    await user.press(openModalButton);
-    await waitFor(() => {
-        expect(screen.getByTestId('carModelChoiceStep')).toBeDefined();
-    });
-
-    await waitFor(async () => {
-        expect(() => screen.getByTestId('chargingLimitButtonPlus')).toThrow();
-    });
-
 });
 
 test('should open the menu and go back', async () => {

@@ -80,6 +80,22 @@ class RenaultAccount extends Account {
         }
         return { hasError: true }
     }
+
+    fetchSoCLevels = async (vin: string): Promise<CarFetchStatus> => {
+        const client = new RenaultClient(this.getEmail(), this.getPassword(), this.getKamereonAccountID());
+        if (client.getSoCLevels) {
+            return await client.getSoCLevels(vin);
+        }
+        return { hasError: true }
+    }
+
+    setSoCLevels = async (vin: string, socTarget?: number, socMin?: number): Promise<CarFetchStatus> => {
+        const client = new RenaultClient(this.getEmail(), this.getPassword(), this.getKamereonAccountID());
+        if (client.setSoCLevels) {
+            return await client.setSoCLevels(vin, socTarget, socMin);
+        }
+        return { hasError: true }
+    }
 }
 
 export default RenaultAccount;

@@ -12,7 +12,6 @@ interface CarTypeInterface {
     brand: BrandApi;
     model: ModelApi;
     battery: BatteryApi;
-    chargingLimit: number;
 
     // leasing
     leasing?: LeasingData;
@@ -35,6 +34,7 @@ enum CarAvailableModels {
     MASTER = "master_e_tech",
     A290 = "a290",
     A390 = "a390",
+    SPRING = "spring"
 }
 
 const AUTHORISED_MODELS = [
@@ -46,7 +46,8 @@ const AUTHORISED_MODELS = [
     CarAvailableModels.TRAFIC,
     CarAvailableModels.MASTER,
     CarAvailableModels.A290,
-    CarAvailableModels.A390
+    CarAvailableModels.A390,
+    CarAvailableModels.SPRING
 ]
 
 class CarType {
@@ -54,7 +55,6 @@ class CarType {
     private readonly brand: BrandApi;
     private readonly model: ModelApi;
     private readonly battery: BatteryApi;
-    private chargingLimit: number;
     private leasing?: LeasingData;
     private supportsV2G?: boolean;
 
@@ -62,7 +62,6 @@ class CarType {
         this.brand = carInterface.brand;
         this.model = carInterface.model;
         this.battery = carInterface.battery;
-        this.chargingLimit = carInterface?.chargingLimit ?? 0;
         this.leasing = carInterface?.leasing;
         this.supportsV2G = carInterface?.supportsV2G;
     }
@@ -81,20 +80,6 @@ class CarType {
 
     getBatterySize(): number {
         return this.battery.size ?? 0;
-    }
-
-    getChargingLimit(): number {
-        // if custom charging limit is allowed
-        if (AUTHORISED_MODELS.includes(this.model.name as CarAvailableModels)) {
-            return this.chargingLimit ?? 100;
-        }
-
-        // all other models
-        return 100;
-    }
-
-    setChargingLimit(chargingLimit: number): void {
-        this.chargingLimit = chargingLimit;
     }
 
     getCarModel(): ModelApi {
@@ -141,7 +126,6 @@ class CarType {
             brand: this.brand,
             model: this.model,
             battery: this.battery,
-            chargingLimit: this.chargingLimit,
             leasing: this.leasing,
             supportsV2G: this.supportsV2G
         })

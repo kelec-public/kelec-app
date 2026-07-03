@@ -237,6 +237,12 @@ type MapLocationStatus = {
     gpsLongitude?: number;
 }
 
+type SoCLevels = {
+    lastEnergyUpdateTimestamp?: string;
+    socMin: number;
+    socTarget: number;
+}
+
 class RenaultClient extends CarMakerClient {
 
     private static readonly GIGYA_URL = 'https://gigya-prod-eu1.renaultgroup.com';
@@ -675,6 +681,71 @@ class RenaultClient extends CarMakerClient {
         }
     };
 
+    private readonly getSoCLevelsApi = async (JWTToken: string, vin: string): Promise<RenaultStatus> => {
+        const url = `${RenaultClient.KAMEREON_URL}/commerce/v1/accounts/${this.kamereonAccountID}/kamereon/kcm/v1/vehicles/${vin}/ev/soc-levels?country=FR`;
+        try {
+            const response = await fetch(url, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-gigya-id_token': JWTToken,
+                    'apikey': RenaultClient.KAMEREON_API_KEY
+                }
+            });
+            const data: SoCLevels = await response.json();
+            if (data !== undefined) {
+                return {
+                    hasError: false,
+                    apiData: data
+                }
+            }
+            return {
+                hasError: true,
+                apiData: []
+            }
+        } catch {
+            return {
+                hasError: true,
+                apiData: []
+            }
+        }
+    };
+
+    private readonly setSoCLevelsApi = async (jwtToken: string, vin: string, socTarget?: number, socMin?: number): Promise<RenaultStatus> => {
+        const url = `${RenaultClient.KAMEREON_URL}/commerce/v1/accounts/${this.kamereonAccountID}/kamereon/kcm/v1/vehicles/${vin}/ev/soc-levels?country=FR`;
+        const body = {
+            ...(socMin !== undefined ? { socMin } : {}),
+            ...(socTarget !== undefined ? { socTarget } : {}),
+        }
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/vnd.api+json',
+                    'apikey': RenaultClient.KAMEREON_API_KEY,
+                    'x-gigya-id_token': jwtToken
+                },
+                body: JSON.stringify(body)
+            })
+            const data = await response.json();
+            try {
+                return {
+                    hasError: false,
+                    apiData: data
+                }
+            } catch {
+                return {
+                    hasError: true,
+                    apiData: []
+                }
+            }
+        } catch {
+            return {
+                hasError: true,
+                apiData: []
+            }
+        }
+    };
+
     getKamereonAccount = async (carMaker: CarMaker = CarMaker.RENAULT): Promise<LoginFunctionReponse> => {
         if (this.kamereonAccountID !== undefined && this.kamereonAccountID !== '') {
             return {
@@ -926,6 +997,40 @@ class RenaultClient extends CarMakerClient {
         }
         const chargeSettings = await this.getKamereonEndpoint(KamereonEndpoints.CHARGES_SETTINGS, ApiVersion.V1, vin, jwtToken.jwtToken!);
         return chargeSettings;
+    }
+
+    getSoCLevels = async (vin: string): Promise<RenaultStatus> => {
+        const gigyaToken = await this.getGigyaToken();
+        if (!gigyaToken.canLogin) {
+            return {
+                hasError: true,
+            };
+        }
+        const jwtToken = await this.getJWTToken(gigyaToken.cookieValue!);
+        if (!jwtToken.canLogin) {
+            return {
+                hasError: true,
+            };
+        }
+        const socLevels = await this.getSoCLevelsApi(jwtToken.jwtToken!, vin);
+        return socLevels;
+    }
+
+    setSoCLevels = async (vin: string, socTarget?: number, socMin?: number): Promise<RenaultStatus> => {
+        const gigyaToken = await this.getGigyaToken();
+        if (!gigyaToken.canLogin) {
+            return {
+                hasError: true,
+            };
+        }
+        const jwtToken = await this.getJWTToken(gigyaToken.cookieValue!);
+        if (!jwtToken.canLogin) {
+            return {
+                hasError: true,
+            };
+        }
+        const socLevels = await this.setSoCLevelsApi(jwtToken.jwtToken!, vin, socTarget, socMin);
+        return socLevels;
     }
 }
 export type { VehicleLinkApi, RenaultStatus, BatteryStatus, CockpitStatus, MapLocationStatus, ChargesHistory, ChargeSettingsStatus, ChargeSchedule, HVACStatus };

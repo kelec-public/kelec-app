@@ -1,6 +1,6 @@
 import { View } from "react-native";
 import Text from "../../../../../screen/Common/CustomText";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import MainContext from "../../../../../lib/Contexts/MainContext";
 import Slider from "../../../../kelec-model/view/Slider";
 import { spacerM } from "../../../../kelec-model/view/Spacers";
@@ -21,7 +21,9 @@ const ChargeLimitSlider = (props: ChargeLimitSliderProps) => {
     return (
         <View
             style={{
-                gap: spacerM
+                gap: spacerM,
+                width: '100%'
+
             }}
         >
             <Text
@@ -34,7 +36,8 @@ const ChargeLimitSlider = (props: ChargeLimitSliderProps) => {
                     [
                         CommonStyles.container,
                         {
-                            paddingVertical: spacerM
+                            paddingVertical: spacerM,
+                            marginHorizontal: 20
                         }
                     ]
                 }>
@@ -43,7 +46,7 @@ const ChargeLimitSlider = (props: ChargeLimitSliderProps) => {
                         setSliderLevel={setChargingLimit}
                         stepper={5}
                         testID="chargingLimitSlider"
-                        minimum={50}
+                        minimum={55}
                     />
                 </View>
             </KelecCard>

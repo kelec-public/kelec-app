@@ -1,19 +1,28 @@
-import { ColorValue, DimensionValue, StyleSheet, View, useColorScheme } from "react-native";
+import { Alert, ColorValue, DimensionValue, Modal, StyleSheet, Touchable, TouchableOpacity, View, useColorScheme } from "react-native";
 import Text from "../../../../Common/CustomText";
 import { formatNumberWithLeadingZero, getBlackColour, getChargingBarColour, getGrayBackgroundColour } from "../../../../../lib/graphics/utils";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import CarViewContext from "../../../../../lib/Contexts/CarViewContext";
 import MainContext from "../../../../../lib/Contexts/MainContext";
 import commonStyles, { fontFamilyBold, fontWeightBold } from "../../../../../lib/graphics/commonStyle";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { ChargeSchedule, ChargeSettingsStatus } from "../../../../../lib/clients/carMakers/renaultClient";
 import InfoPopup from "../../../../Common/InfoPopup";
-
+import CarsViewContext from "../../../../../lib/Contexts/CarsViewContext";
+import BigButton, { ButtonColours } from "../../../../Common/BigButton";
+import ChargeLimitSlider from "../../../../../packages/kelec-login/views/Steps/Step4/ChargeLimitSlider";
+import RenaultAccount from "../../../../../lib/clients/accounts/renaultAccount";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { AUTHORISED_MODELS, CarAvailableModels } from "../../../../../lib/clients/cars/carTypes/carType";
 
 function BatteryCard(): React.JSX.Element {
     const isDarkMode = useColorScheme() === 'dark';
 
-    const { apiHandler, carType } = useContext(CarViewContext);
+    const { apiHandler, carType, account } = useContext(CarViewContext);
+    const { handleModalAnim } = useContext(CarsViewContext);
+
+    const [shouldOpenBatteryModal, setShouldOpenBatteryModal] = useState<boolean>(false);
+    const [sliderLevel, setSliderLevel] = useState<number>(100);
 
     const { appPreferences, languageHandler } = useContext(MainContext);
 
@@ -40,7 +49,7 @@ function BatteryCard(): React.JSX.Element {
     };
 
     const getChargingLimitBarLength = (): DimensionValue => {
-        return apiHandler.getChargingLimit(carType) + '%' as DimensionValue;
+        return apiHandler.getChargingLimit() + '%' as DimensionValue;
     }
 
     // only for renault cars
@@ -141,81 +150,145 @@ function BatteryCard(): React.JSX.Element {
         return 'rgb(0,122,255)';
     }
 
-
-
     return (
-        <View style={[styles.summaryCard, { backgroundColor: getGrayBackgroundColour(isDarkMode) }]} testID="batteryCard">
-            <View style={styles.batteryLevelTextWrapper}>
-                <View style={commonStyles.rowFlex}>
-                    <Text testID={'batteryPercentage'} style={styles.elementText}>{apiHandler.getBatteryLevel()}</Text>
-                    <Text testID={'batteryPercentageSymbol'} style={styles.elementSmallText}>%</Text>
-                </View>
-            </View>
-            <View style={{ marginBottom: 20, position: 'relative' }}>
-                <View style={styles.grayBatteryBar} />
-                <View style={styles.colourBatteryBarsWrapper}>
-                    {carType.shouldDisplayChargingLimit() && apiHandler.getIsCarPlugged() && (
-                        <View testID="chargingLimitBar" style={{ backgroundColor: getChargingBarColour(apiHandler.getIsV2GOrV2L(), 0.3), width: getChargingLimitBarLength(), height: 20, borderTopLeftRadius: 100, borderBottomLeftRadius: 100, borderRadius: 100, position: 'absolute' }}></View>
-                    )}
-                    <View testID={'chargingBar'} style={[{ backgroundColor: getChargingBarBackgroundColour(), width: getBatteryBarLength() }, styles.colourBatteryBar]}></View>
-
-                    <View style={{ flexDirection: 'column', position: 'relative', zIndex: 3, right: 0, transform: [{ translateY: 22 }] }}>
-                        <Text style={{ left: '-50%', marginTop: 5 }}><Text testID={'batteryRange'} style={{ fontWeight: 'bold' }}>{apiHandler.getCarRange(appPreferences)}</Text> {appPreferences.distanceUnits}</Text>
-                    </View>
-
-                </View>
-                <View style={{ position: 'absolute', right: 0, zIndex: 3 }}>
-                    <View style={{ flexDirection: 'column', position: 'relative', zIndex: 3, transform: [{ translateY: -22 }], alignItems: 'flex-end' }}>
-                        <Text testID={'fullRange+Units'} style={{ marginBottom: 5 }}><Text testID={'fullRange'} style={{ fontWeight: 'bold' }}>{getFullRange(apiHandler.getCarRange(appPreferences), apiHandler.getBatteryLevel())}</Text> {appPreferences.distanceUnits}</Text>
-
-                    </View>
-                </View>
-
-            </View>
-            <View testID={'chargeTimeWrapper'} style={{ gap: 10 }}>
-                {apiHandler.getIsCarPlugged() && (
-                    <View style={{ gap: 10 }}>
-                        <View testID="chargeTimeIfCharging" style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 10, flexWrap: "wrap" }}>
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <Text testID={'chargeText'} style={{ fontSize: 15, }}>{languageHandler.getTranslation(apiHandler.getChargeText())}</Text>
-                                {(apiHandler.getIsCarCharging() && apiHandler.getBatteryLevel() < 100 && appPreferences.displayChargingPower) && (
-                                    <View testID={'chargingWrapper'} style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 10 }}>
-                                        <Icon name="bolt" size={20} color={getChargingBarColour(apiHandler.getIsV2GOrV2L())} />
-                                        <Text testID={'chargingPowerText'} style={{ fontWeight: 'bold', fontSize: 15 }}>{apiHandler.getChargingPower(carType)}</Text>
-                                        <Text testID={'chargingPowerUnit'} style={{ fontSize: 15, color: 'gray', fontWeight: '300' }}> {'kW'}</Text>
-                                    </View>
-                                )}
+        <TouchableOpacity
+            testID="BatteryCardButton"
+            disabled={!(AUTHORISED_MODELS.includes(carType.getCarModel().name as CarAvailableModels))}
+            onPress={() => {
+                setShouldOpenBatteryModal(true);
+                handleModalAnim(true);
+                if (apiHandler.getChargingLimit() !== undefined)
+                    setSliderLevel(apiHandler.getChargingLimit());
+            }}
+        >
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={shouldOpenBatteryModal}
+                onRequestClose={() => {
+                    setShouldOpenBatteryModal(false);
+                    handleModalAnim(false);
+                }}
+            >
+                <View style={[commonStyles.flex, commonStyles.flexEnd]}>
+                    <SafeAreaView style={[{ backgroundColor: getGrayBackgroundColour(isDarkMode) }, styles.mainView]}>
+                        <View style={styles.mainViewContent}>
+                            <View style={[commonStyles.rowFlex, commonStyles.spaceBetween, styles.marginVertical]}>
+                                <ChargeLimitSlider chargingLimit={sliderLevel} setChargingLimit={setSliderLevel} />
                             </View>
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <Icon name="hourglass-top" size={15} color={getBlackColour(isDarkMode)} />
-                                <Text testID={'remainingTimeText'} style={{ fontSize: 15 }}>{apiHandler.getIsCarCharging() && apiHandler.getBatteryLevel() != 100 ? formatHour(apiHandler.getRemainingMinutes()) : '--h--'}</Text>
-                                <View testID={'endHourWrapper'} style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', opacity: apiHandler.getIsCarCharging() && apiHandler.getBatteryLevel() < 100 ? 1 : 0 }}>
-                                    <Icon name="battery-charging-full" size={15} style={{ marginLeft: 10 }} color={getBlackColour(isDarkMode)} />
-                                    <Text testID={'endHourText'} style={{ fontSize: 15 }}>{formatDate(apiHandler.getEndChargeHour())}</Text>
+
+                            <View style={commonStyles.navSeparator} />
+
+                            <View style={[commonStyles.rowFlex, commonStyles.gap15, commonStyles.marginVertical]}>
+                                <View style={commonStyles.flex}>
+                                    <BigButton
+                                        testID="BatteryModalCloseButton"
+                                        onPress={() => {
+                                            setShouldOpenBatteryModal(false);
+                                            handleModalAnim(false);
+                                        }}
+                                        colour={ButtonColours.DELETE}
+                                        icon={"close"}
+                                    />
                                 </View>
 
+                                <View style={commonStyles.flex}>
+                                    <BigButton
+                                        testID="confirmButton"
+                                        onPress={async () => {
+                                            apiHandler.setChargingLimit(sliderLevel);
+                                            if (['renault', 'dacia', 'alpine'].includes(carType.getBrand().name)) {
+                                                let response = await (account as RenaultAccount).setSoCLevels(account.getCar()?.getVin() ?? "", sliderLevel);
+                                                if (response.hasError) {
+                                                    Alert.alert(languageHandler.getTranslation("error"), response.errorMessage);
+                                                }
+                                            }
+                                            setShouldOpenBatteryModal(false);
+                                            handleModalAnim(false);
+                                        }}
+                                        icon={"battery-charging-full"}
+                                        text={languageHandler.getTranslation("confirm")}
+                                        colour={ButtonColours.PRIMARY}
+                                    />
+                                </View>
                             </View>
                         </View>
-                        {carType.shouldDisplayChargingLimit() && apiHandler.getChargingPower(carType) < 0 && apiHandler.getIsCarCharging() && (
-                            <InfoPopup
-                                testID={'negativeChargingPowerPopup'}
-                                backgroundColour={'#FFCCB3'}
-                                icon={'warning'}
-                                iconColour={'#7A1F1F'}
-                            >
-                                <Text style={{ color: '#7A1F1F' }}>{languageHandler.getTranslation("negativeChargingPower")}</Text>
-                            </InfoPopup>
+                    </SafeAreaView>
+                </View>
+            </Modal>
+            <View style={[styles.summaryCard, { backgroundColor: getGrayBackgroundColour(isDarkMode) }]} testID="batteryCard">
+                <View style={styles.batteryLevelTextWrapper}>
+                    <View style={commonStyles.rowFlex}>
+                        <Text testID={'batteryPercentage'} style={styles.elementText}>{apiHandler.getBatteryLevel()}</Text>
+                        <Text testID={'batteryPercentageSymbol'} style={styles.elementSmallText}>%</Text>
+                    </View>
+                </View>
+                <View style={{ marginBottom: 20, position: 'relative' }}>
+                    <View style={styles.grayBatteryBar} />
+                    <View style={styles.colourBatteryBarsWrapper}>
+                        {carType.shouldDisplayChargingLimit() && apiHandler.getIsCarPlugged() && (
+                            <View testID="chargingLimitBar" style={{ backgroundColor: getChargingBarColour(apiHandler.getIsV2GOrV2L(), 0.3), width: getChargingLimitBarLength(), height: 20, borderTopLeftRadius: 100, borderBottomLeftRadius: 100, borderRadius: 100, position: 'absolute' }}></View>
                         )}
+                        <View testID={'chargingBar'} style={[{ backgroundColor: getChargingBarBackgroundColour(), width: getBatteryBarLength() }, styles.colourBatteryBar]}></View>
+
+                        <View style={{ flexDirection: 'column', position: 'relative', zIndex: 3, right: 0, transform: [{ translateY: 22 }] }}>
+                            <Text style={{ left: '-50%', marginTop: 5 }}><Text testID={'batteryRange'} style={{ fontWeight: 'bold' }}>{apiHandler.getCarRange(appPreferences)}</Text> {appPreferences.distanceUnits}</Text>
+                        </View>
+
                     </View>
-                )}
-                {apiHandler.shouldDisplayNextChargeSettings() && (
-                    <View testID="shouldDisplayNextCharge" style={{ flexDirection: 'row', gap: 5, marginTop: 10 }}>
-                        <Icon testID={'nextChargeIcon'} name="electrical-services" size={15} color={getBlackColour(isDarkMode)} />
-                        <Text>{languageHandler.getTranslation("nextCharge")}<Text testID={'nextChargeDate'}>{getNextChargeText(apiHandler.getChargingSettings())}</Text></Text>
+                    <View style={{ position: 'absolute', right: 0, zIndex: 3 }}>
+                        <View style={{ flexDirection: 'column', position: 'relative', zIndex: 3, transform: [{ translateY: -22 }], alignItems: 'flex-end' }}>
+                            <Text testID={'fullRange+Units'} style={{ marginBottom: 5 }}><Text testID={'fullRange'} style={{ fontWeight: 'bold' }}>{getFullRange(apiHandler.getCarRange(appPreferences), apiHandler.getBatteryLevel())}</Text> {appPreferences.distanceUnits}</Text>
+
+                        </View>
                     </View>
-                )}
+
+                </View>
+                <View testID={'chargeTimeWrapper'} style={{ gap: 10 }}>
+                    {apiHandler.getIsCarPlugged() && (
+                        <View style={{ gap: 10 }}>
+                            <View testID="chargeTimeIfCharging" style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 10, flexWrap: "wrap" }}>
+                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                    <Text testID={'chargeText'} style={{ fontSize: 15, }}>{languageHandler.getTranslation(apiHandler.getChargeText())}</Text>
+                                    {(apiHandler.getIsCarCharging() && apiHandler.getBatteryLevel() < 100 && appPreferences.displayChargingPower) && (
+                                        <View testID={'chargingWrapper'} style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 10 }}>
+                                            <Icon name="bolt" size={20} color={getChargingBarColour(apiHandler.getIsV2GOrV2L())} />
+                                            <Text testID={'chargingPowerText'} style={{ fontWeight: 'bold', fontSize: 15 }}>{apiHandler.getChargingPower(carType)}</Text>
+                                            <Text testID={'chargingPowerUnit'} style={{ fontSize: 15, color: 'gray', fontWeight: '300' }}> {'kW'}</Text>
+                                        </View>
+                                    )}
+                                </View>
+                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                    <Icon name="hourglass-top" size={15} color={getBlackColour(isDarkMode)} />
+                                    <Text testID={'remainingTimeText'} style={{ fontSize: 15 }}>{apiHandler.getIsCarCharging() && apiHandler.getBatteryLevel() != 100 ? formatHour(apiHandler.getRemainingMinutes()) : '--h--'}</Text>
+                                    <View testID={'endHourWrapper'} style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', opacity: apiHandler.getIsCarCharging() && apiHandler.getBatteryLevel() < 100 ? 1 : 0 }}>
+                                        <Icon name="battery-charging-full" size={15} style={{ marginLeft: 10 }} color={getBlackColour(isDarkMode)} />
+                                        <Text testID={'endHourText'} style={{ fontSize: 15 }}>{formatDate(apiHandler.getEndChargeHour())}</Text>
+                                    </View>
+
+                                </View>
+                            </View>
+                            {carType.shouldDisplayChargingLimit() && apiHandler.getChargingPower(carType) < 0 && apiHandler.getIsCarCharging() && (
+                                <InfoPopup
+                                    testID={'negativeChargingPowerPopup'}
+                                    backgroundColour={'#FFCCB3'}
+                                    icon={'warning'}
+                                    iconColour={'#7A1F1F'}
+                                >
+                                    <Text style={{ color: '#7A1F1F' }}>{languageHandler.getTranslation("negativeChargingPower")}</Text>
+                                </InfoPopup>
+                            )}
+                        </View>
+                    )}
+                    {apiHandler.shouldDisplayNextChargeSettings() && (
+                        <View testID="shouldDisplayNextCharge" style={{ flexDirection: 'row', gap: 5, marginTop: 10 }}>
+                            <Icon testID={'nextChargeIcon'} name="electrical-services" size={15} color={getBlackColour(isDarkMode)} />
+                            <Text>{languageHandler.getTranslation("nextCharge")}<Text testID={'nextChargeDate'}>{getNextChargeText(apiHandler.getChargingSettings())}</Text></Text>
+                        </View>
+                    )}
+                </View>
             </View>
-        </View>
+        </TouchableOpacity>
     )
 }
 
@@ -260,6 +333,26 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 100,
         borderBottomLeftRadius: 100,
         borderRadius: 100,
+    },
+    mainView: {
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 12,
+        },
+        shadowOpacity: 1,
+        shadowRadius: 16.00,
+        elevation: 24,
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        marginTop: 10,
+    },
+    mainViewContent: {
+        paddingHorizontal: 15,
+    },
+    marginVertical: {
+        marginTop: 20,
+        marginBottom: 20
     }
 });
 

@@ -3,8 +3,10 @@ import App from "../../App";
 import React from "react";
 import HyundaiCar from "../../src/lib/clients/cars/hyundaiCar";
 import Account, { CarMaker } from "../../src/lib/clients/accounts/account";
-import { render, waitFor } from "@testing-library/react-native";
+import { fireEventAsync, render, waitFor } from "@testing-library/react-native";
 import UserAccount from "../../src/lib/clients/accounts/userAccount";
+import StorageHandler from "../../src/lib/storage/storageHandler";
+import CarType, { CarTypeInterface } from "../../src/lib/clients/cars/carTypes/carType";
 jest.useFakeTimers();
 beforeEach(async () => {
     jest.useFakeTimers();
@@ -37,5 +39,30 @@ test('should render the batteryCard view', async () => {
         expect(getByTestId('batteryCard')).toBeDefined();
         // check the battery level
         expect(getByTestId('batteryPercentage').props.children).toBe(62); // 62% soc
+    });
+});
+
+test('charging limit popup should not be displayed with hyundai cars', async () => {
+    await AsyncStorage.setItem('vin1/carType', JSON.stringify({
+        brand: { name: 'hyundai', display_name: 'HyundaiBrandToAdd' },
+        model: { name: 'ZOE', display_name: 'ZOEModelToAdd', engine_type: 'ELEC' },
+        battery: { size: 60, max_ac_power: 7.4, max_dc_power: 130 },
+    }));
+
+    const { getByTestId, queryByTestId } = render(<App />);
+
+    mockGetCarStatus.mockResolvedValueOnce({
+        hasError: false,
+        apiData: mockApiData,
+    });
+
+    await waitFor(() => {
+        expect(getByTestId('batteryCard')).toBeDefined();
+    });
+
+    await fireEventAsync.press(getByTestId('BatteryCardButton'));
+
+    await waitFor(() => {
+        expect(queryByTestId('BatteryModalCloseButton')).toBeNull();
     });
 });

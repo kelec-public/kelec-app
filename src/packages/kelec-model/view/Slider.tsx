@@ -42,7 +42,7 @@ const Slider = (props: SliderProps) => {
 
     const panResponder = useRef(
         PanResponder.create({
-            onStartShouldSetPanResponder: () => false,
+            onStartShouldSetPanResponder: () => true,
             onMoveShouldSetPanResponder: (_, gestureState) => {
                 const { dx, dy } = gestureState;
 

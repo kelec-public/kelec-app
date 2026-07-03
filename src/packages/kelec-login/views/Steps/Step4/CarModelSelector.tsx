@@ -8,7 +8,7 @@ import Text from "../../../../../screen/Common/CustomText";
 import { BLACK_COLOUR, PRIMARY_COLOUR } from "../../../../kelec-model/lib/colours"; import { DropDownData, DropDownType } from "../../../../../screen/Common/DropDown";
 import KelecApiHandler, { BatteryApi, BrandApi, ModelApi } from "../../../../../lib/clients/kelec-api/kelecApiHandler";
 import ChargeLimitSlider from "./ChargeLimitSlider";
-import CarType, { AUTHORISED_MODELS, CarAvailableModels, LeasingData } from "../../../../../lib/clients/cars/carTypes/carType";
+import CarType, { LeasingData } from "../../../../../lib/clients/cars/carTypes/carType";
 import CarModel from "../../../../../lib/clients/cars/carModel";
 import CarModelChoiceLeasing, { RowView } from "./CarModelChoiceLeasing";
 import LoginDefaultView from "../../LoginDefaultView";
@@ -94,7 +94,6 @@ const CarModelSelector = (props: Props) => {
                 apiData: storedBattery
             });
             setLeasingData(currentCarType.getLeasingData());
-            setChargingLimit(currentCarType.getChargingLimit());
             setSupportsV2G(currentCarType.getSupportsV2G());
         };
     }
@@ -135,7 +134,6 @@ const CarModelSelector = (props: Props) => {
                     brand: selectedBrand?.apiData as BrandApi,
                     model: selectedModel?.apiData as ModelApi,
                     battery: selectedBattery?.apiData as BatteryApi,
-                    chargingLimit: chargingLimit,
                     leasing: leasingData,
                     supportsV2G: supportsV2G,
                 })
@@ -241,10 +239,6 @@ const CarModelSelector = (props: Props) => {
                         {languageHandler.getTranslation("myCarIsNotListed")}
                     </Text>
                 </TouchableOpacity>
-
-                {selectedBattery && AUTHORISED_MODELS.includes(selectedModel?.value as CarAvailableModels) && (
-                    <ChargeLimitSlider chargingLimit={chargingLimit} setChargingLimit={setChargingLimit} />
-                )}
 
                 <CarModelChoiceLeasing isError={isError} leasingData={leasingData} setLeasingData={setLeasingData} />
 

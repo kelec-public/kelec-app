@@ -35,7 +35,9 @@ interface ApiHandler {
     getICERange(appPreferences: AppPreferences): number;
     getICEFuelLevel(): number;
     getAllEnginesRange(appPreferences: AppPreferences): number;
-    getChargingLimit(carType: CarType): number;
+    setChargingLimit(limit: number): void;
+    getChargingLimit(): number;
+    shouldDisplayChargingLimit(): boolean;
     getIsV2GOrV2L(): boolean;
 
     // for charging settings

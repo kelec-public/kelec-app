@@ -117,12 +117,12 @@ class HyundaiApiHandler implements ApiHandler {
     }
 
     getChargingPower(carType: CarType): number {
-        const totalEnergy = this.getChargingLimit(carType) * this.getAvailableEnergy(carType) / this.getBatteryLevel();
+        const totalEnergy = this.getChargingLimit() * this.getAvailableEnergy(carType) / this.getBatteryLevel();
         const toCharge = totalEnergy - this.getAvailableEnergy(carType);
         const estimatedPower = 60 * toCharge / this.getRemainingMinutes();
         return parseFloat(estimatedPower.toFixed(2));
-
     }
+
     getIsCarICE(): boolean {
         return false;
     }
@@ -139,7 +139,10 @@ class HyundaiApiHandler implements ApiHandler {
         return 0;
     }
 
-    getChargingLimit(carType: CarType): number {
+    setChargingLimit(limit: number): void {
+    }
+
+    getChargingLimit(): number {
         const targetSOC = this.apiDataHyundai?.apiData?.vehicleStatus.evStatus.reservChargeInfos.targetSOClist;
         if (targetSOC === undefined) {
             return 100;
@@ -160,6 +163,10 @@ class HyundaiApiHandler implements ApiHandler {
             }
         }
         return 100;
+    }
+
+    shouldDisplayChargingLimit(): boolean {
+        return true;
     }
 
     shouldDisplayNextChargeSettings(): boolean {

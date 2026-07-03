@@ -2,7 +2,7 @@ import AppPreferences from "../../appPreferences/model/appPreferences";
 import { getDistance } from "../../graphics/utils";
 import { BatteryStatus, ChargeSettingsStatus, CockpitStatus, HVACStatus, MapLocationStatus, RenaultStatus } from "../carMakers/renaultClient";
 import { HVACStatusEnum } from "../carMakers/renaultEnums";
-import CarType, { CarAvailableModels } from "../cars/carTypes/carType";
+import CarType from "../cars/carTypes/carType";
 import ApiHandler from "./apiHandler";
 import RenaultChargesHandler from "./renaultChargesHandler";
 
@@ -28,7 +28,9 @@ class RenaultApiHandler implements ApiHandler {
         apiData?: HVACStatus;
     }
 
-    // initial charge hisotry handler with error
+    private chargingLimit: number = 100;
+
+    // initial charge history handler with error
     private apiChargesHistory: RenaultChargesHandler = new RenaultChargesHandler([], true);
     constructor(batteryStatus?: RenaultStatus) {
         this.apiBatteryStatusRenault = batteryStatus;
@@ -63,10 +65,10 @@ class RenaultApiHandler implements ApiHandler {
     }
 
     getChargingPower(carType: CarType): number {
-        if (carType.getCarModel().name == CarAvailableModels.ZOE1) {
+        if (carType.getCarModel().name == "Zoe 1") {
             return parseFloat(((this.apiBatteryStatusRenault?.apiData?.chargingInstantaneousPower ?? 0) / 1000).toFixed(2));
         }
-        const chargingLimit = Math.min(this.getChargingLimit(carType) + 1, 100);
+        const chargingLimit = Math.min(this.getChargingLimit() + 1, 100);
         const totalEnergy = carType.getBatterySize() * chargingLimit / 100;
         const availableEnergy = this.getAvailableEnergy(carType);
         const toCharge = totalEnergy - availableEnergy;
@@ -187,8 +189,16 @@ class RenaultApiHandler implements ApiHandler {
         return this.getCarRange(appPreferences) + this.getICERange(appPreferences);
     }
 
-    getChargingLimit(carType: CarType): number {
-        return carType.getChargingLimit();
+    setChargingLimit(limit: number): void {
+        this.chargingLimit = limit;
+    }
+
+    getChargingLimit(): number {
+        return this.chargingLimit;
+    }
+
+    shouldDisplayChargingLimit(): boolean {
+        return false; //TODO
     }
 
     shouldDisplayNextChargeSettings(): boolean {

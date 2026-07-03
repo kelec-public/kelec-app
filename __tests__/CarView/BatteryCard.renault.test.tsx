@@ -16,6 +16,9 @@ beforeEach(async () => {
     const userAccount: UserAccount = new UserAccount('vin1', [account]);
     await AsyncStorage.setItem('account', JSON.stringify(userAccount));
     await AsyncStorage.setItem('kelecNextGen', "true");
+
+    mockGetSoCLevels.mockResolvedValue({ hasError: true });
+    mockSetSoCLevels.mockResolvedValue({ hasError: true });
 });
 
 
@@ -23,6 +26,9 @@ const mockGetBatteryStatus = jest.fn();
 const mockGetCockpitStatus = jest.fn();
 const mockGetLocationStatus = jest.fn();
 const mockGetChargeSettings = jest.fn();
+const mockGetSoCLevels = jest.fn();
+const mockSetSoCLevels = jest.fn();
+
 jest.mock('../../src/lib/clients/carMakers/renaultClient', () => {
     return jest.fn().mockImplementation(() => {
         return {
@@ -32,9 +38,29 @@ jest.mock('../../src/lib/clients/carMakers/renaultClient', () => {
             getChargesHistory: jest.fn().mockResolvedValue({
                 hasError: true
             }),
-            getChargeSettings: mockGetChargeSettings
+            getChargeSettings: mockGetChargeSettings,
+            getSoCLevels: mockGetSoCLevels,
+            setSoCLevels: mockSetSoCLevels,
         }
     });
+});
+
+jest.mock('../../src/packages/kelec-model/view/Slider', () => {
+    const React = require('react');
+    const { Pressable, Text } = require('react-native');
+
+    return function MockSlider(props: any) {
+        const { testID, setSliderLevel, sliderLevel } = props;
+
+        return (
+            <Pressable
+                testID={testID}
+                onPress={() => setSliderLevel(85)}
+            >
+                <Text testID="chargingLimitText">{sliderLevel}%</Text>
+            </Pressable>
+        );
+    };
 });
 
 const mockJSONBatteryStatus = require('./mocks/mockRenaultBattery.json');
@@ -212,7 +238,6 @@ describe('negative charging power popup', () => {
         brand: { name: 'RENAULT', display_name: 'Renault' },
         model: { name: 'megane_e_tech', display_name: 'Megane E-Tech', engine_type: '' },
         battery: { size: 60, max_ac_power: 7, max_dc_power: -1 },
-        chargingLimit: 80
     };
     // batteryLevel (90) > chargingLimit (80) → getChargingPower returns negative
     const batteryPluggedOverLimit = { ...mockJSONBatteryStatus, batteryLevel: 90, plugStatus: 1, chargingStatus: 1.0 };
@@ -226,6 +251,14 @@ describe('negative charging power popup', () => {
         mockGetCockpitStatus.mockResolvedValueOnce({ hasError: false, apiData: mockJSONCockpit });
         mockGetLocationStatus.mockResolvedValueOnce({ hasError: true });
         mockGetChargeSettings.mockResolvedValueOnce({ hasError: true });
+        mockGetSoCLevels.mockResolvedValue({
+            hasError: false,
+            apiData: {
+                socTarget: 80,
+                socMin: 0,
+                lastEnergyUpdateTimestamp: '2026-06-29T15:00:00Z',
+            },
+        });
 
         await waitFor(() => {
             expect(getByTestId('negativeChargingPowerPopup')).toBeDefined();
@@ -239,6 +272,14 @@ describe('negative charging power popup', () => {
         mockGetCockpitStatus.mockResolvedValueOnce({ hasError: false, apiData: mockJSONCockpit });
         mockGetLocationStatus.mockResolvedValueOnce({ hasError: true });
         mockGetChargeSettings.mockResolvedValueOnce({ hasError: true });
+        mockGetSoCLevels.mockResolvedValue({
+            hasError: false,
+            apiData: {
+                socTarget: 80,
+                socMin: 0,
+                lastEnergyUpdateTimestamp: '2026-06-29T15:00:00Z',
+            },
+        });
 
         await waitFor(() => {
             expect(queryAllByTestId('negativeChargingPowerPopup')).toHaveLength(0);
@@ -313,4 +354,66 @@ describe('should display next charge with scheduled offset from app preferences'
             expect(nextChargeDate.props.children).toBe(expectedNextCharge);
         });
     });
+});
+
+test('should open battery modal and confirm charging limit', async () => {
+    await AsyncStorage.setItem('vin1/carType', JSON.stringify({
+        brand: { name: 'renault', display_name: 'Renault' },
+        model: { name: 'megane_e_tech', display_name: 'Megane E-Tech', engine_type: 'ELEC' },
+        battery: { size: 60, max_ac_power: 7, max_dc_power: -1 },
+    }));
+
+    const { getByTestId, getByText, queryAllByTestId } = render(<App />);
+
+    mockGetBatteryStatus.mockResolvedValueOnce({
+        hasError: false,
+        apiData: mockJSONBatteryStatus
+    });
+    mockGetCockpitStatus.mockResolvedValueOnce({
+        hasError: false,
+        apiData: mockJSONCockpit
+    });
+    mockGetLocationStatus.mockResolvedValueOnce({
+        hasError: true,
+    });
+    mockGetChargeSettings.mockResolvedValueOnce({
+        hasError: true
+    });
+    mockGetSoCLevels.mockResolvedValueOnce({
+        hasError: false,
+        apiData: {
+            socTarget: 80,
+            socMin: 0,
+            lastEnergyUpdateTimestamp: '2026-06-29T15:00:00Z',
+        },
+    });
+    mockSetSoCLevels.mockResolvedValueOnce({
+        hasError: false,
+    });
+
+    await waitFor(() => {
+        expect(getByTestId('batteryCard')).toBeDefined();
+    });
+
+    await fireEventAsync.press(getByTestId('BatteryCardButton'));
+
+    await waitFor(() => {
+        expect(getByTestId('BatteryModalCloseButton')).toBeDefined();
+        expect(getByTestId('confirmButton')).toBeDefined();
+        expect(getByTestId('chargingLimitSlider')).toBeDefined();
+    });
+
+    await fireEventAsync.press(getByTestId('chargingLimitSlider'));
+
+    await waitFor(() => {
+        expect(getByText('85%')).toBeDefined();
+    });
+
+    await fireEventAsync.press(getByTestId('confirmButton'));
+
+    await waitFor(() => {
+        expect(queryAllByTestId('confirmButton')).toHaveLength(0);
+    });
+
+    expect(mockSetSoCLevels).toHaveBeenCalledWith('vin1', 85, undefined);
 });
