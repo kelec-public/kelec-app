@@ -154,6 +154,7 @@ const LoginDefaultView = ({ children, ...props }: Props) => {
                                         buttonStyle={theme.buttons.neutral}
                                         icon="arrow-back"
                                         onPress={onPrevious}
+                                        fillHeight
                                     />
                                 </View>
                             )}
@@ -169,6 +170,7 @@ const LoginDefaultView = ({ children, ...props }: Props) => {
                                         onPress={onNext}
                                         disabled={disableNext}
                                         isLoading={isLightLoading}
+                                        fillHeight
                                     />
                                 </View>
                             )}

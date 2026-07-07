@@ -15,6 +15,7 @@ type ButtonProps = {
     readonly isLoading?: boolean;
     readonly testID?: string;
     readonly icon?: string;
+    readonly fillHeight?: boolean;
 }
 
 const isGradient = (value: unknown): value is Gradient =>
@@ -27,7 +28,7 @@ const getGradientProps = (gradient: Gradient) => ({
 });
 
 const Button = (props: ButtonProps): React.JSX.Element => {
-    const { buttonStyle, text, onPress, disabled, isLoading, testID, icon } = props;
+    const { buttonStyle, text, onPress, disabled, isLoading, testID, icon, fillHeight } = props;
 
     const theme = useTheme();
     const finalStyle = buttonStyle ?? theme.buttons.primary;
@@ -145,16 +146,15 @@ const Button = (props: ButtonProps): React.JSX.Element => {
             style={{
                 alignItems: 'stretch',
                 justifyContent: 'center',
-                alignSelf: 'stretch',
                 overflow: 'hidden',
-                flex: 1,
+                ...(fillHeight ? { flex: 1, alignSelf: 'stretch' } : {}),
             }}
             disabled={disabled || isLoading}
             testID={testID}
         >
             <Animated.View
                 testID={'buttonStyle'}
-                style={[containerStyle, { overflow: 'hidden', flex: 1 }]}
+                style={[containerStyle, { overflow: 'hidden' }, fillHeight ? { flex: 1 } : {}]}
             >
                 {renderBackground()}
                 {getButtonContent()}
