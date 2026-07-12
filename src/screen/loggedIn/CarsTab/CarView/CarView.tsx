@@ -45,10 +45,12 @@ function CarView({ carModel, navigation, account, pagerRef, tfaInProgress }: Car
 
     const onSoftError = useCallback(
         (message: string) => {
-            Alert.alert(
-                languageHandler.getTranslation('error'),
-                languageHandler.getTranslation(getErrorMessage(message)),
-            );
+            setTimeout(() => {
+                Alert.alert(
+                    languageHandler.getTranslation('error'),
+                    languageHandler.getTranslation(getErrorMessage(message)),
+                );
+            }, 300);
         },
         [languageHandler],
     );
