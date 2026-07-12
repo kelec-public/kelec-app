@@ -21,7 +21,7 @@ type Props = {
     onOpenDonation: () => void;
 };
 
-function CarViewHeader({ carModel, lastUpdateDate, pagerRef, onOpenDonation }: Props): React.JSX.Element {
+function CarViewHeader({ carModel, lastUpdateDate, pagerRef, onOpenDonation }: Readonly<Props>): React.JSX.Element {
     const isDarkMode = useColorScheme() === 'dark';
     const { currentUser, languageHandler } = useContext(MainContext);
     const { handleModalAnim } = useContext(CarsViewContext);

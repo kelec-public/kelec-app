@@ -1,4 +1,3 @@
-import { Account } from "next-auth";
 import ApiHandler from "../../../../lib/clients/apiHandlers/apiHandler";
 import RenaultAccount from "../../../../lib/clients/accounts/renaultAccount";
 import { CarDataLoader, CarLoaderDeps, LoadContext, RemoteResult } from "../../types/carLoader";
