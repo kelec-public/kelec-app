@@ -20,6 +20,8 @@ const getErrorMessage = (message: string) => {
             return "dataNotYetAvailable";
         case "pending_tfa":
             return "pendingTFA";
+        case "server_error":
+            return "impossibleToConnectToServer";
         default:
             return message;
     }
