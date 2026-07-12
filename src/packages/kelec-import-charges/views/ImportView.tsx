@@ -1,23 +1,24 @@
 import React, { useContext, useState } from "react";
-import { Alert, ScrollView, StyleSheet, useColorScheme, View } from "react-native";
+import { ActivityIndicator, Alert, ScrollView, StyleSheet, useColorScheme, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { CarsViewParamList } from "../../../CarsPageView";
+import { CarsViewParamList } from "../../../screen/loggedIn/CarsTab/CarsPageView";
 import { SafeAreaView } from "react-native-safe-area-context";
-import commonStyles from "../../../../../../lib/graphics/commonStyle";
-import { getWhiteColour } from "../../../../../../lib/graphics/utils";
-import MainContext from "../../../../../../lib/Contexts/MainContext";
-import TopNavHeader from "../../../../../Common/Navigation/TopNavHeader";
+import commonStyles from "../../../lib/graphics/commonStyle";
+import { getWhiteColour } from "../../../lib/graphics/utils";
+import MainContext from "../../../lib/Contexts/MainContext";
+import TopNavHeader from "../../../screen/Common/Navigation/TopNavHeader";
 import FilePickerCard from "./FilePickerCard";
-import { spacerXL } from "../../../../../../packages/kelec-model/view/Spacers";
+import { spacerXL } from "../../kelec-model/view/Spacers";
 import DocumentPicker from 'react-native-document-picker';
 import RNFS from 'react-native-fs';
 import * as XLSX from 'xlsx';
-import RenaultCharge from "../../../../../../lib/clients/apiHandlers/renaultCharges/RenaultCharge";
+import RenaultCharge from "../../../lib/clients/apiHandlers/renaultCharges/RenaultCharge";
 import ImportPreviewSection from "./ImportPreviewSection";
-import Text from "../../../../../Common/CustomText";
-import KelecCard from "../../../../../../packages/kelec-model/view/Card";
-import RenaultChargesHandler, { TotalChargeDuration } from "../../../../../../lib/clients/apiHandlers/renaultChargesHandler";
-import ChargeCard from "../ChargeCard";
+import Text from "../../../screen/Common/CustomText";
+import KelecCard from "../../kelec-model/view/Card";
+import RenaultChargesHandler, { TotalChargeDuration } from "../../../lib/clients/apiHandlers/renaultChargesHandler";
+import ChargeCard from "../../../screen/loggedIn/CarsTab/CarView/ChargesView.tsx/ChargeCard";
+import FullScreenLoading from "../../../FullScreenLoading";
 
 export type PendingImportChargeData = {
     charges: RenaultCharge[];
@@ -33,6 +34,7 @@ function ImportChargesView({ navigation, route }: ImportViewProps): React.JSX.El
     const { languageHandler } = useContext(MainContext);
 
     const [pendingCharges, setPendingCharges] = useState<PendingImportChargeData | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     const { charges, carType } = route.params;
 
@@ -67,11 +69,14 @@ function ImportChargesView({ navigation, route }: ImportViewProps): React.JSX.El
                 <View style={styles.view}>
                     <FilePickerCard
                         onPress={async () => {
+                            setIsLoading(true);
                             // on importe un excel précédemment exporté depuis l'app
                             try {
                                 const result = await DocumentPicker.pickSingle({
                                     type: [DocumentPicker.types.xlsx, DocumentPicker.types.xls],
                                 });
+
+
 
                                 let fileContent;
                                 let workbook;
@@ -150,10 +155,16 @@ function ImportChargesView({ navigation, route }: ImportViewProps): React.JSX.El
                                 } else {
                                     console.error('Error picking document:', err);
                                 }
+                            } finally {
+                                setIsLoading(false);
                             }
 
                         }}
                     ></FilePickerCard>
+                    {isLoading && (
+                        <FullScreenLoading></FullScreenLoading>
+                    )}
+
                     {pendingCharges && pendingCharges.charges.length === 0 && (
                         <KelecCard>
                             <Text>{languageHandler.getTranslation("noValidChargesFound")}</Text>
@@ -161,7 +172,6 @@ function ImportChargesView({ navigation, route }: ImportViewProps): React.JSX.El
                     )
                     }
                     {pendingCharges && pendingCharges.charges.length > 0 && (
-
                         <>
                             <ImportPreviewSection
                                 data={{
@@ -171,13 +181,13 @@ function ImportChargesView({ navigation, route }: ImportViewProps): React.JSX.El
                                 }}
                             />
 
-                            {pendingCharges.charges.map((charge, index) => (
+                            {/* {pendingCharges.charges.map((charge, index) => (
                                 <ChargeCard
                                     key={index}
                                     charge={charge}
                                     carType={carType}
                                 ></ChargeCard>
-                            ))}
+                            ))} */}
 
                         </>
                     )}

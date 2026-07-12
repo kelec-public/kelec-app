@@ -158,7 +158,7 @@ function ChargesView({ navigation, route }: ChargesViewProps): React.JSX.Element
 
                                 <Text style={{
                                     fontSize: 15,
-                                    color:theme.colors.onSecondaryContainer,
+                                    color: theme.colors.onSecondaryContainer,
                                     marginLeft: 10
                                 }}>{formatFilterDisplay()}
                                 </Text>
@@ -215,6 +215,7 @@ function ChargesView({ navigation, route }: ChargesViewProps): React.JSX.Element
                                 setShouldOpenModal(false);
                                 handleModalAnim(false);
                             }}
+                            buttonStyle={theme.buttons.neutral}
                         />
                         <Button
                             testID={'exportButton'}
@@ -287,7 +288,7 @@ function ChargesView({ navigation, route }: ChargesViewProps): React.JSX.Element
                             }}
                             icon={"ios-share"}
                             text={languageHandler.getTranslation("export")}
-                                    buttonStyle={theme.buttons.neutral}
+                            buttonStyle={theme.buttons.neutral}
                         />
                     </View>
                 </BottomSheet>
@@ -300,10 +301,10 @@ function ChargesView({ navigation, route }: ChargesViewProps): React.JSX.Element
                         handleModalAnim(false);
                     }}
                 >
-                        <ChargesFiltersView
-                            setShouldOpenModal={setShowFiltersModal}
-                            handleModalAnim={handleModalAnim}
-                        />
+                    <ChargesFiltersView
+                        setShouldOpenModal={setShowFiltersModal}
+                        handleModalAnim={handleModalAnim}
+                    />
                 </Modal>
                 <TopNavHeader
                     navigation={navigation}

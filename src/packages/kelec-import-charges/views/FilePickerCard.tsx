@@ -1,15 +1,18 @@
-import React from "react";
+import React, { useContext } from "react";
 import { StyleSheet, View } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import Text from "../../../../../Common/CustomText";
-import KelecCard from "../../../../../../packages/kelec-model/view/Card";
-import { NEUTRAL_100, PRIMARY_COLOUR } from "../../../../../../packages/kelec-model/lib/colours";
+import Text from "../../../screen/Common/CustomText";
+import KelecCard from "../../kelec-model/view/Card";
+import { NEUTRAL_100, PRIMARY_COLOUR } from "../../kelec-model/lib/colours";
+import MainContext from "../../../lib/Contexts/MainContext";
 
 type FilePickerCardProps = {
     readonly onPress: () => void;
 };
 
 function FilePickerCard({ onPress }: FilePickerCardProps): React.JSX.Element {
+    const { languageHandler } = useContext(MainContext);
+
     return (
         <KelecCard
             onPress={onPress}
@@ -22,8 +25,8 @@ function FilePickerCard({ onPress }: FilePickerCardProps): React.JSX.Element {
                     <Icon name="upload-file" size={26} color={PRIMARY_COLOUR} />
                 </View>
                 <View style={styles.textContainer}>
-                    <Text style={styles.title}>Sélectionner un fichier</Text>
-                    <Text style={styles.subtitle}>Formats acceptés: .xlsx</Text>
+                    <Text style={styles.title}>{languageHandler.getTranslation("selectFile")}</Text>
+                    <Text style={styles.subtitle}>{languageHandler.getTranslation("acceptedFormat")}</Text>
                 </View>
             </View>
         </KelecCard>

@@ -1,12 +1,12 @@
 import React from "react";
 import { StyleSheet, useColorScheme, View } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import Text from "../../../../../Common/CustomText";
-import { formatNumberWithLeadingZero, getWhiteColour } from "../../../../../../lib/graphics/utils";
-import { TotalChargeDuration } from "../../../../../../lib/clients/apiHandlers/renaultChargesHandler";
-import KelecCard from "../../../../../../packages/kelec-model/view/Card";
-import { spacerS } from "../../../../../../packages/kelec-model/view/Spacers";
-import { NEUTRAL_100, NEUTRAL_200, NEUTRAL_50, PRIMARY_COLOUR } from "../../../../../../packages/kelec-model/lib/colours";
+import Text from "../../../screen/Common/CustomText";
+import { formatNumberWithLeadingZero, getWhiteColour } from "../../../lib/graphics/utils";
+import { TotalChargeDuration } from "../../../lib/clients/apiHandlers/renaultChargesHandler";
+import KelecCard from "../../kelec-model/view/Card";
+import { spacerS } from "../../kelec-model/view/Spacers";
+import { NEUTRAL_100, PRIMARY_COLOUR } from "../../kelec-model/lib/colours";
 
 export type ImportPreviewData = {
     charges: { current: number; imported: number };
