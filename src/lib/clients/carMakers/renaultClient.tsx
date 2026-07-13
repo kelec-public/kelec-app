@@ -637,6 +637,7 @@ class RenaultClient extends CarMakerClient {
             }
             return {
                 hasError: true,
+                errorMessage: CarMakerClientErrors.SERVER_ERROR
             }
         }
     }
