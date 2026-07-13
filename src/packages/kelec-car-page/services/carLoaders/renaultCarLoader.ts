@@ -1,11 +1,12 @@
 import ApiHandler from "../../../../lib/clients/apiHandlers/apiHandler";
 import RenaultAccount from "../../../../lib/clients/accounts/renaultAccount";
-import { CarDataLoader, CarLoaderDeps, LoadContext, RemoteResult } from "../../types/carLoader";
+import { CarDataLoader, LoadContext, RemoteResult } from "../../types/carLoader";
 import ChargesStorageController from "../../../../lib/storage/chargesHandler";
 import { getNativeBatteryStatus } from "../../../../lib/storage/sharedPlatformsData";
 import { CarMakerClientErrors } from "../../../../lib/clients/carMakers/carMakerClient";
 import RenaultCharge from "../../../../lib/clients/apiHandlers/renaultCharges/RenaultCharge";
 import { CarFetchStatus } from "../../../../lib/clients/accounts/account";
+import { RenaultCarLoaderDeps } from "../../types/carLoaderDeps";
 
 /**
  * Tous les blocs "1 clé de cache <-> 1 appel API <-> 1 setter" du handler.
@@ -49,7 +50,7 @@ function fixFirstGenZoeChargingStatus(payload: CarFetchStatus): CarFetchStatus {
 }
 
 export class RenaultCarLoader implements CarDataLoader {
-    constructor(private readonly deps: CarLoaderDeps) { }
+    constructor(private readonly deps: RenaultCarLoaderDeps) { }
 
     private get vin(): string {
         return this.deps.carModel.getVin();
@@ -108,8 +109,7 @@ export class RenaultCarLoader implements CarDataLoader {
     }
 
     private async loadBattery({ handler, notify }: LoadContext): Promise<RemoteResult> {
-        const renaultAccount = this.deps.account as any as RenaultAccount;
-        const data = await renaultAccount.fetchCarStatus(this.vin);
+        const data = await this.deps.account.fetchCarStatus(this.vin);
 
         if (data.hasError) {
             const message = data.errorMessage ?? '';
@@ -126,11 +126,10 @@ export class RenaultCarLoader implements CarDataLoader {
 
     private async loadSlots({ handler, notify }: LoadContext): Promise<void> {
         const { account, storageHandler } = this.deps;
-        const renaultAccount = account as any as RenaultAccount;
 
         await Promise.all(
             SLOTS.map(async slot => {
-                const payload = await slot.fetch(renaultAccount, this.vin);
+                const payload = await slot.fetch(account, this.vin);
                 if (payload.hasError) return;
 
                 slot.apply(handler, payload);
@@ -143,9 +142,7 @@ export class RenaultCarLoader implements CarDataLoader {
     /** Historique de charge + sessions V2G : même store, donc séquentiel. */
     private async loadCharges({ handler, notify }: LoadContext): Promise<void> {
         const { account, storageHandler } = this.deps;
-        const renaultAccount = account as any as RenaultAccount;
-
-        const fetched = await renaultAccount.fetchChargesHistory(this.vin);
+        const fetched = await account.fetchChargesHistory(this.vin);
         if (!fetched.hasError) {
             const charges = storageHandler.buildCharges(fetched.apiData);
             const merged = await ChargesStorageController.saveNewCharges(this.vin, charges);
@@ -154,7 +151,7 @@ export class RenaultCarLoader implements CarDataLoader {
 
         const carType = await storageHandler.getCarType(this.vin);
         if (carType?.getSupportsV2G()) {
-            const sessions = await renaultAccount.fetchV2GSessions(this.vin);
+            const sessions = await account.fetchV2GSessions(this.vin);
             if (sessions !== null) {
                 const converted = RenaultCharge.convertV2GSessionsToCharges(sessions);
                 const merged = await ChargesStorageController.saveNewCharges(this.vin, converted);

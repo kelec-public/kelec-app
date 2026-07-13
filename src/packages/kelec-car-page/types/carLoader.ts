@@ -1,13 +1,4 @@
-import CarModel from "../../../lib/clients/cars/carModel";
-import StorageHandler from "../../../lib/storage/storageHandler";
 import ApiHandler from "../../../lib/clients/apiHandlers/apiHandler";
-import Account from "../../../lib/clients/accounts/account";
-
-export type CarLoaderDeps = {
-    carModel: CarModel;
-    account: Account;
-    storageHandler: StorageHandler;
-};
 
 export interface CarDataLoader {
     loadFromCache(ctx: LoadContext): Promise<void>;

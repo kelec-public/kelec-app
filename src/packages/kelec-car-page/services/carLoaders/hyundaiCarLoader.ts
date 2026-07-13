@@ -1,8 +1,8 @@
-import HyundaiAccount from "../../../../lib/clients/accounts/hyundaiAccount";
-import { CarDataLoader, CarLoaderDeps, LoadContext, RemoteResult } from "../../types/carLoader";
+import { CarDataLoader, LoadContext, RemoteResult } from "../../types/carLoader";
+import { HyundaiCarLoaderDeps } from "../../types/carLoaderDeps";
 
 export class HyundaiCarLoader implements CarDataLoader {
-    constructor(private readonly deps: CarLoaderDeps) { }
+    constructor(private readonly deps: HyundaiCarLoaderDeps) { }
 
     private get vin(): string {
         return this.deps.carModel.getVin();
@@ -16,8 +16,7 @@ export class HyundaiCarLoader implements CarDataLoader {
     }
 
     async loadFromNetwork({ handler, notify }: LoadContext): Promise<RemoteResult> {
-        const hyundaiAccount = this.deps.account as any as HyundaiAccount;
-        const data = await hyundaiAccount.fetchCarStatus(this.vin);
+        const data = await this.deps.account.fetchCarStatus(this.vin);
         if (data.hasError) {
             return { status: 'error', message: '' };
         }
