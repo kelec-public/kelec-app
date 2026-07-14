@@ -36,7 +36,6 @@ function ChargesFiltersView({ setShouldOpenModal, handleModalAnim }: ChargesFilt
                     {
                         backgroundColor: getGrayBackgroundColour(isDarkMode),
                     },
-                    styles.modalView,
                     commonStyles.flex
                 ]}>
             <KeyboardAvoidingView
@@ -81,18 +80,6 @@ function ChargesFiltersView({ setShouldOpenModal, handleModalAnim }: ChargesFilt
 }
 
 const styles = StyleSheet.create({
-    modalView: {
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 12,
-        },
-        shadowOpacity: 1,
-        shadowRadius: 16.00,
-        elevation: 24,
-        borderTopLeftRadius: 20,
-        borderTopRightRadius: 20,
-    },
     modalContent: {
         padding: 15,
         gap: 10,

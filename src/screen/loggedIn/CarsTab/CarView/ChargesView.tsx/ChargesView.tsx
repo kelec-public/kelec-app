@@ -12,7 +12,7 @@ import { DocumentDirectoryPath, writeFile } from "react-native-fs";
 import XLSX from 'xlsx';
 import ChargesFiltersView from "./FiltersView/FiltersView";
 import ShareThirdPart from 'react-native-share';
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import ChargeMonthContent from "./ChargeMonthContent";
 import { Filter, FilterName } from "../../../../../lib/model/filters/FiltersStruct";
 import ChargesViewContext from "../../../../../lib/Contexts/ChargesViewContext";
@@ -165,7 +165,7 @@ function ChargesView({ navigation, route }: ChargesViewProps): React.JSX.Element
 
                                 <Text style={{
                                     fontSize: 15,
-                                    color:theme.colors.onSecondaryContainer,
+                                    color: theme.colors.onSecondaryContainer,
                                     marginLeft: 10
                                 }}>{formatFilterDisplay()}
                                 </Text>
@@ -208,7 +208,7 @@ function ChargesView({ navigation, route }: ChargesViewProps): React.JSX.Element
                             icon="sort"
                             text={sortDesc ? languageHandler.getTranslation("sortNewerToOlder")
                                 : languageHandler.getTranslation("sortOlderToNewer")}
-                                    buttonStyle={theme.buttons.neutral}
+                            buttonStyle={theme.buttons.neutral}
                         />
                         <Button
                             testID={'exportButton'}
@@ -281,7 +281,7 @@ function ChargesView({ navigation, route }: ChargesViewProps): React.JSX.Element
                             }}
                             icon={"ios-share"}
                             text={languageHandler.getTranslation("export")}
-                                    buttonStyle={theme.buttons.neutral}
+                            buttonStyle={theme.buttons.neutral}
                         />
                     </View>
                 </BottomSheet>
@@ -294,10 +294,12 @@ function ChargesView({ navigation, route }: ChargesViewProps): React.JSX.Element
                         handleModalAnim(false);
                     }}
                 >
+                    <SafeAreaProvider>
                         <ChargesFiltersView
                             setShouldOpenModal={setShowFiltersModal}
                             handleModalAnim={handleModalAnim}
                         />
+                    </SafeAreaProvider>
                 </Modal>
                 <View>
                     <View style={

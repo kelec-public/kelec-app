@@ -29,7 +29,7 @@ import { DocumentDirectoryPath, writeFile } from 'react-native-fs';
 import DebugZoneView from "./DebugZone/DebugZoneView";
 import TopSettingsView from "./TopSettingsView";
 import { RenaultCredentials } from "../../../lib/clients/carMakers/renaultCredentials";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from '@react-navigation/native';
 import Button from '../../../packages/kelec-model/view/Button';
 
@@ -375,7 +375,8 @@ function SettingsView(): React.JSX.Element {
                     setShowSelectTimeZoneModal(false);
                 }}
             >
-               <SafeAreaView
+                <SafeAreaProvider>
+                    <SafeAreaView
                         style={
                             [
                                 {
@@ -401,12 +402,13 @@ function SettingsView(): React.JSX.Element {
                             />
                         </View>
                     </SafeAreaView>
+                </SafeAreaProvider>
             </Modal>
             <View
                 testID='settingsView'
                 style={[commonStyles.flex, { backgroundColor: useTheme().colors.background }]}>
 
-                <ScrollView style={[commonStyles.flex, styles.mainWrapper, { backgroundColor: useTheme().colors.background  }]}>
+                <ScrollView style={[commonStyles.flex, styles.mainWrapper, { backgroundColor: useTheme().colors.background }]}>
                     <TopSettingsView />
 
                     <View style={[styles.elements, { paddingHorizontal: 15 }]}>
