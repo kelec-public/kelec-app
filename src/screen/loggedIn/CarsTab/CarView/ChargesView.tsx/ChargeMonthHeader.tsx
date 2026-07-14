@@ -1,6 +1,6 @@
 import { TouchableOpacity, useColorScheme, View } from "react-native";
 import Text from "../../../../Common/CustomText";
-import { formatNumberWithLeadingZero, getBlackColour} from "../../../../../lib/graphics/utils";
+import { formatNumberWithLeadingZero, getBlackColour } from "../../../../../lib/graphics/utils";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useContext } from "react";
 import MainContext from "../../../../../lib/Contexts/MainContext";
@@ -15,7 +15,7 @@ type ChargeMonthHeaderProps = {
     readonly shouldDisplayCharges: boolean;
     readonly setShouldDisplayCharges: (shouldDisplay: boolean) => void;
 }
-const getBarColour = (appPreferences: AppPreferences, thereisCharge: RenaultCharge | undefined, hasDCCharge: RenaultCharge | undefined, theme:Theme): string => {
+const getBarColour = (appPreferences: AppPreferences, thereisCharge: RenaultCharge | undefined, hasDCCharge: RenaultCharge | undefined, theme: Theme): string => {
     if (appPreferences.highlightDCCharges && hasDCCharge) {
         return 'rgba(0,142,255,1)';
     }
@@ -170,12 +170,9 @@ function ChargeMonthHeader({ chargeIndex, shouldDisplayCharges, setShouldDisplay
                 justifyContent: 'space-between',
                 gap: 10,
             }}>
-                <View style={{ flex: 1, flexWrap: "wrap" }}>
-                    <Text style={{ fontWeight: fontWeightBold, fontFamily: fontFamilyBold, fontSize: 20, flex: 1 }}>{chargeIndex.charges.length}</Text>
-                    <View style={{ flexDirection: 'row', gap: 0, flex: 1, flexWrap: "wrap" }}>
-                        <Text numberOfLines={1} adjustsFontSizeToFit>{languageHandler.getTranslation("charges")}</Text>
-                        <Icon name="bolt" size={20} color={theme.colors.powerGreen} />
-                    </View>
+                <View style={{ flex: 1, flexWrap: "wrap", flexDirection: 'row' }}>
+                    <Text style={{ fontWeight: fontWeightBold, fontFamily: fontFamilyBold, fontSize: 20 }}>{chargeIndex.charges.length}</Text>
+                    <Icon name="bolt" size={20} color={theme.colors.powerGreen} />
                 </View>
                 <View
                     style={{ flexDirection: 'row', gap: 5 }}>
