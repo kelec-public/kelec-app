@@ -10,9 +10,10 @@ import CredentialsView from "./Steps/Step2/CredentialsView";
 import SelectACarView from "./Steps/Step3/SelectACarView";
 import CarModel from "../../../lib/clients/cars/carModel";
 import MainContext from "../../../lib/Contexts/MainContext";
-import { View } from "react-native";
+import { useColorScheme, View } from "react-native";
 import CarModelSelector, { CarModelSelectorParamList } from "./Steps/Step4/CarModelSelector";
 import TfaView, { TfaOrigin } from "./Steps/Step2/Tfa/TfaView";
+import { Palette } from "../../../../theme/_palette";
 
 export type LoginEntryParamList = {
   CarMakerSelectView: undefined;
@@ -35,6 +36,17 @@ const LoginEntryView = () => {
 
   const Stack = createNativeStackNavigator<LoginEntryParamList>();
 
+  // this navigator should be background white
+  const theme = useTheme();
+  const isDarkMode = useColorScheme() === 'dark';
+  const loginNavigationTheme = {
+    ...theme,
+    colors: {
+      ...theme.colors,
+      background: isDarkMode ? Palette.black : Palette.white,
+    },
+  };
+
 
   // data for account creation
   const [selectedCarMaker, setSelectedCarMaker] = useState<CarMaker | undefined>(undefined);
@@ -52,7 +64,7 @@ const LoginEntryView = () => {
   return (
     <View testID="loginView" style={{ flex: 1 }}>
       <NavigationIndependentTree>
-          <NavigationContainer theme={useTheme()}>
+        <NavigationContainer theme={loginNavigationTheme}>
           <Stack.Navigator
             screenOptions={{
               headerShown: false,
