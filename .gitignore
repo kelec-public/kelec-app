@@ -77,3 +77,8 @@ test-report.html
 
 .env
 /.sonar-local-token
+
+
+android/app/debug.keystore
+android/KelecSigninKey
+android/app/release
