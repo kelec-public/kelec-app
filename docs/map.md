@@ -33,8 +33,7 @@ kelec-map/                            (feature)
 ├── views/
 │   ├── MapCard.tsx                   Mini-carte de la page voiture
 │   ├── FullScreenMapView.tsx         Carte plein écran
-│   ├── MapTypeSelector.tsx           Plan / satellite
-│   └── mapButtonStyle.ts             Bouton rond flottant
+│   └── MapTypeSelector.tsx           Plan / satellite
 ├── types/locationSource.ts           Interface LocationSource
 ├── routes.ts                         MAP_ROUTE
 └── index.ts
@@ -52,6 +51,22 @@ kelec-map/                            (feature)
 6. **Carte plein écran** : elle lit la position, la voiture et la météo dans le provider. Elle ne reçoit plus rien par les paramètres de route,
    donc elle se met à jour si les données sont rafraîchies pendant qu'elle est ouverte.
 7. **Type de carte** : il est enregistré dans les préférences (`usePreferences().update({ mapType })`).
+
+## Pastilles flottantes (`FloatingPill`, kelec-model)
+
+Tous les éléments blancs posés sur les cartes (météo, retour, plein écran, recentrer, plan/satellite, itinéraire) utilisent
+`kelec-model/view/FloatingPill`. Il est dans le package d'infrastructure UI parce que `kelec-weather` (domaine) et `kelec-map` (feature) s'en servent tous les deux.
+
+- **Taille commune déduite de l'icône** : `FLOATING_PILL_SIZE` = icône (`FLOATING_PILL_ICON_SIZE`) + 2 × marge interne + 2 × bordure.
+  Aucune valeur n'est écrite dans les vues.
+  - Pastilles avec texte : hauteur **minimale** `FLOATING_PILL_SIZE`, et dans une ligne en `alignItems: 'stretch'`, elles prennent la hauteur de la plus haute.
+  - Pastilles rondes (`round`, icône seule) : taille **fixe** `FLOATING_PILL_SIZE`, jamais étirées, pour rester rondes.
+- **À ne pas faire** : `aspectRatio` + `flexGrow` + `stretch` pour les pastilles rondes. Dans un conteneur sans taille fixe, le moteur de mise en page
+  les fait grossir sans limite. C'était le cas lors d'un premier essai : boutons énormes, et « Marcher vers… » poussé hors de l'écran.
+- `selected` : fond gris et bordure (plan/satellite).
+- La carte plein écran s'ouvre en modale : il n'y a pas de marge de sécurité en haut (la ligne du haut a donc une marge de 15),
+  mais il y en a une en bas (barre d'accueil) : le bloc du bas est dans un `SafeAreaView edges={['bottom']}`, plus une marge de 15.
+- Les tailles réelles ne sont pas calculées par jest : le rendu se vérifie à l'écran (iOS et Android).
 
 ## Stockage
 

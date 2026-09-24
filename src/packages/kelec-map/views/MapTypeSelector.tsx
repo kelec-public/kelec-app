@@ -1,10 +1,9 @@
-import { StyleSheet, TouchableOpacity, View, useColorScheme } from "react-native";
+import { StyleSheet, View, useColorScheme } from "react-native";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { MapType } from "react-native-maps";
-import commonStyles from "../../../lib/graphics/commonStyle";
-import { getBlackColour, getLightGray, getWhiteColour } from "../../../lib/graphics/utils";
+import { getBlackColour } from "../../../lib/graphics/utils";
+import FloatingPill, { FLOATING_PILL_ICON_SIZE } from "../../kelec-model/view/FloatingPill";
 import { SATELLITE_MAP_TYPE } from "../services/mapLinks";
-import { mapButtonStyle } from "./mapButtonStyle";
 
 type Props = {
     readonly selected: MapType;
@@ -21,34 +20,29 @@ function MapTypeSelector({ selected, onSelect }: Props): React.JSX.Element {
     const isDarkMode = useColorScheme() === 'dark';
 
     return (
-        <View style={[commonStyles.flex, commonStyles.flexEnd, commonStyles.rowFlex]}>
-            {OPTIONS.map(option => {
-                const isSelected = selected === option.mapType;
-                return (
-                    <TouchableOpacity key={option.testID} testID={option.testID} onPress={() => onSelect(option.mapType)}>
-                        <View
-                            testID={option.testID + 'View'}
-                            style={[mapButtonStyle.button, {
-                                backgroundColor: isSelected ? getLightGray(isDarkMode) : getWhiteColour(isDarkMode),
-                                borderColor: isSelected ? 'gray' : 'transparent',
-                            }, styles.withBorder, styles.reducedMargin]}
-                        >
-                            <Icon name={option.icon} color={getBlackColour(isDarkMode)} size={30}></Icon>
-                        </View>
-                    </TouchableOpacity>
-                );
-            })}
+        <View style={styles.row}>
+            {OPTIONS.map(option => (
+                <FloatingPill
+                    key={option.testID}
+                    testID={option.testID}
+                    viewTestID={option.testID + 'View'}
+                    onPress={() => onSelect(option.mapType)}
+                    selected={selected === option.mapType}
+                    round
+                >
+                    <Icon name={option.icon} color={getBlackColour(isDarkMode)} size={FLOATING_PILL_ICON_SIZE}></Icon>
+                </FloatingPill>
+            ))}
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    withBorder: {
-        borderWidth: 3,
-    },
-    reducedMargin: {
-        marginLeft: 5,
-        marginRight: 5,
+    row: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        alignItems: 'stretch',
+        gap: 10,
     },
 });
 

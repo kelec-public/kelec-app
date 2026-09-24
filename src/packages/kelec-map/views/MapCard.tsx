@@ -1,7 +1,8 @@
 import React, { useContext, useRef, useState } from "react";
-import { StyleSheet, View, useColorScheme, TouchableOpacity } from "react-native";
+import { StyleSheet, View, useColorScheme } from "react-native";
 import MainContext from "../../../lib/Contexts/MainContext";
-import { getBlackColour, getDisplayDate, getWhiteColour } from "../../../lib/graphics/utils";
+import { getBlackColour, getDisplayDate } from "../../../lib/graphics/utils";
+import FloatingPill, { FLOATING_PILL_ICON_SIZE } from "../../kelec-model/view/FloatingPill";
 import MapView, { Marker } from "react-native-maps";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { WeatherBadge } from "../../kelec-weather";
@@ -64,27 +65,20 @@ function MapCard({ navigation }: Props): React.JSX.Element | null {
                     </View> */}
                 </Marker>
             </MapView>
-            <View style={[styles.overlay, { top: 10, left: 10 }]}>
-                <WeatherBadge state={weather} />
-            </View>
-            <View style={[styles.overlay, { top: 0, right: 0 }]}>
-                <TouchableOpacity
-                    onPress={() => navigation.navigate(MAP_ROUTE)}
-                    testID="fullScreenButton"
-                >
-                    <View style={[styles.smallButton, { backgroundColor: getWhiteColour(isDarkMode) }]}>
-                        <Icon name="open-in-full" color={getBlackColour(isDarkMode)} size={20}></Icon>
-                    </View>
-                </TouchableOpacity>
+            <View style={styles.overlay} pointerEvents="box-none">
+                {/* météo et plein écran sur la même ligne : même hauteur */}
+                <View style={styles.row} pointerEvents="box-none">
+                    <WeatherBadge state={weather} />
+                    <FloatingPill testID="fullScreenButton" onPress={() => navigation.navigate(MAP_ROUTE)} round>
+                        <Icon name="open-in-full" color={getBlackColour(isDarkMode)} size={FLOATING_PILL_ICON_SIZE}></Icon>
+                    </FloatingPill>
+                </View>
                 {hasRegionChanged && (
-                    <TouchableOpacity
-                        testID="resetSmallRegionButton"
-                        onPress={goBackToOriginalRegion}
-                    >
-                        <View style={[styles.smallButton, { backgroundColor: getWhiteColour(isDarkMode) }]}>
-                            <Icon name="near-me" color={getBlackColour(isDarkMode)} size={20}></Icon>
-                        </View>
-                    </TouchableOpacity>
+                    <View style={[styles.row, styles.end]} pointerEvents="box-none">
+                        <FloatingPill testID="resetSmallRegionButton" onPress={goBackToOriginalRegion} round>
+                            <Icon name="near-me" color={getBlackColour(isDarkMode)} size={FLOATING_PILL_ICON_SIZE}></Icon>
+                        </FloatingPill>
+                    </View>
                 )}
             </View>
         </View>
@@ -106,25 +100,18 @@ const styles = StyleSheet.create({
         zIndex: 99,
         elevation: 99,
         position: 'absolute',
+        top: 10,
+        left: 10,
+        right: 10,
+        gap: 10,
     },
-    smallButton: {
-        display: 'flex',
+    row: {
         flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 10,
-        borderRadius: 999,
-        marginRight: 10,
-        marginTop: 10,
-        marginLeft: 10,
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 3,
-        },
-        shadowOpacity: 0.27,
-        shadowRadius: 4.65,
-        gap: 5,
+        justifyContent: 'space-between',
+        alignItems: 'stretch',
+    },
+    end: {
+        justifyContent: 'flex-end',
     },
     // utilisés par le marqueur commenté ci-dessus
     smallMarker: {
