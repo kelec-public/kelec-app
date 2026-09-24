@@ -5,9 +5,10 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useContext } from "react";
 import MainContext from "../../../lib/Contexts/MainContext";
 import { useChargesHistory } from "../controllers/ChargesHistoryProvider";
+import { CHARGES_HISTORY_ROUTE } from "../routes";
 
 type Props = {
-    readonly navigation: { navigate: (route: 'ChargesView') => void };
+    readonly navigation: { navigate: (route: typeof CHARGES_HISTORY_ROUTE) => void };
 }
 
 /** Carte de la page voiture : totaux de l'historique, ouvre l'écran d'historique. */
@@ -20,7 +21,7 @@ function ChargesSummaryCard({ navigation }: Props): React.JSX.Element {
 
     return (
         <TouchableOpacity onPress={() => {
-            navigation.navigate('ChargesView');
+            navigation.navigate(CHARGES_HISTORY_ROUTE);
         }}>
             <View style={[styles.ChargesCard, { backgroundColor: getGrayBackgroundColour(isDarkMode) }]} testID="ChargesCard">
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>

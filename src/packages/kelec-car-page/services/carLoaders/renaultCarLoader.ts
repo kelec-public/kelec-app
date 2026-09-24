@@ -32,11 +32,6 @@ const SLOTS: Slot[] = [
         apply: (h, p) => h.setChargingSettings?.(p),
         fetch: (a, vin) => a.fetchChargesSettings(vin),
     },
-    {
-        storageKey: 'hvacStatus',
-        apply: (h, p) => h.setHVACStatus?.(p),
-        fetch: (a, vin) => a.fetchHVACStatus(vin),
-    },
 ];
 
 /** Bug connu des Zoe 1re génération : chargingStatus == -1.1 alors que la voiture charge. */

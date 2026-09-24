@@ -203,3 +203,32 @@ test('should not load hvac', async () => {
         expect(screen.getByTestId('HVACCardLowButton')).toBeDefined();
     });
 });  
+test('should show hvac as running when airCtrlOn is true', async () => {
+    const runningApiData = JSON.parse(JSON.stringify(mockApiData));
+    runningApiData.vehicleStatus.airCtrlOn = true;
+
+    render(<App />);
+    mockGetCarStatus.mockResolvedValueOnce({
+        hasError: false,
+        apiData: runningApiData
+    });
+
+    await waitFor(() => {
+        expect(screen.getByTestId('hvacRunningOverlay')).toBeDefined();
+        expect(screen.getByTestId('animatedHvacIcon')).toBeDefined();
+        expect(screen.queryAllByTestId('hvacIcon')).toHaveLength(0);
+    });
+});
+
+test('should show hvac as off when airCtrlOn is false', async () => {
+    render(<App />);
+    mockGetCarStatus.mockResolvedValueOnce({
+        hasError: false,
+        apiData: mockApiData
+    });
+
+    await waitFor(() => {
+        expect(screen.getByTestId('hvacIcon')).toBeDefined();
+    });
+    expect(screen.queryAllByTestId('hvacRunningOverlay')).toHaveLength(0);
+});

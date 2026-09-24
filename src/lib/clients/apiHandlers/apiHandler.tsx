@@ -12,8 +12,6 @@ interface ApiHandler {
     getAvailableEnergy(carType: CarType): number;
     setCockpitStatus?(carFetch: CarFetchStatus): void;
     setLocationStatus?(carFetch: CarFetchStatus): void;
-    setHVACStatus?(carFetch: CarFetchStatus): void;
-    getIsHVACRunning(): boolean;
     getLastUpdateDate(): Date;
     hasError(): boolean;
     getIsCarPlugged(): boolean;
@@ -22,7 +20,6 @@ interface ApiHandler {
     getMapLongitude(): number;
     getMapLatitude(): number;
     getLastMapUpdateDate(): Date;
-    shouldDisplayHVACCard(): boolean;
     getRemainingMinutes(): number;
     getEndChargeHour(): Date;
     getChargeText(): string;
@@ -38,9 +35,6 @@ interface ApiHandler {
     setChargingSettings?(carFetch: CarFetchStatus): void;
     shouldDisplayNextChargeSettings(): boolean;
     getChargingSettings(): ChargeSettingsStatus | null;
-
-    // for hvac
-    getMinimumHvacSOC(): number | null;
 }
 
 

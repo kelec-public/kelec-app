@@ -1,7 +1,6 @@
 import AppPreferences from "../../appPreferences/model/appPreferences";
 import { getDistance } from "../../graphics/utils";
-import { BatteryStatus, ChargeSettingsStatus, CockpitStatus, HVACStatus, MapLocationStatus, RenaultStatus } from "../carMakers/renaultClient";
-import { HVACStatusEnum } from "../carMakers/renaultEnums";
+import { BatteryStatus, ChargeSettingsStatus, CockpitStatus, MapLocationStatus, RenaultStatus } from "../carMakers/renaultClient";
 import CarType, { CarAvailableModels } from "../cars/carTypes/carType";
 import ApiHandler from "./apiHandler";
 
@@ -21,10 +20,6 @@ class RenaultApiHandler implements ApiHandler {
     private apiChargesSettings?: {
         hasError: boolean;
         apiData?: ChargeSettingsStatus;
-    }
-    private apiHVACStatus?: {
-        hasError: boolean;
-        apiData?: HVACStatus;
     }
 
     constructor(batteryStatus?: RenaultStatus) {
@@ -112,10 +107,6 @@ class RenaultApiHandler implements ApiHandler {
         return new Date(this.apiLocationStatus?.apiData?.lastUpdateTime ?? 0);
     }
 
-    shouldDisplayHVACCard(): boolean {
-        return true;
-    }
-
     getRemainingMinutes(): number {
         return this.apiBatteryStatusRenault?.apiData?.chargingRemainingTime ?? 0;
     }
@@ -186,19 +177,6 @@ class RenaultApiHandler implements ApiHandler {
 
     getChargingSettings(): ChargeSettingsStatus | null {
         return this.apiChargesSettings?.apiData ?? null;
-    }
-
-    setHVACStatus(carFetch: RenaultStatus): void {
-        this.apiHVACStatus = carFetch;
-    }
-
-    getIsHVACRunning(): boolean {
-        const hvacStatus = this.apiHVACStatus?.apiData?.hvacStatus ?? HVACStatusEnum.OFF;
-        return hvacStatus == HVACStatusEnum.ON;
-    }
-
-    getMinimumHvacSOC(): number | null {
-        return this.apiHVACStatus?.apiData?.socThreshold ?? null;
     }
 
 

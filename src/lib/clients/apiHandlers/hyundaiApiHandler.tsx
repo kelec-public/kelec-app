@@ -88,10 +88,6 @@ class HyundaiApiHandler implements ApiHandler {
         return this.convertHyundaiTime(this.apiDataHyundai?.apiData?.vehicleLocation.time ?? '');
     }
 
-    shouldDisplayHVACCard(): boolean {
-        return true;
-    }
-
     getRemainingMinutes(): number {
         return this.apiDataHyundai?.apiData?.vehicleStatus?.evStatus.remainTime2.atc.value ?? 0;
     }
@@ -161,17 +157,8 @@ class HyundaiApiHandler implements ApiHandler {
         return null;
     }
 
-    getIsHVACRunning(): boolean {
-        // to implement
-        return false;
-    }
-
     getIsV2GOrV2L(): boolean {
         return false;
-    }
-
-    getMinimumHvacSOC(): number | null {
-        return null;
     }
 }
 

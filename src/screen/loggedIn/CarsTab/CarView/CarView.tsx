@@ -8,9 +8,10 @@ import Account from "../../../../lib/clients/accounts/account";
 import FullScreenError, { getErrorMessage } from "../../../../FullScreenError";
 import FullScreenLoading from "../../../../FullScreenLoading";
 import MapCard from "./Elements/MapCard";
-import HVACCard from "./Elements/HVACCard";
 import ChargesSummaryCard from "../../../../packages/kelec-charge-history/views/ChargesSummaryCard";
 import { useChargesHistory } from "../../../../packages/kelec-charge-history/controllers/ChargesHistoryProvider";
+import { useHvac } from "../../../../packages/kelec-hvac/controllers/HvacProvider";
+import HvacCard from "../../../../packages/kelec-hvac/views/HvacCard";
 import BatteryCard from "./Elements/BatteryCard";
 import PagerView from "react-native-pager-view";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -56,15 +57,19 @@ function CarView({ carModel, navigation, account, pagerRef, tfaInProgress }: Car
         [languageHandler],
     );
 
-    // L'historique de charge n'est synchronisé qu'une fois la batterie récupérée.
+    // Historique de charge et climatisation ne sont synchronisés qu'une fois la batterie récupérée.
     const { history: chargesHistory, sync: syncCharges } = useChargesHistory();
+    const { sync: syncHvac } = useHvac();
+    const onNetworkLoaded = useCallback(async () => {
+        await Promise.all([syncCharges(), syncHvac()]);
+    }, [syncCharges, syncHvac]);
 
     const { status, errorMessage, apiHandler, revision, isRefreshing, refresh } = useCarData({
         carModel,
         account,
         onTfaRequired,
         onSoftError,
-        onNetworkLoaded: syncCharges,
+        onNetworkLoaded,
     });
 
     const carViewContextValues = useMemo(
@@ -106,9 +111,7 @@ function CarView({ carModel, navigation, account, pagerRef, tfaInProgress }: Car
                         <View style={{ display: 'flex', gap: 15, paddingBottom: 50 }}>
                             <SummaryCard navigation={navigation} />
                             <BatteryCard />
-                            {apiHandler.shouldDisplayHVACCard() && (
-                                <HVACCard />
-                            )}
+                            <HvacCard />
                             {chargesHistory.shouldDisplayChargesCard() && (
                                 <ChargesSummaryCard navigation={navigation} />
                             )}
