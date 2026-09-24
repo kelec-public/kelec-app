@@ -13,6 +13,8 @@ type Params = {
     account: Account;
     onTfaRequired: (regToken: string) => void;
     onSoftError: (errorMessage: string) => void;
+    /** Appelé après un fetch réseau réussi (batterie OK) ; attendu avant la fin du rafraîchissement. */
+    onNetworkLoaded?: () => Promise<void>;
 };
 
 /**
@@ -20,7 +22,7 @@ type Params = {
  * Un seul ApiHandler vit pendant tout le chargement ; `revision` sert de
  * signal de re-render (affichage progressif à chaque bloc reçu).
  */
-export function useCarData({ carModel, account, onTfaRequired, onSoftError }: Params) {
+export function useCarData({ carModel, account, onTfaRequired, onSoftError, onNetworkLoaded }: Params) {
     const { storageHandler } = useContext(MainContext);
 
     const [status, setStatus] = useState<CarDataStatus>('loading');
@@ -72,6 +74,7 @@ export function useCarData({ carModel, account, onTfaRequired, onSoftError }: Pa
             case 'ok':
                 notify();
                 commitStatus('loaded');
+                await onNetworkLoaded?.();
                 return;
 
             case 'tfa':
@@ -84,7 +87,7 @@ export function useCarData({ carModel, account, onTfaRequired, onSoftError }: Pa
                 else commitStatus('error', result.message);
                 return;
         }
-    }, [carModel, account, storageHandler, commitStatus, onTfaRequired, onSoftError]);
+    }, [carModel, account, storageHandler, commitStatus, onTfaRequired, onSoftError, onNetworkLoaded]);
 
     const refresh = useCallback(async () => {
         setIsRefreshing(true);

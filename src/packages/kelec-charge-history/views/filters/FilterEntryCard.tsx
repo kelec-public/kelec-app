@@ -1,57 +1,53 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { Filter, FilterName } from "../../../../../../../lib/model/filters/FiltersStruct";
 import { Animated, Easing, TouchableOpacity, useColorScheme, View } from "react-native";
-import { getBlackColour } from "../../../../../../../lib/graphics/utils";
-import Text from "../../../../../../Common/CustomText";
-import MainContext from "../../../../../../../lib/Contexts/MainContext";
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { getBlackColour } from "../../../../lib/graphics/utils";
+import Text from "../../../../screen/Common/CustomText";
+import MainContext from "../../../../lib/Contexts/MainContext";
+import { Filter, FilterName } from "../../models/Filter";
+import { useChargesFilters } from "../../controllers/ChargesFiltersContext";
+import { getDateFilterValues, getNumericalFilterValues, getSwitchFilterValue } from "../../services/chargesFilters";
 import FilterDateCard from "./FilterDateCard";
 import FilterNumericalCard from "./FilterNumericalCard";
-import { getDateFiltersValues, getFilterSwitchValue, getNumericalFiltersValues } from "../../../../../../../lib/model/filters/FiltersHandlers";
-import ChargesViewContext from "../../../../../../../lib/Contexts/ChargesViewContext";
 import FilterSwitchCard from "./FilterSwitchCard";
 
-type FilterCardProps = {
+type Props = {
     readonly filter: Filter;
-    readonly filterValueMin?: number | Date | string; // if the filter is already applied
-    readonly filterValueMax?: number | Date | string; // if the filter is already applied
 }
 
-function FilterEntryCard({ filter, filterValueMin, filterValueMax }: FilterCardProps): React.JSX.Element {
+/** Ligne dépliable d'un filtre ; le contenu dépend du type de filtre. */
+function FilterEntryCard({ filter }: Props): React.JSX.Element {
+    const isDarkMode = useColorScheme() === 'dark';
     const { languageHandler } = useContext(MainContext);
-    const { filters } = useContext(ChargesViewContext);
+    const { filters } = useChargesFilters();
 
-    // if the filter row is expanded
     const [expanded, setExpanded] = useState(false);
 
-    // chevron rotation in degrees
+    // rotation du chevron, en degrés
     const chevronRotation = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
-        makeChevronRotate(expanded);
-    }, [expanded]);
-
-    const makeChevronRotate = (expanded: boolean) => {
         Animated.timing(chevronRotation, {
             toValue: expanded ? 0 : 180,
             duration: 200,
             easing: Easing.inOut(Easing.ease),
             useNativeDriver: true
         }).start();
-    };
+    }, [expanded]);
 
-    const isDarkMode = useColorScheme() === 'dark';
-
-    const displayFilterCard = () => {
+    const renderFilterCard = () => {
         switch (filter.filterName) {
-            case FilterName.DATE:
-                return <FilterDateCard filter={filter} filterValueMin={getDateFiltersValues(filter.filterName, filters).filterValueMin} filterValueMax={getDateFiltersValues(filter.filterName, filters).filterValueMax} />
+            case FilterName.DATE: {
+                const { filterValueMin, filterValueMax } = getDateFilterValues(filter.filterName, filters);
+                return <FilterDateCard filter={filter} filterValueMin={filterValueMin} filterValueMax={filterValueMax} />
+            }
             case FilterName.ONLY_DC:
-                return <FilterSwitchCard filter={filter} filterValue={getFilterSwitchValue(filter.filterName, filters)} />
-            default:
-                return <FilterNumericalCard filter={filter} filterValueMin={getNumericalFiltersValues(filter.filterName, filters).filterValueMin} filterValueMax={getNumericalFiltersValues(filter.filterName, filters).filterValueMax} />
+                return <FilterSwitchCard filter={filter} filterValue={getSwitchFilterValue(filter.filterName, filters)} />
+            default: {
+                const { filterValueMin, filterValueMax } = getNumericalFilterValues(filter.filterName, filters);
+                return <FilterNumericalCard filter={filter} filterValueMin={filterValueMin} filterValueMax={filterValueMax} />
+            }
         }
-
     }
 
     return (
@@ -62,12 +58,8 @@ function FilterEntryCard({ filter, filterValueMin, filterValueMax }: FilterCardP
             }}>
             <TouchableOpacity
                 testID={"expandButton" + filter.filterName}
-                onPress={() => {
-                    setExpanded(!expanded);
-                }}
-                style={{
-                    marginBottom: expanded ? 10 : 0
-                }}
+                onPress={() => setExpanded(!expanded)}
+                style={{ marginBottom: expanded ? 10 : 0 }}
             >
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Text style={{
@@ -90,12 +82,9 @@ function FilterEntryCard({ filter, filterValueMin, filterValueMax }: FilterCardP
                     </Animated.View>
                 </View>
             </TouchableOpacity>
-            {expanded && (
-                displayFilterCard()
-            )}
+            {expanded && renderFilterCard()}
         </View>
     )
-
 };
 
 export default FilterEntryCard;

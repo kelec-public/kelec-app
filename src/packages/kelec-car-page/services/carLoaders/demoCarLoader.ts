@@ -1,4 +1,5 @@
-import { CarDataLoader, CarLoaderDeps, LoadContext, RemoteResult } from "../../types/carLoader";
+import { CarDataLoader, LoadContext, RemoteResult } from "../../types/carLoader";
+import { CarLoaderDeps } from "../../types/carLoaderDeps";
 
 const mockData = require('../../../../assets/car_data/mockDemoData.json');
 
@@ -9,10 +10,6 @@ export class DemoCarLoader implements CarDataLoader {
         handler.setApiData({ hasError: false, apiData: mockData.battery });
         handler.setCockpitStatus?.({ hasError: false, apiData: mockData.cockpit });
         handler.setLocationStatus?.({ hasError: false, apiData: mockData.map });
-        handler.setChargesHistory?.({
-            hasError: false,
-            apiData: this.deps.storageHandler.buildCharges(mockData.charges),
-        });
     }
 
     async loadFromNetwork(): Promise<RemoteResult> {

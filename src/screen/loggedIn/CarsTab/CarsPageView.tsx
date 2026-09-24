@@ -5,7 +5,8 @@ import MainContext from "../../../lib/Contexts/MainContext";
 import CarView from "./CarView/CarView";
 import createNativeStackNavigator from '../../../lib/graphics/navigation';
 import { NavigationContainer, NavigationIndependentTree, useTheme } from "@react-navigation/native";
-import ChargesView from "./CarView/ChargesView.tsx/ChargesView";
+import ChargesHistoryView from "../../../packages/kelec-charge-history/views/ChargesHistoryView";
+import { ChargesHistoryProvider } from "../../../packages/kelec-charge-history/controllers/ChargesHistoryProvider";
 import SendCoffeeCard from "./CarView/Elements/SendCoffee";
 import FullScreenMapView from "./CarView/Elements/Map/FullScreenMapView";
 import { WeatherApiHandler } from "../../../lib/clients/weather/weatherClient";
@@ -49,50 +50,52 @@ function CarsPageView(): React.JSX.Element {
                     const carModel = account.getCar()!;
                     return (
                       <NavigationIndependentTree key={carModel.getVin()}>
-                        <NavigationContainer theme={theme}>
-                          <Stack.Navigator
-                            screenOptions={{
-                              headerShown: false,
-                            }}
-                          >
-                            <Stack.Screen name="CarView">
-                              {props => (
-                                <CarView
-                                  {...props}
-                                  carModel={carModel}
-                                  account={account}
-                                  pagerRef={ref}
-                                  tfaInProgress={tfaInProgress}
-                                />
-                              )}
-                            </Stack.Screen>
-                            <Stack.Screen name="TfaView">
-                              {props =>
-                                <TfaView {...props}
-                                  onTfaCompleted={() => {
-                                    tfaInProgress.current = false;
-                                  }} />
-                              }
-                            </Stack.Screen>
-                            <Stack.Screen name="ChargesView">
-                              {props => <ChargesView {...props} />}
-                            </Stack.Screen>
-                            <Stack.Screen name="CarModelSelector">
-                              {props => <CarModelSelector {...props} />}
-                            </Stack.Screen>
-                            <Stack.Screen
-                              name="DonationScreen"
-                              options={{ presentation: 'modal' }}
+                        <ChargesHistoryProvider carModel={carModel} account={account}>
+                          <NavigationContainer theme={theme}>
+                            <Stack.Navigator
+                              screenOptions={{
+                                headerShown: false,
+                              }}
                             >
-                              {(props: any) => <SendCoffeeCard {...props} />}
-                            </Stack.Screen>
-                            <Stack.Screen
-                              name="MapView"
-                              component={FullScreenMapView}
-                              options={{ presentation: 'modal' }}
-                            />
-                          </Stack.Navigator>
-                        </NavigationContainer>
+                              <Stack.Screen name="CarView">
+                                {props => (
+                                  <CarView
+                                    {...props}
+                                    carModel={carModel}
+                                    account={account}
+                                    pagerRef={ref}
+                                    tfaInProgress={tfaInProgress}
+                                  />
+                                )}
+                              </Stack.Screen>
+                              <Stack.Screen name="TfaView">
+                                {props =>
+                                  <TfaView {...props}
+                                    onTfaCompleted={() => {
+                                      tfaInProgress.current = false;
+                                    }} />
+                                }
+                              </Stack.Screen>
+                              <Stack.Screen name="ChargesView">
+                                {props => <ChargesHistoryView {...props} />}
+                              </Stack.Screen>
+                              <Stack.Screen name="CarModelSelector">
+                                {props => <CarModelSelector {...props} />}
+                              </Stack.Screen>
+                              <Stack.Screen
+                                name="DonationScreen"
+                                options={{ presentation: 'modal' }}
+                              >
+                                {(props: any) => <SendCoffeeCard {...props} />}
+                              </Stack.Screen>
+                              <Stack.Screen
+                                name="MapView"
+                                component={FullScreenMapView}
+                                options={{ presentation: 'modal' }}
+                              />
+                            </Stack.Navigator>
+                          </NavigationContainer>
+                        </ChargesHistoryProvider>
                       </NavigationIndependentTree>
                     );
                 })}

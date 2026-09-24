@@ -7,7 +7,6 @@ import ApiHandler from "../clients/apiHandlers/apiHandler";
 import HyundaiApiHandler from "../clients/apiHandlers/hyundaiApiHandler";
 import CarType, { CarTypeInterface } from "../clients/cars/carTypes/carType";
 import RenaultApiHandler from "../clients/apiHandlers/renaultApiHandler";
-import RenaultCharge from "../clients/apiHandlers/renaultCharges/RenaultCharge";
 import UserAccount, { UserAccountInterface } from "../clients/accounts/userAccount";
 import CarModel, { CarModelInterface } from "../clients/cars/carModel";
 import DemoAccount from "../clients/accounts/demoAccount";
@@ -162,15 +161,6 @@ class StorageHandler {
 
     setCarType = async (vin: string, carType: CarType): Promise<void> => {
         await AsyncStorage.setItem(vin + '/carType', JSON.stringify(carType));
-    }
-
-    // convert renault json charges to json class model
-    buildCharges = (charges: RenaultCharge[]): RenaultCharge[] => {
-        // filter where chargeStartDate is undefined
-        charges = charges.filter((charge: any) => charge.chargeStartDate !== undefined);
-        return charges.map((charge: any) => {
-            return new RenaultCharge(charge.chargeStartDate, charge.chargeEndDate, charge.chargeDuration, charge.chargeStartBatteryLevel, charge.chargeEndBatteryLevel, charge.chargeEnergyRecovered, charge.chargeEndStatus, charge.isAMergeCharge, charge.subCharges, charge.mileageAtStart, charge.inaccurateMileage, charge.V2GEnergyDischarged, charge.isV2G);
-        });
     }
 }
 export default StorageHandler

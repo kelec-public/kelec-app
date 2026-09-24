@@ -1,9 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import RenaultCharge from "../../../src/lib/clients/apiHandlers/renaultCharges/RenaultCharge";
-import ChargesStorageController from "../../../src/lib/storage/chargesHandler";
+import Charge from "../../../src/packages/kelec-charge-history/models/Charge";
+import ChargesRepository from "../../../src/packages/kelec-charge-history/services/chargesRepository";
 
 import * as sharedPlatformsData from '../../../src/lib/storage/sharedPlatformsData';
-import RenaultChargesHandler from "../../../src/lib/clients/apiHandlers/renaultChargesHandler";
+import { mergeCharges } from "../../../src/packages/kelec-charge-history/services/chargeMonths";
 const mockGetMileageHistory = jest.fn();
 jest.spyOn(sharedPlatformsData, 'getMileageHistory').mockImplementation(mockGetMileageHistory);
 
@@ -12,11 +12,11 @@ beforeEach(async () => {
 });
 
 test('should not retrieve any mileage history', async () => {
-    const charge1 = new RenaultCharge('2023-01-01T00:00:00Z', '2023-01-01T01:00:00Z', 50, 0, 100, 60, 'OK');
-    const charge2 = new RenaultCharge('2023-01-02T00:00:00Z', '2023-01-02T01:00:00Z', 60, 0, 120, 70, 'OK');
-    await ChargesStorageController.saveNewCharges('vin', [charge1, charge2]);
+    const charge1 = new Charge('2023-01-01T00:00:00Z', '2023-01-01T01:00:00Z', 50, 0, 100, 60, 'OK');
+    const charge2 = new Charge('2023-01-02T00:00:00Z', '2023-01-02T01:00:00Z', 60, 0, 120, 70, 'OK');
+    await ChargesRepository.saveNewCharges('vin', [charge1, charge2]);
 
-    const charges = await ChargesStorageController.getCharges('vin');
+    const charges = await ChargesRepository.getCharges('vin');
     expect(charges).toEqual([charge1, charge2]);
 });
 
@@ -47,15 +47,15 @@ test('should retrieve mileage history with all parameters', async () => {
     ]
     mockGetMileageHistory.mockResolvedValue(mileageHistory);
 
-    const charge1 = new RenaultCharge('2023-01-01T00:00:00Z', '2023-01-01T01:00:00Z', 50, 0, 100, 60, 'OK');
-    const charge2 = new RenaultCharge('2023-01-02T00:00:00Z', '2023-01-02T01:00:00Z', 60, 0, 120, 70, 'OK');
-    const charge3 = new RenaultCharge('2023-01-04T00:00:00Z', '2023-01-04T00:40:00Z', 60, 0, 120, 70, 'OK');
-    const charge4 = new RenaultCharge('2023-01-05T00:00:00Z', '2023-01-05T00:40:00Z', 60, 0, 120, 70, 'OK');
-    const charge5 = new RenaultCharge('2023-01-02T02:00:00Z', '2023-01-02T00:40:00Z', 60, 0, 120, 70, 'OK', undefined, undefined, 1234, false);
-    const charge6 = new RenaultCharge('2023-01-10T00:00:00Z', '2023-01-10T00:40:00Z', 60, 0, 120, 70, 'OK');
-    await ChargesStorageController.saveNewCharges('vin', [charge1, charge2, charge3, charge4, charge5, charge6]);
+    const charge1 = new Charge('2023-01-01T00:00:00Z', '2023-01-01T01:00:00Z', 50, 0, 100, 60, 'OK');
+    const charge2 = new Charge('2023-01-02T00:00:00Z', '2023-01-02T01:00:00Z', 60, 0, 120, 70, 'OK');
+    const charge3 = new Charge('2023-01-04T00:00:00Z', '2023-01-04T00:40:00Z', 60, 0, 120, 70, 'OK');
+    const charge4 = new Charge('2023-01-05T00:00:00Z', '2023-01-05T00:40:00Z', 60, 0, 120, 70, 'OK');
+    const charge5 = new Charge('2023-01-02T02:00:00Z', '2023-01-02T00:40:00Z', 60, 0, 120, 70, 'OK', undefined, undefined, 1234, false);
+    const charge6 = new Charge('2023-01-10T00:00:00Z', '2023-01-10T00:40:00Z', 60, 0, 120, 70, 'OK');
+    await ChargesRepository.saveNewCharges('vin', [charge1, charge2, charge3, charge4, charge5, charge6]);
 
-    const charges = await ChargesStorageController.getCharges('vin');
+    const charges = await ChargesRepository.getCharges('vin');
 
     // the first charge start is before the first mileage log, so it should not have a mileage at start
     expect(charges![0].mileageAtStart).toBeUndefined();
@@ -84,34 +84,34 @@ test('should retrieve mileage history with all parameters', async () => {
 
 describe('should merge charges', () => {
     test('merge charges with two accurate mileage', async () => {
-        const charge1 = new RenaultCharge('2023-01-01T00:00:00Z', '2023-01-01T01:00:00Z', 50, 0, 60, 60, 'OK');
-        const charge2 = new RenaultCharge('2023-01-02T00:00:00Z', '2023-01-02T01:00:00Z', 60, 60, 80, 70, 'OK');
-        await ChargesStorageController.saveNewCharges('vin', [charge1, charge2]);
+        const charge1 = new Charge('2023-01-01T00:00:00Z', '2023-01-01T01:00:00Z', 50, 0, 60, 60, 'OK');
+        const charge2 = new Charge('2023-01-02T00:00:00Z', '2023-01-02T01:00:00Z', 60, 60, 80, 70, 'OK');
+        await ChargesRepository.saveNewCharges('vin', [charge1, charge2]);
 
-        const charges = await ChargesStorageController.getCharges('vin');
-        const mergedCharges = RenaultChargesHandler.mergeCharges(charges!);
+        const charges = await ChargesRepository.getCharges('vin');
+        const mergedCharges = mergeCharges(charges!);
         expect(mergedCharges).toHaveLength(1);
         expect(mergedCharges[0].getIsInaccurateMileage()).toEqual(false);
     });
 
     test('merge charges with two accurate mileage', async () => {
-        const charge1 = new RenaultCharge('2023-01-01T00:00:00Z', '2023-01-01T01:00:00Z', 50, 0, 60, 60, 'OK', undefined, undefined, 1234, true);
-        const charge2 = new RenaultCharge('2023-01-02T00:00:00Z', '2023-01-02T01:00:00Z', 60, 60, 80, 70, 'OK', undefined, undefined, 1234, true);
-        await ChargesStorageController.saveNewCharges('vin', [charge1, charge2]);
+        const charge1 = new Charge('2023-01-01T00:00:00Z', '2023-01-01T01:00:00Z', 50, 0, 60, 60, 'OK', undefined, undefined, 1234, true);
+        const charge2 = new Charge('2023-01-02T00:00:00Z', '2023-01-02T01:00:00Z', 60, 60, 80, 70, 'OK', undefined, undefined, 1234, true);
+        await ChargesRepository.saveNewCharges('vin', [charge1, charge2]);
 
-        const charges = await ChargesStorageController.getCharges('vin');
-        const mergedCharges = RenaultChargesHandler.mergeCharges(charges!);
+        const charges = await ChargesRepository.getCharges('vin');
+        const mergedCharges = mergeCharges(charges!);
         expect(mergedCharges).toHaveLength(1);
         expect(mergedCharges[0].getIsInaccurateMileage()).toEqual(true);
     });
 
     test('merge charges with one accurate and one inaccurate mileage', async () => {
-        const charge1 = new RenaultCharge('2023-01-01T00:00:00Z', '2023-01-01T01:00:00Z', 50, 0, 60, 60, 'OK', undefined, undefined, 1234, false);
-        const charge2 = new RenaultCharge('2023-01-02T00:00:00Z', '2023-01-02T01:00:00Z', 60, 60, 80, 70, 'OK', undefined, undefined, 1234, true);
-        await ChargesStorageController.saveNewCharges('vin', [charge1, charge2]);
+        const charge1 = new Charge('2023-01-01T00:00:00Z', '2023-01-01T01:00:00Z', 50, 0, 60, 60, 'OK', undefined, undefined, 1234, false);
+        const charge2 = new Charge('2023-01-02T00:00:00Z', '2023-01-02T01:00:00Z', 60, 60, 80, 70, 'OK', undefined, undefined, 1234, true);
+        await ChargesRepository.saveNewCharges('vin', [charge1, charge2]);
 
-        const charges = await ChargesStorageController.getCharges('vin');
-        const mergedCharges = RenaultChargesHandler.mergeCharges(charges!);
+        const charges = await ChargesRepository.getCharges('vin');
+        const mergedCharges = mergeCharges(charges!);
         expect(mergedCharges).toHaveLength(1);
         expect(mergedCharges[0].getIsInaccurateMileage()).toEqual(false);
     }

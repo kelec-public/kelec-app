@@ -1,7 +1,6 @@
 import { render } from "@testing-library/react-native";
-import ChargeCard from "../../../../src/screen/loggedIn/CarsTab/CarView/ChargesView.tsx/ChargeCard";
-import RenaultCharge from "../../../../src/lib/clients/apiHandlers/renaultCharges/RenaultCharge";
-import CarType, { CarTypeInterface } from "../../../../src/lib/clients/cars/carTypes/carType";
+import ChargeCard from "../../../../src/packages/kelec-charge-history/views/ChargeCard";
+import Charge from "../../../../src/packages/kelec-charge-history/models/Charge";
 import LanguageHandler from "../../../../src/lib/model/localization/languageHandler";
 import AppPreferences from "../../../../src/lib/appPreferences/model/appPreferences";
 import MainContext, { MainContextType } from "../../../../src/lib/Contexts/MainContext";
@@ -24,25 +23,6 @@ const themes = setupThemes(mockUseColorScheme);
 beforeEach(() => {
   mockUseTheme.mockReturnValue(themes.getLight());
 });
-
-const carInterface: CarTypeInterface = {
-    brand: {
-        display_name: "renault",
-        name: "renault"
-    },
-    model: {
-        display_name: "megane",
-        name: "megane",
-        engine_type: "ELECTRIC"
-    },
-    battery: {
-        size: 60,
-        max_ac_power: 11,
-        max_dc_power: 60
-    },
-    chargingLimit: 100
-}
-const carType: CarType = new CarType(carInterface);
 
 const languageHandler = new LanguageHandler();
 const appPreferences = new AppPreferences();
@@ -71,10 +51,10 @@ test('should render v2g card', async () => {
         "sessionEndBatteryLevel": 78.0,
         "status": "OK"
     }
-    const mockCharge: RenaultCharge = RenaultCharge.convertV2GSessionsToCharges([mockV2Charge])[0];
+    const mockCharge: Charge = Charge.fromV2GSessions([mockV2Charge])[0];
     const { getByTestId } = render(
         <MainContext.Provider value={mockContext}>
-            <ChargeCard charge={mockCharge} carType={carType} />
+            <ChargeCard charge={mockCharge} />
         </MainContext.Provider>)
 
     const batteryPercentageCharged = getByTestId('batteryPercentageCharged');
