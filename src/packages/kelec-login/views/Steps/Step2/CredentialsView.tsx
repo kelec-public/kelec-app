@@ -1,217 +1,89 @@
-import React, { useContext, useState, RefObject, useRef } from "react";
-import { findNodeHandle, NativeModules, TextInput, Alert, View } from 'react-native';
+import React, { useContext, RefObject, useRef } from "react";
+import { findNodeHandle, NativeModules, TextInput, View } from 'react-native';
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import MainContext from "../../../../../lib/Contexts/MainContext";
 import { capitlizeFirstLetter } from "../../../../../lib/graphics/utils";
-import Field, { FieldType } from "../../../../kelec-model/view/Field";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { LoginEntryParamList } from "../../LoginEntryView";
-import DemoAccount from "../../../../../lib/clients/accounts/demoAccount";
 import Account, { CarMaker } from "../../../../../lib/clients/accounts/account";
-import HyundaiClient from "../../../../../lib/clients/carMakers/hyundaiClient";
-import HyundaiAccount from "../../../../../lib/clients/accounts/hyundaiAccount";
-import RenaultClient from "../../../../../lib/clients/carMakers/renaultClient";
-import RenaultAccount from "../../../../../lib/clients/accounts/renaultAccount";
-import { CarMakerClientErrors } from "../../../../../lib/clients/carMakers/carMakerClient";
+import Field, { FieldType } from "../../../../kelec-model/view/Field";
 import StepLayout from "../../../../kelec-model/view/StepLayout";
 import { CommonStyles } from "../../../../kelec-model/view/Styles";
 import { TFA_ROUTE } from "../../../../kelec-tfa";
+import { useCredentialsController } from "../../../controllers/useCredentialsController";
+import { LoginEntryParamList } from "../../LoginEntryView";
 
 type Props = NativeStackScreenProps<LoginEntryParamList, 'CredentialsView'> & {
     selectedCarMaker: CarMaker;
     setAccount: (account: Account) => void;
 }
-const CredentialsView = (props: Props) => {
-    const { selectedCarMaker, setAccount, navigation } = props
+
+/** Étape 2 : identifiants du compte constructeur. */
+const CredentialsView = ({ selectedCarMaker, setAccount, navigation }: Props) => {
     const { languageHandler } = useContext(MainContext);
 
-    const [email, setEmail] = useState<string>("");
-    const [password, setPassword] = useState<string>("");
+    const controller = useCredentialsController({
+        carMaker: selectedCarMaker,
+        onLoggedIn: account => {
+            setAccount(account);
+            navigation.navigate("SelectACarView", { account });
+        },
+        onTfaRequired: regToken => navigation.navigate(TFA_ROUTE, {
+            regToken,
+            successMessageKey: 'youLlBeRedirectedToPreviousScreenClickNext',
+        }),
+    });
 
-    const [isLightLoading, setIsLightLoading] = useState<boolean>(false);
-
-  const { AutofillModule } = NativeModules;
-
-  const emailRef = useRef<TextInput>(null);
-  const passwordRef = useRef<TextInput>(null);
-
-  const handleFocus = (ref: RefObject<TextInput> | undefined) => {
-    if (!ref?.current) return;
-    const tag = findNodeHandle(ref.current);
-    if (tag) AutofillModule?.notifyViewEntered(tag);
-  };
-
-    const onLoginSuccess = () => AutofillModule?.commit();
-    const onLoginError = () => AutofillModule?.cancel();
-
-    // login
-    const handleLogin = async () => {
-        setIsLightLoading(true);
-
-        // check for demo mode
-        if (email.toLowerCase() === "kelec-demo@gmail.com" && password.toLowerCase() === "demo") {
-            const demoAccount = new DemoAccount("demo", "demo", CarMaker.DEMO);
-            loginUser(demoAccount);
-            return;
-        };
-
-
-        switch (selectedCarMaker) {
-            case CarMaker.RENAULT:
-            case CarMaker.DACIA:
-            case CarMaker.ALPINE: {
-                await loginRenaultGroup();
-                break;
-            }
-            case CarMaker.HYUNDAI: {
-                await loginHyundai();
-                break;
-            }
-
-        }
-
-        setIsLightLoading(false);
+    // Autoremplissage Android (enregistrement des identifiants par le système)
+    const { AutofillModule } = NativeModules;
+    const emailRef = useRef<TextInput>(null);
+    const passwordRef = useRef<TextInput>(null);
+    const handleFocus = (ref: RefObject<TextInput> | undefined) => {
+        if (!ref?.current) return;
+        const tag = findNodeHandle(ref.current);
+        if (tag) AutofillModule?.notifyViewEntered(tag);
     };
 
-
-    /**
-     * 
-     * @param account account logged in
-     */
-    const loginUser = (account: Account) => {
-        setAccount(account);
-        setIsLightLoading(false);
-        navigation.navigate("SelectACarView", {
-            account: account
-        });
-        onLoginSuccess();
-    };
-
-    /**
-     * Handle Hyundai login
-     */
-    const loginHyundai = async () => {
-        const client = new HyundaiClient(email.toLowerCase(), password, '8056');
-        // first check if the user is among the people authorised to use the app
-        const authorisedLogin = await client.checkAuthorised();
-        if (!authorisedLogin) {
-            Alert.alert(
-                languageHandler.getTranslation('error'),
-                languageHandler.getTranslation("Not yet available"),
-                [
-                    { text: languageHandler.getTranslation('ok') }
-                ]);
-            onLoginError();
-            return;
-        }
-
-        // then check that the user has entered valid credentials
-        const canLogin = await client.checkLogin();
-        if (canLogin) {
-            const hyundaiAccount = new HyundaiAccount(email.toLowerCase(), password, '8056');
-            loginUser(hyundaiAccount);
-        } else {
-            Alert.alert(
-                languageHandler.getTranslation('error'),
-                languageHandler.getTranslation('invalidPassWord'),
-                [
-                    { text: languageHandler.getTranslation('ok') }
-                ]);
-            onLoginError();
-        }
-
-    };
-
-    /** 
-     * Handle Renault group login
-     */
-    const loginRenaultGroup = async () => {
-        const trimmedEmail = email.trim().toLowerCase();
-        const client = new RenaultClient(trimmedEmail, password);
-        const kamereonAccountID = await client.getKamereonAccount(selectedCarMaker);
-        if (kamereonAccountID.canLogin) {
-            const renaultAccount = new RenaultAccount(trimmedEmail, password, kamereonAccountID.kamereonAccountID ?? '', undefined, kamereonAccountID.firstName, kamereonAccountID.lastName, selectedCarMaker);
-            loginUser(renaultAccount);
-            return;
-        }
-
-        let errorMessage = "";
-        switch (kamereonAccountID.errorMessage) {
-            case CarMakerClientErrors.SERVER_ERROR:
-                errorMessage = languageHandler.getTranslation('serverError');
-                break;
-            case CarMakerClientErrors.ACCOUNT_LOCKED:
-                errorMessage = languageHandler.getTranslation('accountLocked');
-                break;
-            case CarMakerClientErrors.INVALID_CREDENTIALS:
-                errorMessage = languageHandler.getTranslation('invalidPassWord');
-                break;
-            case CarMakerClientErrors.PENDING_TFA:
-                // redirect to tfa view
-                navigation.navigate(TFA_ROUTE, {
-                    regToken: kamereonAccountID.regToken ?? '',
-                    successMessageKey: 'youLlBeRedirectedToPreviousScreenClickNext',
-                });
-                return; // pas besoin d'afficher l'erreur
-        }
-
-        Alert.alert(
-            languageHandler.getTranslation('error'),
-            errorMessage,
-            [
-                { text: languageHandler.getTranslation('ok') }
-            ]
-        );
-        onLoginError();
+    const login = async () => {
+        const succeeded = await controller.submit();
+        if (succeeded) AutofillModule?.commit();
+        else AutofillModule?.cancel();
     };
 
     return (
         <StepLayout
-                testID='credentialsStepView'
-                title={languageHandler.getTranslation("addCar")}
-                subtitle={languageHandler.getTranslation("loginWith") + " " + capitlizeFirstLetter(selectedCarMaker)}
-                helpText={languageHandler.getTranslation("loginToCarMakerAccountInOrderToFetchInfo")}
-                nextLabel={languageHandler.getTranslation("next")}
-                isLightLoading={isLightLoading}
-                onPrevious={() => {
-                    navigation.goBack();
-                }}
-                onNext={() => {
-                    handleLogin();
-                }}
-                disableNext={email.length === 0 || password.length === 0}
-                nextButtonTestID="loginButton"
-            >
-                <View
-                    style={
-                        [
-                            CommonStyles.container,
-                            CommonStyles.subView,
-                        ]
-                    }
-                >
-                  <Field
+            testID='credentialsStepView'
+            title={languageHandler.getTranslation("addCar")}
+            subtitle={languageHandler.getTranslation("loginWith") + " " + capitlizeFirstLetter(selectedCarMaker)}
+            helpText={languageHandler.getTranslation("loginToCarMakerAccountInOrderToFetchInfo")}
+            nextLabel={languageHandler.getTranslation("next")}
+            isLightLoading={controller.isLoading}
+            onPrevious={() => navigation.goBack()}
+            onNext={() => { login(); }}
+            disableNext={!controller.canSubmit}
+            nextButtonTestID="loginButton"
+        >
+            <View style={[CommonStyles.container, CommonStyles.subView]}>
+                <Field
                     ref={emailRef}
                     testID="emailInput"
                     fieldType={FieldType.Email}
                     label={languageHandler.getTranslation('email')}
                     placeholder={languageHandler.getTranslation('email')}
-                    value={email}
+                    value={controller.email}
                     onFocus={handleFocus}
-                    onChangeText={setEmail}
-                  />
-                  <Field
+                    onChangeText={controller.setEmail}
+                />
+                <Field
                     ref={passwordRef}
                     testID="passwordInput"
                     fieldType={FieldType.Password}
                     label={languageHandler.getTranslation('password')}
                     placeholder={languageHandler.getTranslation('password')}
-                    value={password}
+                    value={controller.password}
                     onFocus={handleFocus}
-                    onChangeText={setPassword}
-                  />
-
-                </View>
-            </StepLayout>
+                    onChangeText={controller.setPassword}
+                />
+            </View>
+        </StepLayout>
     );
 };
 

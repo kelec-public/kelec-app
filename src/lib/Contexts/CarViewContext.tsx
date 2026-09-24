@@ -9,7 +9,6 @@ const CarViewContext = createContext({
     image: '',
     apiHandler: null as unknown as ApiHandler,
     carType: null as unknown as CarType,
-    loadCarModel: () => { },
     account: null as unknown as Account
 });
 

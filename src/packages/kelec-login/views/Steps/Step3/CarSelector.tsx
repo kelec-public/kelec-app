@@ -4,13 +4,12 @@ import Text from "../../../../../screen/Common/CustomText";
 import { capitlizeFirstLetter, formatPlate, getBlackColour } from "../../../../../lib/graphics/utils";
 import { getCarMakerLogo } from "../../../../kelec-model/lib/logos";
 import { useEffect, useState } from "react";
-import fetchImage from "../../../../../lib/graphics/imageFetcher";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { CommonStyles } from "../../../../kelec-model/view/Styles";
 import { spacerL, spacerM, spacerS, spacerXL } from "../../../../kelec-model/view/Spacers";
 import KelecCard from "../../../../kelec-model/view/Card";
 import { subTitle2, subTitle3, title2 } from "../../../../kelec-model/view/Titles";
-import { CarImageRepository } from "../../../../kelec-garage";
+import { fetchVehicleImage } from "../../../services/vehicleImages";
 
 type Props = {
     selectedCar: CarModel | undefined;
@@ -119,13 +118,13 @@ const ImageRow = (props: ImageProps) => {
         loadImage();
     }, [carVin]);
 
+    // affichage seulement : l'image n'est enregistrée que pour la voiture ajoutée (useAddCarFlow.confirm)
     const loadImage = async () => {
-        const imageData = await fetchImage(imageUrl);
+        const imageData = await fetchVehicleImage(imageUrl);
         if (imageData == null) {
             setViewState(ViewState.ERROR);
             return;
         }
-        await CarImageRepository.save(carVin, imageData ?? '');
         setImageData(imageData);
         setViewState(ViewState.LOADED);
     };

@@ -10,6 +10,7 @@ Il sert de référence pour les refactors en cours et à venir. Exemples concret
 - [Carte et météo](./map.md) (`kelec-map`, `kelec-weather`)
 - [TFA Renault](./tfa.md) (`kelec-tfa`)
 - [Modèle de la voiture](./car-type.md) (`kelec-car-type`)
+- [Ajout de voiture / connexion](./login.md) (`kelec-login`)
 
 ## Objectifs
 

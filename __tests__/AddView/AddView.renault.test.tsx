@@ -205,9 +205,10 @@ describe('Should add renault group cars', () => {
                 const image1 = await AsyncStorage.getItem('VIN1/image');
                 const image2 = await AsyncStorage.getItem('VIN2/image');
                 const image3 = await AsyncStorage.getItem('VIN3/image');
-                expect(image1).toBe('image1');
-                expect(image2).toBe('image2');
-                expect(image3).toBe('image3');
+                // affichées seulement : aucune image n'est enregistrée avant la confirmation de l'ajout
+                expect(image1).toBeNull();
+                expect(image2).toBeNull();
+                expect(image3).toBeNull();
             });
 
             // try to add a car without having selected one
@@ -317,7 +318,10 @@ describe('Should add renault group cars', () => {
             expect(mockSaveNativeAccount).toHaveBeenCalledTimes(1);
             expect(await AsyncStorage.getItem('VIN1_password')).toBe('password');
             expect(mockSaveNativeAccount.mock.calls[0][0].cars[0].password).toBe('');
-            expect(mockSaveNativeImage).toHaveBeenCalledTimes(3);
+            // seule l'image de la voiture ajoutée (VIN1) est enregistrée
+            expect(mockSaveNativeImage).toHaveBeenCalledTimes(1);
+            expect(await AsyncStorage.getItem('VIN1/image')).toBe('image1');
+            expect(await AsyncStorage.getItem('VIN2/image')).toBeNull();
         });
     }
 })

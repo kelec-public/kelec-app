@@ -76,8 +76,8 @@ function CarView({ carModel, navigation, account, pagerRef, tfaInProgress }: Car
     });
 
     const carViewContextValues = useMemo(
-        () => ({ carModel, image, apiHandler, carType, loadCarModel: reloadProfile, account }),
-        [carModel, image, apiHandler, revision, carType, reloadProfile, account],
+        () => ({ carModel, image, apiHandler, carType, account }),
+        [carModel, image, apiHandler, revision, carType, account],
     );
 
 

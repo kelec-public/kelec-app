@@ -5,6 +5,7 @@ import { getCarMakerLogo } from "../../../../kelec-model/lib/logos";
 import { useContext } from "react";
 import MainContext from "../../../../../lib/Contexts/MainContext";
 import StepLayout from "../../../../kelec-model/view/StepLayout";
+import { SELECTABLE_CAR_MAKERS } from "../../../models/carMakers";
 import { ViewsAvailable } from "../../../../../Main";
 import KelecCard from "../../../../kelec-model/view/Card";
 import { spacerM, spacerXXL } from "../../../../kelec-model/view/Spacers";
@@ -15,31 +16,6 @@ type Props = {
     navigation?: any;
 }
 
-type CarMakerElem = {
-    brand: CarMaker;
-    display: string;
-};
-
-const carMakerList: CarMakerElem[] = [
-    {
-        "brand": CarMaker.ALPINE,
-        "display": "Alpine"
-    },
-    {
-        "brand": CarMaker.DACIA,
-        "display": "Dacia"
-    },
-    {
-        "brand": CarMaker.HYUNDAI,
-        "display": "Hyundai"
-    },
-    {
-        "brand": CarMaker.RENAULT,
-        "display": "Renault"
-    }
-
-];
-
 const CarMakerSelectView = (props: Props) => {
     const { selectedCarMaker, setSelectedCarMaker, navigation } = props;
     const { currentUser, languageHandler, setCurrentView } = useContext(MainContext);
@@ -47,7 +23,7 @@ const CarMakerSelectView = (props: Props) => {
 
     const isDarkMode = useColorScheme() === 'dark';
 
-    const carMakerRow = (carMakerElem: CarMakerElem, isSelected: boolean) => {
+    const carMakerRow = (carMakerElem: { brand: CarMaker; display: string }, isSelected: boolean) => {
         return <KelecCard
             isSelected={isSelected}
             onPress={() => {
@@ -91,7 +67,7 @@ const CarMakerSelectView = (props: Props) => {
                 }}
             >
                 {
-                    carMakerList.map((carMakerElem) => {
+                    SELECTABLE_CAR_MAKERS.map((carMakerElem) => {
                         const isSelected = selectedCarMaker === carMakerElem.brand;
                         return (
                             carMakerRow(carMakerElem, isSelected)

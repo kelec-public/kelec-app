@@ -1,5 +1,5 @@
 import UserAccount from "../../../lib/clients/accounts/userAccount";
-import { MoveDirection } from "../../../lib/clients/accounts/account";
+import Account, { MoveDirection } from "../../../lib/clients/accounts/account";
 import { RenaultCredentials } from "../../../lib/clients/carMakers/renaultCredentials";
 import { AccountRepository } from "./accountRepository";
 
@@ -11,6 +11,12 @@ import { AccountRepository } from "./accountRepository";
  */
 export class GarageService {
     constructor(private readonly user: UserAccount) { }
+
+    /** Ajoute une voiture (compte avec sa voiture) ; elle devient la voiture par défaut s'il n'y en avait pas. */
+    async addCar(account: Account): Promise<void> {
+        this.user.addCar(account);
+        await this.save();
+    }
 
     async selectDefaultCar(vin: string): Promise<void> {
         this.user.setSelectedCar(vin);
