@@ -11,15 +11,10 @@ interface ApiHandler {
     setApiData(carFetch: CarFetchStatus): void;
     getAvailableEnergy(carType: CarType): number;
     setCockpitStatus?(carFetch: CarFetchStatus): void;
-    setLocationStatus?(carFetch: CarFetchStatus): void;
     getLastUpdateDate(): Date;
     hasError(): boolean;
     getIsCarPlugged(): boolean;
     getIsCarCharging(): boolean;
-    shouldDisplayMap(): boolean;
-    getMapLongitude(): number;
-    getMapLatitude(): number;
-    getLastMapUpdateDate(): Date;
     getRemainingMinutes(): number;
     getEndChargeHour(): Date;
     getChargeText(): string;

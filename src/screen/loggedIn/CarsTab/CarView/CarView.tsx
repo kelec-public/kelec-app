@@ -7,10 +7,10 @@ import CarViewContext from "../../../../lib/Contexts/CarViewContext";
 import Account from "../../../../lib/clients/accounts/account";
 import FullScreenError, { getErrorMessage } from "../../../../FullScreenError";
 import FullScreenLoading from "../../../../FullScreenLoading";
-import MapCard from "./Elements/MapCard";
 import ChargesSummaryCard from "../../../../packages/kelec-charge-history/views/ChargesSummaryCard";
 import { useChargesHistory } from "../../../../packages/kelec-charge-history/controllers/ChargesHistoryProvider";
 import { useHvac } from "../../../../packages/kelec-hvac/controllers/HvacProvider";
+import { MapCard, useCarLocation } from "../../../../packages/kelec-map";
 import HvacCard from "../../../../packages/kelec-hvac/views/HvacCard";
 import BatteryCard from "./Elements/BatteryCard";
 import PagerView from "react-native-pager-view";
@@ -57,12 +57,13 @@ function CarView({ carModel, navigation, account, pagerRef, tfaInProgress }: Car
         [languageHandler],
     );
 
-    // Historique de charge et climatisation ne sont synchronisés qu'une fois la batterie récupérée.
+    // Historique de charge, climatisation et position ne sont synchronisés qu'une fois la batterie récupérée.
     const { history: chargesHistory, sync: syncCharges } = useChargesHistory();
     const { sync: syncHvac } = useHvac();
+    const { sync: syncLocation, isMapVisible } = useCarLocation();
     const onNetworkLoaded = useCallback(async () => {
-        await Promise.all([syncCharges(), syncHvac()]);
-    }, [syncCharges, syncHvac]);
+        await Promise.all([syncCharges(), syncHvac(), syncLocation()]);
+    }, [syncCharges, syncHvac, syncLocation]);
 
     const { status, errorMessage, apiHandler, revision, isRefreshing, refresh } = useCarData({
         carModel,
@@ -115,7 +116,7 @@ function CarView({ carModel, navigation, account, pagerRef, tfaInProgress }: Car
                             {chargesHistory.shouldDisplayChargesCard() && (
                                 <ChargesSummaryCard navigation={navigation} />
                             )}
-                            {apiHandler.shouldDisplayMap() && (
+                            {isMapVisible && (
                                 <MapCard navigation={navigation} />
                             )}
                         </View>

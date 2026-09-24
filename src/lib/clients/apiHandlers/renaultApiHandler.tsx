@@ -1,6 +1,6 @@
 import AppPreferences from "../../appPreferences/model/appPreferences";
 import { getDistance } from "../../graphics/utils";
-import { BatteryStatus, ChargeSettingsStatus, CockpitStatus, MapLocationStatus, RenaultStatus } from "../carMakers/renaultClient";
+import { BatteryStatus, ChargeSettingsStatus, CockpitStatus, RenaultStatus } from "../carMakers/renaultClient";
 import CarType, { CarAvailableModels } from "../cars/carTypes/carType";
 import ApiHandler from "./apiHandler";
 
@@ -13,10 +13,6 @@ class RenaultApiHandler implements ApiHandler {
         hasError: boolean;
         apiData?: CockpitStatus;
     };
-    private apiLocationStatus?: {
-        hasError: boolean;
-        apiData?: MapLocationStatus;
-    }
     private apiChargesSettings?: {
         hasError: boolean;
         apiData?: ChargeSettingsStatus;
@@ -83,29 +79,14 @@ class RenaultApiHandler implements ApiHandler {
     hasError(): boolean {
         return this.apiBatteryStatusRenault?.hasError ?? true;
     }
-    shouldDisplayMap(): boolean {
-        return this.apiLocationStatus?.apiData?.gpsLatitude !== undefined;
-    }
 
-    setLocationStatus(locationStatus: RenaultStatus): void {
-        this.apiLocationStatus = locationStatus;
-    }
 
     setChargingSettings(chargingSettingsFetch: RenaultStatus): void {
         this.apiChargesSettings = chargingSettingsFetch;
     }
 
-    getMapLatitude(): number {
-        return this.apiLocationStatus?.apiData?.gpsLatitude ?? 0;
-    }
 
-    getMapLongitude(): number {
-        return this.apiLocationStatus?.apiData?.gpsLongitude ?? 0;
-    }
 
-    getLastMapUpdateDate(): Date {
-        return new Date(this.apiLocationStatus?.apiData?.lastUpdateTime ?? 0);
-    }
 
     getRemainingMinutes(): number {
         return this.apiBatteryStatusRenault?.apiData?.chargingRemainingTime ?? 0;

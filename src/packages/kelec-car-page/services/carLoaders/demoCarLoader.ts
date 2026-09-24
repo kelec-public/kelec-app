@@ -9,7 +9,6 @@ export class DemoCarLoader implements CarDataLoader {
     async loadFromCache({ handler }: LoadContext): Promise<void> {
         handler.setApiData({ hasError: false, apiData: mockData.battery });
         handler.setCockpitStatus?.({ hasError: false, apiData: mockData.cockpit });
-        handler.setLocationStatus?.({ hasError: false, apiData: mockData.map });
     }
 
     async loadFromNetwork(): Promise<RemoteResult> {
