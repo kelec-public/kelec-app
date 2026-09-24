@@ -9,7 +9,7 @@ import FullScreenError, { getErrorMessage } from "../../../../FullScreenError";
 import FullScreenLoading from "../../../../FullScreenLoading";
 import MapCard from "./Elements/MapCard";
 import HVACCard from "./Elements/HVACCard";
-import MainChargesCard from "./ChargesView.tsx/MainChargesCard";
+import ChargesSummaryCard from "../../../../packages/kelec-charge-history/views/ChargesSummaryCard";
 import BatteryCard from "./Elements/BatteryCard";
 import PagerView from "react-native-pager-view";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -105,7 +105,7 @@ function CarView({ carModel, navigation, account, pagerRef, tfaInProgress }: Car
                                 <HVACCard />
                             )}
                             {apiHandler.shouldDisplayChargesCard() && (
-                                <MainChargesCard navigation={navigation} />
+                                <ChargesSummaryCard navigation={navigation} />
                             )}
                             {apiHandler.shouldDisplayMap() && (
                                 <MapCard navigation={navigation} />

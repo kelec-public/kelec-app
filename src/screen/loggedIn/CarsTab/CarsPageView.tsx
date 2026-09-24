@@ -5,7 +5,8 @@ import MainContext from "../../../lib/Contexts/MainContext";
 import CarView from "./CarView/CarView";
 import createNativeStackNavigator from '../../../lib/graphics/navigation';
 import { NavigationContainer, NavigationIndependentTree, useTheme } from "@react-navigation/native";
-import ChargesView from "./CarView/ChargesView.tsx/ChargesView";
+import ChargesHistoryView from "../../../packages/kelec-charge-history/views/ChargesHistoryView";
+import { ChargesHistoryParams } from "../../../packages/kelec-charge-history/types/navigation";
 import SendCoffeeCard from "./CarView/Elements/SendCoffee";
 import FullScreenMapView from "./CarView/Elements/Map/FullScreenMapView";
 import { WeatherApiHandler } from "../../../lib/clients/weather/weatherClient";
@@ -26,7 +27,7 @@ export type CarsViewParamList = {
     DonationScreen: undefined;
     CarModelSelector: CarModelSelectorParamList;
     CarView: undefined;
-    ChargesView: undefined;
+    ChargesView: ChargesHistoryParams;
     TfaView: {
       regToken: string;
       origin: TfaOrigin;
@@ -75,7 +76,7 @@ function CarsPageView(): React.JSX.Element {
                               }
                             </Stack.Screen>
                             <Stack.Screen name="ChargesView">
-                              {props => <ChargesView {...props} />}
+                              {props => <ChargesHistoryView {...props} />}
                             </Stack.Screen>
                             <Stack.Screen name="CarModelSelector">
                               {props => <CarModelSelector {...props} />}

@@ -3,7 +3,7 @@ import { getDistance } from "../../graphics/utils";
 import { HyundaiStatus } from "../carMakers/hyundaiClient";
 import CarType from "../cars/carTypes/carType";
 import ApiHandler from "./apiHandler";
-import RenaultChargesHandler from "./renaultChargesHandler";
+import ChargesHistory from "../../../packages/kelec-charge-history/models/ChargesHistory";
 
 class HyundaiApiHandler implements ApiHandler {
     private apiDataHyundai?: HyundaiStatus;
@@ -97,8 +97,8 @@ class HyundaiApiHandler implements ApiHandler {
         return false;
     }
 
-    getChargesHistory(): RenaultChargesHandler {
-        return new RenaultChargesHandler([], true);
+    getChargesHistory(): ChargesHistory {
+        return ChargesHistory.unavailable();
     }
 
     getRemainingMinutes(): number {

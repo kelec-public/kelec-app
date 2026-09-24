@@ -4,7 +4,7 @@ import { BatteryStatus, ChargeSettingsStatus, CockpitStatus, HVACStatus, MapLoca
 import { HVACStatusEnum } from "../carMakers/renaultEnums";
 import CarType, { CarAvailableModels } from "../cars/carTypes/carType";
 import ApiHandler from "./apiHandler";
-import RenaultChargesHandler from "./renaultChargesHandler";
+import ChargesHistory from "../../../packages/kelec-charge-history/models/ChargesHistory";
 
 class RenaultApiHandler implements ApiHandler {
     private apiBatteryStatusRenault?: {
@@ -29,7 +29,7 @@ class RenaultApiHandler implements ApiHandler {
     }
 
     // initial charge hisotry handler with error
-    private apiChargesHistory: RenaultChargesHandler = new RenaultChargesHandler([], true);
+    private apiChargesHistory: ChargesHistory = ChargesHistory.unavailable();
     constructor(batteryStatus?: RenaultStatus) {
         this.apiBatteryStatusRenault = batteryStatus;
 
@@ -124,10 +124,10 @@ class RenaultApiHandler implements ApiHandler {
     }
 
     setChargesHistory(carFetch: RenaultStatus): void {
-        this.apiChargesHistory = new RenaultChargesHandler(carFetch.apiData ?? []);
+        this.apiChargesHistory = new ChargesHistory(carFetch.apiData ?? []);
     }
 
-    getChargesHistory(): RenaultChargesHandler {
+    getChargesHistory(): ChargesHistory {
         return this.apiChargesHistory;
     }
 

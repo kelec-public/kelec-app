@@ -1,5 +1,5 @@
 import CarMakerClient, { CarMakerClientErrors } from "./carMakerClient";
-import RenaultCharge from "../apiHandlers/renaultCharges/RenaultCharge";
+import Charge from "../../../packages/kelec-charge-history/models/Charge";
 import { HVACStatusEnum } from "./renaultEnums";
 import { CarMaker } from "../accounts/account";
 import { RenaultCredentials } from "./renaultCredentials";
@@ -181,7 +181,7 @@ type BatteryStatus = {
 }
 
 type ChargesHistory = {
-    charges: RenaultCharge[]
+    charges: Charge[]
 }
 
 type ChargeSettingsStatus = {

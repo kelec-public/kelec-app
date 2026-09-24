@@ -1,18 +1,18 @@
-import { Alert, DimensionValue, Modal, TouchableOpacity, View, useColorScheme, StyleSheet, ScrollView, Dimensions } from "react-native";
-import Text from "../../../../Common/CustomText";
-import RenaultCharge from "../../../../../lib/clients/apiHandlers/renaultCharges/RenaultCharge";
-import CarType from "../../../../../lib/clients/cars/carTypes/carType";
+import { Alert, DimensionValue, TouchableOpacity, View, useColorScheme, ScrollView } from "react-native";
+import Text from "../../../screen/Common/CustomText";
+import Charge from "../models/Charge";
+import CarType from "../../../lib/clients/cars/carTypes/carType";
 import { useContext, useState } from "react";
-import MainContext from "../../../../../lib/Contexts/MainContext";
-import { convertDateForChargeHistory, convertHoursForChargeHistory, formatNumberWithSpaces, getBlackColour, getDistance, getGrayBackgroundColour, getWhiteColour } from "../../../../../lib/graphics/utils";
+import MainContext from "../../../lib/Contexts/MainContext";
+import { convertDateForChargeHistory, convertHoursForChargeHistory, formatNumberWithSpaces, getBlackColour, getDistance, getWhiteColour } from "../../../lib/graphics/utils";
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { fontFamilyBold, fontWeightBold } from "../../../../../lib/graphics/commonStyle";
-import CarsViewContext from "../../../../../lib/Contexts/CarsViewContext";
+import { fontFamilyBold, fontWeightBold } from "../../../lib/graphics/commonStyle";
+import CarsViewContext from "../../../lib/Contexts/CarsViewContext";
 import { useTheme } from '@react-navigation/native';
-import BottomSheet from "../../../../Common/bottomSheet/BottomSheet";
+import BottomSheet from "../../../screen/Common/bottomSheet/BottomSheet";
 
 type ChargeCardProps = {
-    readonly charge: RenaultCharge;
+    readonly charge: Charge;
     readonly carType: CarType;
 }
 
@@ -25,7 +25,7 @@ function ChargeCard({ charge, carType }: ChargeCardProps): React.JSX.Element {
     const { handleModalAnim } = useContext(CarsViewContext);
 
     const getBackgroundColour = () => {
-        if (appPreferences.highlightDCCharges && charge.getAverageChargeSpeed() > 25) {
+        if (appPreferences.highlightDCCharges && charge.isDCCharge()) {
             return isDarkMode ? 'rgba(0,142,255,0.5)' : 'rgba(0,142,255,0.2)';
         } else {
             return getWhiteColour(isDarkMode);
@@ -193,24 +193,5 @@ function ChargeCard({ charge, carType }: ChargeCardProps): React.JSX.Element {
         </View >
     );
 }
-
-const styles = StyleSheet.create({
-    mainView: {
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 12,
-        },
-        shadowOpacity: 1,
-        shadowRadius: 16.00,
-        elevation: 24,
-        borderTopLeftRadius: 20,
-        borderTopRightRadius: 20,
-        marginTop: 10,
-    },
-    mainViewContent: {
-        paddingHorizontal: 15,
-    },
-})
 
 export default ChargeCard;

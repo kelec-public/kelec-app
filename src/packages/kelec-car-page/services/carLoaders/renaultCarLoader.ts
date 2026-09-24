@@ -1,10 +1,10 @@
 import ApiHandler from "../../../../lib/clients/apiHandlers/apiHandler";
 import RenaultAccount from "../../../../lib/clients/accounts/renaultAccount";
 import { CarDataLoader, LoadContext, RemoteResult } from "../../types/carLoader";
-import ChargesStorageController from "../../../../lib/storage/chargesHandler";
+import ChargesRepository from "../../../kelec-charge-history/services/chargesRepository";
 import { getNativeBatteryStatus } from "../../../../lib/storage/sharedPlatformsData";
 import { CarMakerClientErrors } from "../../../../lib/clients/carMakers/carMakerClient";
-import RenaultCharge from "../../../../lib/clients/apiHandlers/renaultCharges/RenaultCharge";
+import Charge from "../../../kelec-charge-history/models/Charge";
 import { CarFetchStatus } from "../../../../lib/clients/accounts/account";
 import { RenaultCarLoaderDeps } from "../../types/carLoaderDeps";
 
@@ -74,7 +74,7 @@ export class RenaultCarLoader implements CarDataLoader {
             }),
         );
 
-        const charges = await ChargesStorageController.getCharges(this.vin);
+        const charges = await ChargesRepository.getCharges(this.vin);
         if (charges) {
             handler.setChargesHistory?.({ hasError: false, apiData: charges });
         }
@@ -144,8 +144,8 @@ export class RenaultCarLoader implements CarDataLoader {
         const { account, storageHandler } = this.deps;
         const fetched = await account.fetchChargesHistory(this.vin);
         if (!fetched.hasError) {
-            const charges = storageHandler.buildCharges(fetched.apiData);
-            const merged = await ChargesStorageController.saveNewCharges(this.vin, charges);
+            const charges = Charge.fromJSONList(fetched.apiData);
+            const merged = await ChargesRepository.saveNewCharges(this.vin, charges);
             handler.setChargesHistory?.({ hasError: false, apiData: merged });
         }
 
@@ -153,8 +153,8 @@ export class RenaultCarLoader implements CarDataLoader {
         if (carType?.getSupportsV2G()) {
             const sessions = await account.fetchV2GSessions(this.vin);
             if (sessions !== null) {
-                const converted = RenaultCharge.convertV2GSessionsToCharges(sessions);
-                const merged = await ChargesStorageController.saveNewCharges(this.vin, converted);
+                const converted = Charge.fromV2GSessions(sessions);
+                const merged = await ChargesRepository.saveNewCharges(this.vin, converted);
                 handler.setChargesHistory?.({ hasError: false, apiData: merged });
             }
         }

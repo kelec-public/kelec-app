@@ -1,4 +1,6 @@
-import { CarDataLoader, CarLoaderDeps, LoadContext, RemoteResult } from "../../types/carLoader";
+import { CarDataLoader, LoadContext, RemoteResult } from "../../types/carLoader";
+import { CarLoaderDeps } from "../../types/carLoaderDeps";
+import Charge from "../../../kelec-charge-history/models/Charge";
 
 const mockData = require('../../../../assets/car_data/mockDemoData.json');
 
@@ -11,7 +13,7 @@ export class DemoCarLoader implements CarDataLoader {
         handler.setLocationStatus?.({ hasError: false, apiData: mockData.map });
         handler.setChargesHistory?.({
             hasError: false,
-            apiData: this.deps.storageHandler.buildCharges(mockData.charges),
+            apiData: Charge.fromJSONList(mockData.charges),
         });
     }
 

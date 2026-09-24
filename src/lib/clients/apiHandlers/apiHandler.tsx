@@ -3,7 +3,7 @@ import AppPreferences from "../../appPreferences/model/appPreferences";
 import { CarFetchStatus } from "../accounts/account";
 import { ChargeSettingsStatus } from "../carMakers/renaultClient";
 import CarType from "../cars/carTypes/carType";
-import RenaultChargesHandler from "./renaultChargesHandler";
+import ChargesHistory from "../../../packages/kelec-charge-history/models/ChargesHistory";
 
 interface ApiHandler {
     getCarRange(appPreferences: AppPreferences): number;
@@ -16,7 +16,7 @@ interface ApiHandler {
     setChargesHistory?(carFetch: CarFetchStatus): void;
     setHVACStatus?(carFetch: CarFetchStatus): void;
     getIsHVACRunning(): boolean;
-    getChargesHistory(): RenaultChargesHandler;
+    getChargesHistory(): ChargesHistory;
     getLastUpdateDate(): Date;
     hasError(): boolean;
     getIsCarPlugged(): boolean;

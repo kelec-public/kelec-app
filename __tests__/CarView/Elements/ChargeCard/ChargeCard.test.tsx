@@ -1,6 +1,6 @@
 import { render } from "@testing-library/react-native";
-import ChargeCard from "../../../../src/screen/loggedIn/CarsTab/CarView/ChargesView.tsx/ChargeCard";
-import RenaultCharge from "../../../../src/lib/clients/apiHandlers/renaultCharges/RenaultCharge";
+import ChargeCard from "../../../../src/packages/kelec-charge-history/views/ChargeCard";
+import Charge from "../../../../src/packages/kelec-charge-history/models/Charge";
 import CarType, { CarTypeInterface } from "../../../../src/lib/clients/cars/carTypes/carType";
 import LanguageHandler from "../../../../src/lib/model/localization/languageHandler";
 import AppPreferences from "../../../../src/lib/appPreferences/model/appPreferences";
@@ -71,7 +71,7 @@ test('should render v2g card', async () => {
         "sessionEndBatteryLevel": 78.0,
         "status": "OK"
     }
-    const mockCharge: RenaultCharge = RenaultCharge.convertV2GSessionsToCharges([mockV2Charge])[0];
+    const mockCharge: Charge = Charge.fromV2GSessions([mockV2Charge])[0];
     const { getByTestId } = render(
         <MainContext.Provider value={mockContext}>
             <ChargeCard charge={mockCharge} carType={carType} />

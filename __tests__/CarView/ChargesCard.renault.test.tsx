@@ -5,8 +5,8 @@ import Account, { CarMaker } from "../../src/lib/clients/accounts/account";
 import { render, waitFor } from "@testing-library/react-native";
 import React from "react";
 import UserAccount from "../../src/lib/clients/accounts/userAccount";
-import RenaultCharge from "../../src/lib/clients/apiHandlers/renaultCharges/RenaultCharge";
-import ChargesStorageController from "../../src/lib/storage/chargesHandler";
+import Charge from "../../src/packages/kelec-charge-history/models/Charge";
+import ChargesRepository from "../../src/packages/kelec-charge-history/services/chargesRepository";
 import { V2GApiSession } from "../../src/lib/clients/carMakers/renault/v2gApiResponse";
 import CarType, { CarTypeInterface } from "../../src/lib/clients/cars/carTypes/carType";
 import StorageHandler from "../../src/lib/storage/storageHandler";
@@ -86,8 +86,8 @@ test('should not render the charges card', async () => {
 
 test('test add new charges with already cached charges', async () => {
     // first, save a charge
-    const charge = new RenaultCharge("2024-01-01T10:00:00Z", "2024-01-01T11:02:00Z", 62, 20, 80, 40, "ok");
-    await ChargesStorageController.saveNewCharges('vin1', [charge]);
+    const charge = new Charge("2024-01-01T10:00:00Z", "2024-01-01T11:02:00Z", 62, 20, 80, 40, "ok");
+    await ChargesRepository.saveNewCharges('vin1', [charge]);
 
     // now load the view
     mockGetBatteryStatus.mockResolvedValueOnce({
@@ -158,8 +158,8 @@ test('test add new V2G charges', async () => {
 
 
     // first, save a charge
-    const charge = new RenaultCharge("2024-01-01T10:00:00Z", "2024-01-01T11:02:00Z", 62, 20, 80, 40, "ok", false, [], 10210, false, 12.25, true);
-    await ChargesStorageController.saveNewCharges('vin1', [charge]);
+    const charge = new Charge("2024-01-01T10:00:00Z", "2024-01-01T11:02:00Z", 62, 20, 80, 40, "ok", false, [], 10210, false, 12.25, true);
+    await ChargesRepository.saveNewCharges('vin1', [charge]);
 
 
     const sessions: V2GApiSession[] = mockJSONV2GChargesHistory._embedded.sessions;
