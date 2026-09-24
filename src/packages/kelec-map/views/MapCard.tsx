@@ -3,9 +3,11 @@ import { StyleSheet, View, useColorScheme } from "react-native";
 import MainContext from "../../../lib/Contexts/MainContext";
 import { getBlackColour, getDisplayDate } from "../../../lib/graphics/utils";
 import FloatingPill, { FLOATING_PILL_ICON_SIZE } from "../../kelec-model/view/FloatingPill";
-import MapView, { Marker } from "react-native-maps";
+import MapView from "react-native-maps";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { WeatherBadge } from "../../kelec-weather";
+import { useCarImage } from "../../kelec-garage";
+import CarMarker from "./CarMarker";
 import { useCarLocation } from "../controllers/MapProvider";
 import { MAP_ROUTE } from "../routes";
 
@@ -20,6 +22,7 @@ function MapCard({ navigation }: Props): React.JSX.Element | null {
     const isDarkMode = useColorScheme() === 'dark';
     const { languageHandler, appPreferences } = useContext(MainContext);
     const { location, carModel, weather } = useCarLocation();
+    const image = useCarImage(carModel?.getVin() ?? '');
 
     const mapViewRef = useRef<MapView>(null);
     const [hasRegionChanged, setHasRegionChanged] = useState<boolean>(false);
@@ -50,20 +53,12 @@ function MapCard({ navigation }: Props): React.JSX.Element | null {
                 mapType={appPreferences.mapType}
                 onPanDrag={() => setHasRegionChanged(true)}
             >
-                <Marker
-                    coordinate={{ latitude, longitude }}
+                <CarMarker
+                    location={location}
+                    image={image}
                     title={carModel?.getModel()}
                     description={languageHandler.getTranslation("lastUpdated") + getDisplayDate(location.updatedAt)}
-                /* centerOffset={{ x: 0, y: -28.3 }} */
-                >
-                    {/* Marqueur avec la photo de la voiture : désactivé car bogué, à reprendre.
-                        `image` : useCarImage(vin) de kelec-garage.
-                        <View style={styles.smallMarkerWrapper}>
-                        <View style={[styles.smallMarker, { backgroundColor: getWhiteColour(isDarkMode) }]}>
-                            <Image style={{ flex: 1, resizeMode: 'contain', transform: [{ rotate: '-45deg' }] }} source={{ uri: `data:image/jpeg;base64,${image}` }} />
-                        </View>
-                    </View> */}
-                </Marker>
+                />
             </MapView>
             <View style={styles.overlay} pointerEvents="box-none">
                 {/* météo et plein écran sur la même ligne : même hauteur */}
@@ -112,25 +107,6 @@ const styles = StyleSheet.create({
     },
     end: {
         justifyContent: 'flex-end',
-    },
-    // utilisés par le marqueur commenté ci-dessus
-    smallMarker: {
-        width: 40,
-        height: 40,
-        borderRadius: 99,
-        borderBottomRightRadius: 0,
-        transform: [{ rotate: '45deg' }],
-        shadowOffset: {
-            width: 0,
-            height: 3,
-        },
-        shadowOpacity: 0.27,
-        shadowRadius: 4.65,
-        elevation: 10,
-    },
-    smallMarkerWrapper: {
-        width: 40,
-        height: 48.3
     },
 });
 

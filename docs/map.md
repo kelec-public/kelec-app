@@ -33,7 +33,8 @@ kelec-map/                            (feature)
 ├── views/
 │   ├── MapCard.tsx                   Mini-carte de la page voiture
 │   ├── FullScreenMapView.tsx         Carte plein écran
-│   └── MapTypeSelector.tsx           Plan / satellite
+│   ├── MapTypeSelector.tsx           Plan / satellite
+│   └── CarMarker.tsx                 Pin de la voiture (photo dans un rond + pointe)
 ├── types/locationSource.ts           Interface LocationSource
 ├── routes.ts                         MAP_ROUTE
 └── index.ts
@@ -68,6 +69,20 @@ Tous les éléments blancs posés sur les cartes (météo, retour, plein écran,
   mais il y en a une en bas (barre d'accueil) : le bloc du bas est dans un `SafeAreaView edges={['bottom']}`, plus une marge de 15.
 - Les tailles réelles ne sont pas calculées par jest : le rendu se vérifie à l'écran (iOS et Android).
 
+## Pin de la voiture (`CarMarker`)
+
+Un rond avec la photo de la voiture (`useCarImage`, kelec-garage) et une pointe en dessous. Si la voiture n'a pas de photo, une icône de voiture est affichée à la place.
+Tailles : `small` (mini-carte) et `large` (plein écran).
+
+Points importants, parce que l'ancien pin était coupé sur Android :
+- **Android dessine un marqueur personnalisé en image, à la taille exacte de sa vue** : tout ce qui dépasse est coupé.
+  - **Pas de rotation** : l'ancien pin était un carré tourné de 45°, qui débordait d'environ 40 %. La pointe est maintenant un triangle en bordures, dans la vue.
+  - **Pas d'`elevation`** : l'ombre déborde. L'ombre n'est appliquée que sur iOS (`shadow*`), avec une petite marge autour du pin.
+  - Le rond a deux couches : l'extérieure porte l'ombre, l'intérieure (`overflow: 'hidden'`) découpe la photo. Sur iOS, `overflow: 'hidden'` masquerait aussi l'ombre.
+- **`tracksViewChanges`** reste actif jusqu'au chargement de la photo (`onLoad` / `onError`, avec un filet de sécurité de 3 s), puis passe à `false`.
+  Sinon Android fige le marqueur avant l'arrivée de l'image, ou le redessine en continu, ce qui est coûteux.
+- **La pointe est sur la position** : `anchor={{ x: 0.5, y: 1 }}` (Android) et `centerOffset` = -(hauteur totale / 2) (iOS).
+
 ## Stockage
 
 | Clé | Contenu | Propriétaire |
@@ -94,12 +109,12 @@ Tous les éléments blancs posés sur les cartes (météo, retour, plein écran,
   et l'objet météo, qui n'était pas sérialisable) sont supprimés.
 - **Correctif** : pendant le chargement et en cas d'erreur, la pastille météo affichait aussi une image vide et « ° », parce que `undefined !== null` est vrai.
   Elle n'affiche maintenant qu'un seul état.
-- **Marqueur avec la photo de la voiture** : il est **gardé en commentaire** dans les deux cartes (il était bogué, à reprendre).
-  Pour le réactiver, l'image s'obtient avec `useCarImage(vin)` (kelec-garage).
+- **Marqueur avec la photo de la voiture** : l'ancien marqueur commenté (bogué, coupé sur Android) a été réécrit dans `CarMarker`, voir ci-dessous.
 
 ## Tests
 
 - `__tests__/packages/kelec-weather/weather.test.tsx` : construction du modèle, et un seul état affiché par la pastille (pas de « ° » pendant le chargement ou en cas d'erreur).
 - `__tests__/packages/kelec-weather/useWeather.test.ts` (avec `fetch` simulé) : aucun appel sans position, chargement, erreur de l'API, erreur réseau, rechargement quand la position change.
+- `__tests__/packages/kelec-map/CarMarker.test.tsx` : placement de la pointe, icône sans photo, `tracksViewChanges` jusqu'au chargement (et filet de sécurité), aucune rotation.
 - `__tests__/packages/kelec-map/location.test.ts` : `parseHyundaiTime`, `locationFromRenault`, source Renault (cache, erreur), source Hyundai.
 - Tests d'intégration existants, inchangés : `__tests__/CarView/MapCard.renault.test.tsx` et `MapCard.hyundai.test.tsx`.
