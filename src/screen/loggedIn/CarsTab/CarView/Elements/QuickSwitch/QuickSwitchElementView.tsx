@@ -4,8 +4,7 @@ import Text from "../../../../../Common/CustomText";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { getBlackColour } from "../../../../../../lib/graphics/utils";
 import commonStyles from "../../../../../../lib/graphics/commonStyle";
-import { useEffect, useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { toImageUri, useCarImage } from "../../../../../../packages/kelec-garage";
 
 
 type Props = {
@@ -20,18 +19,8 @@ const QuickSwitchElementView = (props: Props) => {
     const isDarkMode = useColorScheme() === 'dark';
     const carMaker = CAR_MAKER_DISPLAY[car.car?.getCarmaker() as CarMaker];
     const model = car.car?.getModel();
-    const [imageUri, setImageUri] = useState<string>('');
-
-    useEffect(() => {
-        loadImageData();
-    });
-
-    const loadImageData = async () => {
-        const image = await AsyncStorage.getItem(`${car.car?.getVin()}/image`);
-        if (image) {
-            setImageUri(`data:image/jpeg;base64,${image}`);
-        }
-    };
+    const image = useCarImage(VIN ?? '');
+    const imageUri = image ? toImageUri(image) : '';
 
     return (
         <TouchableOpacity

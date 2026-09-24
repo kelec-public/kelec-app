@@ -1,13 +1,9 @@
-import Account from "./account";
+import Account, { MoveDirection } from "./account";
 
 export interface UserAccountInterface {
     selectedCar: string; // vin
     cars: Account[];
 }
-enum MoveDirection {
-    UP = 'UP',
-    DOWN = 'DOWN'
-};
 
 class UserAccount implements UserAccountInterface {
     constructor(public selectedCar: string, public cars: Account[]) {

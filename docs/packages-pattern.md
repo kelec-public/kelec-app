@@ -5,6 +5,7 @@ Il sert de référence pour les refactors en cours et à venir. Exemples concret
 
 - [Historique de charge](./charge-history.md) (`kelec-charge-history`)
 - [Climatisation / préchauffage](./hvac.md) (`kelec-hvac`)
+- [Page compte et garage](./profile.md) (`kelec-profile`, `kelec-garage`)
 
 ## Objectifs
 
@@ -19,7 +20,11 @@ Il sert de référence pour les refactors en cours et à venir. Exemples concret
 | Type | Packages | Rôle |
 |---|---|---|
 | **Infrastructure** | `kelec-model` (composants UI, couleurs, polices), `kelec-storage` (accès AsyncStorage) | Briques techniques réutilisables, sans aucune logique métier. |
-| **Feature** | `kelec-car-page`, `kelec-login`, `kelec-charge-history`, `kelec-hvac` | Une fonctionnalité de l'app. |
+| **Domaine partagé** | `kelec-garage` (les voitures de l'utilisateur : image, actions sur la liste) | Données et logique métier utilisées par plusieurs features. Exposées uniquement via `index.ts`. |
+| **Feature** | `kelec-car-page`, `kelec-login`, `kelec-charge-history`, `kelec-hvac`, `kelec-profile` | Une fonctionnalité de l'app. |
+
+Une donnée qui n'est utilisée que par une feature reste dans cette feature. Elle passe dans un package de domaine partagé
+quand plusieurs features doivent la lire ou l'écrire (ex. l'image de la voiture : écrite par `kelec-login`, lue par la page voiture, le QuickSwitch et Profile).
 
 ## Structure d'un package feature
 
@@ -52,6 +57,7 @@ kelec-<feature>/
 ### Controllers
 
 - **Provider + hook** (`XxxProvider` / `useXxx()`) : l'état partagé de la fonctionnalité pour une voiture (données, `sync`, commandes).
+  Seulement pour les features qui ont des données par voiture venant du réseau. Une feature purement locale (ex. `kelec-profile`) n'a ni source ni Provider.
 - **Hooks d'écran ou de carte** (`useXxxController`) : l'état local de l'UI (modales, champs, chargement), les actions, les alertes.
 - Ils lisent les contextes globaux (`MainContext`, `CarsViewContext`, `CarViewContext`) dont les vues ont besoin.
 
@@ -103,27 +109,36 @@ pour que tous les écrans de la voiture (page voiture, écran de détail…) lis
 - Chaque clé appartient à **un seul** package, qui est le seul à la lire et à l'écrire.
 - Toutes les clés suivent le format `<vin>/<clé>`.
 
-La migration de `src/lib/storage/storageHandler` et `sharedPlatformsData` vers `kelec-storage` se fera plus tard, par petites étapes.
+La migration de `src/lib/storage/storageHandler` se fait par petites étapes, en envoyant chaque partie vers le package qui possède la donnée :
+
+| Aujourd'hui dans `storageHandler` | Destination | Statut |
+|---|---|---|
+| `storeImage` + lecture `<vin>/image` | `kelec-garage` (`CarImageRepository`) | ✅ fait |
+| `saveAccount` / `loadAccount` (UserAccount) | `kelec-garage` | à faire |
+| `getCarType` / `setCarType` | `kelec-garage` | à faire |
+| `storeApiData` / `getStoredApiData`, `buildApiHandler` | `kelec-car-page` (à côté de `CarStatusCache`) | à faire |
+| `getAppPreferences` / `setAppPreferences`, onboarding | futur package réglages | à faire |
 
 ## Règles de dépendances
 
 ```
-screens (src/screen)  ──►  features  ──►  infrastructure
-                                 │
-                                 └──►  src/lib (clients, contexts, utils)
+screens (src/screen)  ──►  features  ──►  domaine partagé  ──►  infrastructure
+                                 │                │
+                                 └────────────────┴──►  src/lib (clients, contexts, utils)
 ```
 
-1. **L'infrastructure ne dépend d'aucune feature** : `kelec-storage` et `kelec-model` n'importent jamais `kelec-hvac`, `kelec-charge-history`, etc.
-2. **Une feature n'importe une autre feature que via son `index.ts`**, jamais un fichier interne.
-   Ex. : `kelec-hvac` lit le statut Hyundai via `import { CarStatusCache } from "../../../kelec-car-page"`.
-3. **Pas de couplage par chaîne de caractères** entre modules :
+1. **L'infrastructure ne dépend ni du domaine ni des features** : `kelec-storage` et `kelec-model` n'importent jamais `kelec-garage`, `kelec-hvac`, etc.
+2. **Le domaine partagé ne dépend d'aucune feature** : `kelec-garage` n'importe jamais `kelec-profile`, `kelec-car-page`, etc.
+3. **Un package de domaine ou une autre feature ne s'importe que via son `index.ts`**, jamais un fichier interne.
+   Ex. : `import { CarImageRepository } from "../../kelec-garage"`, ou `kelec-hvac` qui lit le statut Hyundai via `import { CarStatusCache } from "../../../kelec-car-page"`.
+4. **Pas de couplage par chaîne de caractères** entre modules :
    - une donnée stockée est lue par le module qui l'écrit, et exposée via une fonction typée (`CarStatusCache`) ;
    - un nom de route est exporté par le package qui fournit l'écran (`CHARGES_HISTORY_ROUTE`), et `CarsPageView` s'en sert.
-4. **Pas de cycle.**
-5. **L'assemblage se fait dans les screens** (`CarsPageView`, `CarView`) : ce sont eux qui montent les Providers et relient `onNetworkLoaded` aux `sync()`.
+5. **Pas de cycle.**
+6. **L'assemblage se fait dans les screens** (`CarsPageView`, `CarView`) : ce sont eux qui montent les Providers et relient `onNetworkLoaded` aux `sync()`.
    `kelec-car-page` ne connaît pas les autres features.
 
-Les règles 1 et 2 sont écrites dans `.eslintrc.js` (`no-restricted-imports`, configurée par package).
+Les règles 1 à 3 sont écrites dans `.eslintrc.js` (`no-restricted-imports`, configurée par package).
 **Elles ne sont pas encore vérifiées automatiquement** : la CI ne lance que jest, et le repo a encore des erreurs ESLint plus anciennes.
 Pour l'instant, on les vérifie avec `npm run lint` ou dans l'éditeur.
 
@@ -137,8 +152,9 @@ Pour l'instant, on les vérifie avec `npm run lint` ou dans l'éditeur.
 
 1. Lister le code existant : vues, méthodes de l'`ApiHandler`, entrées dans les car loaders, clés de stockage, tests qui en dépendent.
 2. Créer `src/packages/kelec-<feature>/` avec `models / services / controllers / views`.
-3. Écrire les sources par constructeur et la factory.
-4. Écrire le Provider (cache puis `sync`), le monter dans `CarsPageView`, brancher `sync` dans le `onNetworkLoaded` de `CarView`.
+3. Si la feature a des données réseau par voiture : écrire les sources par constructeur et la factory.
+4. Idem : écrire le Provider (cache puis `sync`), le monter dans `CarsPageView`, brancher `sync` dans le `onNetworkLoaded` de `CarView`.
+   Si une donnée est partagée entre plusieurs features, la mettre dans un package de domaine partagé.
 5. Déplacer les vues en gardant les `testID` et en les branchant sur les contrôleurs.
 6. Supprimer l'ancien code : méthodes de l'`ApiHandler` et de ses implémentations, slots des car loaders, anciens fichiers.
 7. Garder les clés de stockage existantes (ou décider explicitement d'une migration, en acceptant de perdre les anciennes valeurs).

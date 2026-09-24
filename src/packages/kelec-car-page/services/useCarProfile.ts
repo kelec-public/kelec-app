@@ -2,7 +2,7 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import CarModel from "../../../lib/clients/cars/carModel";
 import MainContext from "../../../lib/Contexts/MainContext";
 import CarType from "../../../lib/clients/cars/carTypes/carType";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { CarImageRepository } from "../../kelec-garage";
 
 const EMPTY_CAR_TYPE = new CarType({
     brand: { name: '', display_name: '' },
@@ -20,7 +20,7 @@ export function useCarProfile(carModel: CarModel) {
         const vin = carModel.getVin();
 
         const [storedImage, storedCarType] = await Promise.all([
-            AsyncStorage.getItem(`${vin}/image`),
+            CarImageRepository.get(vin),
             storageHandler.getCarType(vin),
         ]);
 

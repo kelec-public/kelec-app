@@ -3,14 +3,14 @@ import CarModel from "../../../../../lib/clients/cars/carModel";
 import Text from "../../../../../screen/Common/CustomText";
 import { capitlizeFirstLetter, formatPlate, getBlackColour } from "../../../../../lib/graphics/utils";
 import { getCarMakerLogo } from "../../../../kelec-model/lib/logos";
-import { useContext, useEffect, useState } from "react";
-import MainContext from "../../../../../lib/Contexts/MainContext";
+import { useEffect, useState } from "react";
 import fetchImage from "../../../../../lib/graphics/imageFetcher";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { CommonStyles } from "../../../../kelec-model/view/Styles";
 import { spacerL, spacerM, spacerS, spacerXL } from "../../../../kelec-model/view/Spacers";
 import KelecCard from "../../../../kelec-model/view/Card";
 import { subTitle2, subTitle3, title2 } from "../../../../kelec-model/view/Titles";
+import { CarImageRepository } from "../../../../kelec-garage";
 
 type Props = {
     selectedCar: CarModel | undefined;
@@ -115,10 +115,6 @@ const ImageRow = (props: ImageProps) => {
     const [imageData, setImageData] = useState<string | null>(null);
     const [viewState, setViewState] = useState<ViewState>(ViewState.LOADING);
 
-    const { storageHandler } = useContext(MainContext);
-
-
-
     useEffect(() => {
         loadImage();
     }, [carVin]);
@@ -129,7 +125,7 @@ const ImageRow = (props: ImageProps) => {
             setViewState(ViewState.ERROR);
             return;
         }
-        await storageHandler.storeImage(imageData ?? '', carVin);
+        await CarImageRepository.save(carVin, imageData ?? '');
         setImageData(imageData);
         setViewState(ViewState.LOADED);
     };
