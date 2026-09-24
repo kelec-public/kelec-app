@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AccountInterface, CarFetchStatus, CarMaker } from "../clients/accounts/account";
-import { getNativeCryptedData, saveNativeAccount, saveNativeImage } from "./sharedPlatformsData";
+import { getNativeCryptedData, saveNativeAccount } from "./sharedPlatformsData";
 import RenaultAccount from "../../lib/clients/accounts/renaultAccount";
 import HyundaiAccount from "../../lib/clients/accounts/hyundaiAccount";
 import ApiHandler from "../clients/apiHandlers/apiHandler";
@@ -11,10 +11,6 @@ import UserAccount, { UserAccountInterface } from "../clients/accounts/userAccou
 import CarModel, { CarModelInterface } from "../clients/cars/carModel";
 import DemoAccount from "../clients/accounts/demoAccount";
 import AppPreferences from "../appPreferences/model/appPreferences";
-
-enum CarStorageLocation {
-    IMAGE = '/image',
-}
 
 class StorageHandler {
     // class to handle local storage of the app
@@ -133,12 +129,6 @@ class StorageHandler {
         await AsyncStorage.clear();
         // remove the account for widgets
         await saveNativeAccount(null);
-    }
-
-    storeImage = async (image: string, car_vin: string): Promise<void> => {
-        // save the image in the async storage
-        await saveNativeImage(image, car_vin);
-        await AsyncStorage.setItem(car_vin + CarStorageLocation.IMAGE, image);
     }
 
     getAppPreferences = async (): Promise<AppPreferences> => {

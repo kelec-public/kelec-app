@@ -4,12 +4,15 @@ App React Native (TypeScript). Les fonctionnalités sont en cours de migration v
 lire [docs/packages-pattern.md](docs/packages-pattern.md) avant de toucher à `src/packages`.
 La migration avance par petites PR : ne pas élargir une tâche à d'autres packages sans le demander.
 
+**Invariant métier** : un VIN est unique dans toute l'app, et chaque VIN a exactement un compte (`Account`).
+Le VIN suffit donc à identifier une voiture et son compte.
+
 ## Vérifier son travail
 
 - Tests : `npx jest`. Toute la suite doit passer.
 - Types : `npx tsc --noEmit -p tsconfig.json --ignoreDeprecations 6.0 --baseUrl .`
-  (`tsc -p .` seul échoue sur la config). 3 erreurs sont déjà présentes et connues
-  (`useCarProfile.ts`, `ProfileView.tsx`, `DebugZoneView.tsx`) : il ne faut pas en ajouter.
+  (`tsc -p .` seul échoue sur la config). 2 erreurs sont déjà présentes et connues
+  (`useCarProfile.ts`, `DebugZoneView.tsx`) : il ne faut pas en ajouter.
 - Lint : `npm run lint`. Il n'est pas lancé en CI, et le repo a déjà des erreurs ESLint.
   Au minimum, les règles de frontières entre packages (`no-restricted-imports`) doivent passer sur `src/packages`.
 
