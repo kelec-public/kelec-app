@@ -1,12 +1,12 @@
 import { View } from "react-native";
-import Text from "../../../../../screen/Common/CustomText";
+import Text from "../../../screen/Common/CustomText";
 import { useContext } from "react";
-import MainContext from "../../../../../lib/Contexts/MainContext";
-import Slider from "../../../../kelec-model/view/Slider";
-import { spacerM } from "../../../../kelec-model/view/Spacers";
-import { subTitle } from "../../../../kelec-model/view/Titles";
-import KelecCard from "../../../../kelec-model/view/Card";
-import { CommonStyles } from "../../../../kelec-model/view/Styles";
+import MainContext from "../../../lib/Contexts/MainContext";
+import Slider from "../../kelec-model/view/Slider";
+import { spacerM } from "../../kelec-model/view/Spacers";
+import { subTitle } from "../../kelec-model/view/Titles";
+import KelecCard from "../../kelec-model/view/Card";
+import { CommonStyles } from "../../kelec-model/view/Styles";
 
 type ChargeLimitSliderProps = {
     chargingLimit: number;

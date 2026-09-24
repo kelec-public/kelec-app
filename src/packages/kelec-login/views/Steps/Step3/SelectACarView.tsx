@@ -15,11 +15,11 @@ import HyundaiAccount from "../../../../../lib/clients/accounts/hyundaiAccount";
 import HyundaiClient from "../../../../../lib/clients/carMakers/hyundaiClient";
 import HyundaiCar from "../../../../../lib/clients/cars/hyundaiCar";
 import StepLayout from "../../../../kelec-model/view/StepLayout";
+import { CAR_TYPE_ROUTE } from "../../../../kelec-car-type";
 
 type Props = NativeStackScreenProps<LoginEntryParamList, 'SelectACarView'> & {
     selectedCar?: CarModel;
     setSelectedCar: (car: CarModel | undefined) => void;
-    onConfirmCarAdd?: () => Promise<void>;
 }
 
 enum ViewState {
@@ -29,7 +29,7 @@ enum ViewState {
 }
 const SelectACarView = (props: Props) => {
     const { languageHandler } = useContext(MainContext);
-    const { navigation, route, selectedCar, setSelectedCar, onConfirmCarAdd } = props;
+    const { navigation, route, selectedCar, setSelectedCar } = props;
     const { account } = route.params;
 
     // store fetched cars
@@ -146,11 +146,11 @@ const SelectACarView = (props: Props) => {
                     Alert.alert(languageHandler.getTranslation("selectACar"));
                     return;
                 }
-                navigation.navigate("CarModelSelector", {
-                    carModel: selectedCar,
-                    onConfirmUpdate: onConfirmCarAdd!,
-                    title: "addCar",
-                    subTitle: "carModel"
+                navigation.navigate(CAR_TYPE_ROUTE, {
+                    vin: selectedCar.getVin(),
+                    imageUrl: selectedCar.getImageUrl(),
+                    titleKey: "addCar",
+                    subTitleKey: "carModel",
                 });
             }}
             onPrevious={() => {

@@ -4,7 +4,7 @@
 // - un package de domaine ou de feature n'est importé par un autre package que via son index.ts.
 const INFRA_PACKAGES = ['kelec-model', 'kelec-storage'];
 const DOMAIN_PACKAGES = ['kelec-garage', 'kelec-preferences', 'kelec-weather'];
-const FEATURE_PACKAGES = ['kelec-car-page', 'kelec-login', 'kelec-charge-history', 'kelec-hvac', 'kelec-profile', 'kelec-settings', 'kelec-map', 'kelec-tfa'];
+const FEATURE_PACKAGES = ['kelec-car-page', 'kelec-login', 'kelec-charge-history', 'kelec-hvac', 'kelec-profile', 'kelec-settings', 'kelec-map', 'kelec-tfa', 'kelec-car-type'];
 
 const packageFiles = name => [`src/packages/${name}/**/*.ts`, `src/packages/${name}/**/*.tsx`];
 const anyImportOf = names => names.flatMap(name => [`**/${name}`, `**/${name}/**`]);

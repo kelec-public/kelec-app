@@ -1,15 +1,15 @@
 import { useContext } from "react";
 import { StyleSheet, useColorScheme, View } from "react-native";
-import MainContext from "../../../../../lib/Contexts/MainContext";
-import { LeasingData } from "../../../../../lib/clients/cars/carTypes/carType";
-import Text from "../../../../../screen/Common/CustomText";
-import DatePickerField from "../../../../../screen/loggedIn/CarsTab/CarView/Elements/DatePicker";
-import TextInput from "../../../../../screen/Common/TextInput";
-import SwitchCard from "../../../../kelec-model/view/SwitchCard";
-import SpacedRow from "../../../../kelec-model/view/SpacedRow";
-import { spacerL, spacerM } from "../../../../kelec-model/view/Spacers";
-import { BLACK_COLOUR } from "../../../../kelec-model/lib/colours";
-import { subTitle } from "../../../../kelec-model/view/Titles";
+import MainContext from "../../../lib/Contexts/MainContext";
+import { LeasingData } from "../../../lib/clients/cars/carTypes/carType";
+import Text from "../../../screen/Common/CustomText";
+import DatePickerField from "../../../screen/loggedIn/CarsTab/CarView/Elements/DatePicker";
+import TextInput from "../../../screen/Common/TextInput";
+import SwitchCard from "../../kelec-model/view/SwitchCard";
+import SpacedRow from "../../kelec-model/view/SpacedRow";
+import { spacerL, spacerM } from "../../kelec-model/view/Spacers";
+import { BLACK_COLOUR } from "../../kelec-model/lib/colours";
+import { subTitle } from "../../kelec-model/view/Titles";
 
 type Props = {
     readonly isError: boolean,
@@ -17,7 +17,8 @@ type Props = {
     readonly setLeasingData: (leasingData: LeasingData | undefined) => void,
 }
 
-const CarModelChoiceLeasing = ({ isError, leasingData, setLeasingData }: Props) => {
+/** Carte « ma voiture est en leasing » : dates et kilométrages du contrat. */
+const LeasingCard = ({ isError, leasingData, setLeasingData }: Props) => {
     const isDarkMode = useColorScheme() === 'dark';
 
     const { languageHandler } = useContext(MainContext);
@@ -190,4 +191,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default CarModelChoiceLeasing;
+export default LeasingCard;

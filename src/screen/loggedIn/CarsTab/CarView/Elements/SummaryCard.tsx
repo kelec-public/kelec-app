@@ -7,6 +7,7 @@ import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MainContext from "../../../../../lib/Contexts/MainContext";
 import { fontFamilyBold, fontWeightBold } from "../../../../../lib/graphics/commonStyle";
+import { CAR_TYPE_ROUTE } from "../../../../../packages/kelec-car-type";
 
 type SummaryCardProps = {
     readonly navigation: any;
@@ -15,22 +16,18 @@ type SummaryCardProps = {
 function SummaryCard({ navigation }: SummaryCardProps): React.JSX.Element {
     const isDarkMode = useColorScheme() === 'dark';
 
-    const { image, apiHandler, carType, loadCarModel, carModel } = useContext(CarViewContext);
+    const { image, apiHandler, carType, carModel } = useContext(CarViewContext);
     const { appPreferences } = useContext(MainContext);
 
     return (
         <View style={[styles.summaryCard, { backgroundColor: getGrayBackgroundColour(isDarkMode) }]} testID="summaryCard">
             <Image style={styles.carImage} source={{ uri: `data:image/jpeg;base64,${image}` }} />
             <TouchableOpacity onPress={() => {
-                navigation.navigate("CarModelSelector", {
-                    carModel: carModel,
-                    onConfirmUpdate: async () => {
-                        loadCarModel();
-                        navigation.goBack();
-                    },
-                    title: "carModel",
-                    nextButtonText: "confirm",
-                    backButtonText: "cancel",
+                navigation.navigate(CAR_TYPE_ROUTE, {
+                    vin: carModel.getVin(),
+                    imageUrl: carModel.getImageUrl(),
+                    titleKey: "carModel",
+                    nextButtonTextKey: "confirm",
                     safeAreaEdges: ['top'],
                 });
 

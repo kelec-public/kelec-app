@@ -11,7 +11,7 @@ import SelectACarView from "./Steps/Step3/SelectACarView";
 import CarModel from "../../../lib/clients/cars/carModel";
 import MainContext from "../../../lib/Contexts/MainContext";
 import { useColorScheme, View } from "react-native";
-import CarModelSelector, { CarModelSelectorParamList } from "./Steps/Step4/CarModelSelector";
+import { CAR_TYPE_ROUTE, CarTypeRouteParams, CarTypeScreen } from "../../kelec-car-type";
 import { TFA_ROUTE, TfaRouteParams, TfaView } from "../../kelec-tfa";
 import { Palette } from "../../../../theme/_palette";
 import { AccountRepository } from "../../kelec-garage";
@@ -26,7 +26,7 @@ export type LoginEntryParamList = {
   CarModelChoiceStep: {
     vin: string;
   };
-  CarModelSelector: CarModelSelectorParamList;
+  [CAR_TYPE_ROUTE]: CarTypeRouteParams;
 }
 
 const LoginEntryView = () => {
@@ -98,13 +98,13 @@ const LoginEntryView = () => {
                 <SelectACarView
                   selectedCar={selectedCar}
                   setSelectedCar={setSelectedCar}
-                  onConfirmCarAdd={onConfirmCarAdd}
                   {...props}
                 />
               )}
             </Stack.Screen>
-            <Stack.Screen name="CarModelSelector">
-              {props => <CarModelSelector {...props} />}
+            <Stack.Screen name={CAR_TYPE_ROUTE}>
+              {/* dernière étape : le modèle enregistré, on ajoute la voiture au compte */}
+              {props => <CarTypeScreen {...props} onConfirmed={onConfirmCarAdd} />}
             </Stack.Screen>
           </Stack.Navigator>
         </NavigationContainer>

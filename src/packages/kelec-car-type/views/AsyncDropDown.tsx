@@ -1,11 +1,11 @@
 import { ActivityIndicator, useColorScheme, View } from "react-native";
-import Text from "../../../../../screen/Common/CustomText";
-import CustomDropDown, { DropDownData, DropDownType } from "../../../../../screen/Common/DropDown";
+import Text from "../../../screen/Common/CustomText";
+import CustomDropDown, { DropDownData, DropDownType } from "../../../screen/Common/DropDown";
 import { useContext, useEffect, useState } from "react";
-import MainContext from "../../../../../lib/Contexts/MainContext";
-import { spacerM } from "../../../../kelec-model/view/Spacers";
-import { subTitle } from "../../../../kelec-model/view/Titles";
-import { BLACK_COLOUR } from "../../../../kelec-model/lib/colours";
+import MainContext from "../../../lib/Contexts/MainContext";
+import { spacerM } from "../../kelec-model/view/Spacers";
+import { subTitle } from "../../kelec-model/view/Titles";
+import { BLACK_COLOUR } from "../../kelec-model/lib/colours";
 
 type DropDownViewProps = {
     title: string;
@@ -24,7 +24,8 @@ enum ViewState {
     ERROR
 };
 
-const DropDownView = (props: DropDownViewProps) => {
+/** Menu déroulant dont les options sont chargées de façon asynchrone (rechargées quand `listener` change). */
+const AsyncDropDown = (props: DropDownViewProps) => {
     const { languageHandler } = useContext(MainContext);
 
     const isDarkMode = useColorScheme() === 'dark';
@@ -98,4 +99,4 @@ const DropDownView = (props: DropDownViewProps) => {
 };
 
 
-export default DropDownView;
+export default AsyncDropDown;
