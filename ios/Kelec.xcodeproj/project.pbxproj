@@ -112,6 +112,7 @@
 		EBB5E25E2CEB4711005F9A44 /* widgetHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBB5E25D2CEB470C005F9A44 /* widgetHelper.swift */; };
 		EBB5E25F2CEB4711005F9A44 /* widgetHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBB5E25D2CEB470C005F9A44 /* widgetHelper.swift */; };
 		EBB5E2602CEB4711005F9A44 /* widgetHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBB5E25D2CEB470C005F9A44 /* widgetHelper.swift */; };
+		EBD5D183306576FB000AEAE1 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBD5D182306576FB000AEAE1 /* SceneDelegate.swift */; };
 		EBD8A0272D5164E8007F7FBE /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBD8A0262D5164E8007F7FBE /* MapView.swift */; };
 		EBF321DC2D25781300EA72BC /* WidgetsIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBF321DB2D25781300EA72BC /* WidgetsIntent.swift */; };
 /* End PBXBuildFile section */
@@ -313,6 +314,7 @@
 		EBBEC8B92C5EC18900539BC6 /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = da; path = da.lproj/Localizable.strings; sourceTree = "<group>"; };
 		EBBEC8BA2C5EC19000539BC6 /* pt-PT */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-PT"; path = "pt-PT.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		EBD50B7C2DDD237100A90C5B /* ro */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ro; path = ro.lproj/Localizable.strings; sourceTree = "<group>"; };
+		EBD5D182306576FB000AEAE1 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		EBD8A0262D5164E8007F7FBE /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		EBE9B6562E58D9B300EBC20C /* cs */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cs; path = cs.lproj/Localizable.strings; sourceTree = "<group>"; };
 		EBF321DB2D25781300EA72BC /* WidgetsIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetsIntent.swift; sourceTree = "<group>"; };
@@ -408,6 +410,7 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				EB2EC55F2D9DBC7D001C6DD8 /* AppDelegare.swift */,
+				EBD5D182306576FB000AEAE1 /* SceneDelegate.swift */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				893FFEA72BA8506A006D7475 /* RNSharedWidget.m */,
 				893FFEAD2BA85164006D7475 /* RNSharedRefreshWidget.m */,
@@ -1024,9 +1027,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Kelec/Pods-Kelec-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Kelec/Pods-Kelec-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1041,9 +1048,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Kelec-KelecTests/Pods-Kelec-KelecTests-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Kelec-KelecTests/Pods-Kelec-KelecTests-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1102,9 +1113,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Kelec/Pods-Kelec-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Kelec/Pods-Kelec-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1119,9 +1134,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Kelec-KelecTests/Pods-Kelec-KelecTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Kelec-KelecTests/Pods-Kelec-KelecTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1150,6 +1169,7 @@
 				EB334B662D524C2B007CB65D /* CarEntity.swift in Sources */,
 				EB334B612D523E65007CB65D /* widgetHelper.swift in Sources */,
 				EB334B622D523E7B007CB65D /* zeServices.swift in Sources */,
+				EBD5D183306576FB000AEAE1 /* SceneDelegate.swift in Sources */,
 				EB2EC5602D9DBC7D001C6DD8 /* AppDelegare.swift in Sources */,
 				EBAE10632FD17363000AD9D7 /* storageHandler.swift in Sources */,
 				893FFEAE2BA85164006D7475 /* RNSharedRefreshWidget.m in Sources */,
@@ -1500,10 +1520,7 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DRCT_REMOVE_LEGACY_ARCH=1",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				PODFILE_DIR = "$(SRCROOT)";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
@@ -1584,10 +1601,7 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DRCT_REMOVE_LEGACY_ARCH=1",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				PODFILE_DIR = "$(SRCROOT)";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
@@ -1641,7 +1655,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 8.0;
+				WATCHOS_DEPLOYMENT_TARGET = 9.0;
 			};
 			name = Debug;
 		};
@@ -1687,7 +1701,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 8.0;
+				WATCHOS_DEPLOYMENT_TARGET = 9.0;
 			};
 			name = Release;
 		};

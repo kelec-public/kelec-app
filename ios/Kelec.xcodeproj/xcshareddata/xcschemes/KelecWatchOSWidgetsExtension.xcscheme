@@ -76,7 +76,6 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "8931F3E42C2EB57B0088CD21"
             BuildableName = "Kelec.app"
-            BlueprintName = "KelecWatchOs Watch App"
             ReferencedContainer = "container:Kelec.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -110,7 +109,6 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "89E47DC02C2EDB8B00CD1A27"
             BuildableName = "KelecWatchOSWidgetsExtension.appex"
-            BlueprintName = "KelecWatchOSWidgetsExtension"
             ReferencedContainer = "container:Kelec.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
