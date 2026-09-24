@@ -17,7 +17,7 @@ import PagerView from "react-native-pager-view";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { CarsViewParamList } from "../CarsPageView";
-import { TfaOrigin } from "../../../../packages/kelec-login/views/Steps/Step2/Tfa/TfaView";
+import { TFA_ROUTE } from "../../../../packages/kelec-tfa";
 import { useTheme } from '@react-navigation/native';
 import { useCarProfile } from "../../../../packages/kelec-car-page/services/useCarProfile";
 import { useCarData } from "../../../../packages/kelec-car-page/services/useCarData";
@@ -40,7 +40,7 @@ function CarView({ carModel, navigation, account, pagerRef, tfaInProgress }: Car
         (regToken: string) => {
             if (tfaInProgress.current) return;
             tfaInProgress.current = true;
-            navigation.navigate('TfaView', { regToken, origin: TfaOrigin.CAR_PAGE });
+            navigation.navigate(TFA_ROUTE, { regToken, successMessageKey: 'pullToRefreshCarData' });
         },
         [navigation, tfaInProgress],
     );

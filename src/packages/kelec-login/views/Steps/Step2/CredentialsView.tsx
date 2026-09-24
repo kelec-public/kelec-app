@@ -14,7 +14,7 @@ import RenaultAccount from "../../../../../lib/clients/accounts/renaultAccount";
 import { CarMakerClientErrors } from "../../../../../lib/clients/carMakers/carMakerClient";
 import StepLayout from "../../../../kelec-model/view/StepLayout";
 import { CommonStyles } from "../../../../kelec-model/view/Styles";
-import { TfaOrigin } from "./Tfa/TfaView";
+import { TFA_ROUTE } from "../../../../kelec-tfa";
 
 type Props = NativeStackScreenProps<LoginEntryParamList, 'CredentialsView'> & {
     selectedCarMaker: CarMaker;
@@ -147,9 +147,9 @@ const CredentialsView = (props: Props) => {
                 break;
             case CarMakerClientErrors.PENDING_TFA:
                 // redirect to tfa view
-                navigation.navigate("TfaView", {
+                navigation.navigate(TFA_ROUTE, {
                     regToken: kamereonAccountID.regToken ?? '',
-                    origin: TfaOrigin.ADD_CAR_FLOW,
+                    successMessageKey: 'youLlBeRedirectedToPreviousScreenClickNext',
                 });
                 return; // pas besoin d'afficher l'erreur
         }

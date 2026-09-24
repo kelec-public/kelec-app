@@ -1,8 +1,9 @@
 import { Keyboard, Pressable, StyleSheet, TextInput, View } from "react-native";
-import Text from "../../../../../../screen/Common/CustomText";
+import Text from "../../../screen/Common/CustomText";
 import { useContext, useRef, useState } from "react";
-import MainContext from "../../../../../../lib/Contexts/MainContext";
-import { fontFamilyBold, fontWeightBold } from "../../../../../kelec-model/lib/fonts";
+import MainContext from "../../../lib/Contexts/MainContext";
+import { fontFamilyBold, fontWeightBold } from "../../kelec-model/lib/fonts";
+import { TFA_CODE_LENGTH } from "../controllers/useTfaFlow";
 
 type Props = {
     email: string;
@@ -18,21 +19,18 @@ const TfaCodeView = ({ email, onChangeCode }: Props) => {
 
 
     const handleCodeChange = (text: string) => {
-        const cleaned = text.replace(/\D/g, "").slice(0, AMOUNT_OF_CHARACTERS);
+        const cleaned = text.replace(/\D/g, "").slice(0, TFA_CODE_LENGTH);
         setUserInputCode(cleaned);
         onChangeCode(cleaned);
 
-        if (cleaned.length === AMOUNT_OF_CHARACTERS) {
+        if (cleaned.length === TFA_CODE_LENGTH) {
             Keyboard.dismiss();
         }
     }
 
 
-
-    const AMOUNT_OF_CHARACTERS = 6;
-
     const renderInputBoxes = () =>
-        Array.from({ length: AMOUNT_OF_CHARACTERS }, (_, i) => {
+        Array.from({ length: TFA_CODE_LENGTH }, (_, i) => {
             const isFilled = i < userInputCode.length;
             const isActive = i === userInputCode.length;
             return (
@@ -60,7 +58,7 @@ const TfaCodeView = ({ email, onChangeCode }: Props) => {
                 value={userInputCode}
                 onChangeText={handleCodeChange}
                 keyboardType="number-pad"
-                maxLength={AMOUNT_OF_CHARACTERS}
+                maxLength={TFA_CODE_LENGTH}
                 autoComplete="one-time-code"
                 textContentType="oneTimeCode"
                 style={styles.hiddenInput}

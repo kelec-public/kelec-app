@@ -1,5 +1,5 @@
 import { fireEvent, render, waitFor } from "@testing-library/react-native";
-import TfaView, { TfaOrigin } from "../../src/packages/kelec-login/views/Steps/Step2/Tfa/TfaView";
+import { TfaView } from "../../src/packages/kelec-tfa";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { LoginEntryParamList } from "../../src/packages/kelec-login/views/LoginEntryView";
 import MainContext from "../../src/lib/Contexts/MainContext";
@@ -78,7 +78,7 @@ const mockRoute = {
     name: 'TfaView' as const,
     params: {
         regToken: 'fake-reg-token-123',
-        origin: TfaOrigin.ADD_CAR_FLOW,
+        successMessageKey: 'youLlBeRedirectedToPreviousScreenClickNext',
     },
 };
 
@@ -141,7 +141,7 @@ describe('TfaView', () => {
             ...mockRoute,
             params: {
                 regToken: 'fake-reg-token-123',
-                origin: TfaOrigin.CAR_PAGE,
+                successMessageKey: 'pullToRefreshCarData',
             },
         };
 

@@ -12,7 +12,7 @@ import CarModel from "../../../lib/clients/cars/carModel";
 import MainContext from "../../../lib/Contexts/MainContext";
 import { useColorScheme, View } from "react-native";
 import CarModelSelector, { CarModelSelectorParamList } from "./Steps/Step4/CarModelSelector";
-import TfaView, { TfaOrigin } from "./Steps/Step2/Tfa/TfaView";
+import { TFA_ROUTE, TfaRouteParams, TfaView } from "../../kelec-tfa";
 import { Palette } from "../../../../theme/_palette";
 import { AccountRepository } from "../../kelec-garage";
 
@@ -22,10 +22,7 @@ export type LoginEntryParamList = {
   SelectACarView: {
     account: Account;
   }
-  TfaView: {
-    regToken: string;
-    origin: TfaOrigin;
-  }
+  [TFA_ROUTE]: TfaRouteParams;
   CarModelChoiceStep: {
     vin: string;
   };
@@ -91,7 +88,7 @@ const LoginEntryView = () => {
                 ) : null
               }
             </Stack.Screen>
-            <Stack.Screen name="TfaView">
+            <Stack.Screen name={TFA_ROUTE}>
               {props =>
                 selectedCarMaker ? <TfaView {...props} /> : null
               }

@@ -12,7 +12,7 @@ import { HvacProvider } from "../../../packages/kelec-hvac/controllers/HvacProvi
 import SendCoffeeCard from "./CarView/Elements/SendCoffee";
 import { FullScreenMapView, MAP_ROUTE, MapProvider } from "../../../packages/kelec-map";
 import CarModelSelector, { CarModelSelectorParamList } from "../../../packages/kelec-login/views/Steps/Step4/CarModelSelector";
-import TfaView, { TfaOrigin } from "../../../packages/kelec-login/views/Steps/Step2/Tfa/TfaView";
+import { TFA_ROUTE, TfaRouteParams, TfaView } from "../../../packages/kelec-tfa";
 
 
 export type CarsViewParamList = {
@@ -21,10 +21,7 @@ export type CarsViewParamList = {
     CarModelSelector: CarModelSelectorParamList;
     CarView: undefined;
     [CHARGES_HISTORY_ROUTE]: undefined;
-    TfaView: {
-      regToken: string;
-      origin: TfaOrigin;
-  } ;
+    [TFA_ROUTE]: TfaRouteParams;
 }
 
 function CarsPageView(): React.JSX.Element {
@@ -63,7 +60,7 @@ function CarsPageView(): React.JSX.Element {
                                       />
                                     )}
                                   </Stack.Screen>
-                                  <Stack.Screen name="TfaView">
+                                  <Stack.Screen name={TFA_ROUTE}>
                                     {props =>
                                       <TfaView {...props}
                                         onTfaCompleted={() => {
