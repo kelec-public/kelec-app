@@ -3,6 +3,7 @@ import { getDistance } from "../../graphics/utils";
 import { HyundaiStatus } from "../carMakers/hyundaiClient";
 import CarType from "../cars/carTypes/carType";
 import ApiHandler from "./apiHandler";
+import { parseHyundaiTime } from "../carMakers/hyundaiTime";
 
 class HyundaiApiHandler implements ApiHandler {
     private apiDataHyundai?: HyundaiStatus;
@@ -12,21 +13,7 @@ class HyundaiApiHandler implements ApiHandler {
     }
 
     private convertHyundaiTime(time: string): Date {
-        // convert a string date from hyundai to a date object
-        // under the format 20240409175202 to 2024-04-09T17:52:02
-        const dateYear = time.substring(0, 4);
-        const dateMonth = time.substring(4, 6);
-        const dateDay = time.substring(6, 8);
-        const dateHour = time.substring(8, 10);
-        const dateMinute = time.substring(10, 12);
-        const dateSecond = time.substring(12, 14);
-        const dateFull = dateYear + '-'
-            + dateMonth + '-'
-            + dateDay + 'T'
-            + dateHour + ':'
-            + dateMinute + ':'
-            + dateSecond + 'Z';
-        return new Date(dateFull);
+        return parseHyundaiTime(time);
     }
 
 
@@ -72,21 +59,9 @@ class HyundaiApiHandler implements ApiHandler {
         return this.apiDataHyundai?.hasError ?? true;
     }
 
-    shouldDisplayMap(): boolean {
-        return this.apiDataHyundai?.apiData?.vehicleLocation.coord.lat !== undefined;
-    }
 
-    getMapLatitude(): number {
-        return this.apiDataHyundai?.apiData?.vehicleLocation.coord.lat ?? 0;
-    }
 
-    getMapLongitude(): number {
-        return this.apiDataHyundai?.apiData?.vehicleLocation.coord.lon ?? 0;
-    }
 
-    getLastMapUpdateDate(): Date {
-        return this.convertHyundaiTime(this.apiDataHyundai?.apiData?.vehicleLocation.time ?? '');
-    }
 
     getRemainingMinutes(): number {
         return this.apiDataHyundai?.apiData?.vehicleStatus?.evStatus.remainTime2.atc.value ?? 0;

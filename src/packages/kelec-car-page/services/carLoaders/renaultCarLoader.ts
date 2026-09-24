@@ -23,11 +23,6 @@ const SLOTS: Slot[] = [
         fetch: (a, vin) => a.fetchCarCockpit(vin),
     },
     {
-        storageKey: 'locationStatus',
-        apply: (h, p) => h.setLocationStatus?.(p),
-        fetch: (a, vin) => a.fetchLocationStatus(vin),
-    },
-    {
         storageKey: 'chargesSettings',
         apply: (h, p) => h.setChargingSettings?.(p),
         fetch: (a, vin) => a.fetchChargesSettings(vin),

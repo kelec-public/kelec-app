@@ -7,6 +7,7 @@ Il sert de référence pour les refactors en cours et à venir. Exemples concret
 - [Climatisation / préchauffage](./hvac.md) (`kelec-hvac`)
 - [Page compte et garage](./profile.md) (`kelec-profile`, `kelec-garage`)
 - [Réglages et préférences](./settings.md) (`kelec-settings`, `kelec-preferences`)
+- [Carte et météo](./map.md) (`kelec-map`, `kelec-weather`)
 
 ## Objectifs
 
@@ -21,8 +22,8 @@ Il sert de référence pour les refactors en cours et à venir. Exemples concret
 | Type | Packages | Rôle |
 |---|---|---|
 | **Infrastructure** | `kelec-model` (composants UI, couleurs, polices), `kelec-storage` (accès AsyncStorage) | Briques techniques réutilisables, sans aucune logique métier. |
-| **Domaine partagé** | `kelec-garage` (les voitures de l'utilisateur : compte, mots de passe, modèle technique, image, actions sur la liste), `kelec-preferences` (préférences de l'app) | Données et logique métier utilisées par plusieurs features. Exposées uniquement via `index.ts`. |
-| **Feature** | `kelec-car-page`, `kelec-login`, `kelec-charge-history`, `kelec-hvac`, `kelec-profile`, `kelec-settings` | Une fonctionnalité de l'app. |
+| **Domaine partagé** | `kelec-garage` (les voitures de l'utilisateur : compte, mots de passe, modèle technique, image, actions sur la liste), `kelec-preferences` (préférences de l'app), `kelec-weather` (météo à une position) | Données et logique métier utilisées par plusieurs features. Exposées uniquement via `index.ts`. |
+| **Feature** | `kelec-car-page`, `kelec-login`, `kelec-charge-history`, `kelec-hvac`, `kelec-profile`, `kelec-settings`, `kelec-map` | Une fonctionnalité de l'app. |
 
 Une donnée qui n'est utilisée que par une feature reste dans cette feature. Elle passe dans un package de domaine partagé
 quand plusieurs features doivent la lire ou l'écrire (ex. l'image de la voiture : écrite par `kelec-login`, lue par la page voiture, le QuickSwitch et Profile).
@@ -99,8 +100,8 @@ pour que tous les écrans de la voiture (page voiture, écran de détail…) lis
 3. **Le cache ne doit pas écraser le réseau** : si la réponse réseau arrive avant la lecture du cache, la valeur du cache est ignorée (`hasNetworkData`).
 4. Les `setState` après démontage sont ignorés (`isMounted`).
 
-> `ChargesHistoryProvider` et `HvacProvider` partagent cette logique, volontairement dupliquée pour l'instant.
-> Si un troisième package en a besoin, on l'extraira dans un hook générique.
+> `ChargesHistoryProvider`, `HvacProvider` et `MapProvider` partagent cette logique, encore dupliquée.
+> Maintenant qu'il y a trois providers, c'est le bon moment pour l'extraire dans un hook générique (dans une PR dédiée).
 
 ## Stockage : `kelec-storage`
 

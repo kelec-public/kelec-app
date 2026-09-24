@@ -10,22 +10,13 @@ import { ChargesHistoryProvider } from "../../../packages/kelec-charge-history/c
 import { CHARGES_HISTORY_ROUTE } from "../../../packages/kelec-charge-history/routes";
 import { HvacProvider } from "../../../packages/kelec-hvac/controllers/HvacProvider";
 import SendCoffeeCard from "./CarView/Elements/SendCoffee";
-import FullScreenMapView from "./CarView/Elements/Map/FullScreenMapView";
-import { WeatherApiHandler } from "../../../lib/clients/weather/weatherClient";
-import CarModel from "../../../lib/clients/cars/carModel";
+import { FullScreenMapView, MAP_ROUTE, MapProvider } from "../../../packages/kelec-map";
 import CarModelSelector, { CarModelSelectorParamList } from "../../../packages/kelec-login/views/Steps/Step4/CarModelSelector";
 import TfaView, { TfaOrigin } from "../../../packages/kelec-login/views/Steps/Step2/Tfa/TfaView";
 
 
 export type CarsViewParamList = {
-    MapView: {
-        latitude: number;
-        longitude: number;
-        lastMapUpdateDate: Date;
-        image: string;
-        weatherHandler: WeatherApiHandler | undefined | null;
-        carModel: CarModel;
-    };
+    [MAP_ROUTE]: undefined;
     DonationScreen: undefined;
     CarModelSelector: CarModelSelectorParamList;
     CarView: undefined;
@@ -54,50 +45,53 @@ function CarsPageView(): React.JSX.Element {
                       <NavigationIndependentTree key={carModel.getVin()}>
                         <ChargesHistoryProvider carModel={carModel} account={account}>
                           <HvacProvider carModel={carModel} account={account}>
-                            <NavigationContainer theme={theme}>
-                              <Stack.Navigator
-                                screenOptions={{
-                                  headerShown: false,
-                                }}
-                              >
-                                <Stack.Screen name="CarView">
-                                  {props => (
-                                    <CarView
-                                      {...props}
-                                      carModel={carModel}
-                                      account={account}
-                                      pagerRef={ref}
-                                      tfaInProgress={tfaInProgress}
-                                    />
-                                  )}
-                                </Stack.Screen>
-                                <Stack.Screen name="TfaView">
-                                  {props =>
-                                    <TfaView {...props}
-                                      onTfaCompleted={() => {
-                                        tfaInProgress.current = false;
-                                      }} />
-                                  }
-                                </Stack.Screen>
-                                <Stack.Screen name={CHARGES_HISTORY_ROUTE}>
-                                  {props => <ChargesHistoryView {...props} />}
-                                </Stack.Screen>
-                                <Stack.Screen name="CarModelSelector">
-                                  {props => <CarModelSelector {...props} />}
-                                </Stack.Screen>
-                                <Stack.Screen
-                                  name="DonationScreen"
-                                  options={{ presentation: 'modal' }}
+                            <MapProvider carModel={carModel} account={account}>
+                              <NavigationContainer theme={theme}>
+                                <Stack.Navigator
+                                  screenOptions={{
+                                    headerShown: false,
+                                  }}
                                 >
-                                  {(props: any) => <SendCoffeeCard {...props} />}
-                                </Stack.Screen>
-                                <Stack.Screen
-                                  name="MapView"
-                                  component={FullScreenMapView}
-                                  options={{ presentation: 'modal' }}
-                                />
-                              </Stack.Navigator>
-                            </NavigationContainer>
+                                  <Stack.Screen name="CarView">
+                                    {props => (
+                                      <CarView
+                                        {...props}
+                                        carModel={carModel}
+                                        account={account}
+                                        pagerRef={ref}
+                                        tfaInProgress={tfaInProgress}
+                                      />
+                                    )}
+                                  </Stack.Screen>
+                                  <Stack.Screen name="TfaView">
+                                    {props =>
+                                      <TfaView {...props}
+                                        onTfaCompleted={() => {
+                                          tfaInProgress.current = false;
+                                        }} />
+                                    }
+                                  </Stack.Screen>
+                                  <Stack.Screen name={CHARGES_HISTORY_ROUTE}>
+                                    {props => <ChargesHistoryView {...props} />}
+                                  </Stack.Screen>
+                                  <Stack.Screen name="CarModelSelector">
+                                    {props => <CarModelSelector {...props} />}
+                                  </Stack.Screen>
+                                  <Stack.Screen
+                                    name="DonationScreen"
+                                    options={{ presentation: 'modal' }}
+                                  >
+                                    {(props: any) => <SendCoffeeCard {...props} />}
+                                  </Stack.Screen>
+                                  <Stack.Screen
+                                    name={MAP_ROUTE}
+                                    options={{ presentation: 'modal' }}
+                                  >
+                                    {props => <FullScreenMapView {...props} />}
+                                  </Stack.Screen>
+                                </Stack.Navigator>
+                              </NavigationContainer>
+                            </MapProvider>
                           </HvacProvider>
                         </ChargesHistoryProvider>
                       </NavigationIndependentTree>
