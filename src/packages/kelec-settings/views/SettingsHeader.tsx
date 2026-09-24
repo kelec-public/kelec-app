@@ -1,34 +1,22 @@
 import React, { useContext } from "react";
-import { Dimensions, Linking, StyleSheet, TouchableOpacity, View } from "react-native";
-import Text from "../../Common/CustomText";
+import { Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
+import Text from "../../../screen/Common/CustomText";
 import commonStyles from "../../../lib/graphics/commonStyle";
 import MainContext from "../../../lib/Contexts/MainContext";
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { getAccentOrange } from "../../../lib/graphics/utils";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { getUserDisplayName } from "../services/userDisplayName";
+import { ExternalLinks, openExternalLink } from "../services/externalLinks";
 
-function TopSettingsView(): React.JSX.Element {
-
-
+/** En-tête orange : nom de l'utilisateur (ou « Réglages ») et crédits. */
+function SettingsHeader(): React.JSX.Element {
     const { languageHandler, currentUser } = useContext(MainContext);
 
-
     const getTitle = (): React.ReactNode => {
-        // if the user has first name and last name, display it else display "Settings" string
-        let found = 0;
-        let firstName = '';
-        let lastName = '';
-        // loop of user cars to find if there is a renault with firstname and last name
-        currentUser.getCars().forEach(car => {
-            if (car.firstName !== undefined && car.lastName !== undefined) {
-                found = 1;
-                firstName = car.firstName;
-                lastName = car.lastName;
-            }
-        });
-
-        if (found === 1) {
-            return <Text testID="settingsTitle" style={[commonStyles.navTitle, { color: 'white' }]}>{firstName.toUpperCase()}{'\n'}{lastName.toUpperCase()}</Text>
+        const name = getUserDisplayName(currentUser);
+        if (name) {
+            return <Text testID="settingsTitle" style={[commonStyles.navTitle, { color: 'white' }]}>{name.firstName.toUpperCase()}{'\n'}{name.lastName.toUpperCase()}</Text>
         }
 
         return <Text testID="settingsTitle" style={[commonStyles.navTitle, { color: 'white' }]}>{languageHandler.getTranslation("settings").toUpperCase()}</Text>
@@ -44,9 +32,7 @@ function TopSettingsView(): React.JSX.Element {
                     <Text style={{ color: 'white' }}>{languageHandler.getTranslation('by')}</Text>
                     <TouchableOpacity
                         testID='linkedinButton'
-                        onPress={() => {
-                            Linking.openURL('https://www.linkedin.com/in/kelyan-pegeotselme/');
-                        }}>
+                        onPress={() => openExternalLink(ExternalLinks.AUTHOR_LINKEDIN)}>
                         <Text style={{ color: 'lightblue' }}>Kelyan Pegeot Selme</Text>
                     </TouchableOpacity>
                 </View>
@@ -59,13 +45,7 @@ function TopSettingsView(): React.JSX.Element {
 const styles = StyleSheet.create({
     marginVertical: {
         marginVertical: 10
-    },
-    mediumTitle: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: '#000',
-        marginBottom: 10,
     }
 });
 
-export default TopSettingsView;
+export default SettingsHeader;

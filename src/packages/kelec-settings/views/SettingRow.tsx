@@ -1,15 +1,11 @@
 import { StyleSheet, Switch, TouchableOpacity, View, useColorScheme } from "react-native";
-import Text from "../../Common/CustomText";
+import Text from "../../../screen/Common/CustomText";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import MaterialIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import commonStyles, { fontFamilyBold } from "../../../lib/graphics/commonStyle";
 import { ReactNode } from "react";
 import { getBlackColour } from "../../../lib/graphics/utils";
-
-enum OptionType {
-    SWITCH = 'SWITCH',
-    NAVIGATE = 'NAVIGATE',
-};
+import { OptionType } from "../controllers/settingsTypes";
 
 type SettingRowProps = {
     readonly testID?: string;
@@ -80,4 +76,3 @@ const styles = StyleSheet.create({
 });
 
 export default SettingRow;
-export { OptionType }; 

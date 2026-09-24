@@ -3,8 +3,8 @@
 // - domaine partagé : ne dépend d'aucune feature ;
 // - un package de domaine ou de feature n'est importé par un autre package que via son index.ts.
 const INFRA_PACKAGES = ['kelec-model', 'kelec-storage'];
-const DOMAIN_PACKAGES = ['kelec-garage'];
-const FEATURE_PACKAGES = ['kelec-car-page', 'kelec-login', 'kelec-charge-history', 'kelec-hvac', 'kelec-profile'];
+const DOMAIN_PACKAGES = ['kelec-garage', 'kelec-preferences'];
+const FEATURE_PACKAGES = ['kelec-car-page', 'kelec-login', 'kelec-charge-history', 'kelec-hvac', 'kelec-profile', 'kelec-settings'];
 
 const packageFiles = name => [`src/packages/${name}/**/*.ts`, `src/packages/${name}/**/*.tsx`];
 const anyImportOf = names => names.flatMap(name => [`**/${name}`, `**/${name}/**`]);

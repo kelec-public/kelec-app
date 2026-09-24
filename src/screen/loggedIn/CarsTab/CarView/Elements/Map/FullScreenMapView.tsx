@@ -11,6 +11,7 @@ import WeatherMapCard from "./WeatherMapCard";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { CarsViewParamList } from "../../../CarsPageView";
+import { usePreferences } from "../../../../../../packages/kelec-preferences";
 
 type Props = NativeStackScreenProps<CarsViewParamList, 'MapView'>;
 
@@ -19,7 +20,8 @@ const FullScreenMapView = ({ route, navigation }: Props) => {
 
     const isDarkMode = useColorScheme() === 'dark';
     const { latitude, longitude, lastMapUpdateDate, image, weatherHandler, carModel } = route.params;
-    const { appPreferences, languageHandler, storageHandler, reloadAppPreferences } = useContext(MainContext);
+    const { appPreferences, languageHandler } = useContext(MainContext);
+    const { update: updatePreferences } = usePreferences();
 
     const mapModalViewRef = useRef<MapView>(null);
     const [hasModalRegionChanged, setHasModalRegionChanged] = useState<boolean>(false);
@@ -34,9 +36,7 @@ const FullScreenMapView = ({ route, navigation }: Props) => {
     }
 
     const saveMapType = async (mapType: MapType) => {
-        appPreferences.mapType = mapType;
-        await storageHandler.setAppPreferences(appPreferences);
-        reloadAppPreferences();
+        await updatePreferences({ mapType });
     }
 
     const goBackToOriginalRegion = () => {

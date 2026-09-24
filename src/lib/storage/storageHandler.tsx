@@ -10,7 +10,6 @@ import RenaultApiHandler from "../clients/apiHandlers/renaultApiHandler";
 import UserAccount, { UserAccountInterface } from "../clients/accounts/userAccount";
 import CarModel, { CarModelInterface } from "../clients/cars/carModel";
 import DemoAccount from "../clients/accounts/demoAccount";
-import AppPreferences from "../appPreferences/model/appPreferences";
 
 class StorageHandler {
     // class to handle local storage of the app
@@ -129,16 +128,6 @@ class StorageHandler {
         await AsyncStorage.clear();
         // remove the account for widgets
         await saveNativeAccount(null);
-    }
-
-    getAppPreferences = async (): Promise<AppPreferences> => {
-        const appPreferences = await AsyncStorage.getItem('appPreferences');;
-        if (appPreferences === null) return new AppPreferences();
-        return new AppPreferences(JSON.parse(appPreferences));
-    }
-
-    setAppPreferences = async (appPreferences: AppPreferences): Promise<void> => {
-        await AsyncStorage.setItem('appPreferences', JSON.stringify(appPreferences));
     }
 
     getCarType = async (vin: string): Promise<CarType | null> => {

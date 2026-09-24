@@ -4,7 +4,7 @@ import { NavigationContainer, useTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import CarsView from './CarsTab/CarsView';
 import ProfileView from '../../packages/kelec-profile/views/ProfileView';
-import SettingsView from './SettingsTab/SettingsView';
+import SettingsView from '../../packages/kelec-settings/views/SettingsView';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MainContext from '../../lib/Contexts/MainContext';
 import { getGrayBackgroundColour } from '../../lib/graphics/utils';
