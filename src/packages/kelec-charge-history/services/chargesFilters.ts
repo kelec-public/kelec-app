@@ -3,7 +3,11 @@ import { Filter, FILTER_NO_MAX, FILTER_NO_MIN, FilterDate, FilterName, FilterNum
 
 /* ------------------------------- APPLICATION ------------------------------ */
 
-const isInRange = (value: number, { min, max }: FilterNumerical): boolean => value >= min && value <= max;
+const startOfDay = (date: Date): Date => new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+const endOfDay = (date: Date): Date => new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59, 999);
+
+const isInRange =(value: number, { min, max }: FilterNumerical): boolean => value >= min && value <= max;
 
 const matchesFilter = (charge: Charge, filter: Filter): boolean => {
     switch (filter.filterName) {
@@ -14,9 +18,12 @@ const matchesFilter = (charge: Charge, filter: Filter): boolean => {
         case FilterName.PERCENTAGE_RECOVERED:
             return isInRange(charge.getEndPercentage() - charge.getStartPercentage(), filter.filterType as FilterNumerical);
         case FilterName.DATE: {
+            // Le sélecteur renvoie une date avec l'heure courante : on filtre sur des journées entières.
             const { startDate, endDate } = filter.filterType as FilterDate;
+            const from = startDate ? startOfDay(startDate) : new Date(0);
+            const to = endDate ? endOfDay(endDate) : new Date();
             const chargeDate = charge.getStartDate();
-            return chargeDate >= (startDate || new Date(0)) && chargeDate <= (endDate || new Date());
+            return chargeDate >= from && chargeDate <= to;
         }
         case FilterName.ONLY_DC:
             return charge.isDCCharge();

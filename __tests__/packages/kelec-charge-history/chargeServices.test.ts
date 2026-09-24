@@ -30,6 +30,18 @@ describe('chargesFilters', () => {
         }], charges)).toEqual([jan15]);
     });
 
+    test('le filtre date inclut les journées entières, quelle que soit l\'heure sélectionnée', () => {
+        const dateFilter = (startDate?: Date, endDate?: Date): Filter => ({
+            displayName: 'date',
+            filterName: FilterName.DATE,
+            filterType: { startDate, endDate },
+        });
+        // sélection faite à 11h : les charges de 10h le 1er et le 15 doivent rester
+        expect(applyFilters([dateFilter(new Date('2024-01-01T11:00:00'))], charges)).toEqual(charges);
+        expect(applyFilters([dateFilter(undefined, new Date('2024-01-15T09:00:00'))], charges)).toEqual([jan1, jan15]);
+        expect(applyFilters([dateFilter(new Date('2024-01-15T23:00:00'), new Date('2024-02-02T08:00:00'))], charges)).toEqual([jan15, feb2]);
+    });
+
     test('upsertFilter remplace un filtre du même nom, removeFilter le retire', () => {
         const filters = upsertFilter(upsertFilter([], powerFilter(0, 10)), powerFilter(5, 20));
         expect(filters).toEqual([powerFilter(5, 20)]);
