@@ -1,5 +1,6 @@
 import { Modal, ScrollView, StyleSheet, View } from "react-native";
 import { useTheme } from '@react-navigation/native';
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import commonStyles from '../../../lib/graphics/commonStyle';
 import Text from '../../../screen/Common/CustomText';
 import { useSettingsController } from "../controllers/useSettingsController";
@@ -22,7 +23,9 @@ function SettingsView(): React.JSX.Element {
                 visible={controller.isDebugZoneOpen}
                 onRequestClose={() => controller.setIsDebugZoneOpen(false)}
             >
-                <DebugZoneView setShowDebugZone={controller.setIsDebugZoneOpen} />
+                <SafeAreaProvider>
+                    <DebugZoneView setShowDebugZone={controller.setIsDebugZoneOpen} />
+                </SafeAreaProvider>
             </Modal>
             <TimezoneOffsetModal
                 visible={controller.isTimezoneModalOpen}
