@@ -6,6 +6,7 @@ Il sert de référence pour les refactors en cours et à venir. Exemples concret
 - [Historique de charge](./charge-history.md) (`kelec-charge-history`)
 - [Climatisation / préchauffage](./hvac.md) (`kelec-hvac`)
 - [Page compte et garage](./profile.md) (`kelec-profile`, `kelec-garage`)
+- [Réglages et préférences](./settings.md) (`kelec-settings`, `kelec-preferences`)
 
 ## Objectifs
 
@@ -20,8 +21,8 @@ Il sert de référence pour les refactors en cours et à venir. Exemples concret
 | Type | Packages | Rôle |
 |---|---|---|
 | **Infrastructure** | `kelec-model` (composants UI, couleurs, polices), `kelec-storage` (accès AsyncStorage) | Briques techniques réutilisables, sans aucune logique métier. |
-| **Domaine partagé** | `kelec-garage` (les voitures de l'utilisateur : image, actions sur la liste) | Données et logique métier utilisées par plusieurs features. Exposées uniquement via `index.ts`. |
-| **Feature** | `kelec-car-page`, `kelec-login`, `kelec-charge-history`, `kelec-hvac`, `kelec-profile` | Une fonctionnalité de l'app. |
+| **Domaine partagé** | `kelec-garage` (les voitures de l'utilisateur : image, actions sur la liste), `kelec-preferences` (préférences de l'app) | Données et logique métier utilisées par plusieurs features. Exposées uniquement via `index.ts`. |
+| **Feature** | `kelec-car-page`, `kelec-login`, `kelec-charge-history`, `kelec-hvac`, `kelec-profile`, `kelec-settings` | Une fonctionnalité de l'app. |
 
 Une donnée qui n'est utilisée que par une feature reste dans cette feature. Elle passe dans un package de domaine partagé
 quand plusieurs features doivent la lire ou l'écrire (ex. l'image de la voiture : écrite par `kelec-login`, lue par la page voiture, le QuickSwitch et Profile).
@@ -104,10 +105,11 @@ pour que tous les écrans de la voiture (page voiture, écran de détail…) lis
 ## Stockage : `kelec-storage`
 
 - `VinStorage` : `get/set` de chaînes ou de JSON sous la clé `<vin>/<clé>`.
+- `AppStorage` : `get/set` JSON pour les données globales de l'app (non liées à une voiture), ex. `appPreferences`.
 - `BatchedList<T>` : une liste stockée par lots (`<name>Amount` et `<name>Index<i>`), avec relecture puis suppression d'un ancien format (`legacyKey`).
 - **Les repositories restent dans les features** : `kelec-storage` ne sait pas ce qu'est une `Charge` ou un `HvacStatus`.
 - Chaque clé appartient à **un seul** package, qui est le seul à la lire et à l'écrire.
-- Toutes les clés suivent le format `<vin>/<clé>`.
+- Les clés propres à une voiture suivent le format `<vin>/<clé>`.
 
 La migration de `src/lib/storage/storageHandler` se fait par petites étapes, en envoyant chaque partie vers le package qui possède la donnée :
 
@@ -117,7 +119,9 @@ La migration de `src/lib/storage/storageHandler` se fait par petites étapes, en
 | `saveAccount` / `loadAccount` (UserAccount) | `kelec-garage` | à faire |
 | `getCarType` / `setCarType` | `kelec-garage` | à faire |
 | `storeApiData` / `getStoredApiData`, `buildApiHandler` | `kelec-car-page` (à côté de `CarStatusCache`) | à faire |
-| `getAppPreferences` / `setAppPreferences`, onboarding | futur package réglages | à faire |
+| `getAppPreferences` / `setAppPreferences` | `kelec-preferences` (`PreferencesRepository`) | ✅ fait |
+| onboarding (`get/setHasSeenOnboarding`) | à décider | à faire |
+| `logOut` | `kelec-garage` (avec la persistance du compte) | à faire |
 
 ## Règles de dépendances
 

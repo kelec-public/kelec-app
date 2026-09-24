@@ -12,7 +12,7 @@ Le VIN suffit donc à identifier une voiture et son compte.
 - Tests : `npx jest`. Toute la suite doit passer.
 - Types : `npx tsc --noEmit -p tsconfig.json --ignoreDeprecations 6.0 --baseUrl .`
   (`tsc -p .` seul échoue sur la config). 2 erreurs sont déjà présentes et connues
-  (`useCarProfile.ts`, `DebugZoneView.tsx`) : il ne faut pas en ajouter.
+  (`useCarProfile.ts`, et `kelec-settings/views/debug/DebugZoneView.tsx`, volontairement laissé tel quel) : il ne faut pas en ajouter.
 - Lint : `npm run lint`. Il n'est pas lancé en CI, et le repo a déjà des erreurs ESLint.
   Au minimum, les règles de frontières entre packages (`no-restricted-imports`) doivent passer sur `src/packages`.
 

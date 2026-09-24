@@ -14,6 +14,7 @@ import KelecApiHandler from "./lib/clients/kelec-api/kelecApiHandler";
 import Text from "./screen/Common/CustomText";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
+import { PreferencesRepository } from "./packages/kelec-preferences";
 
 export enum ViewsAvailable {
     LOGIN = 'LOGIN',
@@ -81,11 +82,7 @@ function Main(): React.JSX.Element {
 
     // to reload the app preferences from the storage
     const reloadAppPreferences = async (): Promise<void> => {
-        const preferences = await storageHandler.getAppPreferences();
-
-        if (preferences) {
-            setAppPreferences(preferences);
-        }
+        setAppPreferences(await PreferencesRepository.get());
     };
 
     // to check if there is a message to display

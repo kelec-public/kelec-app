@@ -1,15 +1,15 @@
 import React, { useContext, useState } from "react";
 import { TouchableOpacity, useColorScheme, View } from "react-native";
-import Text from "../../../Common/CustomText";
+import Text from "../../../../screen/Common/CustomText";
 import { getWhiteColour } from "../../../../lib/graphics/utils";
-import BigButton from "../../../Common/BigButton";
+import BigButton from "../../../../screen/Common/BigButton";
 import MainContext from "../../../../lib/Contexts/MainContext";
 import { CarMakerClientErrors } from "../../../../lib/clients/carMakers/carMakerClient";
 import RenaultAccount from "../../../../lib/clients/accounts/renaultAccount";
 import { BatteryStatus, RenaultStatus } from "../../../../lib/clients/carMakers/renaultClient";
 import Config from 'react-native-config';
 import { SafeAreaView } from "react-native-safe-area-context";
-import Button from '../../../../packages/kelec-model/view/Button';
+import Button from '../../../kelec-model/view/Button';
 import { RenaultCredentials } from "../../../../lib/clients/carMakers/renaultCredentials";
 
 type DebugZoneProps = {

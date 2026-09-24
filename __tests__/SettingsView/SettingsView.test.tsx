@@ -1,4 +1,5 @@
 import * as sharedPlatformsData from '../../src/lib/storage/sharedPlatformsData';
+import { getTopDarkColour } from "../../src/lib/graphics/utils";
 import { render, screen, userEvent, waitFor } from "@testing-library/react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Account, { CarMaker } from '../../src/lib/clients/accounts/account';
@@ -550,5 +551,31 @@ test('should update the app preferences merge charges', async () => {
         const appPreferences = await AsyncStorage.getItem('appPreferences');
         expect(appPreferences).toBeDefined();
         expect(JSON.parse(appPreferences ?? '')).toMatchObject({ mergeCharges: false });
+    });
+});
+test('should select a timezone offset', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await waitFor(() => expect(screen.queryAllByTestId('bottomButtonperson').length).toBe(2));
+    await user.press(screen.queryAllByTestId('bottomButtonsettings')[0]);
+    await waitFor(() => expect(screen.getByTestId('settingsView')).toBeDefined());
+
+    await user.press(screen.getByTestId('testSettingRowaccess-time'));
+    await waitFor(() => expect(screen.getByTestId('timezoneOffsetButton2')).toBeDefined());
+
+    await user.press(screen.getByTestId('timezoneOffsetButton2'));
+
+    await waitFor(async () => {
+        const appPreferences = JSON.parse(await AsyncStorage.getItem('appPreferences') ?? "{}");
+        expect(appPreferences).toMatchObject({ scheduledChargeOffset: 2 });
+        expect(screen.queryAllByTestId('timezoneOffsetButton2')).toHaveLength(0);
+    });
+
+    // la valeur choisie est bien celle affichée à la réouverture
+    await user.press(screen.getByTestId('testSettingRowaccess-time'));
+    await waitFor(() => {
+        expect(screen.getByTestId('timezoneOffsetButton2').props.style).toMatchObject({ backgroundColor: getTopDarkColour(false) });
+        expect(screen.getByTestId('timezoneOffsetButton0').props.style).not.toMatchObject({ backgroundColor: getTopDarkColour(false) });
     });
 });
