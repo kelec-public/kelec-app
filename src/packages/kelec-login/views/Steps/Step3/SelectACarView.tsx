@@ -14,7 +14,7 @@ import RenaultCar from "../../../../../lib/clients/cars/renaultCar";
 import HyundaiAccount from "../../../../../lib/clients/accounts/hyundaiAccount";
 import HyundaiClient from "../../../../../lib/clients/carMakers/hyundaiClient";
 import HyundaiCar from "../../../../../lib/clients/cars/hyundaiCar";
-import LoginDefaultView from "../../LoginDefaultView";
+import StepLayout from "../../../../kelec-model/view/StepLayout";
 
 type Props = NativeStackScreenProps<LoginEntryParamList, 'SelectACarView'> & {
     selectedCar?: CarModel;
@@ -136,9 +136,10 @@ const SelectACarView = (props: Props) => {
     };
 
     return (
-        <LoginDefaultView
-            title="addCar"
-            subtitle="chooseTheCar"
+        <StepLayout
+            title={languageHandler.getTranslation("addCar")}
+            subtitle={languageHandler.getTranslation("chooseTheCar")}
+            nextLabel={languageHandler.getTranslation("next")}
             testID="addViewSelector"
             onNext={() => {
                 if (selectedCar === undefined) {
@@ -167,7 +168,7 @@ const SelectACarView = (props: Props) => {
             {viewState === ViewState.LOADED && (
                 <CarSelector selectedCar={selectedCar} setSelectedCar={setSelectedCar} cars={cars} />
             )}
-        </LoginDefaultView >
+        </StepLayout>
     );
 
 };

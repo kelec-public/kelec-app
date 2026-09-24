@@ -4,7 +4,8 @@ import { CarMaker } from "../../../../../lib/clients/accounts/account";
 import { getCarMakerLogo } from "../../../../kelec-model/lib/logos";
 import { useContext } from "react";
 import MainContext from "../../../../../lib/Contexts/MainContext";
-import LoginDefaultView from "../../LoginDefaultView";
+import StepLayout from "../../../../kelec-model/view/StepLayout";
+import { ViewsAvailable } from "../../../../../Main";
 import KelecCard from "../../../../kelec-model/view/Card";
 import { spacerM, spacerXXL } from "../../../../kelec-model/view/Spacers";
 
@@ -41,7 +42,8 @@ const carMakerList: CarMakerElem[] = [
 
 const CarMakerSelectView = (props: Props) => {
     const { selectedCarMaker, setSelectedCarMaker, navigation } = props;
-    const { currentUser } = useContext(MainContext);
+    const { currentUser, languageHandler, setCurrentView } = useContext(MainContext);
+    const t = (key: string) => languageHandler.getTranslation(key);
 
     const isDarkMode = useColorScheme() === 'dark';
 
@@ -69,17 +71,19 @@ const CarMakerSelectView = (props: Props) => {
     }
 
     return (
-        <LoginDefaultView
+        <StepLayout
             testID="carMakerSelectView"
-            title="addCar"
-            subtitle="theCarBrand"
-            helpText="selectTheCarBrand"
+            title={t("addCar")}
+            subtitle={t("theCarBrand")}
+            helpText={t("selectTheCarBrand")}
+            nextLabel={t("next")}
             onNext={() => {
                 if (selectedCarMaker) {
                     navigation.navigate("CredentialsView", { selectedCarMaker: selectedCarMaker });
                 }
             }}
-            shouldDisplayDismissButton={currentUser?.getCars().length > 0}
+            // fermeture seulement s'il y a déjà une voiture à afficher
+            onDismiss={currentUser?.getCars().length > 0 ? () => setCurrentView(ViewsAvailable.LOGGEDIN) : undefined}
         >
             <View
                 style={{
@@ -95,7 +99,7 @@ const CarMakerSelectView = (props: Props) => {
                     })
                 }
             </View>
-        </LoginDefaultView>
+        </StepLayout>
     );
 };
 

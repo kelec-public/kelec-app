@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { LoginEntryParamList } from "../../../LoginEntryView";
-import LoginDefaultView from "../../../LoginDefaultView";
+import StepLayout from "../../../../../kelec-model/view/StepLayout";
 import { useContext, useEffect, useRef, useState } from "react";
 import MainContext from "../../../../../../lib/Contexts/MainContext";
 import Text from "../../../../../../screen/Common/CustomText";
@@ -192,10 +192,11 @@ const TfaView = ({ navigation, route, onTfaCompleted }: Props) => {
     }
 
     return (
-        <LoginDefaultView
+        <StepLayout
             testID="TfaView"
-            title="addCar"
+            title={languageHandler.getTranslation("addCar")}
             subtitle={languageHandler.getTranslation("tfaRequired")}
+            nextLabel={languageHandler.getTranslation("next")}
             isLightLoading={isLightLoading}
             onPrevious={() => {
                 onGoBack();
@@ -209,7 +210,7 @@ const TfaView = ({ navigation, route, onTfaCompleted }: Props) => {
             <View style={styles.container}>
                 {getViewDisplay()}
             </View>
-        </LoginDefaultView>
+        </StepLayout>
 
     )
 };

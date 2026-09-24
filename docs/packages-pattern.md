@@ -21,9 +21,11 @@ Il sert de référence pour les refactors en cours et à venir. Exemples concret
 
 | Type | Packages | Rôle |
 |---|---|---|
-| **Infrastructure** | `kelec-model` (composants UI, couleurs, polices), `kelec-storage` (accès AsyncStorage) | Briques techniques réutilisables, sans aucune logique métier. |
+| **Infrastructure** | `kelec-model` (composants UI : `Button`, `KelecCard`, `StepLayout`, `SwitchCard`, `SpacedRow`, `FloatingPill`…, couleurs, polices), `kelec-storage` (accès AsyncStorage) | Briques techniques réutilisables, sans aucune logique métier. |
 | **Domaine partagé** | `kelec-garage` (les voitures de l'utilisateur : compte, mots de passe, modèle technique, image, actions sur la liste), `kelec-preferences` (préférences de l'app), `kelec-weather` (météo à une position) | Données et logique métier utilisées par plusieurs features. Exposées uniquement via `index.ts`. |
 | **Feature** | `kelec-car-page`, `kelec-login`, `kelec-charge-history`, `kelec-hvac`, `kelec-profile`, `kelec-settings`, `kelec-map` | Une fonctionnalité de l'app. |
+
+Les composants de `kelec-model` reçoivent des **textes déjà traduits** et des callbacks (ex. `onDismiss`) : ils ne dépendent ni de `MainContext` ni de la navigation.
 
 Une donnée qui n'est utilisée que par une feature reste dans cette feature. Elle passe dans un package de domaine partagé
 quand plusieurs features doivent la lire ou l'écrire (ex. l'image de la voiture : écrite par `kelec-login`, lue par la page voiture, le QuickSwitch et Profile).

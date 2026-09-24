@@ -1,23 +1,22 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { LoginEntryParamList } from "../../LoginEntryView";
 import { Edge } from "react-native-safe-area-context";
-import { Image, Linking, StyleSheet, Switch, TouchableOpacity, TouchableWithoutFeedback, useColorScheme, View } from "react-native";
+import { Image, Linking, StyleSheet, TouchableOpacity, View } from "react-native";
 import { useContext, useEffect, useState } from "react";
 import MainContext from "../../../../../lib/Contexts/MainContext";
 import Text from "../../../../../screen/Common/CustomText";
-import { BLACK_COLOUR, PRIMARY_COLOUR } from "../../../../kelec-model/lib/colours"; import { DropDownData, DropDownType } from "../../../../../screen/Common/DropDown";
+import { PRIMARY_COLOUR } from "../../../../kelec-model/lib/colours";
+import { DropDownData, DropDownType } from "../../../../../screen/Common/DropDown";
 import KelecApiHandler, { BatteryApi, BrandApi, ModelApi } from "../../../../../lib/clients/kelec-api/kelecApiHandler";
 import ChargeLimitSlider from "./ChargeLimitSlider";
 import CarType, { AUTHORISED_MODELS, CarAvailableModels, LeasingData } from "../../../../../lib/clients/cars/carTypes/carType";
 import CarModel from "../../../../../lib/clients/cars/carModel";
-import CarModelChoiceLeasing, { RowView } from "./CarModelChoiceLeasing";
-import LoginDefaultView from "../../LoginDefaultView";
+import CarModelChoiceLeasing from "./CarModelChoiceLeasing";
+import StepLayout from "../../../../kelec-model/view/StepLayout";
+import SwitchCard from "../../../../kelec-model/view/SwitchCard";
 import DropDownView from "./DropDownView";
-import { spacerL, spacerM, spacerXL } from "../../../../kelec-model/view/Spacers";
-import KelecCard from "../../../../kelec-model/view/Card";
-import Icon from "react-native-vector-icons/MaterialIcons";
-import { textBody } from "../../../../kelec-model/view/Titles";
-import { CommonStyles } from "../../../../kelec-model/view/Styles";
+import { spacerM } from "../../../../kelec-model/view/Spacers";
+import { subTitle } from "../../../../kelec-model/view/Titles";
 import { CarTypeRepository } from "../../../../kelec-garage";
 
 
@@ -33,12 +32,11 @@ export type CarModelSelectorParamList = {
 type Props = NativeStackScreenProps<LoginEntryParamList, 'CarModelSelector'>;
 
 const CarModelSelector = (props: Props) => {
-    const isDarkMode = useColorScheme() === 'dark';
-
     const { languageHandler } = useContext(MainContext);
 
     const { navigation, route } = props;
-    const { carModel, onConfirmUpdate, title, subTitle, nextButtonText, safeAreaEdges } = route.params;
+    // clés de traduction (renommées pour ne pas masquer le style `subTitle` importé)
+    const { carModel, onConfirmUpdate, title: titleKey, subTitle: subTitleKey, nextButtonText, safeAreaEdges } = route.params;
 
 
 
@@ -116,10 +114,10 @@ const CarModelSelector = (props: Props) => {
     };
 
     return (
-        <LoginDefaultView
+        <StepLayout
             testID="carModelChoiceStep"
-            title={title}
-            subtitle={subTitle}
+            title={languageHandler.getTranslation(titleKey)}
+            subtitle={subTitleKey ? languageHandler.getTranslation(subTitleKey) : undefined}
             safeAreaEdges={safeAreaEdges}
             onPrevious={() => {
                 navigation.goBack();
@@ -143,7 +141,7 @@ const CarModelSelector = (props: Props) => {
                 await CarTypeRepository.save(carModel.getVin(), newCarType);
                 onConfirmUpdate();
             }}
-            nextButtonText={nextButtonText}
+            nextLabel={languageHandler.getTranslation(nextButtonText ?? "next")}
 
         >
             <View
@@ -249,70 +247,15 @@ const CarModelSelector = (props: Props) => {
 
                 <CarModelChoiceLeasing isError={isError} leasingData={leasingData} setLeasingData={setLeasingData} />
 
-                <KelecCard>
-                    <View
-                        style={
-                            [
-                                CommonStyles.container,
-                                {
-                                    padding: spacerM,
-                                    gap: spacerL,
-
-                                }
-                            ]
-                        }>
-                        <RowView>
-                            <TouchableWithoutFeedback
-                                testID="V2GCompatibleSwitch"
-                                onPress={() => {
-                                    setSupportsV2G(!supportsV2G);
-                                }}
-                            >
-                                <View
-                                    style={
-                                        styles.settingText
-                                    }
-                                >
-                                    <View
-                                        style={{
-                                            flex: 1,
-                                            flexDirection: 'row',
-                                            alignItems: 'center',
-                                            gap: spacerM
-                                        }}
-                                    >
-                                        <Icon
-                                            name="ev-station"
-                                            size={spacerXL}
-                                            color={BLACK_COLOUR(isDarkMode)}
-                                        />
-                                        <Text style={
-                                            [
-                                                textBody,
-                                                {
-                                                    flexShrink: 1,
-                                                    flexWrap: 'wrap',
-                                                }
-                                            ]
-                                        }>
-                                            {languageHandler.getTranslation("myCarSupportsV2G")}
-                                        </Text>
-                                    </View>
-                                    <Switch
-
-                                        value={supportsV2G}
-                                        onValueChange={() => {
-                                            setSupportsV2G(!supportsV2G);
-                                        }}
-                                        trackColor={{ true: PRIMARY_COLOUR }}
-                                    />
-                                </View>
-                            </TouchableWithoutFeedback>
-                        </RowView>
-                    </View>
-                </KelecCard>
+                <SwitchCard
+                    testID="V2GCompatibleSwitch"
+                    icon="ev-station"
+                    label={languageHandler.getTranslation("myCarSupportsV2G")}
+                    value={supportsV2G}
+                    onValueChange={setSupportsV2G}
+                />
             </View >
-        </LoginDefaultView >
+        </StepLayout>
     );
 };
 
@@ -327,15 +270,6 @@ const styles = StyleSheet.create({
         color: PRIMARY_COLOUR,
         textAlign: 'center',
         textDecorationLine: 'underline',
-    },
-    settingText: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: spacerM
-    },
-    leftText: {
-        flexWrap: 'wrap',
-        flexShrink: 1
     },
 });
 

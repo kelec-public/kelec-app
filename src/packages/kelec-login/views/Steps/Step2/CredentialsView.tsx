@@ -12,7 +12,7 @@ import HyundaiAccount from "../../../../../lib/clients/accounts/hyundaiAccount";
 import RenaultClient from "../../../../../lib/clients/carMakers/renaultClient";
 import RenaultAccount from "../../../../../lib/clients/accounts/renaultAccount";
 import { CarMakerClientErrors } from "../../../../../lib/clients/carMakers/carMakerClient";
-import LoginDefaultView from "../../LoginDefaultView";
+import StepLayout from "../../../../kelec-model/view/StepLayout";
 import { CommonStyles } from "../../../../kelec-model/view/Styles";
 import { TfaOrigin } from "./Tfa/TfaView";
 
@@ -165,11 +165,12 @@ const CredentialsView = (props: Props) => {
     };
 
     return (
-        <LoginDefaultView
+        <StepLayout
                 testID='credentialsStepView'
-                title="addCar"
+                title={languageHandler.getTranslation("addCar")}
                 subtitle={languageHandler.getTranslation("loginWith") + " " + capitlizeFirstLetter(selectedCarMaker)}
-                helpText="loginToCarMakerAccountInOrderToFetchInfo"
+                helpText={languageHandler.getTranslation("loginToCarMakerAccountInOrderToFetchInfo")}
+                nextLabel={languageHandler.getTranslation("next")}
                 isLightLoading={isLightLoading}
                 onPrevious={() => {
                     navigation.goBack();
@@ -210,7 +211,7 @@ const CredentialsView = (props: Props) => {
                   />
 
                 </View>
-            </LoginDefaultView>
+            </StepLayout>
     );
 };
 
