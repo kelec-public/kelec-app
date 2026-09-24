@@ -2,6 +2,11 @@ import AppPreferences from "../../../lib/appPreferences/model/appPreferences";
 
 export type PreferencesPatch = Partial<Omit<AppPreferences, 'distanceUnits'>>;
 
+/** Préférences de type oui / non (interrupteurs). */
+export type BooleanPreference = {
+    [K in keyof PreferencesPatch]-?: NonNullable<PreferencesPatch[K]> extends boolean ? K : never
+}[keyof PreferencesPatch];
+
 /** Préférences lues par les widgets natifs de l'écran d'accueil (iOS et Android). */
 const WIDGET_FIELDS: (keyof PreferencesPatch)[] = ['displayMiles', 'convertToMiles'];
 

@@ -1,6 +1,6 @@
 import { useCallback, useContext, useState } from "react";
 import MainContext from "../../../lib/Contexts/MainContext";
-import { PreferencesPatch, usePreferences } from "../../kelec-preferences";
+import { BooleanPreference, usePreferences } from "../../kelec-preferences";
 import { ExternalLinks, openExternalLink } from "../services/externalLinks";
 import { syncWithAppleWatch } from "../services/appleWatchSync";
 import { exportWidgetLogs } from "../services/widgetLogsExport";
@@ -26,7 +26,7 @@ export function useSettingsController() {
         setIsTimezoneModalOpen(false);
     }, [update]);
 
-    const toggle = (field: keyof PreferencesPatch & keyof typeof preferences) =>
+    const toggle = (field: BooleanPreference) =>
         () => { update({ [field]: !preferences[field] }); };
 
     const sections: SettingSection[] = [
