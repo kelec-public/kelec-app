@@ -7,6 +7,7 @@ import createNativeStackNavigator from '../../../lib/graphics/navigation';
 import { NavigationContainer, NavigationIndependentTree, useTheme } from "@react-navigation/native";
 import ChargesHistoryView from "../../../packages/kelec-charge-history/views/ChargesHistoryView";
 import { ChargesHistoryProvider } from "../../../packages/kelec-charge-history/controllers/ChargesHistoryProvider";
+import { CHARGES_HISTORY_ROUTE } from "../../../packages/kelec-charge-history/routes";
 import { HvacProvider } from "../../../packages/kelec-hvac/controllers/HvacProvider";
 import SendCoffeeCard from "./CarView/Elements/SendCoffee";
 import FullScreenMapView from "./CarView/Elements/Map/FullScreenMapView";
@@ -28,7 +29,7 @@ export type CarsViewParamList = {
     DonationScreen: undefined;
     CarModelSelector: CarModelSelectorParamList;
     CarView: undefined;
-    ChargesView: undefined;
+    [CHARGES_HISTORY_ROUTE]: undefined;
     TfaView: {
       regToken: string;
       origin: TfaOrigin;
@@ -78,7 +79,7 @@ function CarsPageView(): React.JSX.Element {
                                       }} />
                                   }
                                 </Stack.Screen>
-                                <Stack.Screen name="ChargesView">
+                                <Stack.Screen name={CHARGES_HISTORY_ROUTE}>
                                   {props => <ChargesHistoryView {...props} />}
                                 </Stack.Screen>
                                 <Stack.Screen name="CarModelSelector">

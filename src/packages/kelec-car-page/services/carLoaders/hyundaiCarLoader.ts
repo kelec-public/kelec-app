@@ -1,5 +1,6 @@
 import { CarDataLoader, LoadContext, RemoteResult } from "../../types/carLoader";
 import { HyundaiCarLoaderDeps } from "../../types/carLoaderDeps";
+import { CarStatusCache } from "../carStatusCache";
 
 export class HyundaiCarLoader implements CarDataLoader {
     constructor(private readonly deps: HyundaiCarLoaderDeps) { }
@@ -9,7 +10,7 @@ export class HyundaiCarLoader implements CarDataLoader {
     }
 
     async loadFromCache({ handler }: LoadContext): Promise<void> {
-        const cached = await this.deps.storageHandler.getStoredApiData(this.vin);
+        const cached = await CarStatusCache.getHyundaiStatus(this.vin);
         if (cached) {
             handler.setApiData(cached);
         }
@@ -22,7 +23,7 @@ export class HyundaiCarLoader implements CarDataLoader {
         }
 
         handler.setApiData(data);
-        await this.deps.storageHandler.storeApiData(data, this.vin);
+        await CarStatusCache.saveHyundaiStatus(this.vin, data);
         notify();
         return { status: 'ok' };
     }

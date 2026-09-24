@@ -1,11 +1,7 @@
 import Account from "../../../../lib/clients/accounts/account";
-import { HyundaiStatus } from "../../../../lib/clients/carMakers/hyundaiClient";
-import { VinStorage } from "../../../kelec-storage/vinStorage";
+import { CarStatusCache } from "../../../kelec-car-page";
 import HvacStatus from "../../models/HvacStatus";
 import { CommandOnlyHvacSource } from "./commandOnlyHvacSource";
-
-/** Réponse de statut Hyundai, enregistrée par le car loader (`storageHandler.storeApiData`). */
-const CAR_STATUS_KEY = 'batteryStatus';
 
 /**
  * Hyundai ne fournit pas de statut de climatisation séparé : on lit `vehicleStatus.airCtrlOn`
@@ -18,7 +14,7 @@ export class HyundaiHvacSource extends CommandOnlyHvacSource {
     }
 
     async loadCachedStatus(): Promise<HvacStatus | null> {
-        const carStatus = await VinStorage.getJSON<HyundaiStatus>(this.vin, CAR_STATUS_KEY);
+        const carStatus = await CarStatusCache.getHyundaiStatus(this.vin);
         const airCtrlOn = carStatus?.apiData?.vehicleStatus?.airCtrlOn;
         return airCtrlOn === undefined ? null : new HvacStatus(airCtrlOn);
     }
