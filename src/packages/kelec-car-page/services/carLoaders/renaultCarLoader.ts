@@ -1,10 +1,8 @@
 import ApiHandler from "../../../../lib/clients/apiHandlers/apiHandler";
 import RenaultAccount from "../../../../lib/clients/accounts/renaultAccount";
 import { CarDataLoader, LoadContext, RemoteResult } from "../../types/carLoader";
-import ChargesRepository from "../../../kelec-charge-history/services/chargesRepository";
 import { getNativeBatteryStatus } from "../../../../lib/storage/sharedPlatformsData";
 import { CarMakerClientErrors } from "../../../../lib/clients/carMakers/carMakerClient";
-import Charge from "../../../kelec-charge-history/models/Charge";
 import { CarFetchStatus } from "../../../../lib/clients/accounts/account";
 import { RenaultCarLoaderDeps } from "../../types/carLoaderDeps";
 
@@ -73,11 +71,6 @@ export class RenaultCarLoader implements CarDataLoader {
                 if (cached) slot.apply(handler, cached);
             }),
         );
-
-        const charges = await ChargesRepository.getCharges(this.vin);
-        if (charges) {
-            handler.setChargesHistory?.({ hasError: false, apiData: charges });
-        }
     }
 
     /** Le widget natif peut avoir une donnée batterie plus fraîche que le cache JS. */
@@ -104,7 +97,7 @@ export class RenaultCarLoader implements CarDataLoader {
             return batteryResult;
         }
 
-        await Promise.all([this.loadSlots(ctx), this.loadCharges(ctx)]);
+        await this.loadSlots(ctx);
         return { status: 'ok' };
     }
 
@@ -136,28 +129,6 @@ export class RenaultCarLoader implements CarDataLoader {
                 await storageHandler.storeApiData(payload, this.vin, slot.storageKey);
             }),
         );
-        notify();
-    }
-
-    /** Historique de charge + sessions V2G : même store, donc séquentiel. */
-    private async loadCharges({ handler, notify }: LoadContext): Promise<void> {
-        const { account, storageHandler } = this.deps;
-        const fetched = await account.fetchChargesHistory(this.vin);
-        if (!fetched.hasError) {
-            const charges = Charge.fromJSONList(fetched.apiData);
-            const merged = await ChargesRepository.saveNewCharges(this.vin, charges);
-            handler.setChargesHistory?.({ hasError: false, apiData: merged });
-        }
-
-        const carType = await storageHandler.getCarType(this.vin);
-        if (carType?.getSupportsV2G()) {
-            const sessions = await account.fetchV2GSessions(this.vin);
-            if (sessions !== null) {
-                const converted = Charge.fromV2GSessions(sessions);
-                const merged = await ChargesRepository.saveNewCharges(this.vin, converted);
-                handler.setChargesHistory?.({ hasError: false, apiData: merged });
-            }
-        }
         notify();
     }
 }

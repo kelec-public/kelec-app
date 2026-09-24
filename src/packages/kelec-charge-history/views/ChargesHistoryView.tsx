@@ -8,7 +8,7 @@ import MainContext from "../../../lib/Contexts/MainContext";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import ChargesFiltersContext from "../controllers/ChargesFiltersContext";
 import { useChargesHistoryController } from "../controllers/useChargesHistoryController";
-import { ChargesHistoryParams } from "../types/navigation";
+import { useChargesHistory } from "../controllers/ChargesHistoryProvider";
 import ChargeMonthSection from "./ChargeMonthSection";
 import ChargesOptionsSheet from "./ChargesOptionsSheet";
 import ActiveFiltersRow from "./ActiveFiltersRow";
@@ -16,15 +16,14 @@ import ChargesFiltersView from "./filters/ChargesFiltersView";
 
 type Props = {
     readonly navigation: { goBack: () => void };
-    readonly route: { params: ChargesHistoryParams };
 }
 
-function ChargesHistoryView({ navigation, route }: Props): React.JSX.Element {
+function ChargesHistoryView({ navigation }: Props): React.JSX.Element {
     const isDarkMode = useColorScheme() === 'dark';
     const { languageHandler } = useContext(MainContext);
-    const { charges, carType } = route.params;
+    const { history } = useChargesHistory();
 
-    const controller = useChargesHistoryController(charges);
+    const controller = useChargesHistoryController(history);
     const { months } = controller;
 
     return (
@@ -75,7 +74,7 @@ function ChargesHistoryView({ navigation, route }: Props): React.JSX.Element {
                     data={months}
                     keyExtractor={(item) => item.monthYear}
                     renderItem={({ item: month }) => (
-                        <ChargeMonthSection carType={carType} month={month} isFirst={month.monthYear === months[0].monthYear} />
+                        <ChargeMonthSection month={month} isFirst={month.monthYear === months[0].monthYear} />
                     )}
                     onEndReached={controller.loadMoreMonths}
                     onEndReachedThreshold={0.5}

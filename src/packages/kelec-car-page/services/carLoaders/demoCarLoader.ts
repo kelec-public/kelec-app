@@ -1,6 +1,5 @@
 import { CarDataLoader, LoadContext, RemoteResult } from "../../types/carLoader";
 import { CarLoaderDeps } from "../../types/carLoaderDeps";
-import Charge from "../../../kelec-charge-history/models/Charge";
 
 const mockData = require('../../../../assets/car_data/mockDemoData.json');
 
@@ -11,10 +10,6 @@ export class DemoCarLoader implements CarDataLoader {
         handler.setApiData({ hasError: false, apiData: mockData.battery });
         handler.setCockpitStatus?.({ hasError: false, apiData: mockData.cockpit });
         handler.setLocationStatus?.({ hasError: false, apiData: mockData.map });
-        handler.setChargesHistory?.({
-            hasError: false,
-            apiData: Charge.fromJSONList(mockData.charges),
-        });
     }
 
     async loadFromNetwork(): Promise<RemoteResult> {

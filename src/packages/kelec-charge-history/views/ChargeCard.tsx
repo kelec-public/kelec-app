@@ -1,7 +1,6 @@
 import { Alert, DimensionValue, TouchableOpacity, View, useColorScheme, ScrollView } from "react-native";
 import Text from "../../../screen/Common/CustomText";
 import Charge from "../models/Charge";
-import CarType from "../../../lib/clients/cars/carTypes/carType";
 import { useContext, useState } from "react";
 import MainContext from "../../../lib/Contexts/MainContext";
 import { convertDateForChargeHistory, convertHoursForChargeHistory, formatNumberWithSpaces, getBlackColour, getDistance, getWhiteColour } from "../../../lib/graphics/utils";
@@ -13,10 +12,9 @@ import BottomSheet from "../../../screen/Common/bottomSheet/BottomSheet";
 
 type ChargeCardProps = {
     readonly charge: Charge;
-    readonly carType: CarType;
 }
 
-function ChargeCard({ charge, carType }: ChargeCardProps): React.JSX.Element {
+function ChargeCard({ charge }: ChargeCardProps): React.JSX.Element {
 
     const isDarkMode = useColorScheme() === 'dark';
     const theme = useTheme()
@@ -55,7 +53,6 @@ function ChargeCard({ charge, carType }: ChargeCardProps): React.JSX.Element {
                         <ChargeCard
                             key={subCharge.getStartDate().toISOString()}
                             charge={subCharge}
-                            carType={carType}
                         />
                     ))}
                 </ScrollView>

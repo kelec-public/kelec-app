@@ -192,3 +192,17 @@ test('test add new V2G charges', async () => {
 
 
 });
+test('should not fetch charges if battery fetch fails', async () => {
+    mockGetChargesHistory.mockClear();
+    mockGetBatteryStatus.mockResolvedValueOnce({
+        hasError: true,
+        errorMessage: 'error'
+    });
+    const { findByTestId } = render(<App />);
+
+    await findByTestId('carsPageView');
+    await waitFor(() => {
+        expect(mockGetBatteryStatus).toHaveBeenCalled();
+    });
+    expect(mockGetChargesHistory).not.toHaveBeenCalled();
+});

@@ -4,11 +4,10 @@ import { getBlackColour, getGrayBackgroundColour } from "../../../lib/graphics/u
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useContext } from "react";
 import MainContext from "../../../lib/Contexts/MainContext";
-import CarViewContext from "../../../lib/Contexts/CarViewContext";
-import { ChargesHistoryParams } from "../types/navigation";
+import { useChargesHistory } from "../controllers/ChargesHistoryProvider";
 
 type Props = {
-    readonly navigation: { navigate: (route: 'ChargesView', params: ChargesHistoryParams) => void };
+    readonly navigation: { navigate: (route: 'ChargesView') => void };
 }
 
 /** Carte de la page voiture : totaux de l'historique, ouvre l'écran d'historique. */
@@ -16,14 +15,12 @@ function ChargesSummaryCard({ navigation }: Props): React.JSX.Element {
     const isDarkMode = useColorScheme() === 'dark';
 
     const { languageHandler } = useContext(MainContext);
-    const { apiHandler, carType } = useContext(CarViewContext);
-
-    const history = apiHandler.getChargesHistory();
+    const { history } = useChargesHistory();
     const [hours, minutes] = history.getTotalTimeCharging();
 
     return (
         <TouchableOpacity onPress={() => {
-            navigation.navigate('ChargesView', { charges: history, carType: carType });
+            navigation.navigate('ChargesView');
         }}>
             <View style={[styles.ChargesCard, { backgroundColor: getGrayBackgroundColour(isDarkMode) }]} testID="ChargesCard">
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>

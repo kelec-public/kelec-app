@@ -3,7 +3,6 @@ import AppPreferences from "../../appPreferences/model/appPreferences";
 import { CarFetchStatus } from "../accounts/account";
 import { ChargeSettingsStatus } from "../carMakers/renaultClient";
 import CarType from "../cars/carTypes/carType";
-import ChargesHistory from "../../../packages/kelec-charge-history/models/ChargesHistory";
 
 interface ApiHandler {
     getCarRange(appPreferences: AppPreferences): number;
@@ -13,10 +12,8 @@ interface ApiHandler {
     getAvailableEnergy(carType: CarType): number;
     setCockpitStatus?(carFetch: CarFetchStatus): void;
     setLocationStatus?(carFetch: CarFetchStatus): void;
-    setChargesHistory?(carFetch: CarFetchStatus): void;
     setHVACStatus?(carFetch: CarFetchStatus): void;
     getIsHVACRunning(): boolean;
-    getChargesHistory(): ChargesHistory;
     getLastUpdateDate(): Date;
     hasError(): boolean;
     getIsCarPlugged(): boolean;
@@ -26,7 +23,6 @@ interface ApiHandler {
     getMapLatitude(): number;
     getLastMapUpdateDate(): Date;
     shouldDisplayHVACCard(): boolean;
-    shouldDisplayChargesCard(): boolean;
     getRemainingMinutes(): number;
     getEndChargeHour(): Date;
     getChargeText(): string;

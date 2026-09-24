@@ -10,6 +10,7 @@ import FullScreenLoading from "../../../../FullScreenLoading";
 import MapCard from "./Elements/MapCard";
 import HVACCard from "./Elements/HVACCard";
 import ChargesSummaryCard from "../../../../packages/kelec-charge-history/views/ChargesSummaryCard";
+import { useChargesHistory } from "../../../../packages/kelec-charge-history/controllers/ChargesHistoryProvider";
 import BatteryCard from "./Elements/BatteryCard";
 import PagerView from "react-native-pager-view";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -55,11 +56,15 @@ function CarView({ carModel, navigation, account, pagerRef, tfaInProgress }: Car
         [languageHandler],
     );
 
+    // L'historique de charge n'est synchronisé qu'une fois la batterie récupérée.
+    const { history: chargesHistory, sync: syncCharges } = useChargesHistory();
+
     const { status, errorMessage, apiHandler, revision, isRefreshing, refresh } = useCarData({
         carModel,
         account,
         onTfaRequired,
         onSoftError,
+        onNetworkLoaded: syncCharges,
     });
 
     const carViewContextValues = useMemo(
@@ -104,7 +109,7 @@ function CarView({ carModel, navigation, account, pagerRef, tfaInProgress }: Car
                             {apiHandler.shouldDisplayHVACCard() && (
                                 <HVACCard />
                             )}
-                            {apiHandler.shouldDisplayChargesCard() && (
+                            {chargesHistory.shouldDisplayChargesCard() && (
                                 <ChargesSummaryCard navigation={navigation} />
                             )}
                             {apiHandler.shouldDisplayMap() && (
