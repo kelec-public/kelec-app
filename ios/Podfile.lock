@@ -1350,8 +1350,51 @@ PODS:
     - react-native-config/App (= 1.5.10)
   - react-native-config/App (1.5.10):
     - React-Core
-  - react-native-maps (1.18.0):
+  - react-native-maps (1.29.8):
+    - react-native-maps/Maps (= 1.29.8)
+  - react-native-maps/Generated (1.29.8):
+    - hermes-engine
+    - RCTRequired
+    - RCTTypeSafety
     - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - ReactNativeDependencies
+    - Yoga
+  - react-native-maps/Maps (1.29.8):
+    - hermes-engine
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - react-native-maps/Generated
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - ReactNativeDependencies
+    - Yoga
   - react-native-pager-view (8.0.2):
     - hermes-engine
     - RCTRequired
@@ -2228,7 +2271,7 @@ SPEC CHECKSUMS:
   React-microtasksnativemodule: e446366818d636e3e9525518e23b1f06c12db658
   React-mutationobservernativemodule: 91e1960597f1c6df3a58749d25c1d3821ab9fc37
   react-native-config: eae2b928a919c9743d710bbff3b7592882268fe8
-  react-native-maps: 3b0c8378ff774053bdd8954c820e987fdd7b4d72
+  react-native-maps: 040d26d0a94b2e466ec4ce5ee176d538f88d1812
   react-native-pager-view: 165ed34bd1a23753ab7cf0fb5e668cf1f91cd36c
   react-native-safe-area-context: 0d652bc91c2093b0da554b6e32f79f9a727da3a4
   React-NativeModulesApple: df149b8bb19831835c622e8d7b8d4b6fc71e73b1

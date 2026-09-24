@@ -74,13 +74,15 @@ Tous les éléments blancs posés sur les cartes (météo, retour, plein écran,
 Un rond avec la photo de la voiture (`useCarImage`, kelec-garage) et une pointe en dessous. Si la voiture n'a pas de photo, une icône de voiture est affichée à la place.
 Tailles : `small` (mini-carte) et `large` (plein écran).
 
-Points importants, parce que l'ancien pin était coupé sur Android :
-- **Android dessine un marqueur personnalisé en image, à la taille exacte de sa vue** : tout ce qui dépasse est coupé.
-  - **Pas de rotation** : l'ancien pin était un carré tourné de 45°, qui débordait d'environ 40 %. La pointe est maintenant un triangle en bordures, dans la vue.
-  - **Pas d'`elevation`** : l'ombre déborde. L'ombre n'est appliquée que sur iOS (`shadow*`), avec une petite marge autour du pin.
-  - Le rond a deux couches : l'extérieure porte l'ombre, l'intérieure (`overflow: 'hidden'`) découpe la photo. Sur iOS, `overflow: 'hidden'` masquerait aussi l'ombre.
-- **`tracksViewChanges`** reste actif jusqu'au chargement de la photo (`onLoad` / `onError`, avec un filet de sécurité de 3 s), puis passe à `false`.
-  Sinon Android fige le marqueur avant l'arrivée de l'image, ou le redessine en continu, ce qui est coûteux.
+Points importants pour Android (`react-native-maps` y dessine le marqueur en image, en dehors de l'affichage normal) :
+- **`react-native-maps` ≥ 1.29.5** : les versions précédentes créaient une image trop petite, et seul le coin haut-gauche du pin était affiché
+  (changelog 1.29.5 : *« custom Marker views clipped due to undersized bitmap »*). Le projet utilise la 1.29.8.
+- **La photo doit être un enfant direct du `Marker`.** `react-native-maps` ne déclenche le chargement d'une `<Image>` sur Android
+  (`hackToHandleDraweeLifecycle`, qui appelle `onAttachedToWindow` puis redessine le marqueur quand l'image est affichée) que pour ses **enfants directs**.
+  Imbriquée dans d'autres vues, la photo n'est jamais chargée : ni `onLoad` ni `onError`, et le rond reste vide.
+  D'où la structure : 1er enfant = le pin (rond + pointe), 2e enfant = la photo en `position: 'absolute'` dans le rond, rendue ronde par son propre `borderRadius`.
+- **Pas de rotation ni d'`elevation`** : elles débordent de la vue et sont coupées. La pointe est un triangle en bordures, et l'ombre n'est appliquée que sur iOS.
+- **`tracksViewChanges`** reste actif jusqu'au chargement de la photo, plus 300 ms le temps du dernier rendu (avec un filet de sécurité de 3 s), puis passe à `false`.
 - **La pointe est sur la position** : `anchor={{ x: 0.5, y: 1 }}` (Android) et `centerOffset` = -(hauteur totale / 2) (iOS).
 
 ## Stockage
@@ -115,6 +117,6 @@ Points importants, parce que l'ancien pin était coupé sur Android :
 
 - `__tests__/packages/kelec-weather/weather.test.tsx` : construction du modèle, et un seul état affiché par la pastille (pas de « ° » pendant le chargement ou en cas d'erreur).
 - `__tests__/packages/kelec-weather/useWeather.test.ts` (avec `fetch` simulé) : aucun appel sans position, chargement, erreur de l'API, erreur réseau, rechargement quand la position change.
-- `__tests__/packages/kelec-map/CarMarker.test.tsx` : placement de la pointe, icône sans photo, `tracksViewChanges` jusqu'au chargement (et filet de sécurité), aucune rotation.
+- `__tests__/packages/kelec-map/CarMarker.test.tsx` : placement de la pointe, icône sans photo, `tracksViewChanges` jusqu'au chargement (+ 300 ms, et filet de sécurité), aucune rotation, photo en enfant direct du `Marker` et affichée aussi sur Android.
 - `__tests__/packages/kelec-map/location.test.ts` : `parseHyundaiTime`, `locationFromRenault`, source Renault (cache, erreur), source Hyundai.
 - Tests d'intégration existants, inchangés : `__tests__/CarView/MapCard.renault.test.tsx` et `MapCard.hyundai.test.tsx`.

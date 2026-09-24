@@ -9,9 +9,14 @@ import { CarLocation } from "../models/CarLocation";
 const SIZES = { small: 44, large: 72 };
 /** Hauteur de la pointe, proportionnelle au rond. */
 const POINTER_RATIO = 0.3;
+/** Taille de la photo dans le rond. */
+const PHOTO_RATIO = 0.85;
 /** Marge autour du pin : Android dessine le marqueur en image à la taille de la vue, tout ce qui dépasse est coupé. */
 const OUTER_PADDING = 4;
+const BORDER = 2;
 const READY_TIMEOUT_MS = 3000;
+/** Délai après le chargement de la photo avant de figer le marqueur : laisse le temps au dernier rendu natif. */
+const FREEZE_DELAY_MS = 300;
 
 type Props = {
     readonly location: CarLocation;
@@ -24,22 +29,36 @@ type Props = {
 
 /**
  * Pin de la voiture : un rond avec la photo de la voiture et une pointe en dessous, posée sur la position.
- * Pas de rotation ni d'`elevation` (ils débordaient de la vue et étaient coupés sur Android).
+ *
+ * Contraintes Android (react-native-maps dessine le marqueur en image, hors de l'affichage normal) :
+ * - la photo doit être un **enfant direct** du Marker : react-native-maps ne déclenche le chargement
+ *   d'une <Image> (et le redessin une fois affichée) que pour ses enfants directs. Imbriquée, elle ne charge jamais ;
+ * - pas de rotation ni d'`elevation` : elles débordent de la vue et sont coupées.
  */
 function CarMarker({ location, image, title, description, size = 'small' }: Props): React.JSX.Element {
     const isDarkMode = useColorScheme() === 'dark';
     const diameter = SIZES[size];
     const pointerHeight = Math.round(diameter * POINTER_RATIO);
     const totalHeight = diameter + pointerHeight + 2 * OUTER_PADDING;
+    const photoSize = Math.round(diameter * PHOTO_RATIO);
+    const photoOffset = OUTER_PADDING + (diameter - photoSize) / 2;
 
-    // Android fige le marqueur en image : on le laisse se redessiner jusqu'au chargement de la photo.
+    // Le marqueur est figé en image : on le laisse se redessiner jusqu'au chargement de la photo.
     const [isReady, setIsReady] = useState(false);
+    const [isImageLoaded, setIsImageLoaded] = useState(false);
     useEffect(() => {
+        setIsImageLoaded(false);
         setIsReady(image === '');
         // filet de sécurité si l'image ne signale jamais son chargement
         const timer = setTimeout(() => setIsReady(true), READY_TIMEOUT_MS);
         return () => clearTimeout(timer);
     }, [image]);
+    useEffect(() => {
+        if (!isImageLoaded) return;
+        // onLoad = image décodée, pas encore dessinée : on attend un peu avant de figer
+        const timer = setTimeout(() => setIsReady(true), FREEZE_DELAY_MS);
+        return () => clearTimeout(timer);
+    }, [isImageLoaded]);
 
     const background = getWhiteColour(isDarkMode);
 
@@ -53,13 +72,8 @@ function CarMarker({ location, image, title, description, size = 'small' }: Prop
             anchor={{ x: 0.5, y: 1 }}
             centerOffset={{ x: 0, y: -totalHeight / 2 }}
         >
-            {/* collapsable={false} : empêche la nouvelle architecture d'aplatir cette vue, ce qui fausse
-                la taille de l'image du marqueur sur Android (seul le coin haut-gauche était dessiné). */}
-            <View
-                testID="carMarker"
-                collapsable={false}
-                style={[styles.container, { width: diameter + 2 * OUTER_PADDING, height: totalHeight }]}
-            >
+            {/* 1er enfant : le pin (rond + pointe), qui donne sa taille au marqueur */}
+            <View testID="carMarker" style={[styles.container, { width: diameter + 2 * OUTER_PADDING, height: totalHeight }]}>
                 <View
                     style={[styles.circle, {
                         width: diameter,
@@ -68,20 +82,9 @@ function CarMarker({ location, image, title, description, size = 'small' }: Prop
                         backgroundColor: background,
                     }]}
                 >
-                    <View style={[styles.clip, { borderRadius: diameter / 2 }]}>
-                        {image !== '' ? (
-                            <Image
-                                testID="carMarkerImage"
-                                source={{ uri: toImageUri(image) }}
-                                style={{ width: diameter * 0.85, height: diameter * 0.85 }}
-                                resizeMode="contain"
-                                onLoad={() => setIsReady(true)}
-                                onError={() => setIsReady(true)}
-                            />
-                        ) : (
-                            <Icon name="directions-car" size={diameter * 0.5} color={getBlackColour(isDarkMode)} />
-                        )}
-                    </View>
+                    {image === '' && (
+                        <Icon name="directions-car" size={diameter * 0.5} color={getBlackColour(isDarkMode)} />
+                    )}
                 </View>
                 <View
                     style={[styles.pointer, {
@@ -92,6 +95,24 @@ function CarMarker({ location, image, title, description, size = 'small' }: Prop
                     }]}
                 />
             </View>
+            {/* 2e enfant, direct : la photo, posée dans le rond (voir la contrainte Android ci-dessus) */}
+            {image !== '' && (
+                <Image
+                    testID="carMarkerImage"
+                    source={{ uri: toImageUri(image) }}
+                    style={[styles.photo, {
+                        top: photoOffset,
+                        left: photoOffset,
+                        width: photoSize,
+                        height: photoSize,
+                        borderRadius: photoSize / 2,
+                        backgroundColor: background,
+                    }]}
+                    resizeMode="contain"
+                    onLoad={() => setIsImageLoaded(true)}
+                    onError={() => setIsReady(true)}
+                />
+            )}
         </Marker>
     );
 }
@@ -102,7 +123,9 @@ const styles = StyleSheet.create({
         padding: OUTER_PADDING,
     },
     circle: {
-        borderWidth: 2,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: BORDER,
         borderColor: 'rgba(0,0,0,0.15)',
         // ombre iOS seulement : sur Android, elevation déborde de la vue et serait coupée
         ...Platform.select({
@@ -114,12 +137,8 @@ const styles = StyleSheet.create({
             },
         }),
     },
-    clip: {
-        // couche séparée : overflow hidden sur le rond masquerait aussi son ombre (iOS)
-        flex: 1,
-        overflow: 'hidden',
-        justifyContent: 'center',
-        alignItems: 'center',
+    photo: {
+        position: 'absolute',
     },
     pointer: {
         width: 0,
