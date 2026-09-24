@@ -12,10 +12,21 @@ import { AccountRepository } from "./accountRepository";
 export class GarageService {
     constructor(private readonly user: UserAccount) { }
 
-    /** Ajoute une voiture (compte avec sa voiture) ; elle devient la voiture par défaut s'il n'y en avait pas. */
-    async addCar(account: Account): Promise<void> {
+    hasCar(vin: string): boolean {
+        return this.user.getCars().some(account => account.getCar()?.getVin() === vin);
+    }
+
+    /**
+     * Ajoute une voiture (compte avec sa voiture) ; elle devient la voiture par défaut s'il n'y en avait pas.
+     * Un VIN est unique dans l'app : renvoie false (et n'ajoute rien) si la voiture est déjà dans le garage.
+     */
+    async addCar(account: Account): Promise<boolean> {
+        const vin = account.getCar()?.getVin();
+        if (vin === undefined || this.hasCar(vin)) return false;
+
         this.user.addCar(account);
         await this.save();
+        return true;
     }
 
     async selectDefaultCar(vin: string): Promise<void> {

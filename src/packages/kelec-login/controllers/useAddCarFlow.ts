@@ -21,6 +21,7 @@ export function useAddCarFlow() {
         if (image) await CarImageRepository.save(selectedCar.getVin(), image);
 
         account.setCar(selectedCar);
+        // false si le VIN est déjà dans le garage (il n'est de toute façon pas proposé à l'étape 3)
         await new GarageService(currentUser).addCar(account);
         reloadUser();
     };

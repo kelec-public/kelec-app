@@ -1,5 +1,8 @@
 import { useContext, useEffect } from "react";
 import { Alert, Keyboard } from "react-native";
+import Text from "../../../../../screen/Common/CustomText";
+import { textBody } from "../../../../kelec-model/view/Titles";
+import { GarageService } from "../../../../kelec-garage";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import MainContext from "../../../../../lib/Contexts/MainContext";
 import CarModel from "../../../../../lib/clients/cars/carModel";
@@ -18,8 +21,9 @@ type Props = NativeStackScreenProps<LoginEntryParamList, 'SelectACarView'> & {
 
 /** Étape 3 : choix de la voiture parmi celles du compte. */
 const SelectACarView = ({ navigation, route, selectedCar, setSelectedCar }: Props) => {
-    const { languageHandler } = useContext(MainContext);
-    const vehicles = useVehicleList(route.params.account);
+    const { languageHandler, currentUser } = useContext(MainContext);
+    const garage = new GarageService(currentUser);
+    const vehicles = useVehicleList(route.params.account, vin => garage.hasCar(vin));
 
     useEffect(() => {
         // on ferme le clavier s'il est resté ouvert après le TFA
@@ -49,8 +53,13 @@ const SelectACarView = ({ navigation, route, selectedCar, setSelectedCar }: Prop
         >
             {vehicles.status === 'error' && <FullScreenError message="impossibleToConnectToServer" />}
             {vehicles.status === 'loading' && <FullScreenLoading />}
-            {vehicles.status === 'loaded' && (
+            {vehicles.status === 'loaded' && vehicles.cars.length > 0 && (
                 <CarSelector selectedCar={selectedCar} setSelectedCar={setSelectedCar} cars={vehicles.cars} />
+            )}
+            {vehicles.status === 'loaded' && vehicles.cars.length === 0 && (
+                <Text testID="noCarToAdd" style={textBody}>
+                    {languageHandler.getTranslation("noVehicleToAdd")}
+                </Text>
             )}
         </StepLayout>
     );

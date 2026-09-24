@@ -56,9 +56,13 @@ avant le choix de la source, quel que soit le constructeur sélectionné. Selon 
 
 Avant, les images de **toutes** les voitures listées étaient enregistrées dès l'affichage de la liste, y compris celles qu'on n'ajoutait pas.
 
-## À faire plus tard
+## Un VIN ne peut être ajouté qu'une fois
 
-- **VIN déjà présent** : l'ajout ne vérifie pas encore qu'une voiture avec le même VIN n'existe pas déjà (décision repoussée).
+Un VIN est unique dans toute l'app (voir `CLAUDE.md`) :
+- **étape 3** : `useVehicleList` retire de la liste les voitures déjà dans le garage (`GarageService.hasCar`) ;
+- si la liste est vide (toutes les voitures déjà ajoutées, ou compte sans voiture), un message générique s'affiche :
+  clé `noVehicleToAdd`, `testID="noCarToAdd"` ;
+- **garde-fou** : `GarageService.addCar` renvoie `false` et n'ajoute rien si le VIN est déjà présent.
 
 ## Historique du refactor
 
@@ -76,5 +80,7 @@ Avant, les images de **toutes** les voitures listées étaient enregistrées dè
 - `__tests__/packages/kelec-login/loginServices.test.ts` : constructeurs proposés, identifiants démo, choix de la source,
   messages d'erreur, choix de l'image Renault, connexion Renault (succès, TFA, erreur), voitures démo.
 - `__tests__/packages/kelec-login/vehicleImages.test.ts` : cache des images, sans mettre les échecs en cache.
+- `__tests__/packages/kelec-login/SelectACarView.test.tsx` : voitures déjà ajoutées masquées, message quand il ne reste rien à ajouter.
+- `__tests__/packages/kelec-garage/garage.test.ts` : `addCar` refuse un VIN déjà présent.
 - Tests d'intégration : `__tests__/AddView/*` (mis à jour : les images ne sont plus enregistrées à l'affichage de la liste,
   seule celle de la voiture ajoutée l'est), `__tests__/Login/*`, `CarView/DemoAccount.test.tsx`.

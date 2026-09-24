@@ -26,7 +26,22 @@ afterEach(() => {
     jest.restoreAllMocks();
 });
 
+const storageHandlerSaveCalled = () => saveAccount.mock.calls.length > 0;
+
 describe('GarageService', () => {
+    test('addCar ajoute une nouvelle voiture et enregistre', async () => {
+        expect(await garage.addCar(car('VIN4', 'd@x.fr'))).toBe(true);
+        expect(vins(user)).toEqual(['VIN1', 'VIN2', 'VIN3', 'VIN4']);
+        expect(storageHandlerSaveCalled()).toBe(true);
+    });
+
+    test('addCar refuse un VIN déjà présent (un VIN est unique dans l\'app)', async () => {
+        expect(garage.hasCar('VIN2')).toBe(true);
+        expect(await garage.addCar(car('VIN2', 'autre@x.fr'))).toBe(false);
+        expect(vins(user)).toEqual(['VIN1', 'VIN2', 'VIN3']);
+        expect(storageHandlerSaveCalled()).toBe(false);
+    });
+
     test('selectDefaultCar change la voiture par défaut et enregistre', async () => {
         await garage.selectDefaultCar('VIN2');
         expect(user.getSelectedCar()).toBe('VIN2');
