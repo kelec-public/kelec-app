@@ -8,7 +8,7 @@ export const CarTypeRepository = {
     /** null si aucun modèle n'est enregistré, ou si l'entrée est incomplète (sans batterie). */
     async get(vin: string): Promise<CarType | null> {
         const stored = await VinStorage.getJSON<CarTypeInterface>(vin, KEY);
-        if (stored === null || stored.battery == undefined) return null;
+        if (!stored?.battery) return null;
         return new CarType(stored);
     },
 
