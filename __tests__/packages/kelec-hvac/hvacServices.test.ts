@@ -3,6 +3,7 @@ import HvacStatus from "../../../src/packages/kelec-hvac/models/HvacStatus";
 import { getTemperatureLabel, stepTemperature } from "../../../src/packages/kelec-hvac/models/Temperature";
 import { TemperaturePreferences } from "../../../src/packages/kelec-hvac/services/temperaturePreferences";
 import { RenaultHvacSource } from "../../../src/packages/kelec-hvac/services/sources/renaultHvacSource";
+import { HyundaiHvacSource } from "../../../src/packages/kelec-hvac/services/sources/hyundaiHvacSource";
 import Account, { CarMaker } from "../../../src/lib/clients/accounts/account";
 
 beforeEach(async () => {
@@ -67,5 +68,25 @@ describe('RenaultHvacSource', () => {
 
         expect(await source.syncStatus()).toBeNull();
         expect(await source.loadCachedStatus()).toBeNull();
+    });
+});
+
+describe('HyundaiHvacSource', () => {
+    const source = new HyundaiHvacSource(new Account('email', 'password', CarMaker.HYUNDAI), 'VIN');
+    const storeCarStatus = (airCtrlOn: boolean) => AsyncStorage.setItem('VIN/batteryStatus', JSON.stringify({
+        hasError: false,
+        apiData: { vehicleStatus: { airCtrlOn } },
+    }));
+
+    test('null tant que le statut de la voiture n\'a pas été enregistré', async () => {
+        expect(await source.syncStatus()).toBeNull();
+    });
+
+    test('lit airCtrlOn dans le statut de la voiture, sans SOC minimum', async () => {
+        await storeCarStatus(true);
+        expect(await source.syncStatus()).toEqual(new HvacStatus(true, null));
+
+        await storeCarStatus(false);
+        expect(await source.loadCachedStatus()).toEqual(new HvacStatus(false, null));
     });
 });
