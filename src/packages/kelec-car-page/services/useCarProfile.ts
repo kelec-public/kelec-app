@@ -1,8 +1,7 @@
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import CarModel from "../../../lib/clients/cars/carModel";
-import MainContext from "../../../lib/Contexts/MainContext";
 import CarType from "../../../lib/clients/cars/carTypes/carType";
-import { CarImageRepository } from "../../kelec-garage";
+import { CarImageRepository, CarTypeRepository } from "../../kelec-garage";
 
 const EMPTY_CAR_TYPE = new CarType({
     brand: { name: '', display_name: '' },
@@ -12,7 +11,6 @@ const EMPTY_CAR_TYPE = new CarType({
 });
 
 export function useCarProfile(carModel: CarModel) {
-    const { storageHandler } = useContext(MainContext);
     const [image, setImage] = useState<string>('');
     const [carType, setCarType] = useState<CarType>(EMPTY_CAR_TYPE);
 
@@ -21,12 +19,12 @@ export function useCarProfile(carModel: CarModel) {
 
         const [storedImage, storedCarType] = await Promise.all([
             CarImageRepository.get(vin),
-            storageHandler.getCarType(vin),
+            CarTypeRepository.get(vin),
         ]);
 
         if (storedImage) setImage(storedImage);
         if (storedCarType) setCarType(storedCarType);
-    }, [carModel, storageHandler]);
+    }, [carModel]);
 
     useEffect(() => {
         reload();

@@ -1,22 +1,16 @@
 import { NativeModules, Platform } from "react-native";
 import * as Watch from 'react-native-watch-connectivity';
-import UserAccount from "../clients/accounts/userAccount";
+import UserAccount, { UserAccountInterface } from "../clients/accounts/userAccount";
 import AppPreferences from "../appPreferences/model/appPreferences";
 import { GigyaTokenFunctionResponse } from "../clients/carMakers/renaultClient";
 const { RNSharedWidget } = NativeModules;
 const SharedStorage = NativeModules.SharedStorage;
 
-const saveNativeAccount = async (account: UserAccount | null): Promise<void> => {
-    //set password crypted
-    account?.getCars().forEach(async car => {
-        const password = car.getPassword();
-        if (password) {
-            await setNativeCryptedData(car.getCar()?.getVin() + '_password', password);
-            // remove password from clear storage
-            car.password = '';
-        }
-    });
-
+/**
+ * Compte partagé avec les widgets (stockage NON chiffré) : doit être passé sans mot de passe,
+ * voir AccountRepository.save (kelec-garage). null à la déconnexion.
+ */
+const saveNativeAccount = async (account: UserAccountInterface | null): Promise<void> => {
     if (Platform.OS === 'ios') {
         const setMethod = RNSharedWidget?.setData;
         if (setMethod != undefined)

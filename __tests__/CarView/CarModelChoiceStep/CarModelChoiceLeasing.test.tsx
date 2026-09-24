@@ -4,7 +4,7 @@ import HyundaiCar from "../../../src/lib/clients/cars/hyundaiCar";
 import Account, { CarMaker } from "../../../src/lib/clients/accounts/account";
 import UserAccount from "../../../src/lib/clients/accounts/userAccount";
 import CarType, { CarTypeInterface } from "../../../src/lib/clients/cars/carTypes/carType";
-import StorageHandler from "../../../src/lib/storage/storageHandler";
+import { CarTypeRepository } from "../../../src/packages/kelec-garage";
 import App from "../../../App";
 import { render, waitFor, screen, userEvent, fireEventAsync } from "@testing-library/react-native";
 
@@ -95,8 +95,7 @@ test('should insert leasing data', async () => {
         chargingLimit: 80
     }
     const carType = new CarType(carTypeInterface);
-    const storageHandler = new StorageHandler();
-    await storageHandler.setCarType("vin1", carType);
+    await CarTypeRepository.save("vin1", carType);
 
     const user = userEvent.setup();
     render(<App />);
@@ -194,7 +193,7 @@ test('should insert leasing data', async () => {
         expect(screen.getByTestId('summaryCardLeasingMileageUnder')).toBeDefined();
     });
 
-    const carTypeFromStorage = await storageHandler.getCarType("vin1");
+    const carTypeFromStorage = await CarTypeRepository.get("vin1");
     expect(carTypeFromStorage!.getLeasingData()).toBeDefined();
     expect(carTypeFromStorage!.getLeasingData()?.startDate).toBe(startDate.toISOString());
     expect(carTypeFromStorage!.getLeasingData()?.endDate).toBe(endDate.toISOString());
@@ -290,8 +289,7 @@ test('should be over the leasing mileage', async () => {
         }
     }
     const carType = new CarType(carTypeInterface);
-    const storageHandler = new StorageHandler();
-    await storageHandler.setCarType("vin1", carType);
+    await CarTypeRepository.save("vin1", carType);
 
     render(<App />);
     mockGetCarStatus.mockResolvedValueOnce({
@@ -330,8 +328,7 @@ test('should be over with end of leasing in the past', async () => {
         }
     }
     const carType = new CarType(carTypeInterface);
-    const storageHandler = new StorageHandler();
-    await storageHandler.setCarType("vin1", carType);
+    await CarTypeRepository.save("vin1", carType);
 
     const { getByTestId, getByText } = render(<App />);
     mockGetCarStatus.mockResolvedValueOnce({
@@ -371,8 +368,7 @@ test('should be under with start of leasing in the future', async () => {
         }
     }
     const carType = new CarType(carTypeInterface);
-    const storageHandler = new StorageHandler();
-    await storageHandler.setCarType("vin1", carType);
+    await CarTypeRepository.save("vin1", carType);
 
     const { getByTestId } = render(<App />);
     mockGetCarStatus.mockResolvedValueOnce({

@@ -237,7 +237,11 @@ test('Should add A Hyundai car', async () => {
         ]
     });
 
-    expect(mockSaveNativeAccount).toHaveBeenCalledTimes(2);
+    // 1 seul enregistrement : le mot de passe est écrit dans le stockage chiffré dès l'ajout,
+    // donc le rechargement du compte n'a plus besoin de le migrer (avant : 2).
+    expect(mockSaveNativeAccount).toHaveBeenCalledTimes(1);
+    expect(await AsyncStorage.getItem('VIN1_password')).toBe('password');
+    expect(mockSaveNativeAccount.mock.calls[0][0].cars[0].password).toBe('');
     expect(mockSaveNativeImage).toHaveBeenCalledTimes(3);
 });
 

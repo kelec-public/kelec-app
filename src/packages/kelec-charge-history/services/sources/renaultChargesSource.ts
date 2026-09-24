@@ -1,5 +1,5 @@
 import Account from "../../../../lib/clients/accounts/account";
-import StorageHandler from "../../../../lib/storage/storageHandler";
+import { CarTypeRepository } from "../../../kelec-garage";
 import Charge from "../../models/Charge";
 import { ChargesSource } from "../../types/chargesSource";
 import ChargesRepository from "../chargesRepository";
@@ -8,7 +8,6 @@ export class RenaultChargesSource implements ChargesSource {
     constructor(
         private readonly account: Account,
         private readonly vin: string,
-        private readonly storageHandler: StorageHandler,
     ) { }
 
     loadCached(): Promise<Charge[] | null> {
@@ -24,7 +23,7 @@ export class RenaultChargesSource implements ChargesSource {
             charges = await ChargesRepository.saveNewCharges(this.vin, Charge.fromJSONList(fetched.apiData));
         }
 
-        const carType = await this.storageHandler.getCarType(this.vin);
+        const carType = await CarTypeRepository.get(this.vin);
         if (carType?.getSupportsV2G()) {
             const sessions = await this.account.fetchV2GSessions(this.vin);
             if (sessions !== null) {

@@ -6,7 +6,7 @@ import UserAccount from "../../src/lib/clients/accounts/userAccount";
 import App from "../../App";
 import { render, waitFor, screen, userEvent, fireEvent } from "@testing-library/react-native";
 import CarType, { CarTypeInterface } from "../../src/lib/clients/cars/carTypes/carType";
-import StorageHandler from "../../src/lib/storage/storageHandler";
+import { CarTypeRepository } from "../../src/packages/kelec-garage";
 import { Linking } from "react-native";
 
 beforeEach(async () => {
@@ -70,8 +70,7 @@ jest.mock('../../src/lib/clients/kelec-api/kelecApiHandler', () => {
 
 
 test('should open the car model choice screen without filled values', async () => {
-    const storageHandler = new StorageHandler();
-    const data = await storageHandler.getCarType("vin1");
+    const data = await CarTypeRepository.get("vin1");
     expect(data).toBeNull();
 
     const user = userEvent.setup();
@@ -120,8 +119,7 @@ test('should open the car model choice screen with filled values', async () => {
         chargingLimit: 80
     }
     const carType = new CarType(carTypeInterface);
-    const storageHandler = new StorageHandler();
-    await storageHandler.setCarType("vin1", carType);
+    await CarTypeRepository.save("vin1", carType);
 
     const user = userEvent.setup();
     render(<App />);
@@ -181,7 +179,7 @@ test('should open the car model choice screen with filled values', async () => {
         expect(() => screen.getByTestId('carModelChoiceStep')).toThrow();
     });
 
-    const data = await storageHandler.getCarType("vin1");
+    const data = await CarTypeRepository.get("vin1");
     expect(data).not.toBeNull();
     expect(data?.getBattery().size).toBe(60);
     expect(data?.getBattery().max_ac_power).toBe(22);
@@ -259,7 +257,7 @@ test('should open the car model choice screen with filled values', async () => {
         expect(() => screen.getByTestId('carModelChoiceStep')).toThrow();
     });
 
-    const data2 = await storageHandler.getCarType("vin1");
+    const data2 = await CarTypeRepository.get("vin1");
     expect(data2).not.toBeNull();
     expect(data2?.getChargingLimit()).toBe(85);
 });
@@ -283,8 +281,7 @@ test('charging limit slider should not be displayed with hyundai cars', async ()
         chargingLimit: 80
     }
     const carType = new CarType(carTypeInterface);
-    const storageHandler = new StorageHandler();
-    await storageHandler.setCarType("vin1", carType);
+    await CarTypeRepository.save("vin1", carType);
 
     const user = userEvent.setup();
     render(<App />);
@@ -365,8 +362,7 @@ test('should open mail when car is not listed', async () => {
 });
 
 test('should display errors when confirming without filling the values', async () => {
-    const storageHandler = new StorageHandler();
-    const data = await storageHandler.getCarType("vin1");
+    const data = await CarTypeRepository.get("vin1");
     expect(data).toBeNull();
     mockGetCarStatus.mockResolvedValueOnce({
         hasError: false,

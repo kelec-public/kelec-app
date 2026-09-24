@@ -1,6 +1,7 @@
 import { useCallback, useContext, useState } from "react";
 import MainContext from "../../../lib/Contexts/MainContext";
 import { BooleanPreference, usePreferences } from "../../kelec-preferences";
+import { logOut as clearSession } from "../../kelec-garage";
 import { ExternalLinks, openExternalLink } from "../services/externalLinks";
 import { syncWithAppleWatch } from "../services/appleWatchSync";
 import { exportWidgetLogs } from "../services/widgetLogsExport";
@@ -8,7 +9,7 @@ import { OptionType, SettingSection } from "./settingsTypes";
 
 /** Onglet Réglages : sections affichées, actions, et modales (fuseau horaire, debug). */
 export function useSettingsController() {
-    const { currentUser, languageHandler, reloadUser, storageHandler, checkOnboarding } = useContext(MainContext);
+    const { currentUser, languageHandler, reloadUser, checkOnboarding } = useContext(MainContext);
     const { preferences, update } = usePreferences();
     const t = (key: string) => languageHandler.getTranslation(key);
 
@@ -16,10 +17,10 @@ export function useSettingsController() {
     const [isDebugZoneOpen, setIsDebugZoneOpen] = useState(false);
 
     const logOut = useCallback(async () => {
-        await storageHandler.logOut();
+        await clearSession(currentUser);
         checkOnboarding();
         reloadUser();
-    }, [storageHandler, checkOnboarding, reloadUser]);
+    }, [currentUser, checkOnboarding, reloadUser]);
 
     const selectTimezoneOffset = useCallback(async (offset: number) => {
         await update({ scheduledChargeOffset: offset });

@@ -9,7 +9,7 @@ import Charge from "../../src/packages/kelec-charge-history/models/Charge";
 import ChargesRepository from "../../src/packages/kelec-charge-history/services/chargesRepository";
 import { V2GApiSession } from "../../src/lib/clients/carMakers/renault/v2gApiResponse";
 import CarType, { CarTypeInterface } from "../../src/lib/clients/cars/carTypes/carType";
-import StorageHandler from "../../src/lib/storage/storageHandler";
+import { CarTypeRepository } from "../../src/packages/kelec-garage";
 jest.useFakeTimers();
 beforeEach(async () => {
     jest.useFakeTimers();
@@ -154,7 +154,7 @@ test('test add new V2G charges', async () => {
         supportsV2G: true
     }
     const carType: CarType = new CarType(carInterface);
-    await new StorageHandler().setCarType("vin1", carType)
+    await CarTypeRepository.save("vin1", carType)
 
 
     // first, save a charge

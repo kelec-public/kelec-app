@@ -21,7 +21,7 @@ Il sert de référence pour les refactors en cours et à venir. Exemples concret
 | Type | Packages | Rôle |
 |---|---|---|
 | **Infrastructure** | `kelec-model` (composants UI, couleurs, polices), `kelec-storage` (accès AsyncStorage) | Briques techniques réutilisables, sans aucune logique métier. |
-| **Domaine partagé** | `kelec-garage` (les voitures de l'utilisateur : image, actions sur la liste), `kelec-preferences` (préférences de l'app) | Données et logique métier utilisées par plusieurs features. Exposées uniquement via `index.ts`. |
+| **Domaine partagé** | `kelec-garage` (les voitures de l'utilisateur : compte, mots de passe, modèle technique, image, actions sur la liste), `kelec-preferences` (préférences de l'app) | Données et logique métier utilisées par plusieurs features. Exposées uniquement via `index.ts`. |
 | **Feature** | `kelec-car-page`, `kelec-login`, `kelec-charge-history`, `kelec-hvac`, `kelec-profile`, `kelec-settings` | Une fonctionnalité de l'app. |
 
 Une donnée qui n'est utilisée que par une feature reste dans cette feature. Elle passe dans un package de domaine partagé
@@ -116,12 +116,13 @@ La migration de `src/lib/storage/storageHandler` se fait par petites étapes, en
 | Aujourd'hui dans `storageHandler` | Destination | Statut |
 |---|---|---|
 | `storeImage` + lecture `<vin>/image` | `kelec-garage` (`CarImageRepository`) | ✅ fait |
-| `saveAccount` / `loadAccount` (UserAccount) | `kelec-garage` | à faire |
-| `getCarType` / `setCarType` | `kelec-garage` | à faire |
+| `saveAccount` / `loadAccount` (UserAccount) | `kelec-garage` (`AccountRepository`) | ✅ fait |
+| `getCarType` / `setCarType` | `kelec-garage` (`CarTypeRepository`) | ✅ fait |
 | `storeApiData` / `getStoredApiData`, `buildApiHandler` | `kelec-car-page` (à côté de `CarStatusCache`) | à faire |
 | `getAppPreferences` / `setAppPreferences` | `kelec-preferences` (`PreferencesRepository`) | ✅ fait |
 | onboarding (`get/setHasSeenOnboarding`) | à décider | à faire |
-| `logOut` | `kelec-garage` (avec la persistance du compte) | à faire |
+| `logOut` | `kelec-garage` (`logOut`) | ✅ fait |
+| `loadCarMaker` | — (inutilisé) | ✅ supprimé |
 
 ## Règles de dépendances
 

@@ -1,4 +1,4 @@
-import StorageHandler from "../../src/lib/storage/storageHandler";
+import { buildUserAccount } from "../../src/packages/kelec-garage";
 import * as sharedPlatformsData from '../../src/lib/storage/sharedPlatformsData';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CarModel from "../../src/lib/clients/cars/carModel";
@@ -7,7 +7,6 @@ import UserAccount from "../../src/lib/clients/accounts/userAccount";
 import { render, waitFor, screen, userEvent } from "@testing-library/react-native";
 import App from "../../App";
 
-const storageHandler = new StorageHandler();
 
 jest.useFakeTimers();
 
@@ -50,7 +49,7 @@ jest.mock('../../src/lib/clients/carMakers/renaultClient', () => {
 
 test('should rename the car', async () => {
     const user = JSON.parse(await AsyncStorage.getItem('account') ?? "");
-    const accountParsed = await storageHandler.buildUserAccount(user);
+    const accountParsed = (await buildUserAccount(user, async () => null)).user;
     expect(accountParsed?.getCars().length).toBe(1);
 
     const userSetup = userEvent.setup();
@@ -101,7 +100,7 @@ test('should rename the car', async () => {
 
 test('should not rename the car because cancel', async () => {
     const user = JSON.parse(await AsyncStorage.getItem('account') ?? "");
-    const accountParsed = await storageHandler.buildUserAccount(user);
+    const accountParsed = (await buildUserAccount(user, async () => null)).user;
     expect(accountParsed?.getCars().length).toBe(1);
 
     const userSetup = userEvent.setup();

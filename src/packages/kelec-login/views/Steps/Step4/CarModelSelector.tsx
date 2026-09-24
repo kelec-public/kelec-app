@@ -18,6 +18,7 @@ import KelecCard from "../../../../kelec-model/view/Card";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { textBody } from "../../../../kelec-model/view/Titles";
 import { CommonStyles } from "../../../../kelec-model/view/Styles";
+import { CarTypeRepository } from "../../../../kelec-garage";
 
 
 export type CarModelSelectorParamList = {
@@ -34,7 +35,7 @@ type Props = NativeStackScreenProps<LoginEntryParamList, 'CarModelSelector'>;
 const CarModelSelector = (props: Props) => {
     const isDarkMode = useColorScheme() === 'dark';
 
-    const { languageHandler, storageHandler } = useContext(MainContext);
+    const { languageHandler } = useContext(MainContext);
 
     const { navigation, route } = props;
     const { carModel, onConfirmUpdate, title, subTitle, nextButtonText, safeAreaEdges } = route.params;
@@ -67,7 +68,7 @@ const CarModelSelector = (props: Props) => {
     }, [carModel.getVin()]);
 
     const loadCurrentCarType = async () => {
-        const currentCarType = await storageHandler.getCarType(carModel.getVin());
+        const currentCarType = await CarTypeRepository.get(carModel.getVin());
         if (currentCarType) {
             setSelectedBrand({
                 testID: currentCarType.getBrand().name + 'TestId',
@@ -139,7 +140,7 @@ const CarModelSelector = (props: Props) => {
                     leasing: leasingData,
                     supportsV2G: supportsV2G,
                 })
-                await storageHandler.setCarType(carModel.getVin(), newCarType);
+                await CarTypeRepository.save(carModel.getVin(), newCarType);
                 onConfirmUpdate();
             }}
             nextButtonText={nextButtonText}

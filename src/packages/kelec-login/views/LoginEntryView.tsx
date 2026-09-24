@@ -14,6 +14,7 @@ import { useColorScheme, View } from "react-native";
 import CarModelSelector, { CarModelSelectorParamList } from "./Steps/Step4/CarModelSelector";
 import TfaView, { TfaOrigin } from "./Steps/Step2/Tfa/TfaView";
 import { Palette } from "../../../../theme/_palette";
+import { AccountRepository } from "../../kelec-garage";
 
 export type LoginEntryParamList = {
   CarMakerSelectView: undefined;
@@ -32,7 +33,7 @@ export type LoginEntryParamList = {
 }
 
 const LoginEntryView = () => {
-  const { currentUser, storageHandler, reloadUser } = useContext(MainContext);
+  const { currentUser, reloadUser } = useContext(MainContext);
 
   const Stack = createNativeStackNavigator<LoginEntryParamList>();
 
@@ -57,7 +58,7 @@ const LoginEntryView = () => {
   const onConfirmCarAdd = async () => {
     account?.setCar(selectedCar!);
     currentUser.addCar(account!);
-    await storageHandler.saveAccount(currentUser);
+    await AccountRepository.save(currentUser);
     reloadUser();
   };
 

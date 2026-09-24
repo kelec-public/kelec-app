@@ -15,6 +15,7 @@ import Text from "./screen/Common/CustomText";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import { PreferencesRepository } from "./packages/kelec-preferences";
+import { AccountRepository } from "./packages/kelec-garage";
 
 export enum ViewsAvailable {
     LOGIN = 'LOGIN',
@@ -67,7 +68,7 @@ function Main(): React.JSX.Element {
     // to reload the user from the storage and update the current view
     const reloadUser = async (): Promise<void> => {
 
-        let user = await storageHandler.loadAccount();
+        const user = await AccountRepository.load();
         if (user) {
             setCurrentUser(user);
             setCurrentView(ViewsAvailable.LOGGEDIN);

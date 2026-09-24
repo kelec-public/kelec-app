@@ -5,7 +5,7 @@ import React from "react";
 import App from "../../App";
 import * as sharedPlatformsData from '../../src/lib/storage/sharedPlatformsData';
 import { Alert } from 'react-native';
-import StorageHandler from "../../src/lib/storage/storageHandler";
+import { CarTypeRepository } from "../../src/packages/kelec-garage";
 import { CarMaker } from "../../src/lib/clients/accounts/account";
 
 jest.useFakeTimers();
@@ -307,12 +307,16 @@ describe('Should add renault group cars', () => {
             });
 
             // check car type
-            const carType = await new StorageHandler().getCarType("VIN1");
+            const carType = await CarTypeRepository.get("VIN1");
             expect(carType?.getSupportsV2G()).toBe(true);
 
 
 
-            expect(mockSaveNativeAccount).toHaveBeenCalledTimes(2);
+            // 1 seul enregistrement : le mot de passe est écrit dans le stockage chiffré dès l'ajout,
+            // donc le rechargement du compte n'a plus besoin de le migrer (avant : 2).
+            expect(mockSaveNativeAccount).toHaveBeenCalledTimes(1);
+            expect(await AsyncStorage.getItem('VIN1_password')).toBe('password');
+            expect(mockSaveNativeAccount.mock.calls[0][0].cars[0].password).toBe('');
             expect(mockSaveNativeImage).toHaveBeenCalledTimes(3);
         });
     }

@@ -1,15 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { AccountInterface, CarFetchStatus, CarMaker } from "../clients/accounts/account";
-import { getNativeCryptedData, saveNativeAccount } from "./sharedPlatformsData";
-import RenaultAccount from "../../lib/clients/accounts/renaultAccount";
-import HyundaiAccount from "../../lib/clients/accounts/hyundaiAccount";
+import { CarFetchStatus, CarMaker } from "../clients/accounts/account";
 import ApiHandler from "../clients/apiHandlers/apiHandler";
 import HyundaiApiHandler from "../clients/apiHandlers/hyundaiApiHandler";
-import CarType, { CarTypeInterface } from "../clients/cars/carTypes/carType";
 import RenaultApiHandler from "../clients/apiHandlers/renaultApiHandler";
-import UserAccount, { UserAccountInterface } from "../clients/accounts/userAccount";
-import CarModel, { CarModelInterface } from "../clients/cars/carModel";
-import DemoAccount from "../clients/accounts/demoAccount";
 
 class StorageHandler {
     // class to handle local storage of the app
@@ -24,74 +17,6 @@ class StorageHandler {
         // set that the user has seen the onboarding
         await AsyncStorage.setItem('hasSeenLoginOnboarding', 'true');
     }
-
-    saveAccount = async (account: UserAccount): Promise<void> => {
-
-        // save the account for widgets
-        await saveNativeAccount(account);
-
-        // remove clear passwords
-        account.getCars().forEach(car => {
-            car.password = '';
-        });
-
-        // save the account in the async storage
-        await Promise.all([
-            AsyncStorage.setItem('account', JSON.stringify(account)),
-            AsyncStorage.setItem('kelecNextGen', 'true')
-        ]);
-
-    }
-
-    loadAccount = async (): Promise<UserAccount | null> => {
-        // load the account from the async storage
-        let account = await AsyncStorage.getItem('account');
-        let kelecNextGen = await AsyncStorage.getItem('kelecNextGen'); // transition to new add car interface
-        if (account === null || kelecNextGen === null) return null;
-        const accountJSON: UserAccountInterface = JSON.parse(account);
-        return await this.buildUserAccount(accountJSON);
-    }
-
-    buildUserAccount = async (account: UserAccountInterface): Promise<UserAccount> => {
-        // build a user account class from the storage interface
-        let toMigrate = false; // true if needs to resave crypted password
-        const currentUserAccount = new UserAccount(account.selectedCar, []);
-        for (let car of account.cars) {
-            const typedAccout = car as unknown as AccountInterface;
-            const carMaker = typedAccout.carMaker;
-            let typedCar: CarModelInterface = car.car as unknown as CarModelInterface;
-            let carToAdd: CarModel;
-
-            // get password from crypted storage
-            let password = await getNativeCryptedData(typedCar.vin + '_password');
-            if (password == null || password == "") { // happens if password hasn't been stored to crypted storage yet
-                toMigrate = true;
-                password = typedAccout.password;
-            }
-            switch (carMaker) {
-                case CarMaker.ALPINE:
-                case CarMaker.DACIA:
-                case CarMaker.RENAULT:
-                    carToAdd = new CarModel(typedCar.vin, typedCar.model, typedCar.imageUrl, typedCar.carMaker, typedCar.registrationNumber);
-                    currentUserAccount.addCar(new RenaultAccount(typedAccout.email, password ?? '', typedAccout.kamereonAccountID ?? "", carToAdd, typedAccout.firstName, typedAccout.lastName, carMaker));
-                    break;
-                case CarMaker.HYUNDAI:
-                    carToAdd = new CarModel(typedCar.vin, typedCar.model, typedCar.imageUrl, typedCar.carMaker, typedCar.registrationNumber);
-                    currentUserAccount.addCar(new HyundaiAccount(typedAccout.email, password ?? '', typedAccout.pinCode ?? "", carToAdd));
-                    break;
-                case CarMaker.DEMO:
-                    carToAdd = new CarModel(typedCar.vin, typedCar.model, typedCar.imageUrl, typedCar.carMaker, typedCar.registrationNumber);
-                    currentUserAccount.addCar(new DemoAccount(typedAccout.email, password ?? '', typedAccout.carMaker, carToAdd));
-                    break;
-            }
-        }
-        if (toMigrate) {
-            await this.saveAccount(currentUserAccount);
-        }
-
-        return currentUserAccount;
-    }
-
 
     buildApiHandler = (carMaker: CarMaker): ApiHandler => {
         // build an api handler from the api data
@@ -116,30 +41,6 @@ class StorageHandler {
         const apiData = await AsyncStorage.getItem(vin + '/' + endpoint);
         if (apiData === null) return null;
         return JSON.parse(apiData);
-    }
-
-    loadCarMaker = async (): Promise<string | null> => {
-        // load the car maker from the async storage
-        return await AsyncStorage.getItem('carMaker');
-    }
-
-    logOut = async (): Promise<void> => {
-        // remove the account from the async storage
-        await AsyncStorage.clear();
-        // remove the account for widgets
-        await saveNativeAccount(null);
-    }
-
-    getCarType = async (vin: string): Promise<CarType | null> => {
-        const carType = await AsyncStorage.getItem(vin + '/carType');
-        if (carType === null) return null;
-        const parsedCarType = JSON.parse(carType) as unknown as CarTypeInterface;
-        if (parsedCarType.battery == undefined) return null;
-        return new CarType(JSON.parse(carType) as unknown as CarTypeInterface);
-    }
-
-    setCarType = async (vin: string, carType: CarType): Promise<void> => {
-        await AsyncStorage.setItem(vin + '/carType', JSON.stringify(carType));
     }
 }
 export default StorageHandler

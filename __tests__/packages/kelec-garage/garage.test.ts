@@ -2,10 +2,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Account, { CarMaker, MoveDirection } from "../../../src/lib/clients/accounts/account";
 import UserAccount from "../../../src/lib/clients/accounts/userAccount";
 import CarModel from "../../../src/lib/clients/cars/carModel";
-import StorageHandler from "../../../src/lib/storage/storageHandler";
 import { RenaultCredentials } from "../../../src/lib/clients/carMakers/renaultCredentials";
 import * as sharedPlatformsData from "../../../src/lib/storage/sharedPlatformsData";
-import { CarImageRepository, GarageService } from "../../../src/packages/kelec-garage";
+import { AccountRepository, CarImageRepository, GarageService } from "../../../src/packages/kelec-garage";
 
 const car = (vin: string, email: string) =>
     new Account(email, 'password', CarMaker.RENAULT, new CarModel(vin, `model ${vin}`, '', CarMaker.RENAULT));
@@ -13,15 +12,14 @@ const car = (vin: string, email: string) =>
 const vins = (user: UserAccount) => user.getCars().map(account => account.getCar()?.getVin());
 
 let user: UserAccount;
-let storageHandler: StorageHandler;
+let saveAccount: jest.SpyInstance;
 let garage: GarageService;
 
 beforeEach(async () => {
     await AsyncStorage.clear();
     user = new UserAccount('VIN1', [car('VIN1', 'a@x.fr'), car('VIN2', 'b@x.fr'), car('VIN3', 'c@x.fr')]);
-    storageHandler = new StorageHandler();
-    jest.spyOn(storageHandler, 'saveAccount').mockResolvedValue();
-    garage = new GarageService(user, storageHandler);
+    saveAccount = jest.spyOn(AccountRepository, 'save').mockResolvedValue();
+    garage = new GarageService(user);
 });
 
 afterEach(() => {
@@ -32,7 +30,7 @@ describe('GarageService', () => {
     test('selectDefaultCar change la voiture par défaut et enregistre', async () => {
         await garage.selectDefaultCar('VIN2');
         expect(user.getSelectedCar()).toBe('VIN2');
-        expect(storageHandler.saveAccount).toHaveBeenCalledWith(user);
+        expect(saveAccount).toHaveBeenCalledWith(user);
     });
 
     test('moveCar réordonne les voitures', async () => {
@@ -57,7 +55,7 @@ describe('GarageService', () => {
         expect(clearCredentials).toHaveBeenCalledWith('a@x.fr');
         expect(vins(user)).toEqual(['VIN2', 'VIN3']);
         expect(user.getSelectedCar()).toBe('VIN2');
-        expect(storageHandler.saveAccount).toHaveBeenCalledWith(user);
+        expect(saveAccount).toHaveBeenCalledWith(user);
         expect(await AsyncStorage.getItem('VIN1/image')).toBe('image'); // conservée pour une réimportation
     });
 
