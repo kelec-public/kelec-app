@@ -1,7 +1,7 @@
 import UserAccount from "../../../lib/clients/accounts/userAccount";
 import { MoveDirection } from "../../../lib/clients/accounts/account";
 import { RenaultCredentials } from "../../../lib/clients/carMakers/renaultCredentials";
-import StorageHandler from "../../../lib/storage/storageHandler";
+import { AccountRepository } from "./accountRepository";
 
 /**
  * Actions sur les voitures de l'utilisateur. Chacune modifie le `UserAccount` puis l'enregistre ;
@@ -10,10 +10,7 @@ import StorageHandler from "../../../lib/storage/storageHandler";
  * Un VIN est unique dans toute l'app, et chaque VIN a exactement un compte : le VIN suffit à identifier une voiture.
  */
 export class GarageService {
-    constructor(
-        private readonly user: UserAccount,
-        private readonly storageHandler: StorageHandler,
-    ) { }
+    constructor(private readonly user: UserAccount) { }
 
     async selectDefaultCar(vin: string): Promise<void> {
         this.user.setSelectedCar(vin);
@@ -44,6 +41,6 @@ export class GarageService {
     }
 
     private save(): Promise<void> {
-        return this.storageHandler.saveAccount(this.user);
+        return AccountRepository.save(this.user);
     }
 }

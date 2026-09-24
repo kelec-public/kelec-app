@@ -3,7 +3,7 @@ import CarModel from "../../src/lib/clients/cars/carModel";
 import Account, { CarMaker } from "../../src/lib/clients/accounts/account";
 import App from "../../App";
 import { render, waitFor, screen, userEvent, act } from "@testing-library/react-native";
-import StorageHandler from "../../src/lib/storage/storageHandler";
+import { buildUserAccount } from "../../src/packages/kelec-garage";
 import * as sharedPlatformsData from '../../src/lib/storage/sharedPlatformsData';
 import { getBlackColour, getWhiteColour } from "../../src/lib/graphics/utils";
 import UserAccount from "../../src/lib/clients/accounts/userAccount";
@@ -31,7 +31,6 @@ type AlertSpyProps = jest.SpyInstance<
 const AlertSpy = jest.spyOn(Alert, 'alert') as AlertSpyProps
 
 
-const storageHandler = new StorageHandler();
 
 jest.useFakeTimers();
 
@@ -78,7 +77,7 @@ beforeEach(async () => {
 
 test('should render the profile view', async () => {
     const user = JSON.parse(await AsyncStorage.getItem('account') ?? "");
-    const accountParsed = await storageHandler.buildUserAccount(user);
+    const accountParsed = (await buildUserAccount(user, async () => null)).user;
     expect(accountParsed?.getCars().length).toBe(3);
     expect(accountParsed?.getCars()[0].car?.getVin()).toBe('vin1');
     expect(accountParsed?.getCars()[1].car?.getVin()).toBe('vin2');
@@ -114,7 +113,7 @@ test('should render the profile view', async () => {
 
 test('should move the car up', async () => {
     const user = JSON.parse(await AsyncStorage.getItem('account') ?? "");
-    const accountParsed = await storageHandler.buildUserAccount(user);
+    const accountParsed = (await buildUserAccount(user, async () => null)).user;
 
     expect(accountParsed?.getCars().length).toBe(3);
     expect(accountParsed?.getCars()[0].car?.getVin()).toBe('vin1');
@@ -155,7 +154,7 @@ test('should move the car up', async () => {
         // verify the widgets have been updated (useless in this case)
         expect(mockSaveNativeAccount).toHaveBeenCalled();
         const user = JSON.parse(await AsyncStorage.getItem('account') ?? "");
-        const accountParsed = await storageHandler.buildUserAccount(user);
+        const accountParsed = (await buildUserAccount(user, async () => null)).user;
 
         // verify the order of cars have been changed
         expect(accountParsed?.getCars().length).toBe(3);
@@ -178,7 +177,7 @@ test('should move the car up', async () => {
 
 test('should move the car down', async () => {
     const user = JSON.parse(await AsyncStorage.getItem('account') ?? "");
-    const accountParsed = await storageHandler.buildUserAccount(user);
+    const accountParsed = (await buildUserAccount(user, async () => null)).user;
 
     expect(accountParsed?.getCars().length).toBe(3);
     expect(accountParsed?.getCars()[0].car?.getVin()).toBe('vin1');
@@ -225,7 +224,7 @@ test('should move the car down', async () => {
     await UserEvent.press(moveTheCarDown[0]);
     await waitFor(async () => {
         const user = JSON.parse(await AsyncStorage.getItem('account') ?? "");
-        const accountParsed = await storageHandler.buildUserAccount(user);
+        const accountParsed = (await buildUserAccount(user, async () => null)).user;
 
         // verify the order of cars have been changed
         expect(accountParsed?.getCars().length).toBe(3);
@@ -254,7 +253,7 @@ test('should move the car down', async () => {
 
 test('should delete cars', async () => {
     const user = JSON.parse(await AsyncStorage.getItem('account') ?? "");
-    const accountParsed = await storageHandler.buildUserAccount(user);
+    const accountParsed = (await buildUserAccount(user, async () => null)).user;
 
     expect(accountParsed?.getCars().length).toBe(3);
     expect(accountParsed?.getCars()[0].car?.getVin()).toBe('vin1');
@@ -291,7 +290,7 @@ test('should delete cars', async () => {
     await waitFor(async () => {
         // verify the widgets have been updated (useless in this case)
         const user = JSON.parse(await AsyncStorage.getItem('account') ?? "");
-        const accountParsed = await storageHandler.buildUserAccount(user);
+        const accountParsed = (await buildUserAccount(user, async () => null)).user;
 
         // verify the order of cars have been changed
         expect(accountParsed?.getCars().length).toBe(2);
@@ -316,7 +315,7 @@ test('should delete cars', async () => {
     await waitFor(async () => {
         // verify the widgets have been updated (useless in this case)
         const user = JSON.parse(await AsyncStorage.getItem('account') ?? "");
-        const accountParsed = await storageHandler.buildUserAccount(user);
+        const accountParsed = (await buildUserAccount(user, async () => null)).user;
 
         // verify the order of cars have been changed
         expect(accountParsed?.getCars().length).toBe(1);
@@ -347,7 +346,7 @@ test('should delete cars', async () => {
     await waitFor(async () => {
         // verify the widgets have been updated (useless in this case)
         const user = JSON.parse(await AsyncStorage.getItem('account') ?? "");
-        const accountParsed = await storageHandler.buildUserAccount(user);
+        const accountParsed = (await buildUserAccount(user, async () => null)).user;
 
         // verify the order of cars have been changed
         expect(accountParsed?.getCars().length).toBe(0);
@@ -365,7 +364,7 @@ test('should delete cars', async () => {
 
 test('should set selected car', async () => {
     const user = JSON.parse(await AsyncStorage.getItem('account') ?? "");
-    const accountParsed = await storageHandler.buildUserAccount(user);
+    const accountParsed = (await buildUserAccount(user, async () => null)).user;
 
     expect(accountParsed?.getCars().length).toBe(3);
     expect(accountParsed?.getCars()[0].car?.getVin()).toBe('vin1');
@@ -406,7 +405,7 @@ test('should set selected car', async () => {
     await waitFor(async () => {
         // verify the widgets have been updated (useful in this case)
         const user = JSON.parse(await AsyncStorage.getItem('account') ?? "");
-        const accountParsed = await storageHandler.buildUserAccount(user);
+        const accountParsed = (await buildUserAccount(user, async () => null)).user;
 
         // verify the selected car has been changed
         expect(accountParsed?.getSelectedCar()).toBe('vin2');

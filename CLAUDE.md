@@ -27,6 +27,10 @@ Le VIN suffit donc à identifier une voiture et son compte.
 - **`Alert.alert` n'est pas réinitialisé entre les tests** d'un même fichier : les compteurs
   (`toHaveBeenCalledTimes`) s'additionnent.
 - **Des données sont déjà stockées sur les téléphones des utilisateurs** : ne pas renommer une clé AsyncStorage
-  ni un champ sérialisé (ex. `Charge`) sans décision explicite.
+  ni un champ sérialisé (ex. `Charge`) sans décision explicite. En particulier, la clé du mot de passe dans le
+  stockage chiffré reste `<vin>_password` (lue par les widgets iOS/Android et l'intent Siri).
+- **Mots de passe** : ils ne vont que dans le stockage chiffré (`PasswordVault`, kelec-garage). Le JSON du compte
+  (AsyncStorage et widgets) est toujours enregistré sans mot de passe, via `AccountRepository.save`.
+- **Stockage chiffré dans les tests** : `jest.setup.js` le simule dans AsyncStorage (`get/setNativeCryptedData`).
 - **Traductions** : ne pas modifier `src/lib/model/localization/localizations.json`. Utiliser
   `languageHandler.getTranslation("clé")` et signaler les nouvelles clés : les textes sont ajoutés à la main.

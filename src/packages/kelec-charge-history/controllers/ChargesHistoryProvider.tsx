@@ -1,5 +1,4 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import MainContext from "../../../lib/Contexts/MainContext";
 import Account from "../../../lib/clients/accounts/account";
 import CarModel from "../../../lib/clients/cars/carModel";
 import Charge from "../models/Charge";
@@ -31,11 +30,9 @@ type Props = {
  * Charge le cache au montage ; le réseau est déclenché de l'extérieur via `sync`.
  */
 export function ChargesHistoryProvider({ carModel, account, children }: Props): React.JSX.Element {
-    const { storageHandler } = useContext(MainContext);
-
     const source = useMemo(
-        () => createChargesSource(carModel, account, storageHandler),
-        [carModel, account, storageHandler],
+        () => createChargesSource(carModel, account),
+        [carModel, account],
     );
 
     const [history, setHistory] = useState<ChargesHistory>(ChargesHistory.unavailable);

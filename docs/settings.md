@@ -83,7 +83,7 @@ Ces indicateurs remplacent les anciennes comparaisons de textes traduits (`item.
 - **Debug zone** : seul le fichier a été déplacé, sans toucher au contenu en dehors des chemins d'import. L'exclusion correspondante a été mise à jour dans `sonar-project.properties`.
   Elle contient un import de `BigButton`, un fichier qui n'existe plus : c'est l'une des 2 erreurs TypeScript connues.
   Babel supprime cet import inutilisé, donc il n'a pas d'effet à l'exécution.
-- La déconnexion utilise encore `storageHandler.logOut`. Elle sera migrée avec la persistance du compte dans `kelec-garage`.
+- La déconnexion passe par `logOut(currentUser)` de `kelec-garage` (PR « account »), qui efface aussi les identifiants du trousseau.
 
 ## Tests
 

@@ -13,7 +13,7 @@ export type GarageCar = {
 
 /** Page compte : liste des voitures, mode édition (réordonner) et actions sur chaque voiture. */
 export function useProfileController() {
-    const { languageHandler, currentUser, storageHandler, reloadUser, setCurrentView } = useContext(MainContext);
+    const { languageHandler, currentUser, reloadUser, setCurrentView } = useContext(MainContext);
 
     const [editMode, setEditMode] = useState(false);
 
@@ -25,7 +25,7 @@ export function useProfileController() {
         [currentUser],
     );
 
-    const garage = useMemo(() => new GarageService(currentUser, storageHandler), [currentUser, storageHandler]);
+    const garage = useMemo(() => new GarageService(currentUser), [currentUser]);
 
     /** Enregistre puis recharge l'utilisateur pour mettre toute l'app à jour. */
     const run = useCallback(async (action: () => Promise<void>) => {
