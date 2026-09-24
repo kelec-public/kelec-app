@@ -90,7 +90,6 @@ android {
         versionCode 294
         versionName '2.6.6'
         resValue "string", "build_config_package", "com.kelec"
-        resValue "string", "MAPS_API_KEY", project.findProperty('MAPS_API_KEY') ?: ""
     }
     signingConfigs {
         debug {
