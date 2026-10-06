@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { ScrollView, StyleSheet, TouchableOpacity, useColorScheme, View } from "react-native";
+import { Alert, ScrollView, StyleSheet, TouchableOpacity, useColorScheme, View } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { useTheme } from "@react-navigation/native";
 import Text from "../../../../screen/Common/CustomText";
@@ -336,6 +336,14 @@ const DebugZoneView = ({ setShowDebugZone }: DebugZoneProps): React.JSX.Element 
         entries.forEach(entry => writeLog(formatMileageEntry(entry)));
     }
 
+    const exportLogs = () => {
+        if (logs.length === 0) {
+            Alert.alert('No logs to export');
+            return;
+        }
+        shareTextFile(`debugLogs${Date.now()}.txt`, logs.join('\n'), 'text/plain');
+    }
+
     const carList = (): React.ReactNode => (
         <>
             <Text style={styles.subtitle}>Choose a car</Text>
@@ -403,8 +411,7 @@ const DebugZoneView = ({ setShowDebugZone }: DebugZoneProps): React.JSX.Element 
                             text="Export"
                             icon="ios-share"
                             buttonStyle={theme.buttons.neutral}
-                            disabled={logs.length === 0}
-                            onPress={() => shareTextFile(`debugLogs${Date.now()}.txt`, logs.join('\n'), 'text/plain')}
+                            onPress={exportLogs}
                         />
                     ) : null}
                     <Button
