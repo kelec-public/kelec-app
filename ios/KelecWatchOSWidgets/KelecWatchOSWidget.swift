@@ -52,43 +52,37 @@ struct KelecWatchOSWidgetEntryView : View {
   var entry: Provider.Entry
   @Environment(\.widgetFamily) var family
   var body: some View{
-    if #available(iOSApplicationExtension 16.0, *) {
-      switch family{
-      case .accessoryCircular:
-        KelecLockScreenCircularView(apiHandler: entry.apiHandler, alternative: alternative)
-          .widgetBackground()
-      case .accessoryInline:
-        CarWidgetStateView(account: entry.account, userCar: entry.userCar, apiHandler: entry.apiHandler) { _, _, apiHandler in
-          KelecLockScreenInlineView(apiHandler: apiHandler)
-        }
-      case .accessoryRectangular:
-        CarWidgetStateView(account: entry.account, userCar: entry.userCar, apiHandler: entry.apiHandler) { _, _, apiHandler in
-          KelecLockScreenRectangularView(apiHandler: apiHandler, carName: entry.carName, appPreferences: entry.appPreferences)
-            .widgetBackground()
-        }
-          case .accessoryCorner:
-        Text("\(entry.apiHandler?.getBatteryLevel() ?? 0)%")
-                        .widgetLabel {
-                            ProgressView(value: Double(entry.apiHandler?.getBatteryLevel() ?? 0), total: 100)
-                                .tint(.accentColor)
-                                .widgetAccentable()
-                        }
-                        .backport.widgetCurvesContent()
-
-          default:
-              Gauge(value: 0 , in: 0...100) {
-                  Image(systemName:  "car.fill")
-              }currentValueLabel: {
-                  Text("XX")
-              }
-              .gaugeStyle(.accessoryCircular)
-              .widgetAccentable()
-              .tint(.accentColor)
-          }
-          
-      }else{
-          EmptyView()
+    switch family{
+    case .accessoryCircular:
+      KelecLockScreenCircularView(apiHandler: entry.apiHandler, alternative: alternative)
+        .widgetBackground()
+    case .accessoryInline:
+      CarWidgetStateView(account: entry.account, userCar: entry.userCar, apiHandler: entry.apiHandler) { _, _, apiHandler in
+        KelecLockScreenInlineView(apiHandler: apiHandler)
       }
+    case .accessoryRectangular:
+      CarWidgetStateView(account: entry.account, userCar: entry.userCar, apiHandler: entry.apiHandler) { _, _, apiHandler in
+        KelecLockScreenRectangularView(apiHandler: apiHandler, carName: entry.carName, appPreferences: entry.appPreferences)
+          .widgetBackground()
+      }
+    case .accessoryCorner:
+      Text("\(entry.apiHandler?.getBatteryLevel() ?? 0)%")
+        .widgetLabel {
+          ProgressView(value: Double(entry.apiHandler?.getBatteryLevel() ?? 0), total: 100)
+            .tint(.accentColor)
+            .widgetAccentable()
+        }
+        .widgetCurvesContent()
+    default:
+      Gauge(value: 0 , in: 0...100) {
+        Image(systemName:  "car.fill")
+      }currentValueLabel: {
+        Text("XX")
+      }
+      .gaugeStyle(.accessoryCircular)
+      .widgetAccentable()
+      .tint(.accentColor)
+    }
   }
 }
 
@@ -116,28 +110,4 @@ struct KelecWatchOSWidgetAlternative: Widget {
         .description("watchWidgetDescription")
         .supportedFamilies([.accessoryCircular])
     }
-}
-
-public struct Backport<Content> {
-  public let content: Content
-
-  public init(_ content: Content) {
-    self.content = content
-  }
-}
-
-extension View {
-  var backport: Backport<Self> { Backport(self) }
-}
-
-extension Backport where Content: View {
-  @ViewBuilder func widgetCurvesContent() -> some View {
-    if #available(watchOS 10.0, iOSApplicationExtension 17.0, iOS 17.0, macOSApplicationExtension 14.0, *) {
-      content.widgetCurvesContent()
-
-    } else {
-      content
-    }
-  }
-  // You can put multiple funcs in here
 }

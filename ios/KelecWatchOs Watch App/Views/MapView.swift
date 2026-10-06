@@ -9,11 +9,6 @@ import SwiftUI
 import MapKit
 import CoreLocation
 
-struct Pin: Identifiable{
-  let id = UUID()
-  let coordinate: CLLocationCoordinate2D
-}
-
 private enum CarLocationState {
   case loading
   case failed
@@ -34,18 +29,8 @@ struct MapView: View {
     case .failed:
       Text("watchCarLocationError")
     case .loaded(let coordinate):
-      if #available(watchOS 10, *) {
-        Map(initialPosition: .region(region(around: coordinate))) {
-          Marker(userCar.car?.model ?? "", coordinate: coordinate)
-        }
-      } else {
-        // watchOS 9: the watch app still supports it
-        Map(
-          coordinateRegion: .constant(region(around: coordinate)),
-          annotationItems: [Pin(coordinate: coordinate)]
-        ){
-          MapMarker(coordinate: $0.coordinate)
-        }
+      Map(initialPosition: .region(region(around: coordinate))) {
+        Marker(userCar.car?.model ?? "", coordinate: coordinate)
       }
     }
   }

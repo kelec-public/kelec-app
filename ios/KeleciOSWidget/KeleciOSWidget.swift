@@ -87,7 +87,7 @@ struct KeleciOSWidget: Widget {
       KeleciOSWidgetEntryView(entry: entry)
     }
 
-    .contentMarginsDisabledIfAvailable()
+    .contentMarginsDisabled()
     .configurationDisplayName("Renault E-Tech")
     .description(String(localized: "widgetHomeScreenDescription"))
     .supportedFamilies([.systemMedium, .systemSmall])
@@ -102,7 +102,7 @@ struct KeleciOSWidgetAlternative: Widget {
       KeleciOSWidgetEntryView(entry: entry, alternative: 1)
     }
 
-    .contentMarginsDisabledIfAvailable()
+    .contentMarginsDisabled()
     .configurationDisplayName("Renault E-Tech")
     .description(String(localized: "widgetHomeScreenDescription"))
     .supportedFamilies([.systemMedium])
@@ -169,21 +169,3 @@ extension Image{
     self = Image(uiImage: uiImg)
   }
 }
-
-
-
-extension WidgetConfiguration
-{
-  func contentMarginsDisabledIfAvailable() -> some WidgetConfiguration
-  {
-    if #available(iOSApplicationExtension 17.0, *)
-    {
-      return self.contentMarginsDisabled()
-    }
-    else
-    {
-      return self
-    }
-  }
-}
-

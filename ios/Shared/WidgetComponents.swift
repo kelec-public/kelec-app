@@ -11,13 +11,9 @@ import renaultApi
 
 extension View {
   // white container background, required by widgets since iOS 17 / watchOS 10
-  @ViewBuilder func widgetBackground() -> some View {
-    if #available(iOS 17, watchOS 10, *) {
-      self.containerBackground(for: .widget) {
-        Color("blanc")
-      }
-    } else {
-      self
+  func widgetBackground() -> some View {
+    self.containerBackground(for: .widget) {
+      Color("blanc")
     }
   }
 }
