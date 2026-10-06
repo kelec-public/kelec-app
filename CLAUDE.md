@@ -4,6 +4,9 @@ App React Native (TypeScript). Les fonctionnalités sont en cours de migration v
 lire [docs/packages-pattern.md](docs/packages-pattern.md) avant de toucher à `src/packages`.
 La migration avance par petites PR : ne pas élargir une tâche à d'autres packages sans le demander.
 
+Natif iOS (widgets, bridge RN, Apple Watch, package local `renaultApi`) : lire [docs/native-ios.md](docs/native-ios.md)
+avant de toucher à `ios/`. Les clés de stockage partagé et leurs formats y sont listés : ne jamais les renommer.
+
 **Invariant métier** : un VIN est unique dans toute l'app, et chaque VIN a exactement un compte (`Account`).
 Le VIN suffit donc à identifier une voiture et son compte.
 
