@@ -1,17 +1,22 @@
 import React, { useContext, useState } from "react";
-import { TouchableOpacity, useColorScheme, View } from "react-native";
+import { ScrollView, StyleSheet, TouchableOpacity, useColorScheme, View } from "react-native";
+import Icon from "react-native-vector-icons/MaterialIcons";
 import Text from "../../../../screen/Common/CustomText";
-import { getWhiteColour } from "../../../../lib/graphics/utils";
+import { getBlackColour, getWhiteColour } from "../../../../lib/graphics/utils";
+import commonStyles, { fontFamilyBold } from "../../../../lib/graphics/commonStyle";
 import BigButton from "../../../../screen/Common/BigButton";
 import MainContext from "../../../../lib/Contexts/MainContext";
 import { CarMakerClientErrors } from "../../../../lib/clients/carMakers/carMakerClient";
 import RenaultAccount from "../../../../lib/clients/accounts/renaultAccount";
+import Account, { CarMaker } from "../../../../lib/clients/accounts/account";
 import { BatteryStatus, RenaultStatus } from "../../../../lib/clients/carMakers/renaultClient";
 import Config from 'react-native-config';
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from '../../../kelec-model/view/Button';
 import { RenaultCredentials } from "../../../../lib/clients/carMakers/renaultCredentials";
 import { formatMileageEntry, lastMileageEntries } from "../../services/mileageHistoryDebug";
+import SettingRow from "../SettingRow";
+import { OptionType } from "../../controllers/settingsTypes";
 
 type DebugZoneProps = {
     readonly setShowDebugZone: (showDebugZone: boolean) => void;
@@ -290,54 +295,22 @@ const DebugZoneView = ({ setShowDebugZone }: DebugZoneProps): React.JSX.Element 
 
     const { currentUser } = useContext(MainContext);
 
+    const [selectedCar, setSelectedCar] = useState<Account | null>(null);
     const [logs, setLogs] = useState<string[]>([]);
 
     const writeLog = (log: string) => {
         setLogs(prevLogs => [...prevLogs, log]);
     };
 
-    const listCars = (): React.ReactNode => {
-        let return_node = []
-        return_node.push(
-            <Text
-                key={'carsAvailable'}
-                style={{
-                    fontSize: 20
-                }}>Cars available</Text>
-        )
-        for (const car of currentUser.getCars()) {
-            const vin = car.getCar()?.getVin() ?? '';
-            return_node.push(
-                <View key={vin} style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
-                    <TouchableOpacity
-                        onPress={() => {
-                            const new_account = car as unknown as RenaultAccount;
-                            launchDebugForCar(car.getEmail(), car.getPassword(), new_account.getKamereonAccountID(), vin);
-                        }}>
-                        <Text style={{
-                            color: 'blue',
-                            fontSize: 20
-                        }}>{car.getCar()?.getModel()}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => showMileageHistory(car.getCar()?.getModel() ?? vin, vin)}>
-                        <Text style={{ color: 'blue' }}>Mileage history</Text>
-                    </TouchableOpacity>
-                </View>
-            )
-        }
-        return <View style={{
-            width: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center'
-        }}>
-            {return_node}
-        </View>;
-    }
+    const selectCar = (car: Account | null) => {
+        setLogs([]);
+        setSelectedCar(car);
+    };
 
-    const launchDebugForCar = async (email: string, password: string, accountID: string, vin: string) => {
-        const client = new MiniRenaultClient(email, password, accountID);
+    const launchBatteryStatus = async (car: Account) => {
+        setLogs([]);
+        const vin = car.getCar()?.getVin() ?? '';
+        const client = new MiniRenaultClient(car.getEmail(), car.getPassword(), (car as RenaultAccount).getKamereonAccountID());
         const gigyaToken = await client.getGigyaToken();
         if (!gigyaToken.canLogin) {
             return;
@@ -347,56 +320,73 @@ const DebugZoneView = ({ setShowDebugZone }: DebugZoneProps): React.JSX.Element 
             return;
         }
         await client.getKamereonEndpoint(KamereonEndpoints.BATTERY_STATUS, ApiVersion.V2, vin, jwtToken.jwtToken!);
-
     }
 
-    /** Les 10 dernières entrées de l'historique de kilométrage (écrit par le widget), dans les logs. */
-    const showMileageHistory = async (model: string, vin: string) => {
-        const entries = await lastMileageEntries(vin);
-        writeLog(`Mileage history of ${model} (${entries.length} last entries)`);
+    /** Les 10 dernières entrées de l'historique de kilométrage (écrit par le widget). */
+    const showMileageHistory = async (car: Account) => {
+        setLogs([]);
+        const entries = await lastMileageEntries(car.getCar()?.getVin() ?? '');
+        writeLog(`${entries.length} last entries (oldest first)`);
         if (entries.length === 0) {
             writeLog('No mileage history');
         }
         entries.forEach(entry => writeLog(formatMileageEntry(entry)));
     }
 
-    const displayLogs = (): React.ReactNode => {
-        if (logs.length === 0) {
-            return <Text>No logs available</Text>
-        }
-        let return_node = []
-        for (const [index, log] of logs.entries()) {
-            return_node.push(
-                <Text key={index}>{log}</Text>
-            )
-        }
-        return (
-            <View>
-                {return_node}
-            </View>
-        )
-    }
+    const carList = (): React.ReactNode => (
+        <>
+            <Text style={styles.subtitle}>Choose a car</Text>
+            {currentUser.getCars().map(car => (
+                <SettingRow
+                    key={car.getCar()?.getVin()}
+                    icon="directions-car"
+                    title={car.getCar()?.getModel() ?? ''}
+                    description={car.getCar()?.getVin()}
+                    type={OptionType.NAVIGATE}
+                    onPress={() => selectCar(car)}
+                />
+            ))}
+        </>
+    );
+
+    const carActions = (car: Account): React.ReactNode => (
+        <>
+            <TouchableOpacity style={[commonStyles.rowFlex, commonStyles.gap5, styles.back]} onPress={() => selectCar(null)}>
+                <Icon name="arrow-back" size={20} color={getBlackColour(isDarkMode)} />
+                <Text style={styles.subtitle}>{car.getCar()?.getModel()}</Text>
+            </TouchableOpacity>
+            {RENAULT_GROUP.includes(car.getCarMaker()) ? (
+                <SettingRow
+                    icon="battery-charging-full"
+                    title="Battery status"
+                    description="Gigya → JWT → Kamereon battery-status"
+                    type={OptionType.NAVIGATE}
+                    onPress={() => launchBatteryStatus(car)}
+                />
+            ) : null}
+            <SettingRow
+                icon="speed"
+                title="Mileage history"
+                description="10 last entries written by the widget"
+                type={OptionType.NAVIGATE}
+                onPress={() => showMileageHistory(car)}
+            />
+            <Text style={styles.subtitle}>Logs</Text>
+            <ScrollView style={[styles.logs, { borderColor: getBlackColour(isDarkMode) }]}>
+                {logs.length === 0
+                    ? <Text style={styles.logLine}>No logs available</Text>
+                    : logs.map((log, index) => <Text key={index} style={styles.logLine}>{log}</Text>)}
+            </ScrollView>
+        </>
+    );
 
     return (
-        <View style={{
-            backgroundColor: getWhiteColour(isDarkMode),
-            flex: 1
-        }}
-        >
-            <SafeAreaView style={{
-                flex: 1,
-
-            }}>
-                <View style={{
-                    flex: 1,
-                    paddingHorizontal: 20
-                }}>
-                    <View style={{
-                        flex: 1,
-                    }}>
-                        {listCars()}
-                        <Text>Logs :</Text>
-                        {displayLogs()}
+        <View style={[styles.container, { backgroundColor: getWhiteColour(isDarkMode) }]}>
+            <SafeAreaView style={styles.container}>
+                <View style={styles.content}>
+                    <Text style={styles.title}>Debug zone</Text>
+                    <View style={[styles.container, commonStyles.gap10]}>
+                        {selectedCar ? carActions(selectedCar) : carList()}
                     </View>
                     <Button
                         text="Close"
@@ -409,5 +399,39 @@ const DebugZoneView = ({ setShowDebugZone }: DebugZoneProps): React.JSX.Element 
         </View>
     )
 }
+
+const RENAULT_GROUP = [CarMaker.RENAULT, CarMaker.DACIA, CarMaker.ALPINE];
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+    },
+    content: {
+        flex: 1,
+        paddingHorizontal: 20,
+        gap: 15,
+    },
+    title: {
+        fontSize: 24,
+        fontFamily: fontFamilyBold,
+    },
+    subtitle: {
+        fontSize: 18,
+        fontFamily: fontFamilyBold,
+    },
+    back: {
+        alignItems: 'center',
+    },
+    logs: {
+        flex: 1,
+        borderWidth: StyleSheet.hairlineWidth,
+        borderRadius: 10,
+        padding: 10,
+    },
+    logLine: {
+        fontSize: 12,
+        marginBottom: 4,
+    },
+});
 
 export default DebugZoneView;
