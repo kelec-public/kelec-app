@@ -28,7 +28,7 @@ struct CarView: View {
       }else{
         ZStack{
           if let apiHandler = viewModel.apiHandler {
-            BatteryCardView(refreshApi: refresh, imageUrl: URL(string: carAccount.car?.imageUrl ?? ""), apiHandler: apiHandler, appPreferences: viewModel.appPreferences, carMaker: carAccount.getCarMaker(), carAccount: carAccount)
+            BatteryCardView(refreshApi: refresh, launchHVAC: viewModel.launchHVAC, imageUrl: URL(string: carAccount.car?.imageUrl ?? ""), apiHandler: apiHandler, appPreferences: viewModel.appPreferences, carMaker: carAccount.getCarMaker(), carAccount: carAccount)
               .navigationBarTitleDisplayMode(.inline)
               .navigationTitle(Text("\(carAccount.car?.model ?? "Unknown")"))
           }else{

@@ -14,6 +14,7 @@ import renaultApi
 struct BatteryCardView: View{
   @Environment(\.isLuminanceReduced) var isLuminanceReduced
   var refreshApi: () -> Void
+  var launchHVAC: () async -> Bool
   var imageUrl: URL?
   var apiHandler: ApiHandler
   var appPreferences: AppPreferences?
@@ -226,7 +227,7 @@ struct BatteryCardView: View{
       self.shouldShowHVACConfirm = false
       self.isLightLoadingHVAC = true
       // launch HVAC
-      let hasLaunchedHVAC = await launchHVAC(carAccount: self.carAccount)
+      let hasLaunchedHVAC = await launchHVAC()
       if(hasLaunchedHVAC){
         self.hvacAlertTitle = LocalizedStringKey("informationSent").stringValue()
         self.hvacAlertMessage = LocalizedStringKey("preHeatLaunched").stringValue()
@@ -242,17 +243,5 @@ struct BatteryCardView: View{
   }
   
   
-  func launchHVAC(carAccount: UserCar) async -> Bool {
-    let vin = carAccount.car?.vin ?? "VIN"
-    let client = getCarMakerApiClient(usercar: carAccount)
-    
-    do {
-      let hvacLaunchStatus = try await client.launchHvac(vin: vin)
-      return hvacLaunchStatus == true
-    } catch {
-      print("Failed to launch HVAC: \(error)")
-      return false
-    }
-  }
   
 }

@@ -50,4 +50,8 @@ public func getCarMakerApiClient(usercar: UserCar) -> ApiClient{
   }
 }
 
-
+// sends the pre-heating command, false when it could not be sent
+func sendHVACCommand(userCar: UserCar) async -> Bool {
+  let client = getCarMakerApiClient(usercar: userCar)
+  return (try? await client.launchHvac(vin: userCar.car?.vin ?? "")) ?? false
+}

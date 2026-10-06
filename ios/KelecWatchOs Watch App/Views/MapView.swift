@@ -34,16 +34,27 @@ struct MapView: View {
     case .failed:
       Text("watchCarLocationError")
     case .loaded(let coordinate):
-      Map(
-        coordinateRegion: .constant(MKCoordinateRegion(
-          center: coordinate,
-          span: MKCoordinateSpan(latitudeDelta: 0.00222, longitudeDelta: 0.00222)
-        )),
-        annotationItems: [Pin(coordinate: coordinate)]
-      ){
-        MapMarker(coordinate: $0.coordinate)
+      if #available(watchOS 10, *) {
+        Map(initialPosition: .region(region(around: coordinate))) {
+          Marker(userCar.car?.model ?? "", coordinate: coordinate)
+        }
+      } else {
+        // watchOS 9: the watch app still supports it
+        Map(
+          coordinateRegion: .constant(region(around: coordinate)),
+          annotationItems: [Pin(coordinate: coordinate)]
+        ){
+          MapMarker(coordinate: $0.coordinate)
+        }
       }
     }
+  }
+
+  private func region(around coordinate: CLLocationCoordinate2D) -> MKCoordinateRegion {
+    MKCoordinateRegion(
+      center: coordinate,
+      span: MKCoordinateSpan(latitudeDelta: 0.00222, longitudeDelta: 0.00222)
+    )
   }
 
   func fetchCarLocation() async{

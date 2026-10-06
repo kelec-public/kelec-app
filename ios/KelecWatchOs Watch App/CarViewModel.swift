@@ -36,6 +36,11 @@ final class CarViewModel: ObservableObject {
     isRefreshing = false
   }
 
+  // false when the command could not be sent
+  func launchHVAC() async -> Bool {
+    await sendHVACCommand(userCar: userCar)
+  }
+
   // reloads the car and the watch widgets
   func refresh() async {
     await load()

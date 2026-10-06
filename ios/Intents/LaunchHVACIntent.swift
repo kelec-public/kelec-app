@@ -27,9 +27,7 @@ struct LaunchHVACIntent: AppIntent {
     var isASuccess = false
     
     if let userCar = SharedStore.loadAccount()?.cars.first(where: { $0.car?.vin == car.id }) {
-      let client = getCarMakerApiClient(usercar: userCar)
-      // not a success when the command can't be sent
-      isASuccess = (try? await client.launchHvac(vin: userCar.car?.vin ?? "")) ?? false
+      isASuccess = await sendHVACCommand(userCar: userCar)
     }
     
     if(isASuccess){
