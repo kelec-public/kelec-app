@@ -13,22 +13,12 @@ import SwiftUI
 
 
 
-struct iosWidgetMediumView: View{
-  var date:Date
-  var carAccount: UserAccount
+struct MediumCarWidgetView: View{
   var apiHandler: ApiHandler
   var userCar: UserCar
+  var carName: String
   var image: String
-  var value: String
   var appPreferences: AppPreferences?
-  var NormalColours: [Color] = [
-    Color(red: 151/255, green: 207/255, blue: 1),
-    Color(red: 10/255, green: 120/255, blue: 1)
-  ]
-  var ChargingColours: [Color] = [
-    Color(red: 185/255, green: 1, blue: 222/255),
-    Color(red: 44/255, green: 212/255, blue: 6/255)
-  ]
   var body: some View{
     GeometryReader{ geo in
       VStack(alignment: .leading, spacing: 5) {
@@ -39,7 +29,7 @@ struct iosWidgetMediumView: View{
             .frame(width: userCar.getCarMaker() == "renault" ? 20 : 40)
           
           // car name
-          Text("\(value)")
+          Text("\(carName)")
             .widgetAccentable()
           
           

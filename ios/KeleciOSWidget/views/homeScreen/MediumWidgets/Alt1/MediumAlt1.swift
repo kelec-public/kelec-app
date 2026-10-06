@@ -9,18 +9,15 @@ import SwiftUI
 import WidgetKit
 import renaultApi
 
-struct iosAlt1WidgetMediumView: View {
-  var date: Date
-  var carAccount: UserAccount
+struct MediumCarWidgetAltView: View {
   var apiHandler: ApiHandler
-  var userCar: UserCar
+  var carName: String
   var image: String
-  var value: String
   var appPreferences: AppPreferences?
   var body: some View {
     VStack {
       HStack {
-        Text("\(value)")
+        Text("\(carName)")
           .widgetAccentable()
           .font(.title3)
           .fontWeight(.bold)
@@ -125,7 +122,7 @@ struct iosAlt1WidgetMediumView: View {
 }
 
 #Preview(as: .systemMedium) {
-  KeleciOSWidget2()
+  KeleciOSWidgetAlternative()
 } timeline: {
   let date = Date() - 60 * 14
   let car = UserCar(email: "email", password: "password", carMaker: "renault")

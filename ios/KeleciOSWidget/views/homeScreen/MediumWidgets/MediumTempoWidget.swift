@@ -10,20 +10,20 @@ import SwiftUI
 import WidgetKit
 import renaultApi
 
-struct KeleciOSTempoEntryView: View {
+struct TempoWidgetEntryView: View {
   var entry: TempoProvider.Entry
   var twoDays: Bool
   @Environment(\.widgetFamily) var family
   var body: some View{
     switch family{
     case .systemMedium:
-      CarWidgetStateView(account: entry.account, userCar: entry.userCar, apiHandler: entry.apiHandler, serverError: "tempoCarServerError") { account, userCar, apiHandler in
+      CarWidgetStateView(account: entry.account, userCar: entry.userCar, apiHandler: entry.apiHandler, serverError: "tempoCarServerError") { _, _, apiHandler in
         if let tempoApi = entry.tempoApi {
           if (self.twoDays) {
-            KeleciOSTempoMedium2DaysWidgetView(date: entry.date, carAccount: account, apiHandler: apiHandler, userCar: userCar, image: entry.image, value: entry.carName, appPreferences: entry.appPreferences, tempoApi: tempoApi)
+            MediumTempo2DaysWidgetView(apiHandler: apiHandler, carName: entry.carName, image: entry.image, appPreferences: entry.appPreferences, tempoApi: tempoApi)
               .widgetBackground()
           } else {
-            KeleciOSTempoMediumView(date: entry.date, carAccount: account, apiHandler: apiHandler, userCar: userCar, image: entry.image, value: entry.carName, appPreferences: entry.appPreferences, tempoApi: tempoApi)
+            MediumTempoWidgetView(apiHandler: apiHandler, carName: entry.carName, image: entry.image, appPreferences: entry.appPreferences, tempoApi: tempoApi)
               .widgetBackground()
           }
         } else {
@@ -36,20 +36,17 @@ struct KeleciOSTempoEntryView: View {
   }
 }
 
-struct KeleciOSTempoMediumView: View{
-  var date:Date
-  var carAccount: UserAccount
+struct MediumTempoWidgetView: View{
   var apiHandler: ApiHandler
-  var userCar: UserCar
+  var carName: String
   var image: String
-  var value: String
   var appPreferences: AppPreferences?
   var tempoApi: tempoFinalReturn
   var body: some View{
     GeometryReader { geo in
       HStack{
         
-        iosWidgetSmallView(date: date, carAccount: carAccount, apiHandler: apiHandler, userCar: userCar, image: image, value: value, appPreferences: appPreferences)
+        SmallCarWidgetView(apiHandler: apiHandler, carName: carName, image: image, appPreferences: appPreferences)
           .widgetBackground()
         .frame(width: geo.size.width/2, height: geo.size.height)
         

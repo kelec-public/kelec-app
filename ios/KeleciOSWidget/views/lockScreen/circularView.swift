@@ -28,16 +28,16 @@ struct KelecLockScreenCircularView:View{
       
     }
     
-    .if(shouldBeCapcity){ view in
+    .if(isCapacityStyle){ view in
       view.gaugeStyle(.accessoryCircularCapacity)
     }
-    .if(!shouldBeCapcity){ view in
+    .if(!isCapacityStyle){ view in
       view.gaugeStyle(.accessoryCircular)}
     .tint(.accentColor)
     .widgetAccentable()
   }
   
-  private var shouldBeCapcity: Bool {
+  private var isCapacityStyle: Bool {
     return self.alternative == 1
   }
   

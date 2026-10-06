@@ -18,7 +18,6 @@ struct BatteryCardView: View{
   var apiHandler: ApiHandler
   var appPreferences: AppPreferences?
   var carMaker: String
-  var account: UserAccount
   var carAccount: UserCar
   @State var maxChargeOffset:CGFloat = 0
   

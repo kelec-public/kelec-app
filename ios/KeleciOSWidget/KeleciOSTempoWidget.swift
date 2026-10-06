@@ -61,7 +61,7 @@ struct KeleciOSTempoWidget: Widget {
   
   var body: some WidgetConfiguration {
     AppIntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: TempoProvider()) { entry in
-      KeleciOSTempoEntryView(entry: entry, twoDays: false)
+      TempoWidgetEntryView(entry: entry, twoDays: false)
     }
     .contentMarginsDisabledIfAvailable()
     .configurationDisplayName("Renault E-Tech Tempo")
@@ -75,7 +75,7 @@ struct KeleciOSTempo2DaysWidget: Widget {
   
   var body: some WidgetConfiguration {
     AppIntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: TempoProvider()) { entry in
-      KeleciOSTempoEntryView(entry: entry, twoDays: true)
+      TempoWidgetEntryView(entry: entry, twoDays: true)
     }
     .contentMarginsDisabledIfAvailable()
     .configurationDisplayName("Renault E-Tech Tempo")

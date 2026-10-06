@@ -11,14 +11,14 @@ import SwiftUI
 
 struct KelecLockScreenRectangularView:View{
   var apiHandler: ApiHandler
-  var value: String
+  var carName: String
   var appPreferences: AppPreferences?
   var body: some View{
       VStack(alignment: .leading, spacing: 6){
         HStack() {
           Image(systemName: carStatusIcon(isPlugged: apiHandler.getIsCarPlugged(), isCharging: apiHandler.getIsCarCharging()))
             .widgetAccentable()
-          Text("\(value)")
+          Text("\(carName)")
             .widgetAccentable()
           
         }

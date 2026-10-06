@@ -59,17 +59,17 @@ struct KeleciOSWidgetEntryView : View {
   var body: some View{
     switch family{
     case .systemSmall:
-      CarWidgetStateView(account: entry.account, userCar: entry.userCar, apiHandler: entry.apiHandler) { account, userCar, apiHandler in
-        iosWidgetSmallView(date: entry.date, carAccount: account, apiHandler: apiHandler, userCar: userCar, image: entry.image, value: entry.carName, appPreferences: entry.appPreferences)
+      CarWidgetStateView(account: entry.account, userCar: entry.userCar, apiHandler: entry.apiHandler) { _, _, apiHandler in
+        SmallCarWidgetView(apiHandler: apiHandler, carName: entry.carName, image: entry.image, appPreferences: entry.appPreferences)
           .widgetBackground()
       }
     case .systemMedium:
-      CarWidgetStateView(account: entry.account, userCar: entry.userCar, apiHandler: entry.apiHandler) { account, userCar, apiHandler in
+      CarWidgetStateView(account: entry.account, userCar: entry.userCar, apiHandler: entry.apiHandler) { _, userCar, apiHandler in
         if self.alternative == 1 {
-          iosAlt1WidgetMediumView(date: entry.date, carAccount: account, apiHandler: apiHandler, userCar: userCar, image: entry.image, value: entry.carName, appPreferences: entry.appPreferences)
+          MediumCarWidgetAltView(apiHandler: apiHandler, carName: entry.carName, image: entry.image, appPreferences: entry.appPreferences)
             .widgetBackground()
         } else {
-          iosWidgetMediumView(date: entry.date, carAccount: account, apiHandler: apiHandler, userCar: userCar, image: entry.image, value: entry.carName, appPreferences: entry.appPreferences)
+          MediumCarWidgetView(apiHandler: apiHandler, userCar: userCar, carName: entry.carName, image: entry.image, appPreferences: entry.appPreferences)
             .widgetBackground()
         }
       }
@@ -94,7 +94,7 @@ struct KeleciOSWidget: Widget {
   }
 }
 
-struct KeleciOSWidget2: Widget {
+struct KeleciOSWidgetAlternative: Widget {
   let kind: String = "KeleciOSWidget2"
   
   var body: some WidgetConfiguration {
@@ -121,7 +121,7 @@ struct KelecLockScreenWidgetEntryView:View {
       }
     case .accessoryRectangular:
       CarWidgetStateView(account: entry.account, userCar: entry.userCar, apiHandler: entry.apiHandler) { _, _, apiHandler in
-        KelecLockScreenRectangularView(apiHandler: apiHandler, value: entry.carName, appPreferences: entry.appPreferences)
+        KelecLockScreenRectangularView(apiHandler: apiHandler, carName: entry.carName, appPreferences: entry.appPreferences)
           .widgetBackground()
       }
     case .accessoryCircular:

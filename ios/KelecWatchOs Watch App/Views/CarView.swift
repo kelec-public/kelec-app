@@ -9,13 +9,11 @@ import SwiftUI
 import renaultApi
 
 struct CarView: View {
-  let account: UserAccount
   let carAccount: UserCar
   @StateObject private var viewModel: CarViewModel
   @ObservedObject private var sync = WatchSync.shared
 
-  init(account: UserAccount, carAccount: UserCar) {
-    self.account = account
+  init(carAccount: UserCar) {
     self.carAccount = carAccount
     _viewModel = StateObject(wrappedValue: CarViewModel(userCar: carAccount))
   }
@@ -30,7 +28,7 @@ struct CarView: View {
       }else{
         ZStack{
           if let apiHandler = viewModel.apiHandler {
-            BatteryCardView(refreshApi: refresh, imageUrl: URL(string: carAccount.car?.imageUrl ?? ""), apiHandler: apiHandler, appPreferences: viewModel.appPreferences, carMaker: carAccount.getCarMaker(), account: account, carAccount: carAccount)
+            BatteryCardView(refreshApi: refresh, imageUrl: URL(string: carAccount.car?.imageUrl ?? ""), apiHandler: apiHandler, appPreferences: viewModel.appPreferences, carMaker: carAccount.getCarMaker(), carAccount: carAccount)
               .navigationBarTitleDisplayMode(.inline)
               .navigationTitle(Text("\(carAccount.car?.model ?? "Unknown")"))
           }else{
@@ -78,6 +76,5 @@ struct CarView: View {
 #Preview {
   let carModel = CarModel(vin: "VIN", image: "image", imageUrl: "https://api.kelec.app/ioniq", model: "DEMO")
   let car = UserCar(email: "", password: "", carMaker: "demo", car: carModel)
-  let account = UserAccount(selectedCar: "VIN", cars: [car])
-  CarView(account: account, carAccount: car)
+  CarView(carAccount: car)
 }

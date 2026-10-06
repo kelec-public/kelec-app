@@ -10,13 +10,10 @@ import SwiftUI
 import WidgetKit
 import renaultApi
 
-struct KeleciOSTempoMedium2DaysWidgetView: View {
-  var date:Date
-  var carAccount: UserAccount
+struct MediumTempo2DaysWidgetView: View {
   var apiHandler: ApiHandler
-  var userCar: UserCar
+  var carName: String
   var image: String
-  var value: String
   var appPreferences: AppPreferences?
   var tempoApi: tempoFinalReturn
   
@@ -24,7 +21,7 @@ struct KeleciOSTempoMedium2DaysWidgetView: View {
     GeometryReader { geo in
       HStack{
         
-        iosWidgetSmallView(date: date, carAccount: carAccount, apiHandler: apiHandler, userCar: userCar, image: image, value: value, appPreferences: appPreferences)
+        SmallCarWidgetView(apiHandler: apiHandler, carName: carName, image: image, appPreferences: appPreferences)
           .widgetBackground()
           .frame(width: geo.size.width/2, height: geo.size.height)
         

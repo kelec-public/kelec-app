@@ -11,19 +11,16 @@ import renaultApi
 import SwiftUI
 
 
-struct iosWidgetSmallView: View{
-  var date:Date
-  var carAccount: UserAccount
+struct SmallCarWidgetView: View{
   var apiHandler: ApiHandler
-  var userCar: UserCar
+  var carName: String
   var image: String
-  var value: String
   var appPreferences: AppPreferences?
   var body: some View{
     VStack(alignment: .leading, spacing: 0){
       HStack{
         Spacer()
-        Text("\(value)")
+        Text("\(carName)")
           .widgetAccentable()
           .font(.system(size: 15))
         Spacer()

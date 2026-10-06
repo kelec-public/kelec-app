@@ -63,7 +63,7 @@ struct KelecWatchOSWidgetEntryView : View {
         }
       case .accessoryRectangular:
         CarWidgetStateView(account: entry.account, userCar: entry.userCar, apiHandler: entry.apiHandler) { _, _, apiHandler in
-          KelecLockScreenRectangularView(apiHandler: apiHandler, value: entry.carName, appPreferences: entry.appPreferences)
+          KelecLockScreenRectangularView(apiHandler: apiHandler, carName: entry.carName, appPreferences: entry.appPreferences)
             .widgetBackground()
         }
           case .accessoryCorner:

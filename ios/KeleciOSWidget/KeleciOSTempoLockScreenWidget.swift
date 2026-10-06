@@ -30,22 +30,22 @@ struct LockScreenTempoProvider: TimelineProvider{
 
 }
 
-struct iosTempoLockScreenEntryView: View {
+struct TempoLockScreenEntryView: View {
   var entry: LockScreenTempoProvider.Entry
   @Environment(\.widgetFamily) var family
   var body: some View{
     switch family{
     case .accessoryRectangular:
-      iosTempoLockScreenRectangular(tempoApi: entry.tempoApi)
+      TempoLockScreenRectangularView(tempoApi: entry.tempoApi)
     case .accessoryInline:
-      iosTempoLockScreenInline(tempoApi: entry.tempoApi)
+      TempoLockScreenInlineView(tempoApi: entry.tempoApi)
     default:
       Text("error")
     }
   }
 }
 
-struct iosTempoLockScreenInline: View {
+struct TempoLockScreenInlineView: View {
   var tempoApi: tempoFinalReturn?
   var body: some View {
     if(tempoApi != nil){
@@ -57,7 +57,7 @@ struct iosTempoLockScreenInline: View {
   }
 }
 
-struct iosTempoLockScreenRectangular: View {
+struct TempoLockScreenRectangularView: View {
   var tempoApi: tempoFinalReturn?
   var body: some View {
     if(tempoApi != nil){
@@ -86,12 +86,12 @@ struct TempoLockScreenEntry: TimelineEntry {
   let tempoApi: tempoFinalReturn?
 }
 
-struct iosTempoLockScreen: Widget {
+struct TempoLockScreenWidget: Widget {
   let kind: String = "iosTempoLockScreen"
   
   var body: some WidgetConfiguration {
     StaticConfiguration(kind: kind, provider: LockScreenTempoProvider()) { entry in
-      iosTempoLockScreenEntryView(entry: entry)
+      TempoLockScreenEntryView(entry: entry)
     }
     .configurationDisplayName("Tempo")
     .description("tempoLockScreenWidgetDescription")

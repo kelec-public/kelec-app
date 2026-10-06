@@ -11,11 +11,11 @@ import SwiftUI
 struct KeleciOSWidgetBundle: WidgetBundle {
   var body: some Widget {
     KeleciOSWidget()
-    KeleciOSWidget2()
+    KeleciOSWidgetAlternative()
     KelecLockScreenWidget()
     KelecLockScreenWidgetAlternative()
     KeleciOSTempoWidget()
     KeleciOSTempo2DaysWidget()
-    iosTempoLockScreen()
+    TempoLockScreenWidget()
   }
 }

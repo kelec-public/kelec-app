@@ -23,7 +23,7 @@ struct ContentView: View {
         // one page per car
         TabView{
           ForEach(account.cars, id: \.car?.vin) { car in
-            CarView(account: account, carAccount: car)
+            CarView(carAccount: car)
           }
         }
       }else{
