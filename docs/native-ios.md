@@ -4,7 +4,7 @@ Synthèse du refactor du code natif iOS (6 octobre 2026) : le diagnostic de dép
 et l'organisation qui en résulte.
 
 Périmètre : le bridge React Native, les widgets iOS (écran d'accueil, écran verrouillé, Tempo), l'intent Siri,
-l'app Apple Watch et ses widgets, et le package `renaultApi`. Le natif Android n'est pas couvert (à faire plus tard).
+l'app Apple Watch et ses widgets, et le package `renaultApi`. Le natif Android est décrit dans [native-android.md](native-android.md).
 
 ## Diagnostic de départ
 
