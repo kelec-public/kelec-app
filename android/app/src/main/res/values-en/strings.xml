@@ -24,4 +24,5 @@
     <string name="scheduled_charge_status">"SCHEDULED CHARGE | "</string>
     <string name="not_charging_status">"NOT CHARGING | "</string>
     <string name="widget_configure_title">Select a car</string>
+    <string name="widget_server_error">Impossible to connect to server</string>
 </resources>

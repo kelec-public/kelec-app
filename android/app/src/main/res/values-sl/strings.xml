@@ -24,4 +24,5 @@
     <string name="not_charging_status">"SE NE POLNI | "</string>
     <string name="no_car_added">Najprej morate v aplikaciji izbrati avto</string>
     <string name="widget_configure_title">Izberite avtomobil</string>
+    <string name="widget_server_error">Ni mogoče vzpostaviti povezave s strežnikom</string>
 </resources>

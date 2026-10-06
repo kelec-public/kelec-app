@@ -24,4 +24,5 @@
     <string name="charging_status">"LADATAAN | "</string>
     <string name="not_charging_status">"EI LATAUSTA | "</string>
     <string name="widget_configure_title">Valitse auto</string>
+    <string name="widget_server_error">Palvelimeen ei voida muodostaa yhteyttä</string>
 </resources>

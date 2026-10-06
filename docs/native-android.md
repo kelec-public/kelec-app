@@ -60,5 +60,5 @@ Les deux stockages utilisent le même fichier de SharedPreferences, `DATA` : les
 | `<vin>_batteryStatus` | `DATA` en clair | Dernier statut batterie Renault (même format) | Widget | App RN |
 | `<vin>_mileageHistory` | `DATA` en clair | Kilométrage du dernier mois (`[{mileage, timestamp ISO}]`) | Widget | App RN (historique de charge) |
 | `<vin>/image` | `DATA` en clair | Image base64 (jamais lue) | Bridge RN | — |
-| `<vin>_password` | `DATA` chiffré | Mot de passe du compte | Stockage chiffré RN | Widget |
+| `<vin>_password` | `DATA` chiffré | Mot de passe du compte | Stockage chiffré RN | — (le widget Renault n'en a pas besoin) |
 | `cookieValue_<email>` | `DATA` chiffré | Session Renault (JSON `{canLogin, cookieValue}`) | Stockage chiffré RN | Widget |

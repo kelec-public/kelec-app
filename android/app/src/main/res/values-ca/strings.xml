@@ -24,4 +24,5 @@
     <string name="not_charging_status">"NO CARREGANT | "</string>
     <string name="no_car_added">Primer has de seleccionar un cotxe a l\'aplicació</string>
     <string name="widget_configure_title">Seleccioneu un cotxe</string>
+    <string name="widget_server_error">No es pot connectar al servidor</string>
 </resources>

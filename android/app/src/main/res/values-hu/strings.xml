@@ -25,4 +25,5 @@
     <string name="not_charging_status">"NINCS TÖLTÉS | "</string>
     <string name="ended_charge_status">"TÖLTÉS BEFEJEZŐDÖTT | "</string>
     <string name="widget_configure_title">Válasszon egy autót</string>
+    <string name="widget_server_error">Nem lehet csatlakozni a szerverhez</string>
 </resources>

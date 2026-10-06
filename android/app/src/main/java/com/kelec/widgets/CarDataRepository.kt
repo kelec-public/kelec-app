@@ -109,7 +109,6 @@ class CarDataRepository(context: Context) {
     }
 
     // crypted data
-    fun loadCryptedPassword(vin: String): String? = loadCryptedData(vin + PASSWORD_SUFFIX)
     fun loadCryptedCookieValue(email: String): String? {
         val raw = loadCryptedData(COOKIEVALUE_PREFIX + email) ?: return null
         return try {
@@ -175,7 +174,6 @@ class CarDataRepository(context: Context) {
         private const val ACCOUNT_KEY = "account"
         private const val APP_PREFERENCES_KEY = "appPreferences"
         private const val CAR_DATA_SUFFIX = "/carData"
-        private const val PASSWORD_SUFFIX = "_password"
         private const val COOKIEVALUE_PREFIX = "cookieValue_"
         private const val DEMO_CAR_MAKER = "demo"
 

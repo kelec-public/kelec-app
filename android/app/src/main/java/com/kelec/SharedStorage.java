@@ -35,11 +35,12 @@ public class SharedStorage extends ReactContextBaseJavaModule {
         SharedPreferences.Editor editor = context.getSharedPreferences("DATA", context.MODE_PRIVATE).edit();
         editor.putString(key, message);
         editor.commit();
-        Intent intent = new Intent(getCurrentActivity().getApplicationContext(), KelecMainWIdget.class);
+        Context appContext = context.getApplicationContext();
+        Intent intent = new Intent(appContext, KelecMainWIdget.class);
         intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-        int[] ids = AppWidgetManager.getInstance(getCurrentActivity().getApplicationContext()).getAppWidgetIds(new ComponentName(getCurrentActivity().getApplicationContext(), KelecMainWIdget.class));
+        int[] ids = AppWidgetManager.getInstance(appContext).getAppWidgetIds(new ComponentName(appContext, KelecMainWIdget.class));
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
-        getCurrentActivity().getApplicationContext().sendBroadcast(intent);
+        appContext.sendBroadcast(intent);
     }
 
     @ReactMethod
@@ -81,10 +82,12 @@ public class SharedStorage extends ReactContextBaseJavaModule {
                     EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             );
 
-            String message = sharedPreferences.getString(key, "");
+            // null si la clé est absente ou illisible (comme sur iOS)
+            String message = sharedPreferences.getString(key, null);
             callback.invoke(message);
         } catch (Exception e) {
-            callback.invoke("ERROR: " + e.getMessage(), e);
+            Log.e("SharedStorage", "Unable to read encrypted data", e);
+            callback.invoke((Object) null);
         }
     }
 

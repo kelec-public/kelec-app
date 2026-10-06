@@ -24,4 +24,5 @@
     <string name="scheduled_charge_status">"Punjenje zakazano | "</string>
     <string name="no_car_added">Prvo morate odabrati automobil u aplikaciji</string>
     <string name="widget_configure_title">Odaberite automobil</string>
+    <string name="widget_server_error">Nije moguće povezivanje sa serverom</string>
 </resources>

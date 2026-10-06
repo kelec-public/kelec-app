@@ -24,4 +24,5 @@
     <string name="scheduled_charge_status">"RICARICA PROGRAMMATA | "</string>
     <string name="not_charging_status">"RICARICA FALLITA | "</string>
     <string name="widget_configure_title">Seleziona un\'auto</string>
+    <string name="widget_server_error">Impossibile collegarsi al server.</string>
 </resources>

@@ -25,7 +25,7 @@ enum class ChargingState {
         CHARGING, CHARGING_LEGACY_ZOE -> context.getString(R.string.charging_status)
         V2G -> "V2G"
         V2L -> "V2L"
-        NOT_CHARGING -> context.getString(R.string.charging_status)
+        NOT_CHARGING -> context.getString(R.string.not_charging_status)
     }
 
     companion object {

@@ -23,4 +23,5 @@
     <string name="ended_charge_status">CHARGE TERMINÉE | </string>
     <string name="charging_status">EN CHARGE | </string>
     <string name="not_charging_status">NE CHARGE PAS | </string>
+    <string name="widget_server_error">Impossible de se connecter au serveur</string>
 </resources>

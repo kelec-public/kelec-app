@@ -83,7 +83,7 @@ public class KelecMainWIdget extends AppWidgetProvider {
             case NOT_LOGGED_IN:
                 return renderError(mgr, appWidgetId, context, context.getString(R.string.not_yet_logged_in));
             case NO_CARS:
-                return renderError(mgr, appWidgetId, context, context.getString(R.string.not_yet_logged_in));
+                return renderError(mgr, appWidgetId, context, context.getString(R.string.no_car_added));
             case OK:
             default:
                 break;
@@ -98,18 +98,14 @@ public class KelecMainWIdget extends AppWidgetProvider {
             return done();
         }
 
-        String password = repo.loadCryptedPassword(car.getVin());
-        if (password == null) {
-            return renderError(mgr, appWidgetId, context, "Unable to decrpyt password");
-        }
-
+        // Renault group n'utilise que le cookie de session : le mot de passe n'est pas nécessaire.
         String cookieValue = repo.loadCryptedCookieValue(car.getEmail());
         if (cookieValue == null) {
-            return renderError(mgr, appWidgetId, context, "Unable to decrypt cookie value");
+            return renderError(mgr, appWidgetId, context, context.getString(R.string.not_yet_logged_in));
         }
 
         BatteryStatusAttributes cached = repo.loadCachedBatteryStatus(car.getVin());
-        RenaultApiHandler api = new RenaultApiHandler(car.getEmail(), password, car.getKamereonAccountID(), cookieValue);
+        RenaultApiHandler api = new RenaultApiHandler(car.getKamereonAccountID(), cookieValue);
 
         return api.getBatteryStatus(context, car.getVin())
                 .thenAccept(fresh -> {
@@ -119,16 +115,14 @@ public class KelecMainWIdget extends AppWidgetProvider {
                     } else if (cached != null) {
                         render(mgr, appWidgetId, KelecWidgetViews.INSTANCE.main(context, appWidgetId, cached, car.getModel(), car.getMaker(), prefs));
                     } else {
-                        render(mgr, appWidgetId, KelecWidgetViews.INSTANCE.error(context, "Unable to collect data"));
+                        render(mgr, appWidgetId, KelecWidgetViews.INSTANCE.error(context, context.getString(R.string.widget_server_error)));
                     }
                 })
                 .exceptionally(err -> {
                     if (cached != null) {
                         render(mgr, appWidgetId, KelecWidgetViews.INSTANCE.main(context, appWidgetId, cached, car.getModel(), car.getMaker(), prefs));
                     } else {
-                        Throwable cause = err.getCause() != null ? err.getCause() : err;
-                        String msg = cause.getMessage() != null ? cause.getMessage() : "Unknown error";
-                        render(mgr, appWidgetId, KelecWidgetViews.INSTANCE.error(context, msg));
+                        render(mgr, appWidgetId, KelecWidgetViews.INSTANCE.error(context, context.getString(R.string.widget_server_error)));
                     }
                     return null;
                 });

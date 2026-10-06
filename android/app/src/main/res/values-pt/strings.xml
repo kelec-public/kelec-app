@@ -24,4 +24,5 @@
     <string name="charging_status">"CARREGANDO | "</string>
     <string name="not_charging_status">"NÃO CARREGANDO | "</string>
     <string name="widget_configure_title">Selecione um carro</string>
+    <string name="widget_server_error">Impossível conectar ao servidor</string>
 </resources>

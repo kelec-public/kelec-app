@@ -11,8 +11,6 @@ import kotlinx.coroutines.withContext
 import java.util.concurrent.CompletableFuture
 
 class RenaultApiHandler(
-    private val email: String,
-    private val password: String,
     private val kamereonAccountID: String,
     private val cookieValue: String,
 ) {
@@ -40,12 +38,16 @@ class RenaultApiHandler(
                     throw RuntimeException("Unable to get battery status")
                 }
 
-                val cockpitResponse = KamereonCockpitApiClient.apiService.getCockpitStatus(
-                    kamereonAccountID, vin, jwt
-                )
-                cockpitResponse.data.attributes?.let {
-                    if (it.totalMileage != null)
-                        MileageHandler.saveMileageHistory(context, vin, it.totalMileage)
+                // Le kilométrage est facultatif : son échec ne doit pas faire perdre le statut batterie.
+                try {
+                    val cockpitResponse = KamereonCockpitApiClient.apiService.getCockpitStatus(
+                        kamereonAccountID, vin, jwt
+                    )
+                    cockpitResponse.data.attributes?.totalMileage?.let {
+                        MileageHandler.saveMileageHistory(context, vin, it)
+                    }
+                } catch (e: Exception) {
+                    Log.w("RenaultApiHandler", "Unable to get mileage", e)
                 }
 
                 batteryStatus
@@ -61,7 +63,7 @@ class RenaultApiHandler(
                 } else {
                     future.complete(result)
                 }
-            } catch (e: RuntimeException) {
+            } catch (e: Exception) {
                 future.completeExceptionally(e)
             }
         }
