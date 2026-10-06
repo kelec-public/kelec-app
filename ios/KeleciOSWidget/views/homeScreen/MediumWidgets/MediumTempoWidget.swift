@@ -17,45 +17,24 @@ struct KeleciOSTempoEntryView: View {
   var body: some View{
     switch family{
     case .systemMedium:
-      if(entry.account == nil){
-        Text("Vous devez d'abord vous connecter sur l'appli")
-      }else if(entry.apiHandler == nil){
-        Text("Impossible de se connecter au serveur Renault")
-      } else if (entry.tempoApi == nil){
-        Text("Impossible de se connecter au serveur RTE")
-      }else{
-        if (self.twoDays) {
-          KeleciOSTempoMedium2DaysEntryView(entry: entry)
+      CarWidgetStateView(account: entry.account, userCar: entry.userCar, apiHandler: entry.apiHandler, serverError: "Impossible de se connecter au serveur Renault") { account, userCar, apiHandler in
+        if let tempoApi = entry.tempoApi {
+          if (self.twoDays) {
+            KeleciOSTempoMedium2DaysWidgetView(date: entry.date, carAccount: account, apiHandler: apiHandler, userCar: userCar, image: entry.image, value: entry.carName, appPreferences: entry.appPreferences, tempoApi: tempoApi)
+              .widgetBackground()
+          } else {
+            KeleciOSTempoMediumView(date: entry.date, carAccount: account, apiHandler: apiHandler, userCar: userCar, image: entry.image, value: entry.carName, appPreferences: entry.appPreferences, tempoApi: tempoApi)
+              .widgetBackground()
+          }
         } else {
-          KeleciOSTempoMediumEntryView(entry: entry)
+          Text("Impossible de se connecter au serveur RTE")
         }
-        
       }
     default:
       Text("error")
     }
   }
 }
-
-struct KeleciOSTempoMediumEntryView: View{
-  var entry: TempoEntry
-  var body: some View{
-    if #available(iOS 17, *){
-      ZStack{
-        KeleciOSTempoMediumView(date: entry.date, carAccount: entry.account!, apiHandler: entry.apiHandler!, userCar: entry.userCar!, image: entry.image, value: entry.carName,  appPreferences: entry.appPreferences, tempoApi: entry.tempoApi!)
-          .containerBackground(for: .widget) {
-            Color("blanc")
-          }
-      }
-    }else{
-      ZStack{
-        KeleciOSTempoMediumView(date: entry.date, carAccount: entry.account!, apiHandler: entry.apiHandler!, userCar: entry.userCar!, image: entry.image, value: entry.carName,  appPreferences: entry.appPreferences, tempoApi: entry.tempoApi!)
-      }
-    }
-  }
-}
-
-
 
 struct KeleciOSTempoMediumView: View{
   var date:Date
@@ -70,7 +49,8 @@ struct KeleciOSTempoMediumView: View{
     GeometryReader { geo in
       HStack{
         
-        iosWidgetEntryViewSmall(date: date, carAccount: carAccount, apiHandler: apiHandler, userCar: userCar, image: image, value: value, appPreferences: appPreferences)
+        iosWidgetSmallView(date: date, carAccount: carAccount, apiHandler: apiHandler, userCar: userCar, image: image, value: value, appPreferences: appPreferences)
+          .widgetBackground()
         .frame(width: geo.size.width/2, height: geo.size.height)
         
         

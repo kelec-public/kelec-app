@@ -132,7 +132,7 @@ struct BatteryCardView: View{
         HStack(spacing: 5){
           HStack(spacing: 3) {
             Image(systemName: "hourglass")
-            Text(!apiHandler.getIsCarCharging() ? "--h--" : "\(Int(apiHandler.getChargingRemainingTime()/60))h\(apiHandler.getChargingRemainingTime()%60  <= 9 ? "0" : "")\(apiHandler.getChargingRemainingTime()%60)")
+            Text(!apiHandler.getIsCarCharging() ? "--h--" : formatChargingTime(minutes: apiHandler.getChargingRemainingTime()))
           }
           if(apiHandler.getIsCarCharging()){
             HStack(spacing: 3) {

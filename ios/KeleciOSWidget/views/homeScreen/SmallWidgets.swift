@@ -11,30 +11,6 @@ import renaultApi
 import SwiftUI
 
 
-struct iosWidgetEntryViewSmall: View{
-  var date:Date
-  var carAccount: UserAccount
-  var apiHandler: ApiHandler
-  var userCar: UserCar
-  var image: String
-  var value: String
-  var appPreferences: AppPreferences?
-  var body: some View{
-    if #available(iOS 17, *){
-      ZStack{
-        iosWidgetSmallView(date: date, carAccount: carAccount, apiHandler: apiHandler, userCar: userCar, image: image, value: value, appPreferences: appPreferences)
-          .containerBackground(for: .widget) {
-            Color("blanc")
-          }
-      }
-    }else{
-      ZStack{
-        iosWidgetSmallView(date: date, carAccount: carAccount,  apiHandler: apiHandler, userCar: userCar, image: image, value: value, appPreferences: appPreferences)
-      }
-    }
-  }
-}
-
 struct iosWidgetSmallView: View{
   var date:Date
   var carAccount: UserAccount
@@ -75,7 +51,7 @@ struct iosWidgetSmallView: View{
             HStack(spacing: 3) {
               Image(systemName: "hourglass")
                 .frame(height: 13)
-              Text((!apiHandler.getIsCarCharging() || apiHandler.getBatteryLevel() == 100) ? "--h--" : "\(Int(apiHandler.getChargingRemainingTime()/60))h\(apiHandler.getChargingRemainingTime()%60 <= 9 ? "0" : "")\(apiHandler.getChargingRemainingTime()%60)")
+              Text((!apiHandler.getIsCarCharging() || apiHandler.getBatteryLevel() == 100) ? "--h--" : formatChargingTime(minutes: apiHandler.getChargingRemainingTime()))
                 .widgetAccentable(false)
                 .font(.system(size: 13))
             }
@@ -93,38 +69,7 @@ struct iosWidgetSmallView: View{
       ZStack{
         HStack{
           VStack(alignment: .center, spacing: 0) {
-            if #available(iOSApplicationExtension 18.0, *) {
-              if(Image(base64str: image) != nil && image != ""){
-                Image(base64str: image)!
-                  .resizable()
-                  .widgetAccentedRenderingMode(.fullColor)
-                  .scaledToFit()
-              }else if(image == "megane"){
-                Image("megane")
-                  .resizable()
-                  .widgetAccentedRenderingMode(.fullColor)
-                  .scaledToFit()
-              }else{
-                Image("renaultLogo")
-                  .resizable()
-                  .widgetAccentedRenderingMode(.fullColor)
-                  .scaledToFit()
-              }
-            }else{
-              if(Image(base64str: image) != nil && image != ""){
-                Image(base64str: image)!
-                  .resizable()
-                  .scaledToFit()
-              }else if(image == "megane"){
-                Image("megane")
-                  .resizable()
-                  .scaledToFit()
-              }else{
-                Image("renaultLogo")
-                  .resizable()
-                  .scaledToFit()
-              }
-            }
+            CarImageView(image: image)
 
           }
           
@@ -134,16 +79,7 @@ struct iosWidgetSmallView: View{
           Spacer()
           HStack(spacing: 0){
             Spacer()
-            if(isBeforeToday(convertTimestamp(date: apiHandler.getLastRefreshDate()))){
-              Text("\(convertTimestamp(date: apiHandler.getLastRefreshDate()), style: .date) ")
-                .widgetAccentable()
-                .font(.system(size: 10))
-                .foregroundColor(.gray)
-            }
-            Text(" \(convertTimestamp(date:apiHandler.getLastRefreshDate()), style: .time)")
-              .widgetAccentable()
-              .font(.system(size: 10))
-              .foregroundColor(.gray)
+            LastRefreshLabel(lastRefreshDate: apiHandler.getLastRefreshDate(), font: .system(size: 10))
           }
         }
       }

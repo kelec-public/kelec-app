@@ -10,29 +10,11 @@ import WidgetKit
 import SwiftUI
 import renaultApi
 
-struct KelecLockScreenInlineEntryView: View{
-  var apiHandler: ApiHandler
-  var body: some View{
-    if #available(iOS 17, watchOS 10, *) {
-      ZStack{
-        KelecLockScreenInlineView(apiHandler: apiHandler)
-          .containerBackground(for: .widget) {
-            Color("blanc")
-          }
-      }
-    }else{
-      ZStack{
-        KelecLockScreenInlineView(apiHandler: apiHandler)
-      }
-    }
-  }
-}
-
 struct KelecLockScreenInlineView:View{
   var apiHandler: ApiHandler
   var body: some View{
     HStack{
-      Image(systemName: apiHandler.getIsCarPlugged() ? (apiHandler.getIsCarCharging() ? "bolt.car.fill" : "bolt") : "car.fill")
+      Image(systemName: carStatusIcon(isPlugged: apiHandler.getIsCarPlugged(), isCharging: apiHandler.getIsCarCharging()))
       Text("\(apiHandler.getBatteryLevel())%")
     }
   }

@@ -110,18 +110,7 @@ struct iosWidgetMediumView: View{
           Text("\(apiHandler.getBatteryRange(appPreferences: appPreferences)) \(getUnitsText(useMiles: appPreferences?.displayMiles ?? false))")
             .foregroundColor(.gray)
           Spacer()
-          HStack(spacing: 0){
-            if(isBeforeToday(convertTimestamp(date: apiHandler.getLastRefreshDate()))){
-              Text("\(convertTimestamp(date: apiHandler.getLastRefreshDate()), style: .date) ")
-                .widgetAccentable(true)
-                .font(.caption)
-                .foregroundColor(.gray)
-            }
-            Text(" \(convertTimestamp(date: apiHandler.getLastRefreshDate()), style: .time)")
-              .widgetAccentable(true)
-              .font(.caption)
-              .foregroundColor(.gray)
-          }
+          LastRefreshLabel(lastRefreshDate: apiHandler.getLastRefreshDate())
         }
         .widgetAccentable(false)
         HStack{
@@ -131,7 +120,7 @@ struct iosWidgetMediumView: View{
               HStack(spacing: 15){
                 HStack(spacing: 3) {
                   Image(systemName: "hourglass")
-                  Text((!apiHandler.getIsCarCharging() || apiHandler.getBatteryLevel() == 100) ? "--h--" : "\(Int(apiHandler.getChargingRemainingTime()/60))h\(apiHandler.getChargingRemainingTime()%60 <= 9 ? "0" : "")\(apiHandler.getChargingRemainingTime()%60)")
+                  Text((!apiHandler.getIsCarCharging() || apiHandler.getBatteryLevel() == 100) ? "--h--" : formatChargingTime(minutes: apiHandler.getChargingRemainingTime()))
                 }
                 HStack(spacing: 3) {
                   Image(systemName: "bolt.batteryblock.fill")
@@ -144,38 +133,7 @@ struct iosWidgetMediumView: View{
           .widgetAccentable(false)
           Spacer()
           VStack(alignment: .trailing, spacing: 0) {
-            if #available(iOSApplicationExtension 18.0, *) {
-              if(Image(base64str: image) != nil && image != ""){
-                Image(base64str: image)!
-                  .resizable()
-                  .widgetAccentedRenderingMode(.fullColor)
-                  .scaledToFit()
-              }else if(image == "megane"){
-                Image("megane")
-                  .resizable()
-                  .widgetAccentedRenderingMode(.fullColor)
-                  .scaledToFit()
-              }else{
-                Image("renaultLogo")
-                  .resizable()
-                  .widgetAccentedRenderingMode(.fullColor)
-                  .scaledToFit()
-              }
-            }else{
-              if(Image(base64str: image) != nil && image != ""){
-                Image(base64str: image)!
-                  .resizable()
-                  .scaledToFit()
-              }else if(image == "megane"){
-                Image("megane")
-                  .resizable()
-                  .scaledToFit()
-              }else{
-                Image("renaultLogo")
-                  .resizable()
-                  .scaledToFit()
-              }
-            }
+            CarImageView(image: image)
 
           }  .padding(.bottom, -10)
         }

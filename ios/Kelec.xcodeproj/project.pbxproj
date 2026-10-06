@@ -23,6 +23,8 @@
 		543A0922E6C0F74544F75AC1 /* PreviewData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 783F92D76DA3869D1D196954 /* PreviewData.swift */; };
 		5C6A7AC9B97884F8DFE646C9 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = FA8D1F2F1ABA231C68E0DCBC /* PrivacyInfo.xcprivacy */; };
 		620ADEEF920BA2F39935574C /* libPods-Kelec-KelecTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D594780007EADAB715A8B525 /* libPods-Kelec-KelecTests.a */; };
+		65BBCDE07F59BDE0F9570AED /* WidgetComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95387443BC55A8F2134CF2D6 /* WidgetComponents.swift */; };
+		6B1B546A12F6269678E1A28E /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66BE55BDD7A0395D7A763C6E /* Components.swift */; };
 		73398D730D0D173381EF923E /* VehicleLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CFF2DD73D40078FF86337F /* VehicleLoader.swift */; };
 		8142FCCA34FD434BA35AB5F8 /* NouvelRLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A6578D399A67482C95C2B086 /* NouvelRLight.ttf */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
@@ -70,7 +72,6 @@
 		893FFEC62BA8659B006D7475 /* KeleciOSWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 893FFEB52BA8659A006D7475 /* KeleciOSWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		893FFED72BA8677F006D7475 /* zeServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 893FFED62BA8677F006D7475 /* zeServices.swift */; };
 		893FFEDB2BA86806006D7475 /* SmallWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 893FFEDA2BA86806006D7475 /* SmallWidgets.swift */; };
-		893FFEDD2BA86853006D7475 /* EntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 893FFEDC2BA86853006D7475 /* EntryView.swift */; };
 		893FFEE02BA868AA006D7475 /* Medium.swift in Sources */ = {isa = PBXBuildFile; fileRef = 893FFEDF2BA868AA006D7475 /* Medium.swift */; };
 		895B27822C2CAEE2009A9366 /* inlineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 895B27812C2CAEE2009A9366 /* inlineView.swift */; };
 		895B27842C2CAF13009A9366 /* circularView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 895B27832C2CAF13009A9366 /* circularView.swift */; };
@@ -96,7 +97,6 @@
 		EB08B30D2D411E1F00ABB3A9 /* inlineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 895B27812C2CAEE2009A9366 /* inlineView.swift */; };
 		EB08B30E2D411E2300ABB3A9 /* rectangularView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 895B27852C2CAF3F009A9366 /* rectangularView.swift */; };
 		EB08B3102D416FD000ABB3A9 /* KelecWatchOSWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB08B30F2D416FD000ABB3A9 /* KelecWatchOSWidgetBundle.swift */; };
-		EB0D368D2E27B755002D4D06 /* EntryViewAlt1.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB0D368C2E27B755002D4D06 /* EntryViewAlt1.swift */; };
 		EB0D368F2E27B79F002D4D06 /* MediumAlt1.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB0D368E2E27B79F002D4D06 /* MediumAlt1.swift */; };
 		EB16FA842F9A391F00624723 /* renaultApi in Frameworks */ = {isa = PBXBuildFile; productRef = EB16FA832F9A391F00624723 /* renaultApi */; };
 		EB16FA862F9A395700624723 /* renaultApi in Frameworks */ = {isa = PBXBuildFile; productRef = EB16FA852F9A395700624723 /* renaultApi */; };
@@ -133,6 +133,7 @@
 		EBF321DC2D25781300EA72BC /* WidgetsIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBF321DB2D25781300EA72BC /* WidgetsIntent.swift */; };
 		F884DBD2A00C0B5722FA16A4 /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82D3A947D978E8DABF716AA3 /* SharedStore.swift */; };
 		F8BEEB694E951321237B3647 /* VehicleLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CFF2DD73D40078FF86337F /* VehicleLoader.swift */; };
+		FC7A6C8440D5297CCF109BA9 /* WidgetComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95387443BC55A8F2134CF2D6 /* WidgetComponents.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -226,6 +227,7 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Kelec/Info.plist; sourceTree = "<group>"; };
 		2AA3C74DAF974BC5AB76E7E5 /* NouvelRBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = NouvelRBold.ttf; path = ../assets/fonts/Renault/NouvelRBold.ttf; sourceTree = "<group>"; };
 		5E858BB876E9BCE7314FF9A4 /* Tempo.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tempo.swift; sourceTree = "<group>"; };
+		66BE55BDD7A0395D7A763C6E /* Components.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
 		783F92D76DA3869D1D196954 /* PreviewData.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PreviewData.swift; sourceTree = "<group>"; };
 		7D4DDF6B05B94D7984A043B8 /* NouvelRExtrabold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = NouvelRExtrabold.ttf; path = ../assets/fonts/Renault/NouvelRExtrabold.ttf; sourceTree = "<group>"; };
 		7D8FC3E77A32465185812C68 /* NouvelRRegular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = NouvelRRegular.ttf; path = ../assets/fonts/Renault/NouvelRRegular.ttf; sourceTree = "<group>"; };
@@ -280,7 +282,6 @@
 		893FFEC32BA8659B006D7475 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		893FFED62BA8677F006D7475 /* zeServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = zeServices.swift; sourceTree = "<group>"; };
 		893FFEDA2BA86806006D7475 /* SmallWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallWidgets.swift; sourceTree = "<group>"; };
-		893FFEDC2BA86853006D7475 /* EntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryView.swift; sourceTree = "<group>"; };
 		893FFEDF2BA868AA006D7475 /* Medium.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Medium.swift; sourceTree = "<group>"; };
 		893FFEE82BA86F7B006D7475 /* KeleciOSWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = KeleciOSWidgetExtension.entitlements; sourceTree = "<group>"; };
 		895B27812C2CAEE2009A9366 /* inlineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = inlineView.swift; sourceTree = "<group>"; };
@@ -300,6 +301,7 @@
 		89F9E8552C2C928500CF7619 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
 		89F9E8562C2C928600CF7619 /* sv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sv; path = sv.lproj/Localizable.strings; sourceTree = "<group>"; };
 		90869F49878796ACE139FE0E /* Pods-Kelec.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Kelec.release.xcconfig"; path = "Target Support Files/Pods-Kelec/Pods-Kelec.release.xcconfig"; sourceTree = "<group>"; };
+		95387443BC55A8F2134CF2D6 /* WidgetComponents.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WidgetComponents.swift; sourceTree = "<group>"; };
 		98AF216D67FFDBBEE44349ED /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = ../Kelec/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		9BD43CFC6B0D84DED96AD390 /* Pods-Kelec-KelecTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Kelec-KelecTests.debug.xcconfig"; path = "Target Support Files/Pods-Kelec-KelecTests/Pods-Kelec-KelecTests.debug.xcconfig"; sourceTree = "<group>"; };
 		A57F85118AC76635FD2C7DA8 /* Pods-Kelec-KelecTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Kelec-KelecTests.release.xcconfig"; path = "Target Support Files/Pods-Kelec-KelecTests/Pods-Kelec-KelecTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -314,7 +316,6 @@
 		EB024F142CDAB35100DB6143 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Localizable.strings; sourceTree = "<group>"; };
 		EB024F152CDAB35700DB6143 /* hu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hu; path = hu.lproj/Localizable.strings; sourceTree = "<group>"; };
 		EB08B30F2D416FD000ABB3A9 /* KelecWatchOSWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KelecWatchOSWidgetBundle.swift; sourceTree = "<group>"; };
-		EB0D368C2E27B755002D4D06 /* EntryViewAlt1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryViewAlt1.swift; sourceTree = "<group>"; };
 		EB0D368E2E27B79F002D4D06 /* MediumAlt1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediumAlt1.swift; sourceTree = "<group>"; };
 		EB2D0CF32D10E1EC00AD9668 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/Localizable.strings; sourceTree = "<group>"; };
 		EB2EC55F2D9DBC7D001C6DD8 /* AppDelegare.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegare.swift; sourceTree = "<group>"; };
@@ -632,6 +633,7 @@
 			children = (
 				895B27802C2CAEC5009A9366 /* lockScreen */,
 				893FFED92BA867F6006D7475 /* homeScreen */,
+				66BE55BDD7A0395D7A763C6E /* Components.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -649,7 +651,6 @@
 			isa = PBXGroup;
 			children = (
 				EB0D368B2E27B743002D4D06 /* Alt1 */,
-				893FFEDC2BA86853006D7475 /* EntryView.swift */,
 				893FFEDF2BA868AA006D7475 /* Medium.swift */,
 				EB8576682C9B5F6200DA2F7E /* MediumTempoWidget.swift */,
 				EB73EAFD2FBF901700E27D9D /* MediumTempo2DaysWidget.swift */,
@@ -686,6 +687,7 @@
 				82D3A947D978E8DABF716AA3 /* SharedStore.swift */,
 				B3CFF2DD73D40078FF86337F /* VehicleLoader.swift */,
 				783F92D76DA3869D1D196954 /* PreviewData.swift */,
+				95387443BC55A8F2134CF2D6 /* WidgetComponents.swift */,
 			);
 			name = Shared;
 			path = Shared;
@@ -705,7 +707,6 @@
 		EB0D368B2E27B743002D4D06 /* Alt1 */ = {
 			isa = PBXGroup;
 			children = (
-				EB0D368C2E27B755002D4D06 /* EntryViewAlt1.swift */,
 				EB0D368E2E27B79F002D4D06 /* MediumAlt1.swift */,
 			);
 			path = Alt1;
@@ -1252,7 +1253,6 @@
 				893FFEDB2BA86806006D7475 /* SmallWidgets.swift in Sources */,
 				893FFEC02BA8659A006D7475 /* KeleciOSWidget.swift in Sources */,
 				EB85766B2C9B657400DA2F7E /* KeleciOSTempoLockScreenWidget.swift in Sources */,
-				893FFEDD2BA86853006D7475 /* EntryView.swift in Sources */,
 				EB73EAFE2FBF901700E27D9D /* MediumTempo2DaysWidget.swift in Sources */,
 				893FFEBE2BA8659A006D7475 /* KeleciOSWidgetLiveActivity.swift in Sources */,
 				895B27822C2CAEE2009A9366 /* inlineView.swift in Sources */,
@@ -1263,7 +1263,6 @@
 				EB334B672D524C2B007CB65D /* CarEntity.swift in Sources */,
 				EB0D368F2E27B79F002D4D06 /* MediumAlt1.swift in Sources */,
 				893FFED72BA8677F006D7475 /* zeServices.swift in Sources */,
-				EB0D368D2E27B755002D4D06 /* EntryViewAlt1.swift in Sources */,
 				893FFEBC2BA8659A006D7475 /* KeleciOSWidgetBundle.swift in Sources */,
 				0699818AD13121B6A49E8C16 /* AppGroup.swift in Sources */,
 				18A526551724E61250286DC7 /* Keychain.swift in Sources */,
@@ -1271,6 +1270,8 @@
 				73398D730D0D173381EF923E /* VehicleLoader.swift in Sources */,
 				543A0922E6C0F74544F75AC1 /* PreviewData.swift in Sources */,
 				C3BA62CD560D7B6BF30E279F /* Tempo.swift in Sources */,
+				FC7A6C8440D5297CCF109BA9 /* WidgetComponents.swift in Sources */,
+				6B1B546A12F6269678E1A28E /* Components.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1292,6 +1293,7 @@
 				F884DBD2A00C0B5722FA16A4 /* SharedStore.swift in Sources */,
 				E4E4789D7365D3F23627DD71 /* VehicleLoader.swift in Sources */,
 				CB2456A9E4DCAF1586A12645 /* PreviewData.swift in Sources */,
+				65BBCDE07F59BDE0F9570AED /* WidgetComponents.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

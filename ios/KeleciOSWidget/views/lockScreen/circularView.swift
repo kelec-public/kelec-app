@@ -10,25 +10,6 @@ import SwiftUI
 import WidgetKit
 import renaultApi
 
-struct KelecLockScreenCircularEntryView: View{
-  var apiHandler: ApiHandler?
-  var alternative: Int
-  var body: some View{
-    if #available(iOS 17, watchOS 10, *) {
-      ZStack{
-        KelecLockScreenCircularView(apiHandler: apiHandler, alternative: alternative)
-          .containerBackground(for: .widget) {
-            Color("blanc")
-          }
-      }
-    }else{
-      ZStack{
-        KelecLockScreenCircularView(apiHandler: apiHandler, alternative: alternative)
-      }
-    }
-  }
-}
-
 struct KelecLockScreenCircularView:View{
   var apiHandler: ApiHandler?
   var alternative: Int

@@ -9,26 +9,6 @@ import Foundation
 import renaultApi
 import SwiftUI
 
-struct KelecLockScreenRectangularEntryView: View{
-  var apiHandler: ApiHandler
-  var value: String
-  var appPreferences: AppPreferences?
-  var body: some View{
-    if #available(iOS 17, watchOS 10, *) {
-      ZStack{
-        KelecLockScreenRectangularView(apiHandler: apiHandler, value: value, appPreferences: appPreferences)
-          .containerBackground(for: .widget) {
-            Color("blanc")
-          }
-      }
-    }else{
-      ZStack{
-        KelecLockScreenRectangularView(apiHandler: apiHandler, value: value, appPreferences: appPreferences)
-      }
-    }
-  }
-}
-
 struct KelecLockScreenRectangularView:View{
   var apiHandler: ApiHandler
   var value: String
@@ -36,7 +16,7 @@ struct KelecLockScreenRectangularView:View{
   var body: some View{
       VStack(alignment: .leading, spacing: 6){
         HStack() {
-          Image(systemName: apiHandler.getIsCarPlugged() ? (apiHandler.getIsCarCharging() ? "bolt.car.fill" : "bolt") : "car.fill")
+          Image(systemName: carStatusIcon(isPlugged: apiHandler.getIsCarPlugged(), isCharging: apiHandler.getIsCarCharging()))
             .widgetAccentable()
           Text("\(value)")
             .widgetAccentable()

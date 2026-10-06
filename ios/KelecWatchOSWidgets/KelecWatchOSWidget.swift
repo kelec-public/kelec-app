@@ -55,28 +55,16 @@ struct KelecWatchOSWidgetEntryView : View {
     if #available(iOSApplicationExtension 16.0, *) {
       switch family{
       case .accessoryCircular:
-        KelecLockScreenCircularEntryView(apiHandler: entry.apiHandler, alternative: alternative)
+        KelecLockScreenCircularView(apiHandler: entry.apiHandler, alternative: alternative)
+          .widgetBackground()
       case .accessoryInline:
-        if(entry.account) == nil{
-          Text(String(localized: "Vous devez d'abord vous connecter sur l'appli"))
-        }
-        else if(entry.userCar == nil){
-          Text(String(localized: "Vous devez d'abord sélectionner une voiture sur l'appli"))
-        }else if(entry.apiHandler == nil){
-          Text(String(localized: "Impossible de se connecter au serveur"))
-        }else{
-          KelecLockScreenInlineView(apiHandler: entry.apiHandler!)
+        CarWidgetStateView(account: entry.account, userCar: entry.userCar, apiHandler: entry.apiHandler) { _, _, apiHandler in
+          KelecLockScreenInlineView(apiHandler: apiHandler)
         }
       case .accessoryRectangular:
-        if(entry.account) == nil{
-          Text(String(localized: "Vous devez d'abord vous connecter sur l'appli"))
-        }
-        else if(entry.userCar == nil){
-          Text(String(localized: "Vous devez d'abord sélectionner une voiture sur l'appli"))
-        }else if(entry.apiHandler == nil){
-          Text(String(localized: "Impossible de se connecter au serveur"))
-        }else{
-          KelecLockScreenRectangularEntryView(apiHandler: entry.apiHandler!, value: entry.carName, appPreferences: entry.appPreferences)
+        CarWidgetStateView(account: entry.account, userCar: entry.userCar, apiHandler: entry.apiHandler) { _, _, apiHandler in
+          KelecLockScreenRectangularView(apiHandler: apiHandler, value: entry.carName, appPreferences: entry.appPreferences)
+            .widgetBackground()
         }
           case .accessoryCorner:
         Text("\(entry.apiHandler?.getBatteryLevel() ?? 0)%")

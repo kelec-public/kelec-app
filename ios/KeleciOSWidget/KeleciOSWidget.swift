@@ -59,33 +59,18 @@ struct KeleciOSWidgetEntryView : View {
   var body: some View{
     switch family{
     case .systemSmall:
-      if(entry.account == nil){
-        Text("Vous devez d'abord vous connecter sur l'appli")
-      }else if(entry.userCar == nil){
-        Text(String(localized: "Vous devez d'abord sélectionner une voiture sur l'appli"))
-      }else if(entry.apiHandler == nil){
-        Text("Impossible de se connecter au serveur")
-      }else{
-        iosWidgetEntryViewSmall(date: entry.date, carAccount: entry.account!, apiHandler: entry.apiHandler!, userCar: entry.userCar!, image: entry.image, value:entry.carName, appPreferences: entry.appPreferences)
+      CarWidgetStateView(account: entry.account, userCar: entry.userCar, apiHandler: entry.apiHandler) { account, userCar, apiHandler in
+        iosWidgetSmallView(date: entry.date, carAccount: account, apiHandler: apiHandler, userCar: userCar, image: entry.image, value: entry.carName, appPreferences: entry.appPreferences)
+          .widgetBackground()
       }
     case .systemMedium:
-      if(entry.account == nil){
-        Text(String(localized: "Vous devez d'abord vous connecter sur l'appli"))
-      }
-      else if(entry.userCar == nil){
-        Text(String(localized: "Vous devez d'abord sélectionner une voiture sur l'appli"))
-      }else if(entry.apiHandler == nil){
-        Text(String(localized: "Impossible de se connecter au serveur"))
-      }else{
-        switch (self.alternative){
-        case 0:
-          iosWidgetEntryViewMedium(date: entry.date, carAccount: entry.account!, apiHandler: entry.apiHandler!, userCar: entry.userCar!, image: entry.image, value:entry.carName, alternative: alternative, appPreferences: entry.appPreferences)
-        case 1:
-          iosAlt1EntryViewMedium(date: entry.date, carAccount: entry.account!, apiHandler: entry.apiHandler!, userCar: entry.userCar!, image: entry.image, value:entry.carName, alternative: alternative, appPreferences: entry.appPreferences)
-
-        default:
-          iosWidgetEntryViewMedium(date: entry.date, carAccount: entry.account!, apiHandler: entry.apiHandler!, userCar: entry.userCar!, image: entry.image, value:entry.carName, alternative: alternative, appPreferences: entry.appPreferences)
-
+      CarWidgetStateView(account: entry.account, userCar: entry.userCar, apiHandler: entry.apiHandler) { account, userCar, apiHandler in
+        if self.alternative == 1 {
+          iosAlt1WidgetMediumView(date: entry.date, carAccount: account, apiHandler: apiHandler, userCar: userCar, image: entry.image, value: entry.carName, appPreferences: entry.appPreferences)
+            .widgetBackground()
+        } else {
+          iosWidgetMediumView(date: entry.date, carAccount: account, apiHandler: apiHandler, userCar: userCar, image: entry.image, value: entry.carName, appPreferences: entry.appPreferences)
+            .widgetBackground()
         }
       }
     default:
@@ -131,29 +116,17 @@ struct KelecLockScreenWidgetEntryView:View {
   var body: some View {
     switch family{
     case .accessoryInline:
-      if(entry.account) == nil{
-        Text(String(localized: "Vous devez d'abord vous connecter sur l'appli"))
-      }
-      else if(entry.userCar == nil){
-        Text(String(localized: "Vous devez d'abord sélectionner une voiture sur l'appli"))
-      }else if(entry.apiHandler == nil){
-        Text(String(localized: "Impossible de se connecter au serveur"))
-      }else{
-        KelecLockScreenInlineView(apiHandler: entry.apiHandler!)
+      CarWidgetStateView(account: entry.account, userCar: entry.userCar, apiHandler: entry.apiHandler) { _, _, apiHandler in
+        KelecLockScreenInlineView(apiHandler: apiHandler)
       }
     case .accessoryRectangular:
-      if(entry.account) == nil{
-        Text(String(localized: "Vous devez d'abord vous connecter sur l'appli"))
-      }
-      else if(entry.userCar == nil){
-        Text(String(localized: "Vous devez d'abord sélectionner une voiture sur l'appli"))
-      }else if(entry.apiHandler == nil){
-        Text(String(localized: "Impossible de se connecter au serveur"))
-      }else{
-        KelecLockScreenRectangularEntryView(apiHandler: entry.apiHandler!, value: entry.carName, appPreferences: entry.appPreferences)
+      CarWidgetStateView(account: entry.account, userCar: entry.userCar, apiHandler: entry.apiHandler) { _, _, apiHandler in
+        KelecLockScreenRectangularView(apiHandler: apiHandler, value: entry.carName, appPreferences: entry.appPreferences)
+          .widgetBackground()
       }
     case .accessoryCircular:
-      KelecLockScreenCircularEntryView(apiHandler: entry.apiHandler, alternative: alternative)
+      KelecLockScreenCircularView(apiHandler: entry.apiHandler, alternative: alternative)
+        .widgetBackground()
     default:
       Text("error")
     }

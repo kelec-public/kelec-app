@@ -10,25 +10,6 @@ import SwiftUI
 import WidgetKit
 import renaultApi
 
-struct KeleciOSTempoMedium2DaysEntryView: View{
-  var entry: TempoEntry
-  var body: some View{
-    if #available(iOS 17, *){
-      ZStack{
-        KeleciOSTempoMedium2DaysWidgetView(date: entry.date, carAccount: entry.account!, apiHandler: entry.apiHandler!, userCar: entry.userCar!, image: entry.image, value: entry.carName,  appPreferences: entry.appPreferences, tempoApi: entry.tempoApi!)
-          .containerBackground(for: .widget) {
-            Color("blanc")
-          }
-      }
-    }else{
-      ZStack{
-        KeleciOSTempoMedium2DaysWidgetView(date: entry.date, carAccount: entry.account!, apiHandler: entry.apiHandler!, userCar: entry.userCar!, image: entry.image, value: entry.carName,  appPreferences: entry.appPreferences, tempoApi: entry.tempoApi!)
-      }
-    }
-  }
-}
-
-
 struct KeleciOSTempoMedium2DaysWidgetView: View {
   var date:Date
   var carAccount: UserAccount
@@ -43,7 +24,8 @@ struct KeleciOSTempoMedium2DaysWidgetView: View {
     GeometryReader { geo in
       HStack{
         
-        iosWidgetEntryViewSmall(date: date, carAccount: carAccount, apiHandler: apiHandler, userCar: userCar, image: image, value: value, appPreferences: appPreferences)
+        iosWidgetSmallView(date: date, carAccount: carAccount, apiHandler: apiHandler, userCar: userCar, image: image, value: value, appPreferences: appPreferences)
+          .widgetBackground()
           .frame(width: geo.size.width/2, height: geo.size.height)
         
         VStack(spacing: 0) {

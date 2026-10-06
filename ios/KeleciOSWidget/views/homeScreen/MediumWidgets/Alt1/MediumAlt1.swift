@@ -9,44 +9,6 @@ import SwiftUI
 import WidgetKit
 import renaultApi
 
-struct GetImageView: View {
-  var image: String
-  var body: some View {
-    if #available(iOSApplicationExtension 18.0, *) {
-      if Image(base64str: image) != nil && image != "" {
-        Image(base64str: image)!
-          .resizable()
-          .widgetAccentedRenderingMode(.fullColor)
-          .scaledToFit()
-      } else if image == "megane" {
-        Image("megane")
-          .resizable()
-          .widgetAccentedRenderingMode(.fullColor)
-          .scaledToFit()
-      } else {
-        Image("renaultLogo")
-          .resizable()
-          .widgetAccentedRenderingMode(.fullColor)
-          .scaledToFit()
-      }
-    } else {
-      if Image(base64str: image) != nil && image != "" {
-        Image(base64str: image)!
-          .resizable()
-          .scaledToFit()
-      } else if image == "megane" {
-        Image("megane")
-          .resizable()
-          .scaledToFit()
-      } else {
-        Image("renaultLogo")
-          .resizable()
-          .scaledToFit()
-      }
-    }
-  }
-}
-
 struct iosAlt1WidgetMediumView: View {
   var date: Date
   var carAccount: UserAccount
@@ -66,7 +28,7 @@ struct iosAlt1WidgetMediumView: View {
         if(apiHandler.getIsCarPlugged()){
           Image(systemName: "clock.badge.checkmark")
             .foregroundColor(getChargingColour(isV2GorV2L: apiHandler.getIsV2GorV2L()))
-          Text((!apiHandler.getIsCarCharging() || apiHandler.getBatteryLevel() == 100) ? "--h--" : "\(Int(apiHandler.getChargingRemainingTime()/60))h\(apiHandler.getChargingRemainingTime()%60 <= 9 ? "0" : "")\(apiHandler.getChargingRemainingTime()%60)")
+          Text((!apiHandler.getIsCarCharging() || apiHandler.getBatteryLevel() == 100) ? "--h--" : formatChargingTime(minutes: apiHandler.getChargingRemainingTime()))
             .foregroundColor(getChargingColour(isV2GorV2L: apiHandler.getIsV2GorV2L()))
             .widgetAccentable()
         }
@@ -110,7 +72,7 @@ struct iosAlt1WidgetMediumView: View {
           }
         }
         Spacer()
-        GetImageView(image: image)
+        CarImageView(image: image)
           .padding(-5)
 
       }
@@ -122,18 +84,7 @@ struct iosAlt1WidgetMediumView: View {
         .font(.caption)
         .foregroundColor(.gray)
         Spacer()
-        HStack(spacing: 0){
-          if(isBeforeToday(convertTimestamp(date: apiHandler.getLastRefreshDate()))){
-            Text("\(convertTimestamp(date: apiHandler.getLastRefreshDate()), style: .date) ")
-              .widgetAccentable(true)
-              .font(.caption)
-              .foregroundColor(.gray)
-          }
-          Text(" \(convertTimestamp(date: apiHandler.getLastRefreshDate()), style: .time)")
-            .widgetAccentable(true)
-            .font(.caption)
-            .foregroundColor(.gray)
-        }
+        LastRefreshLabel(lastRefreshDate: apiHandler.getLastRefreshDate())
       }
 
     }
