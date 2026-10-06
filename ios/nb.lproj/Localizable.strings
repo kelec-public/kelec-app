@@ -45,9 +45,6 @@
 "watchAddVehicleOnIphone" = "Legg til et kjøretøy i appen på iPhone";
 
 /* No comment provided by engineer. */
-"error" = "error";
-
-/* No comment provided by engineer. */
 "widgetServerError" = "Kan ikke koble til serveren";
 
 /* No comment provided by engineer. */
@@ -96,7 +93,7 @@
 
 "preHeatLaunched" = "Aktiv forvarming";
 
-"error" = "Error";
+"error" = "Feil";
 
 "commandSendError" = "Feil ved sending av kommando til server. Prøv på nytt senere.";
 

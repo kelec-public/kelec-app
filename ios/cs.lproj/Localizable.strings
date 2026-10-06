@@ -38,9 +38,6 @@
 "watchAddVehicleOnIphone" = "Nejprve přidejte vozidlo do aplikace na iPhonu";
 
 /* No comment provided by engineer. */
-"error" = "error";
-
-/* No comment provided by engineer. */
 "widgetServerError" = "Nelze se připojit k serveru";
 
 /* No comment provided by engineer. */
@@ -89,7 +86,7 @@
 
 "preHeatLaunched" = "Předehřev vozu spuštěn";
 
-"error" = "Error";
+"error" = "Chyba";
 
 "commandSendError" = "Chyba při odesílání příkazu na server. Zkuste to prosím znovu později.";
 

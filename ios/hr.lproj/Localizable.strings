@@ -45,9 +45,6 @@
 "watchAddVehicleOnIphone" = "Dodajte vozilo u aplikaciju na iPhoneu";
 
 /* No comment provided by engineer. */
-"error" = "error";
-
-/* No comment provided by engineer. */
 "widgetServerError" = "Nije moguće povezivanje sa serverom";
 
 /* No comment provided by engineer. */
@@ -96,7 +93,7 @@
 
 "preHeatLaunched" = "Aktivno predgrijavanje";
 
-"error" = "Erreur";
+"error" = "Greška";
 
 "commandSendError" = "Greška pri slanju naredbe poslužitelju. Pokušajte ponovno kasnije.";
 

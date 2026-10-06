@@ -45,9 +45,6 @@
 "watchAddVehicleOnIphone" = "Afegir un vehicle a l'aplicació de l'iPhone";
 
 /* No comment provided by engineer. */
-"error" = "error";
-
-/* No comment provided by engineer. */
 "widgetServerError" = "No es pot connectar al servidor";
 
 /* No comment provided by engineer. */
@@ -96,7 +93,7 @@
 
 "preHeatLaunched" = "Preescalfament actiu";
 
-"error" = "Erreur";
+"error" = "Error";
 
 "commandSendError" = "S'ha produït un error en enviar l'ordre al servidor. Torna-ho a provar més tard.";
 

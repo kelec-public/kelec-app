@@ -38,9 +38,6 @@
 "watchAddVehicleOnIphone" = "Aggiungi un veicolo all'app su iPhone";
 
 /* No comment provided by engineer. */
-"error" = "error";
-
-/* No comment provided by engineer. */
 "widgetServerError" = "Impossibile collegarsi al server.";
 
 /* No comment provided by engineer. */
@@ -53,7 +50,7 @@
 "refresh" = "Ricaricare";
 
 /* No comment provided by engineer. */
-"widgetHomeScreenDescription" = "VRiunisce le informazioni della tua Renault E-Tech sulla schermata iniziale";
+"widgetHomeScreenDescription" = "Riunisce le informazioni della tua Renault E-Tech sulla schermata iniziale";
 
 /* No comment provided by engineer. */
 "widgetLockScreenDescription" = "Riunisce le informazioni della tua Renault E-Tech sulla schermata di blocco";
