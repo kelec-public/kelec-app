@@ -1,19 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Kelec</string>
-    <string name="appwidget_text">WIDGET</string>
-    <string name="add_widget">Add widget</string>
     <string name="app_widget_description">Muestra información sobre su E-Tech Renault en su pantalla de inicio</string>
     <string name="widget_image_description">Car logo manufacturer</string>
     <string name="widget_time_remaining_image_description">Remaining time image</string>
     <string name="widget_end_time_image_description">End time image</string>
     <string name="widget_car_name">RENAULT</string>
-    <string name="widget_unique_text">CHARGEMENT</string>
     <string name="widget_battery_level">50</string>
     <string name="widget_percent">%</string>
     <string name="widget_charging_status">"CARGANDO | "</string>
     <string name="widget_battery_autonomy">77 km</string>
-    <string name="widget_last_refresh">22:56</string>
     <string name="time_remaining_text">5h38</string>
     <string name="end_time_text">04:34</string>
     <string name="widget_configure_subtitle">Seleccione el coche que se mostrará en este widget</string>

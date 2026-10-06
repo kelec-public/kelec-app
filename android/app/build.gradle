@@ -75,9 +75,6 @@ def jscFlavor = 'io.github.react-native-community:jsc-android:2026004.+'
 
 android {
 
-    buildFeatures {
-        viewBinding true
-    }
     ndkVersion rootProject.ext.ndkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
@@ -136,8 +133,6 @@ dependencies {
     implementation("com.facebook.react:react-android")
     implementation project(':react-native-config')
     implementation project(':react-native-fs')
-    implementation 'androidx.glance:glance-appwidget:1.1.1'
-    implementation 'androidx.security:security-crypto:1.1.0-alpha06'
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     } else {

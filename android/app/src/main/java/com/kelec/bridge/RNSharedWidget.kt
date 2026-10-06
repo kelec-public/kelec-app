@@ -20,6 +20,10 @@ class RNSharedWidget(reactContext: ReactApplicationContext) : ReactContextBaseJa
     private val handler = Handler(Looper.getMainLooper())
     private val reloadWidgets = Runnable { KelecMainWIdget.requestUpdate(reactApplicationContext) }
 
+    init {
+        sharedStore.removeLegacyCarImages()
+    }
+
     override fun getName() = "RNSharedWidget"
 
     /** Une série d'écritures (compte, préférences) ne recharge le widget qu'une fois, après 0,5 s. */

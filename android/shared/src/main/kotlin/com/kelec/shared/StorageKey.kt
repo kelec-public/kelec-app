@@ -12,6 +12,9 @@ object StorageKey {
     const val ACCOUNT = "account"
     const val APP_PREFERENCES = "appPreferences"
 
+    /** `<vin>/image` : images écrites par d'anciennes versions, supprimées au lancement (jamais lues sur Android). */
+    const val LEGACY_CAR_IMAGE_SUFFIX = "/image"
+
     // En clair, écrit par le widget
     fun widgetVin(appWidgetId: Int) = "widget_vin_$appWidgetId"
     /** Ancien cache du widget (même contenu que [batteryStatus]) : seulement relu. */
