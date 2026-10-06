@@ -7,6 +7,7 @@
 
 import SwiftUI
 import WatchKit
+import WidgetKit
 
 @main
 struct KelecWatchOs_Watch_AppApp: App {
@@ -22,6 +23,8 @@ struct KelecWatchOs_Watch_AppApp: App {
 final class WatchAppDelegate: NSObject, WKApplicationDelegate {
     func applicationDidFinishLaunching() {
         WatchSync.shared.activate()
+        // the widgets offered per car may have been computed before the account was synced
+        WidgetCenter.shared.invalidateConfigurationRecommendations()
     }
 
     // the app can be woken in background to receive the data synced by the iPhone

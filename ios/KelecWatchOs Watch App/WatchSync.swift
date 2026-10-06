@@ -85,8 +85,9 @@ final class WatchSync: NSObject, WCSessionDelegate, ObservableObject {
     let preferencesChanged = savePreferences(payload["appPreferences"] as? String)
     let accountChanged = saveAccount(payload["message"] as? String)
 
-    if accountChanged {
-      // the widgets offered on the watch are one per car
+    if payload["message"] != nil {
+      // the widgets offered on the watch are one per car. Even when the account didn't change:
+      // watchOS may have computed them before the first sync and keeps them until invalidated
       WidgetCenter.shared.invalidateConfigurationRecommendations()
     }
     if preferencesChanged || accountChanged {
