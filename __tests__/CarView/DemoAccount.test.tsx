@@ -171,6 +171,6 @@ test('Should use the demo account', async () => {
 
     await waitFor(async () => {
         expect(Alert.alert).toHaveBeenCalledTimes(1);
-        expect(Alert.alert).toHaveBeenLastCalledWith("Informations envoyées", "Le préchauffage a été lancé");
+        expect(Alert.alert).toHaveBeenLastCalledWith("Informations envoyées", "Le confort thermique a été lancé");
     });
 });
