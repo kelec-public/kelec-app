@@ -19,6 +19,7 @@
 		18A526551724E61250286DC7 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96768361AC72CE554B71B05 /* Keychain.swift */; };
 		1DE85FEA504A939EF4862700 /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82D3A947D978E8DABF716AA3 /* SharedStore.swift */; };
 		24BDC979B5E210E5D0DE63DE /* VehicleCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31931830D897FCA4F47DF7AE /* VehicleCache.swift */; };
+		27CFC1640B2790ECAEDB1536 /* WatchSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13EE766F9F9476F2DA5C7C93 /* WatchSync.swift */; };
 		3FD99B40031937DDE2A3A904 /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82D3A947D978E8DABF716AA3 /* SharedStore.swift */; };
 		42F8A0292585AFA11DBBAE07 /* RenaultSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B53AE419075ECE912D2A1B /* RenaultSession.swift */; };
 		4304D3C858A08FB1747C19EE /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82D3A947D978E8DABF716AA3 /* SharedStore.swift */; };
@@ -67,7 +68,6 @@
 		8931F4032C2EB57C0088CD21 /* KelecWatchOs_Watch_AppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8931F4022C2EB57C0088CD21 /* KelecWatchOs_Watch_AppUITests.swift */; };
 		8931F4052C2EB57C0088CD21 /* KelecWatchOs_Watch_AppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8931F4042C2EB57C0088CD21 /* KelecWatchOs_Watch_AppUITestsLaunchTests.swift */; };
 		8931F4082C2EB57C0088CD21 /* Kelec.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 8931F3E52C2EB57B0088CD21 /* Kelec.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		8931F4142C2EB5C20088CD21 /* ViewModelWatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8931F4132C2EB5C20088CD21 /* ViewModelWatch.swift */; };
 		8931F41A2C2EB7180088CD21 /* CarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8931F4192C2EB7180088CD21 /* CarView.swift */; };
 		8931F41C2C2EB7380088CD21 /* BatteryCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8931F41B2C2EB7380088CD21 /* BatteryCardView.swift */; };
 		893FFEA82BA8506A006D7475 /* RNSharedWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 893FFEA72BA8506A006D7475 /* RNSharedWidget.m */; };
@@ -93,6 +93,7 @@
 		97642CD7A2CF2CCD8486B4C8 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7F486009640FB55D626BE43 /* Models.swift */; };
 		A4B420E3CE7997789162BBE9 /* Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E0E227B58D232E3A68F80A5 /* Formatting.swift */; };
 		A60CEBBC422A85CA4AC6A7E9 /* ApiClients.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF671DF3293ADF6C2184565F /* ApiClients.swift */; };
+		B0071A9FAF06119EC22C4F52 /* CarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2262E3A1AF04AEB72802C70E /* CarViewModel.swift */; };
 		B42DD1495B684E49A2BC9410 /* NouvelRBook.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AA1E7CA07A354F8C8294F4EB /* NouvelRBook.ttf */; };
 		B769AF2D3E0A4AD9BC077D4C /* NouvelRBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2AA3C74DAF974BC5AB76E7E5 /* NouvelRBold.ttf */; };
 		C3BA62CD560D7B6BF30E279F /* Tempo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E858BB876E9BCE7314FF9A4 /* Tempo.swift */; };
@@ -227,6 +228,8 @@
 		13B07F961A680F5B00A75B9A /* Kelec.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Kelec.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Kelec/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Kelec/Info.plist; sourceTree = "<group>"; };
+		13EE766F9F9476F2DA5C7C93 /* WatchSync.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WatchSync.swift; sourceTree = "<group>"; };
+		2262E3A1AF04AEB72802C70E /* CarViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CarViewModel.swift; sourceTree = "<group>"; };
 		2AA3C74DAF974BC5AB76E7E5 /* NouvelRBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = NouvelRBold.ttf; path = ../assets/fonts/Renault/NouvelRBold.ttf; sourceTree = "<group>"; };
 		31931830D897FCA4F47DF7AE /* VehicleCache.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VehicleCache.swift; sourceTree = "<group>"; };
 		53B53AE419075ECE912D2A1B /* RenaultSession.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RenaultSession.swift; sourceTree = "<group>"; };
@@ -267,7 +270,6 @@
 		8931F3FE2C2EB57C0088CD21 /* KelecWatchOs Watch AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "KelecWatchOs Watch AppUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8931F4022C2EB57C0088CD21 /* KelecWatchOs_Watch_AppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KelecWatchOs_Watch_AppUITests.swift; sourceTree = "<group>"; };
 		8931F4042C2EB57C0088CD21 /* KelecWatchOs_Watch_AppUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KelecWatchOs_Watch_AppUITestsLaunchTests.swift; sourceTree = "<group>"; };
-		8931F4132C2EB5C20088CD21 /* ViewModelWatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelWatch.swift; sourceTree = "<group>"; };
 		8931F4192C2EB7180088CD21 /* CarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarView.swift; sourceTree = "<group>"; };
 		8931F41B2C2EB7380088CD21 /* BatteryCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatteryCardView.swift; sourceTree = "<group>"; };
 		893FFEA72BA8506A006D7475 /* RNSharedWidget.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = RNSharedWidget.m; path = Kelec/RNSharedWidget.m; sourceTree = "<group>"; };
@@ -552,10 +554,11 @@
 				8931F3E72C2EB57B0088CD21 /* KelecWatchOsApp.swift */,
 				8931F3E92C2EB57B0088CD21 /* ContentView.swift */,
 				8931F4182C2EB70E0088CD21 /* Views */,
-				8931F4132C2EB5C20088CD21 /* ViewModelWatch.swift */,
 				8931F3EB2C2EB57C0088CD21 /* Assets.xcassets */,
 				8931F3ED2C2EB57C0088CD21 /* Preview Content */,
 				98AF216D67FFDBBEE44349ED /* PrivacyInfo.xcprivacy */,
+				13EE766F9F9476F2DA5C7C93 /* WatchSync.swift */,
+				2262E3A1AF04AEB72802C70E /* CarViewModel.swift */,
 			);
 			path = "KelecWatchOs Watch App";
 			sourceTree = "<group>";
@@ -1206,7 +1209,6 @@
 				8931F3EA2C2EB57B0088CD21 /* ContentView.swift in Sources */,
 				EBD8A0272D5164E8007F7FBE /* MapView.swift in Sources */,
 				8931F41A2C2EB7180088CD21 /* CarView.swift in Sources */,
-				8931F4142C2EB5C20088CD21 /* ViewModelWatch.swift in Sources */,
 				8931F41C2C2EB7380088CD21 /* BatteryCardView.swift in Sources */,
 				8931F3E82C2EB57B0088CD21 /* KelecWatchOsApp.swift in Sources */,
 				E350B546851FE63430C13339 /* AppGroup.swift in Sources */,
@@ -1218,6 +1220,8 @@
 				A4B420E3CE7997789162BBE9 /* Formatting.swift in Sources */,
 				42F8A0292585AFA11DBBAE07 /* RenaultSession.swift in Sources */,
 				68555E0BB2E877291BF772FD /* ApiClients.swift in Sources */,
+				27CFC1640B2790ECAEDB1536 /* WatchSync.swift in Sources */,
+				B0071A9FAF06119EC22C4F52 /* CarViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

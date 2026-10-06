@@ -6,8 +6,7 @@
 //
 
 import SwiftUI
-import _MapKit_SwiftUI
-import ClockKit
+import MapKit
 import CoreLocation
 
 struct Pin: Identifiable{
@@ -15,112 +14,46 @@ struct Pin: Identifiable{
   let coordinate: CLLocationCoordinate2D
 }
 
-
-struct MapView: View {
-  @State var userCar: UserCar
-  
-  @State var carName: String = "test"
-  
-  @State var mapLongitude: Double = 0
-  @State var mapLatitude: Double = 0
-
-  
-  var body: some View {
-    if(mapLatitude == 0 && mapLongitude == 0){
-      // not yet loaded map data
-      ProgressView()
-        .task {
-          await fetchCarLocation(carAccount: userCar)
-        }
-    }else if (mapLatitude == -1.0 && mapLongitude == -1.0){
-      // there have been an error
-      Text("Impossible to get car location")
-    }else{
-      // successfully fetched data
-      ZStack{
-        Map(
-          coordinateRegion: getMapCoordinates(),
-          annotationItems: [getPinCoordinates()]
-        ){
-          MapMarker(coordinate: $0.coordinate)
-        }
-        
-//        VStack{
-//          Spacer()
-//          Button{
-//            let coordinate = CLLocationCoordinate2D(latitude: Double(latitude) ?? 0, longitude: Double(longitude) ?? 0)
-//            let location = CLKLaunchableLocation(locationName: carName, location: coordinate)
-//            WKExtension.shared().openSystemURL(location.url)
-//          }label: {
-//            Text("Marcher vers \(carName)")
-//            
-//            
-//          }.background(Color("orange"))
-//            .cornerRadius(25)
-//            .padding(.bottom, 20)
-//          
-//        }
-        
-      }
-    }
-
-
-    
-  }
-  
-  
-  func fetchCarLocation(carAccount: UserCar) async{
-    let vin = carAccount.car?.vin ?? "VIN"
-    let client = getCarMakerApiClient(usercar: carAccount)
-    
-    do{
-      let fetchedApiLocation = try await client.getMapCoordinates(vin: vin)
-      VehicleCache.saveLocation(vin: vin, latitude: fetchedApiLocation.0, longitude: fetchedApiLocation.1)
-      self.mapLatitude = fetchedApiLocation.0
-      self.mapLongitude = fetchedApiLocation.1
-    }catch{
-      // try to load from local saved
-//      if let savedLocation = VehicleCache.loadLocation(vin: vin){
-//        self.mapLatitude = savedLocation.latitude
-//        self.mapLongitude = savedLocation.longitude
-//      }else{
-        self.mapLatitude = -1.0
-        self.mapLongitude = -1.0
-//      }
-      // an error occured
-    }
-  
-  }
-  
-  func getMapCoordinates() -> Binding<MKCoordinateRegion> {
-    return Binding<MKCoordinateRegion>(
-                get: {
-                    MKCoordinateRegion(
-                        center: CLLocationCoordinate2D(latitude: self.mapLatitude, longitude: self.mapLongitude),
-                        span: MKCoordinateSpan(latitudeDelta: 0.00222, longitudeDelta:  0.00222)
-                    )
-                },
-                set: { newRegion in
-                    
-                }
-            )
-  }
-  
-  func getPinCoordinates() -> Pin{
-    
-    let location = CLLocationCoordinate2D(latitude: self.mapLatitude, longitude: self.mapLongitude)
-    return Pin(coordinate: location)
-  }
-  
+private enum CarLocationState {
+  case loading
+  case failed
+  case loaded(CLLocationCoordinate2D)
 }
 
-//#Preview {
-//  let parisLatitude = 48.854700
-//  let parisLongitude = 2.347749
-//  MapView(
-//    carName: "IONIQ",
-//    mapLongitude: parisLongitude,
-//    mapLatitude: parisLatitude
-//  )
-//    .edgesIgnoringSafeArea(.all)
-//}
+struct MapView: View {
+  let userCar: UserCar
+  @State private var state: CarLocationState = .loading
+
+  var body: some View {
+    switch state {
+    case .loading:
+      ProgressView()
+        .task {
+          await fetchCarLocation()
+        }
+    case .failed:
+      Text("Impossible to get car location")
+    case .loaded(let coordinate):
+      Map(
+        coordinateRegion: .constant(MKCoordinateRegion(
+          center: coordinate,
+          span: MKCoordinateSpan(latitudeDelta: 0.00222, longitudeDelta: 0.00222)
+        )),
+        annotationItems: [Pin(coordinate: coordinate)]
+      ){
+        MapMarker(coordinate: $0.coordinate)
+      }
+    }
+  }
+
+  func fetchCarLocation() async{
+    let vin = userCar.car?.vin ?? "VIN"
+    do{
+      let (latitude, longitude) = try await getCarMakerApiClient(usercar: userCar).getMapCoordinates(vin: vin)
+      VehicleCache.saveLocation(vin: vin, latitude: latitude, longitude: longitude)
+      state = .loaded(CLLocationCoordinate2D(latitude: latitude, longitude: longitude))
+    }catch{
+      state = .failed
+    }
+  }
+}

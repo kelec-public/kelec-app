@@ -14,7 +14,7 @@ import renaultApi
 struct BatteryCardView: View{
   @Environment(\.isLuminanceReduced) var isLuminanceReduced
   var refreshApi: () -> Void
-  var imageUrl: URL
+  var imageUrl: URL?
   var apiHandler: ApiHandler
   var appPreferences: AppPreferences?
   var carMaker: String

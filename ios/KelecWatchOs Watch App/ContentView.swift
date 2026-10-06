@@ -8,9 +8,10 @@
 import SwiftUI
 
 struct ContentView: View {
-  @StateObject var model = ViewModelWatch()
-  @State var account: UserAccount?
-  @State var isLoading = true
+  @ObservedObject private var sync = WatchSync.shared
+  @State private var account: UserAccount?
+  @State private var isLoading = true
+
   var body: some View {
     VStack{
       if(self.isLoading){
@@ -18,70 +19,44 @@ struct ContentView: View {
           .onAppear(){
             loadAccount()
           }
+      }else if let account = account, !account.cars.isEmpty {
+        // one page per car
+        TabView{
+          ForEach(account.cars, id: \.car?.vin) { car in
+            CarView(account: account, carAccount: car)
+          }
+        }
       }else{
-        if(self.account == nil){
-          VStack{
-            Text("Ouvrez l'appli sur l'iPhone pour synchroniser")
-            Button{
-              loadAccount()
-            }label: {
-              HStack{
-                Image(systemName: "arrow.clockwise")
-                Text("Rafraîchir")
-              }
-            }
-            .buttonStyle(.bordered)
-          }
-        }else{
-          if(account!.cars.count > 0){
-            TabView{
-              ForEach(0..<account!.cars.count, id: \.self) { i in
-                VStack{
-                  CarView(account: account!, carAccount: account!.cars[i], model: model)
-
-                }
-               
-              }
-            }
-          }else{
-            VStack{
-              Text("Ajoutez un véhicule sur l'appli sur iPhone")
-              Button{
-                loadAccount()
-              }label: {
-                HStack{
-                  Image(systemName: "arrow.clockwise")
-                  Text("Rafraîchir")
-                }
-              }
-              .buttonStyle(.bordered)
+        VStack{
+          Text(account == nil
+               ? LocalizedStringKey("Ouvrez l'appli sur l'iPhone pour synchroniser")
+               : LocalizedStringKey("Ajoutez un véhicule sur l'appli sur iPhone"))
+          Button{
+            loadAccount()
+          }label: {
+            HStack{
+              Image(systemName: "arrow.clockwise")
+              Text("Rafraîchir")
             }
           }
+          .buttonStyle(.bordered)
         }
       }
     }
-    .onChange(of: model.shouldRefreshView){ _ in
-      self.account = nil
-      Task{
-        loadAccount()
-      }
-      model.endRefresh()
+    // new data synced from the iPhone
+    .onChange(of: sync.lastSyncDate){ _ in
+      loadAccount()
     }
   }
-  
+
   func loadAccount(){
-    let account = SharedStore.loadAccount()
-    if (account != nil){
+    if let account = SharedStore.loadAccount() {
       self.account = account
     }
     self.isLoading = false
   }
 }
 
-struct ContentView_Previews: PreviewProvider {
-  static var previews: some View {
-    ContentView()
-  }
+#Preview {
+  ContentView()
 }
-
-

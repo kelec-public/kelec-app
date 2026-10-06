@@ -6,114 +6,78 @@
 //
 
 import SwiftUI
-import WidgetKit
 import renaultApi
 
 struct CarView: View {
-  
-  @State var account: UserAccount
-  @State var apiHandler: ApiHandler? = nil
-  @State var appPreferences: AppPreferences? = nil
-  @State var carAccount: UserCar
-  @State var isLoading = true
-  @State var isLightLoading = false
-  @StateObject var model: ViewModelWatch
+  let account: UserAccount
+  let carAccount: UserCar
+  @StateObject private var viewModel: CarViewModel
+  @ObservedObject private var sync = WatchSync.shared
+
+  init(account: UserAccount, carAccount: UserCar) {
+    self.account = account
+    self.carAccount = carAccount
+    _viewModel = StateObject(wrappedValue: CarViewModel(userCar: carAccount))
+  }
 
   var body: some View {
     NavigationView {
-      if(isLoading){
+      if(viewModel.isLoading){
         ProgressView()
           .task {
-            await fetchApi(account: account, carAccount: carAccount)
+            await viewModel.load()
           }
-        
-        
       }else{
         ZStack{
-          
-          if(apiHandler == nil){
+          if let apiHandler = viewModel.apiHandler {
+            BatteryCardView(refreshApi: refresh, imageUrl: URL(string: carAccount.car?.imageUrl ?? ""), apiHandler: apiHandler, appPreferences: viewModel.appPreferences, carMaker: carAccount.getCarMaker(), account: account, carAccount: carAccount)
+              .navigationBarTitleDisplayMode(.inline)
+              .navigationTitle(Text("\(carAccount.car?.model ?? "Unknown")"))
+          }else{
             VStack {
               Image("zoe")
                 .resizable()
                 .scaledToFit()
-              
+
               Text("Impossible de se connecter au serveur \(carAccount.getCarMaker())")
               Button{
                 Task{
-                  await fetchApi(account: account, carAccount: carAccount)
+                  await viewModel.load()
                 }
-                
               }label: {
                 Image(systemName: "arrow.clockwise")
               }
             }
-          }else{
-              // Fallback on earlier versions
-              BatteryCardView(refreshApi: refreshApi, imageUrl: URL(string: carAccount.car?.imageUrl ?? "error")!, apiHandler: apiHandler!, appPreferences: appPreferences, carMaker: carAccount.getCarMaker(), account: account, carAccount: carAccount)
-              
-                .navigationBarTitleDisplayMode(.inline)
-                .navigationTitle(Text("\(carAccount.car?.model ?? "Unknown")"))
-            
           }
-          VStack {
-            if self.isLightLoading {
-              VStack {
-                HStack {
-                  Spacer()
-                  ProgressView()
-                    .frame(width: 20, height: 20)
-                }
+          if viewModel.isRefreshing {
+            VStack {
+              HStack {
                 Spacer()
+                ProgressView()
+                  .frame(width: 20, height: 20)
               }
+              Spacer()
             }
           }
         }
       }
-      
     }
-    .onChange(of: model.shouldRefreshView){ _ in
-      if model.shouldRefreshView {
-        refreshApi()
-        model.endRefresh()
-      }
+    // new data synced from the iPhone
+    .onChange(of: sync.lastSyncDate){ _ in
+      refresh()
     }
-    
   }
-  
-  func refreshApi()-> Void{
+
+  func refresh() {
     Task{
-      await fetchApi(account: account, carAccount: carAccount)
-      if #available(watchOS 9, *){
-        WidgetCenter.shared.reloadAllTimelines()
-      }
-      
+      await viewModel.refresh()
     }
   }
-  func fetchApi(account: UserAccount, carAccount: UserCar) async{
-
-    // load user preferences
-    self.appPreferences = SharedStore.loadPreferences()
-    
-    // display the cached data first, then refresh it
-    self.isLightLoading = true
-    self.apiHandler = VehicleLoader.cachedStatus(userCar: carAccount)
-    if(self.apiHandler != nil){
-      self.isLoading = false
-    }
-    self.apiHandler = await VehicleLoader.fetchStatus(userCar: carAccount)
-    self.isLoading = false
-    self.isLightLoading = false
-    
-  }
-  
-
-  
 }
 
 #Preview {
   let carModel = CarModel(vin: "VIN", image: "image", imageUrl: "https://api.kelec.app/ioniq", model: "DEMO")
   let car = UserCar(email: "", password: "", carMaker: "demo", car: carModel)
   let account = UserAccount(selectedCar: "VIN", cars: [car])
-  let model = ViewModelWatch()
-  CarView(account: account, carAccount: car, model: model)
+  CarView(account: account, carAccount: car)
 }
