@@ -777,7 +777,7 @@
 			);
 			mainGroup = 83CBB9F61A601CBA00E9B192;
 			packageReferences = (
-				EB16FA822F9A391F00624723 /* XCRemoteSwiftPackageReference "renault-api-swift-client" */,
+				0021A91824910D9CE23B595B /* XCLocalSwiftPackageReference "RenaultApi" */,
 			);
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
@@ -1658,36 +1658,32 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		EB16FA822F9A391F00624723 /* XCRemoteSwiftPackageReference "renault-api-swift-client" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/kelec-public/renault-api-swift-client.git";
-			requirement = {
-				kind = exactVersion;
-				version = 1.0.9;
-			};
+/* Begin XCLocalSwiftPackageReference section */
+		0021A91824910D9CE23B595B /* XCLocalSwiftPackageReference "RenaultApi" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/RenaultApi;
 		};
-/* End XCRemoteSwiftPackageReference section */
+/* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		EB16FA832F9A391F00624723 /* renaultApi */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = EB16FA822F9A391F00624723 /* XCRemoteSwiftPackageReference "renault-api-swift-client" */;
+			package = 0021A91824910D9CE23B595B /* XCLocalSwiftPackageReference "RenaultApi" */;
 			productName = renaultApi;
 		};
 		EB16FA852F9A395700624723 /* renaultApi */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = EB16FA822F9A391F00624723 /* XCRemoteSwiftPackageReference "renault-api-swift-client" */;
+			package = 0021A91824910D9CE23B595B /* XCLocalSwiftPackageReference "RenaultApi" */;
 			productName = renaultApi;
 		};
 		EB16FA872F9A395D00624723 /* renaultApi */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = EB16FA822F9A391F00624723 /* XCRemoteSwiftPackageReference "renault-api-swift-client" */;
+			package = 0021A91824910D9CE23B595B /* XCLocalSwiftPackageReference "RenaultApi" */;
 			productName = renaultApi;
 		};
 		EB16FA892F9A396600624723 /* renaultApi */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = EB16FA822F9A391F00624723 /* XCRemoteSwiftPackageReference "renault-api-swift-client" */;
+			package = 0021A91824910D9CE23B595B /* XCLocalSwiftPackageReference "RenaultApi" */;
 			productName = renaultApi;
 		};
 /* End XCSwiftPackageProductDependency section */
