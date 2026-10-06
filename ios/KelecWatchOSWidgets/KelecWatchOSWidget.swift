@@ -11,23 +11,36 @@ import renaultApi
 import WidgetKit
 
 
-struct Provider: TimelineProvider {
+struct Provider: AppIntentTimelineProvider {
   
   func placeholder(in context: Context) -> SimpleEntry {
     SimpleEntry.preview
   }
   
-  func getSnapshot(in context: Context, completion: @escaping (SimpleEntry) -> ()) {
-    completion(SimpleEntry.preview)
+  func snapshot(for configuration: ConfigurationAppIntent, in context: Context) async -> SimpleEntry {
+    SimpleEntry.preview
   }
   
-  func getTimeline(in context: Context, completion: @escaping (Timeline<SimpleEntry>) -> ())   {
-    Task{
-      let currentDate = Date()
-      let nextRefresh = Calendar.current.date(byAdding: .minute, value: 15, to: currentDate)!
-      let data = await VehicleLoader.loadWidgetData(selectCar: watchCar)
-      let entry = SimpleEntry(date: currentDate, account: data.account, userCar: data.userCar, carName: data.carName,  appPreferences: data.appPreferences, apiHandler: data.apiHandler)
-      completion(Timeline(entries: [entry], policy: .after(nextRefresh)))
+  func timeline(for configuration: ConfigurationAppIntent, in context: Context) async -> Timeline<SimpleEntry> {
+    let currentDate = Date()
+    let nextRefresh = Calendar.current.date(byAdding: .minute, value: 15, to: currentDate)!
+    let data = await VehicleLoader.loadWidgetData { account in
+      watchWidgetCar(account: account, configuredVin: configuration.car?.id)
+    }
+    let entry = SimpleEntry(date: currentDate, account: data.account, userCar: data.userCar, carName: data.carName,  appPreferences: data.appPreferences, apiHandler: data.apiHandler)
+    return Timeline(entries: [entry], policy: .after(nextRefresh))
+  }
+  
+  // watchOS has no widget configuration screen: one preconfigured widget is offered per car.
+  // Refreshed by WatchSync when the synced account changes
+  func recommendations() -> [AppIntentRecommendation<ConfigurationAppIntent>] {
+    let cars = buildCarWidgetEntityFromUserCars(userCars: SharedStore.loadAccount()?.cars ?? [])
+    guard !cars.isEmpty else {
+      // not synced yet: keep a widget available, it shows what to do
+      return [AppIntentRecommendation(intent: ConfigurationAppIntent(), description: "Renault E-Tech")]
+    }
+    return cars.map { car in
+      AppIntentRecommendation(intent: ConfigurationAppIntent(car: car), description: car.name)
     }
   }
 }
@@ -90,7 +103,7 @@ struct KelecWatchOSWidget: Widget {
     let kind: String = "KelecWatchWidget"
 
     var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: Provider()) { entry in
+        AppIntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: Provider()) { entry in
             KelecWatchOSWidgetEntryView(entry: entry)
         }
         .configurationDisplayName("Renault E-Tech")
@@ -103,7 +116,7 @@ struct KelecWatchOSWidgetAlternative: Widget {
     let kind: String = "KelecWatchWidgetAlternative"
 
     var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: Provider()) { entry in
+        AppIntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: Provider()) { entry in
           KelecWatchOSWidgetEntryView(alternative: 1, entry: entry)
         }
         .configurationDisplayName("Renault E-Tech Alternative")
