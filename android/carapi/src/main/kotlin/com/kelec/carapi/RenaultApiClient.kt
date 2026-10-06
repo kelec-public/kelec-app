@@ -27,9 +27,11 @@ class RenaultApiClient(
         val jwt = request("Unable to get login token") {
             RenaultServices.gigya.getJWT(loginToken = cookieValue, apiKey = keys.gigyaApiKey).idToken
         }
+        logger("JWT token fetch and decode OK.")
         val battery = request("Unable to get battery status") {
             RenaultServices.kamereon.getBatteryStatus(kamereonAccountId, vin, jwt, keys.kamereonApiKey).data?.attributes
         }
+        logger("battery status ok.")
         val totalMileage = try {
             RenaultServices.kamereon.getCockpit(kamereonAccountId, vin, jwt, keys.kamereonApiKey).data?.attributes?.totalMileage
         } catch (e: CancellationException) {
@@ -47,8 +49,13 @@ class RenaultApiClient(
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
+            logger("ERROR : $errorMessage (${e.javaClass.simpleName}: ${e.message})")
             throw RenaultApiException(errorMessage, e)
         }
-        return result ?: throw RenaultApiException(errorMessage)
+        if (result == null) {
+            logger("ERROR : $errorMessage (empty response)")
+            throw RenaultApiException(errorMessage)
+        }
+        return result
     }
 }

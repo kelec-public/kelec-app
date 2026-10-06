@@ -77,6 +77,14 @@ Java 17 et les dépôts Maven des nouveaux modules sont réglés par le plugin G
 - Plusieurs widgets sur la même voiture ne font qu'une requête.
 - Voiture du widget : celle configurée (`widget_vin_<id>`), sinon la première du compte.
 
+## Logs du widget
+
+Comme sur iOS : `SharedHistory.writeWidgetLog` ajoute `{date ISO, message}` à `widgetLogs` (5 derniers jours),
+exporté depuis Réglages → Debug → « export widget logs » (iOS : `Share`, Android : `react-native-share`).
+Messages : début du rafraîchissement, préférences trouvées ou non, compte ou voiture absents, voiture configurée
+ou repli sur la première, cookie chargé ou absent, jeton JWT et statut batterie (OK ou erreur avec la cause),
+kilométrage en échec, données chargées ou repli sur le cache.
+
 ## Bridge RN (`RNSharedWidget`)
 
 Même nom et mêmes méthodes que sur iOS, toutes en promesses :
@@ -136,3 +144,4 @@ Les deux stockages utilisent le même fichier de SharedPreferences, `DATA` : les
 | `ed16304` | Bridge RN en Kotlin avec la même API que l'iOS, `sharedPlatformsData.tsx` simplifié |
 | `0222349` | Rafraîchissement dans un `CoroutineWorker` |
 | `b7d41f6`, `790747f` | Ménage (Glance, viewBinding, permission, textes) et corrections de relecture |
+| `24ed12f` | Images des voitures gardées |

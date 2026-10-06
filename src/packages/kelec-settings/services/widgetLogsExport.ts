@@ -1,5 +1,6 @@
-import { Alert, Share } from "react-native";
+import { Alert, Platform, Share } from "react-native";
 import { DocumentDirectoryPath, writeFile } from "react-native-fs";
+import ShareThirdPart from 'react-native-share';
 import { getWidgetsLogs } from "../../../lib/storage/sharedPlatformsData";
 
 /** (Debug) Exporte les logs des widgets dans un fichier JSON et ouvre la feuille de partage. */
@@ -13,8 +14,13 @@ export async function exportWidgetLogs(): Promise<void> {
     const path = `${DocumentDirectoryPath}/exportLogs.json`;
     try {
         await writeFile(path, logs, 'utf8');
-        Share.share({ url: 'file://' + path })
-            .then(res => console.log(res))
+        // `url` n'est géré que par le partage iOS : sur Android, le fichier passe par react-native-share.
+        const url = 'file://' + path;
+        const sharing = Platform.OS === 'ios'
+            ? Share.share({ url })
+            : ShareThirdPart.open({ title: 'Widget logs', url, type: 'application/json' });
+        sharing
+            ?.then(res => console.log(res))
             .catch(err => {
                 Alert.alert('Erreur 2');
                 err && console.log(err);

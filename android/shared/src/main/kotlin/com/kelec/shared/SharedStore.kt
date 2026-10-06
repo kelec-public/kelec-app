@@ -39,8 +39,9 @@ class SharedStore(context: Context) {
         return UserAccount(cars)
     }
 
-    fun loadPreferences(): AppPreferences {
-        val raw = getString(StorageKey.APP_PREFERENCES)?.takeIf { it.isNotEmpty() } ?: return AppPreferences()
+    /** null si les préférences sont absentes ou illisibles (l'appelant prend alors les valeurs par défaut). */
+    fun loadPreferences(): AppPreferences? {
+        val raw = getString(StorageKey.APP_PREFERENCES)?.takeIf { it.isNotEmpty() } ?: return null
         return try {
             val json = JSONObject(raw)
             AppPreferences(
@@ -48,7 +49,7 @@ class SharedStore(context: Context) {
                 convertToMiles = json.optBoolean("convertToMiles", false),
             )
         } catch (e: JSONException) {
-            AppPreferences()
+            null
         }
     }
 

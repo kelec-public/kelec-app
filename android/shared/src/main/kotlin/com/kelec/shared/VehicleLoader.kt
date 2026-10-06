@@ -30,6 +30,7 @@ class VehicleLoader(context: Context, private val keys: RenaultApiKeys) {
             history.writeWidgetLog("No Renault session for ${car.model}")
             return VehicleStatus.NotLoggedIn
         }
+        history.writeWidgetLog("Crypted cookie value loaded")
 
         val client = RenaultApiClient(car.kamereonAccountId, cookieValue, keys) { history.writeWidgetLog(it) }
         return try {
