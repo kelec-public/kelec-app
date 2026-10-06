@@ -60,11 +60,9 @@ const saveNativePreferences = async (appPreferences: AppPreferences): Promise<vo
     await setSharedData('appPreferences', JSON.stringify(appPreferences));
 };
 
-/** Image de la voiture, affichée par les widgets iOS seulement. */
+/** Image de la voiture : affichée par les widgets iOS, enregistrée aussi sur Android (pas encore lue). */
 const saveNativeImage = async (image: string, car_vin: string): Promise<void> => {
-    if (Platform.OS === 'ios') {
-        await setSharedData(car_vin + '/image', image);
-    }
+    await setSharedData(car_vin + '/image', image);
 }
 
 /**

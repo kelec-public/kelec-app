@@ -52,15 +52,6 @@ class SharedStore(context: Context) {
         }
     }
 
-    /** Images base64 des voitures, écrites par d'anciennes versions et jamais lues sur Android. */
-    fun removeLegacyCarImages() {
-        val keys = prefs.all.keys.filter { it.endsWith(StorageKey.LEGACY_CAR_IMAGE_SUFFIX) }
-        if (keys.isEmpty()) return
-        val editor = prefs.edit()
-        keys.forEach { editor.remove(it) }
-        editor.apply()
-    }
-
     fun widgetVin(appWidgetId: Int): String? = getString(StorageKey.widgetVin(appWidgetId))?.takeIf { it.isNotEmpty() }
 
     fun saveWidgetVin(appWidgetId: Int, vin: String) = putString(StorageKey.widgetVin(appWidgetId), vin)

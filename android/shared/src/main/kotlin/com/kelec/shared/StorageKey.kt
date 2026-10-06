@@ -11,9 +11,8 @@ object StorageKey {
     // En clair, écrit par le bridge RN
     const val ACCOUNT = "account"
     const val APP_PREFERENCES = "appPreferences"
-
-    /** `<vin>/image` : images écrites par d'anciennes versions, supprimées au lancement (jamais lues sur Android). */
-    const val LEGACY_CAR_IMAGE_SUFFIX = "/image"
+    /** Image base64 de la voiture : pas encore lue sur Android, gardée pour un usage futur (widget, montre). */
+    fun carImage(vin: String) = "$vin/image"
 
     // En clair, écrit par le widget
     fun widgetVin(appWidgetId: Int) = "widget_vin_$appWidgetId"

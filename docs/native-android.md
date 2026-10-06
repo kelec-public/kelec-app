@@ -21,7 +21,6 @@ les clients d'API Renault. Hyundai reste hors périmètre (le widget Android ne 
   - `SharedStorage.set` plantait sans activité (`getCurrentActivity()` nul) ;
   - chaque écriture (compte, préférences, image) relançait le réseau pour tous les widgets, et `refreshWidget()` ne faisait rien ;
   - « NE CHARGE PAS » affiché « EN CHARGE », « aucune voiture » affiché « connectez-vous », erreurs en anglais en dur ;
-  - images base64 des voitures écrites dans les SharedPreferences sans être lues ;
   - `widgetLogs` jamais écrit (export des logs vide sur Android).
 
 ## Décisions prises
@@ -35,7 +34,7 @@ les clients d'API Renault. Hyundai reste hors périmètre (le widget Android ne 
 | Code partagé | **Modules Gradle** `:carapi` et `:shared`, l'équivalent de `ios/Packages/RenaultApi` et `ios/Shared`, pour être réutilisés par l'app Wear OS. |
 | Bridge RN | **Même module que l'iOS** (`RNSharedWidget`, mêmes méthodes) : `sharedPlatformsData.tsx` n'a plus de branche par plateforme pour le stockage. |
 | Statut batterie | Écrit sous une seule clé (`<vin>_batteryStatus`). L'ancienne `<vin>/carData` est encore relue, plus écrite. |
-| Images des voitures | Plus écrites sur Android (jamais lues) ; celles déjà enregistrées sont supprimées au lancement. |
+| Images des voitures | **Gardées** : toujours écrites sur Android (`<vin>/image`), pas encore lues, pour un usage futur (widget, montre). |
 
 ## Organisation actuelle
 
@@ -123,7 +122,7 @@ Les deux stockages utilisent le même fichier de SharedPreferences, `DATA` : les
 | `<vin>/carData` | `DATA` en clair | Ancien cache du widget (même format) | Plus écrit | Widget, si `<vin>_batteryStatus` est absent |
 | `<vin>_mileageHistory` | `DATA` en clair | Kilométrage des 30 derniers jours (`[{mileage, timestamp ISO}]`) | Widget | App RN (historique de charge) |
 | `widgetLogs` | `DATA` en clair | Logs des 5 derniers jours (`[{date ISO, message}]`) | Widget | App RN (export) |
-| `<vin>/image` | `DATA` en clair | Image base64 d'anciennes versions | Plus écrit, supprimé au lancement | — |
+| `<vin>/image` | `DATA` en clair | Image base64 de la voiture | Bridge RN | — (gardée pour un usage futur) |
 | `<vin>_password` | `DATA` chiffré | Mot de passe du compte | Stockage chiffré RN | App RN (le widget Renault n'en a pas besoin) |
 | `cookieValue_<email>` | `DATA` chiffré | Session Renault (JSON `{canLogin, cookieValue}`) | Stockage chiffré RN | Widget |
 
@@ -136,4 +135,4 @@ Les deux stockages utilisent le même fichier de SharedPreferences, `DATA` : les
 | `cb3f8e7` | Modules `:carapi` et `:shared`, widget en Kotlin, une requête par voiture, `widgetLogs` |
 | `ed16304` | Bridge RN en Kotlin avec la même API que l'iOS, `sharedPlatformsData.tsx` simplifié |
 | `0222349` | Rafraîchissement dans un `CoroutineWorker` |
-| `b7d41f6`, `790747f` | Ménage (Glance, viewBinding, permission, textes, images) et corrections de relecture |
+| `b7d41f6`, `790747f` | Ménage (Glance, viewBinding, permission, textes) et corrections de relecture |
