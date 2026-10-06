@@ -79,18 +79,14 @@ struct Provider: TimelineProvider {
         if let userCar = userCar {
           let carMaker = parseCarMaker(carMaker: userCar.carMaker)
           let client = getCarMakerApiClient(usercar: userCar)
-          let semaphore = DispatchSemaphore(value: 0)
           do {
             let fetchedApiHandler = try await client.getVehicleInfo(vin: userCar.car?.vin ?? "")
             apiHandler = fetchedApiHandler
             zeServices.saveLoadedCar(vin: userCar.car?.vin ?? "", zecar: fetchedApiHandler)
-            semaphore.signal()
           } catch {
             // Fallback to local data if fetching fails
             apiHandler = zeServices.loadSavedCar(vin: userCar.car?.vin ?? "", carMaker: carMaker)
-            semaphore.signal()
           }
-          semaphore.wait()
         }
         
         
@@ -125,7 +121,7 @@ struct KelecWatchOSWidgetEntryView : View {
         if(entry.account) == nil{
           Text(String(localized: "Vous devez d'abord vous connecter sur l'appli"))
         }
-        else if(entry.account?.selectedCar ?? "" == ""){
+        else if(entry.userCar == nil){
           Text(String(localized: "Vous devez d'abord sélectionner une voiture sur l'appli"))
         }else if(entry.apiHandler == nil){
           Text(String(localized: "Impossible de se connecter au serveur"))
@@ -136,7 +132,7 @@ struct KelecWatchOSWidgetEntryView : View {
         if(entry.account) == nil{
           Text(String(localized: "Vous devez d'abord vous connecter sur l'appli"))
         }
-        else if(entry.account?.selectedCar ?? "" == ""){
+        else if(entry.userCar == nil){
           Text(String(localized: "Vous devez d'abord sélectionner une voiture sur l'appli"))
         }else if(entry.apiHandler == nil){
           Text(String(localized: "Impossible de se connecter au serveur"))

@@ -24,7 +24,10 @@ class ViewModelWatch: NSObject, WCSessionDelegate, ObservableObject{
   }
   
   func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?){
-    
+    // data synced while the watch app was closed
+    if activationState == .activated && !session.receivedApplicationContext.isEmpty {
+      handleSyncPayload(session.receivedApplicationContext)
+    }
   }
   
   func connect(){
@@ -36,54 +39,65 @@ class ViewModelWatch: NSObject, WCSessionDelegate, ObservableObject{
     return
   }
   
+  func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String: Any]) {
+    handleSyncPayload(applicationContext)
+  }
+  
+  // kept for iPhones still sending the data with sendMessage
   func session(_ session: WCSession, didReceiveMessage message: [String: Any], replyHandler: @escaping([String: Any]) -> Void) {
-     print("Message reçu")
+    handleSyncPayload(message)
+    replyHandler([:])
+  }
+  
+  func handleSyncPayload(_ payload: [String: Any]) {
     let decoder = JSONDecoder()
+    var hasChanged = false
     
-    if let cookieMapJson = message["cookieValue"] {
-      let data = Data((cookieMapJson as! String).utf8)
-      if let cookieMap = try? decoder.decode(CookieMap.self, from: data) {
-          saveCookieMapToKeychain(cookieMap: cookieMap)
+    if let cookieMapJson = payload["cookieValue"] as? String,
+       let cookieMap = try? decoder.decode(CookieMap.self, from: Data(cookieMapJson.utf8)) {
+      saveCookieMapToKeychain(cookieMap: cookieMap)
+    }
+    
+    // passwords (hyundai only) by vin. A missing key never removes a password already saved
+    if let passwordsJson = payload["passwords"] as? String,
+       let passwords = try? decoder.decode([String: String].self, from: Data(passwordsJson.utf8)) {
+      for (vin, password) in passwords where !password.isEmpty {
+        saveToKeychain(key: "\(vin)_password", value: password)
       }
     }
     
-    if let appPreferencesData = message["appPreferences"]{
-      if let decoded = try? decoder.decode(AppPreferences.self, from:  Data((appPreferencesData as! String).utf8)){
+    if let appPreferencesJson = payload["appPreferences"] as? String {
+      if let appPreferencesRecieved = try? decoder.decode(AppPreferences.self, from: Data(appPreferencesJson.utf8)){
         print("app preferences recieved an decoded")
-        let appPreferencesRecieved = decoded
         let currentAppPreferences = getUserAppPreferencesFromUserDefaults()
         if (currentAppPreferences == nil || currentAppPreferences != appPreferencesRecieved){
-          if #available(watchOS 9, *){
-            WidgetCenter.shared.reloadAllTimelines()
-          }
           saveAppPreferencesToUserDefaults(appPreferences: appPreferencesRecieved)
-          DispatchQueue.main.async {
-            self.shouldRefreshView = true
-          }
+          hasChanged = true
         }
       }else{
         print("impossible de décoder les app preferences")
       }
     }
     
-     if let jsonData = message["message"]{
-       if let decoded = try? decoder.decode(UserAccount.self, from: Data((jsonData as! String).utf8)){
-         print("message reçu et décodé")
-         let accountRecieved = decoded
-         let currentAccount = getAccountFromUserDefaults()
-         if(currentAccount == nil || currentAccount != accountRecieved){
-           if #available(watchOS 9, *){
-             WidgetCenter.shared.reloadAllTimelines()
-           }
-           saveAccountToUserDefaults(account: accountRecieved)
-           DispatchQueue.main.async {
-             self.shouldRefreshView = true
-           }
-         }
-       }
-     }
+    // the account is received without passwords: it replaces the one saved by older versions with passwords
+    if let accountJson = payload["message"] as? String,
+       let accountRecieved = try? decoder.decode(UserAccount.self, from: Data(accountJson.utf8)) {
+      print("message reçu et décodé")
+      let currentAccount = getAccountFromUserDefaults()
+      if(currentAccount == nil || currentAccount != accountRecieved){
+        saveAccountToUserDefaults(account: accountRecieved)
+        hasChanged = true
+      }
+    }
     
-    replyHandler([:])
+    if hasChanged {
+      if #available(watchOS 9, *){
+        WidgetCenter.shared.reloadAllTimelines()
+      }
+      DispatchQueue.main.async {
+        self.shouldRefreshView = true
+      }
+    }
   }
   
   func saveCookieMapToKeychain(cookieMap: CookieMap) {

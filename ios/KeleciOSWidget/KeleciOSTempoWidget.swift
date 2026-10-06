@@ -93,33 +93,20 @@ struct TempoProvider: AppIntentTimelineProvider {
       // keep going only if the userCar is not undefined
       if let userCar = userCar {
         let carMaker = parseCarMaker(carMaker: userCar.carMaker)
-        var client = getCarMakerApiClient(usercar: userCar)
-          let semaphore = DispatchSemaphore(value: 0)
-          do {
-            // try to get password from keychain
-            let passwordFromKeychain = try getPasswordFromKeychain(key: "\(userCar.car?.vin ?? "")_password")
-            client.setPassword(password: passwordFromKeychain)
-            writeWidgetLog(message: "Crypted password loaded")
-            let fetchedApiHandler = try await client.getVehicleInfo(vin: userCar.car?.vin ?? "")
-            apiHandler = fetchedApiHandler
-            writeWidgetLog(message: "Data successfully fecthed")
-            zeServices.saveLoadedCar(vin: userCar.car?.vin ?? "", zecar: fetchedApiHandler)
-            semaphore.signal()
-          } catch {
-            // Fallback to local data if fetching fails
-            writeWidgetLog(message: "Loading cache data")
-            apiHandler = zeServices.loadSavedCar(vin: userCar.car?.vin ?? "", carMaker: carMaker)
-            semaphore.signal()
-          }
-          semaphore.wait()
-        
-        //         fetch rte data for tempo
-        let semaphore_tempo = DispatchSemaphore(value: 0)
-        Task{
-          tempoApi = await getTempoData()
-          semaphore_tempo.signal()
+        let client = getCarMakerApiClient(usercar: userCar)
+        do {
+          let fetchedApiHandler = try await client.getVehicleInfo(vin: userCar.car?.vin ?? "")
+          apiHandler = fetchedApiHandler
+          writeWidgetLog(message: "Data successfully fecthed")
+          zeServices.saveLoadedCar(vin: userCar.car?.vin ?? "", zecar: fetchedApiHandler)
+        } catch {
+          // Fallback to local data if fetching fails
+          writeWidgetLog(message: "Loading cache data")
+          apiHandler = zeServices.loadSavedCar(vin: userCar.car?.vin ?? "", carMaker: carMaker)
         }
-        semaphore_tempo.wait()
+        
+        // fetch rte data for tempo
+        tempoApi = await getTempoData()
       }
     }
     

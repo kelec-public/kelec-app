@@ -109,20 +109,13 @@ struct CarView: View {
       self.isLoading = false
     }
     let client = getCarMakerApiClient(usercar: carAccount)
-    let semaphore = DispatchSemaphore(value: 0)
     do{
       let fetchedApiHandler = try await client.getVehicleInfo(vin: vin)
       zeServices.saveLoadedCar(vin: vin, zecar: fetchedApiHandler)
       self.apiHandler = fetchedApiHandler
-      
-
-      
-      semaphore.signal()
     }catch{
       apiHandler = zeServices.loadSavedCar(vin: vin, carMaker: carMaker)
-      semaphore.signal()
     }
-    semaphore.wait()
     self.isLoading = false
     self.isLightLoading = false
     

@@ -1,6 +1,6 @@
 import { NativeModules, Platform } from "react-native";
 import * as Watch from 'react-native-watch-connectivity';
-import UserAccount, { UserAccountInterface } from "../clients/accounts/userAccount";
+import { UserAccountInterface } from "../clients/accounts/userAccount";
 import AppPreferences from "../appPreferences/model/appPreferences";
 import { GigyaTokenFunctionResponse } from "../clients/carMakers/renaultClient";
 const { RNSharedWidget } = NativeModules;
@@ -102,19 +102,23 @@ const saveNativeImage = async (image: string, car_vin: string): Promise<void> =>
     }
 }
 
-const sendDataToAppleWatch = async (account: UserAccount, appPreferences: AppPreferences, cookieValue: Record<string, GigyaTokenFunctionResponse>): Promise<void> => {
+/**
+ * Envoi par contexte applicatif : iOS garde la dernière valeur et la livre à la montre
+ * dès que possible, même si l'app de la montre est fermée.
+ * Le compte doit être passé sans mot de passe : ceux dont la montre a besoin vont dans `passwords` (par VIN).
+ */
+const sendDataToAppleWatch = async (account: UserAccountInterface, appPreferences: AppPreferences, cookieValue: Record<string, GigyaTokenFunctionResponse>, passwords: Record<string, string>): Promise<void> => {
     if (Platform.OS === 'ios') {
         const payload = {
             "message": JSON.stringify(account),
             "appPreferences": JSON.stringify(appPreferences),
-            "cookieValue": JSON.stringify(cookieValue)
+            "cookieValue": JSON.stringify(cookieValue),
+            "passwords": JSON.stringify(passwords)
         }
         try {
-            Watch.sendMessage(payload, error => {
-                console.log("Error sending message to watch: ", error);
-            });
-        } catch {
-            console.log("Error sending data to apple watch");
+            Watch.updateApplicationContext(payload);
+        } catch (error) {
+            console.log("Error sending data to apple watch", error);
         }
     }
 }

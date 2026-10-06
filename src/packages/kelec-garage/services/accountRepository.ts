@@ -9,7 +9,7 @@ const ACCOUNT_KEY = 'account';
 const NEXT_GEN_KEY = 'kelecNextGen';
 
 /** Copie JSON du compte sans aucun mot de passe, pour le stockage non chiffré (AsyncStorage, widgets). */
-const withoutPasswords = (user: UserAccount): UserAccountInterface => {
+export const withoutPasswords = (user: UserAccount): UserAccountInterface => {
     const copy: UserAccountInterface = JSON.parse(JSON.stringify(user));
     copy.cars.forEach(account => {
         account.password = '';

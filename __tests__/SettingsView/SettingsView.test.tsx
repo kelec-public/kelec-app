@@ -328,6 +328,11 @@ test('should send the account to the apple watch', async () => {
     const actionButton = screen.getByTestId('testSettingRowwatch');
     await user.press(actionButton);
     await waitFor(() => expect(mockSendDataToAppleWatch).toHaveBeenCalled());
+
+    // le compte part sans mot de passe, et pas de mot de passe Renault (cookies de session)
+    const [sentAccount, , , sentPasswords] = mockSendDataToAppleWatch.mock.calls[0];
+    expect(sentAccount.cars[0].password).toBe('');
+    expect(sentPasswords).toEqual({});
 });
 
 describe('export widgets logs', () => {

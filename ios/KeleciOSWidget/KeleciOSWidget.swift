@@ -87,25 +87,17 @@ struct Provider: AppIntentTimelineProvider {
       // keep going only if the userCar is not undefined
       if let userCar = userCar {
         let carMaker = parseCarMaker(carMaker: userCar.carMaker)
-        var client = getCarMakerApiClient(usercar: userCar)
-          let semaphore = DispatchSemaphore(value: 0)
-          do {
-            // try to get password from keychain
-            let passwordFromKeychain = try getPasswordFromKeychain(key: "\(userCar.car?.vin ?? "")_password")
-            client.setPassword(password: passwordFromKeychain)
-            writeWidgetLog(message: "Crypted password loaded")
-            let fetchedApiHandler = try await client.getVehicleInfo(vin: userCar.car?.vin ?? "")
-            apiHandler = fetchedApiHandler
-            writeWidgetLog(message: "Data successfully fecthed")
-            zeServices.saveLoadedCar(vin: userCar.car?.vin ?? "", zecar: fetchedApiHandler)
-            semaphore.signal()
-          } catch {
-            // Fallback to local data if fetching fails
-            writeWidgetLog(message: "Loading cache data")
-            apiHandler = zeServices.loadSavedCar(vin: userCar.car?.vin ?? "", carMaker: carMaker)
-            semaphore.signal()
-          }
-          semaphore.wait()
+        let client = getCarMakerApiClient(usercar: userCar)
+        do {
+          let fetchedApiHandler = try await client.getVehicleInfo(vin: userCar.car?.vin ?? "")
+          apiHandler = fetchedApiHandler
+          writeWidgetLog(message: "Data successfully fecthed")
+          zeServices.saveLoadedCar(vin: userCar.car?.vin ?? "", zecar: fetchedApiHandler)
+        } catch {
+          // Fallback to local data if fetching fails
+          writeWidgetLog(message: "Loading cache data")
+          apiHandler = zeServices.loadSavedCar(vin: userCar.car?.vin ?? "", carMaker: carMaker)
+        }
         
 
       }
@@ -136,7 +128,7 @@ struct KeleciOSWidgetEntryView : View {
     case .systemSmall:
       if(entry.account == nil){
         Text("Vous devez d'abord vous connecter sur l'appli")
-      }else if(entry.account?.selectedCar ?? "" == ""){
+      }else if(entry.userCar == nil){
         Text(String(localized: "Vous devez d'abord sélectionner une voiture sur l'appli"))
       }else if(entry.apiHandler == nil){
         Text("Impossible de se connecter au serveur")
@@ -147,9 +139,9 @@ struct KeleciOSWidgetEntryView : View {
       if(entry.account == nil){
         Text(String(localized: "Vous devez d'abord vous connecter sur l'appli"))
       }
-      else if(entry.account?.selectedCar ?? "" == ""){
+      else if(entry.userCar == nil){
         Text(String(localized: "Vous devez d'abord sélectionner une voiture sur l'appli"))
-      }else if(entry.account?.selectedCar ?? "" != "" && entry.apiHandler == nil){
+      }else if(entry.apiHandler == nil){
         Text(String(localized: "Impossible de se connecter au serveur"))
       }else{
         switch (self.alternative){
@@ -209,7 +201,7 @@ struct KelecLockScreenWidgetEntryView:View {
       if(entry.account) == nil{
         Text(String(localized: "Vous devez d'abord vous connecter sur l'appli"))
       }
-      else if(entry.account?.selectedCar ?? "" == ""){
+      else if(entry.userCar == nil){
         Text(String(localized: "Vous devez d'abord sélectionner une voiture sur l'appli"))
       }else if(entry.apiHandler == nil){
         Text(String(localized: "Impossible de se connecter au serveur"))
@@ -220,7 +212,7 @@ struct KelecLockScreenWidgetEntryView:View {
       if(entry.account) == nil{
         Text(String(localized: "Vous devez d'abord vous connecter sur l'appli"))
       }
-      else if(entry.account?.selectedCar ?? "" == ""){
+      else if(entry.userCar == nil){
         Text(String(localized: "Vous devez d'abord sélectionner une voiture sur l'appli"))
       }else if(entry.apiHandler == nil){
         Text(String(localized: "Impossible de se connecter au serveur"))

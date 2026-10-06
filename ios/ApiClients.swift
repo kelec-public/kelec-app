@@ -16,7 +16,17 @@ func getRteClient() -> rteApi {
   return rteApi(basicAuth: envVar("RTE_BASIC_AUTH"))
 }
 
+// the password is stored in the keychain under "<vin>_password".
+// the password in the account JSON is only a fallback for watches synced before passwords were moved to the keychain
+func getCarPassword(usercar: UserCar) -> String {
+  if let passwordFromKeychain = try? getPasswordFromKeychain(key: "\(usercar.car?.vin ?? "")_password") {
+    return passwordFromKeychain
+  }
+  return usercar.getPassword()
+}
+
 public func getCarMakerApiClient(usercar: UserCar) -> ApiClient{
+  let password = getCarPassword(usercar: usercar)
   switch (usercar.getCarMaker()){
   case "renault", "dacia", "alpine":
     let gigyaApiKey = envVar("GIGYA_API_KEY")
@@ -24,7 +34,7 @@ public func getCarMakerApiClient(usercar: UserCar) -> ApiClient{
     
     var apiClient = RenaultApiClient(
       username: usercar.getEmail(),
-      password: usercar.getPassword(),
+      password: password,
       kamereonAccountId: usercar.kamereonAccountID ?? "",
       gigyaApiKey: gigyaApiKey,
       kamareonApiKey: kamareonApiKey
@@ -37,7 +47,7 @@ public func getCarMakerApiClient(usercar: UserCar) -> ApiClient{
       }
     return apiClient
   case "hyundai":
-    return HyundaiApiClient(email: usercar.getEmail(), password: usercar.getPassword(), pin: usercar.pinCode ?? "")
+    return HyundaiApiClient(email: usercar.getEmail(), password: password, pin: usercar.pinCode ?? "")
   default:
     return DemoApiClient()
   }

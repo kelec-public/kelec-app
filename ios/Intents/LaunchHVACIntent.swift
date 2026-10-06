@@ -34,32 +34,14 @@ struct LaunchHVACIntent: AppIntent {
         
         if let userCar = userCar{
           let vin = userCar.car?.vin ?? ""
-          var client = getCarMakerApiClient(usercar: userCar)
-          let dispatchSemaphore = DispatchSemaphore(value: 0)
+          let client = getCarMakerApiClient(usercar: userCar)
           
           do {
-            // try to get password from keychain
-            if(userCar.password.isEmpty){
-              let passwordFromKeychain = try getPasswordFromKeychain(key: "\(userCar.car?.vin ?? "")_password")
-              client.setPassword(password: passwordFromKeychain)
-            }else{
-              client.setPassword(password: userCar.password)
-            }
-            
-            
-            let hvacLaunchStatus = try await client.launchHvac(vin: vin)
-            if(hvacLaunchStatus == true){
-              isASuccess = true
-            }
-            dispatchSemaphore.signal()
+            isASuccess = try await client.launchHvac(vin: vin)
           }catch{
             // nothing to do, it is not a usccess
             isASuccess = false
-            dispatchSemaphore.signal()
           }
-          
-          dispatchSemaphore.wait()
-          
         }
         
       }

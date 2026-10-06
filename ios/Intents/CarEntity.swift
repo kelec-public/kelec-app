@@ -31,8 +31,9 @@ struct CarQuery: EntityQuery{
       let userAccount = getUserAccount(userBundle: userBundle)
       let allCars = buildCarWidgetEntityFromUserCars(userCars: userAccount?.cars ?? [])
       
+      // an unknown id (car deleted) returns nothing: widgets then fall back to the first car themselves
       return identifiers.compactMap { id in
-        allCars.first(where: {$0.id == id}) ?? allCars.first
+        allCars.first(where: {$0.id == id})
       }
     }
     return []

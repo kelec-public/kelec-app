@@ -69,21 +69,8 @@ func getUserAppPreferences(userBundle: UserDefaults) -> AppPreferences? {
 
 func getAccountUserCar(userAccount: UserAccount) -> UserCar?{
   // this function return the car the user selected to be displayed on widgets
-  if(userAccount.selectedCar == ""){
-    // there are no car added yet
-    return nil
-  }
-  
-  let selectedCar = userAccount.selectedCar
-  // now iterate over cars to find the good one
-  for car in userAccount.cars{
-    if(car.car?.vin == selectedCar){
-      return car
-    }
-  }
-  
-  // car not found (shouldn't happen?)
-  return nil
+  // falls back to the first car if the selected one is not in the list anymore
+  return userAccount.cars.first { $0.car?.vin == userAccount.selectedCar } ?? userAccount.cars.first
 }
 
 func getCarImage(vin: String, userBundle: UserDefaults) -> String {
@@ -115,6 +102,7 @@ func saveAccountToUserDefaults(account: UserAccount)->Bool{
   if let encoded = try? encoder.encode(account){
     if let userDefaults = UserDefaults(suiteName: "group.kelyanselme.MyRenaultPlus"){
       userDefaults.set(encoded, forKey: "account")
+      return true
     }
   }
   return false
@@ -134,28 +122,24 @@ func saveAppPreferencesToUserDefaults(appPreferences: AppPreferences)->Bool{
 
 // ONLY FOR APPLE WATCH
 func getAccountFromUserDefaults()->UserAccount?{
-  if let userDefaults = UserDefaults(suiteName: "group.kelyanselme.MyRenaultPlus"){
-    if let accountData = userDefaults.object(forKey: "account"){
-      let decoder = JSONDecoder()
-      if let loadedAccount = try? decoder.decode(UserAccount.self, from: accountData as! Data){
-        return loadedAccount
-      }
-    }
-  }
-  return nil
+  return decodeFromUserDefaults(UserAccount.self, key: "account")
 }
 
 
 func getUserAppPreferencesFromUserDefaults()->AppPreferences?{
-  if let userDefaults = UserDefaults(suiteName: "group.kelyanselme.MyRenaultPlus"){
-    if let accountData = userDefaults.object(forKey: "appPreferences"){
-      let decoder = JSONDecoder()
-      if let loadedAccount = try? decoder.decode(AppPreferences.self, from: accountData as! Data){
-        return loadedAccount
-      }
-    }
+  return decodeFromUserDefaults(AppPreferences.self, key: "appPreferences")
+}
+
+// the same key can be stored as Data (written by the watch) or as String (written by the RN bridge)
+private func decodeFromUserDefaults<T: Decodable>(_ type: T.Type, key: String) -> T? {
+  guard let userDefaults = UserDefaults(suiteName: "group.kelyanselme.MyRenaultPlus") else {
+    return nil
   }
-  return nil
+  let stored = userDefaults.object(forKey: key)
+  guard let data = (stored as? Data) ?? (stored as? String).map({ Data($0.utf8) }) else {
+    return nil
+  }
+  return try? JSONDecoder().decode(type, from: data)
 }
 
 
