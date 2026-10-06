@@ -140,9 +140,9 @@ struct MediumCarWidgetView: View{
   let car = UserCar(email: "email", password: "password", carMaker: "renault")
   let carAlpine = UserCar(email: "email", password: "password", carMaker: "alpine")
   let carDacia = UserCar(email: "email", password: "password", carMaker: "dacia")
-  let carAccount = UserAccount(selectedCar: "car", cars: [car])
-  let carAccountAlpine = UserAccount(selectedCar: "car", cars: [carAlpine])
-  let carAccountDacia = UserAccount(selectedCar: "car", cars: [carDacia])
+  let carAccount = UserAccount(cars: [car])
+  let carAccountAlpine = UserAccount(cars: [carAlpine])
+  let carAccountDacia = UserAccount(cars: [carDacia])
   let renaultBatteryStatus = RenaultBatteryStatus(
     timestamp: "2025-07-15T08:40:54Z", batteryLevel: 69, batteryAutonomy: 216, batteryCapacity: nil,
     batteryAvailableEnergy: nil, plugStatus: 0, chargingStatus: 0, chargingRemainingTime: 150,

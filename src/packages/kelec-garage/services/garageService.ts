@@ -17,7 +17,7 @@ export class GarageService {
     }
 
     /**
-     * Ajoute une voiture (compte avec sa voiture) ; elle devient la voiture par défaut s'il n'y en avait pas.
+     * Ajoute une voiture (compte avec sa voiture).
      * Un VIN est unique dans l'app : renvoie false (et n'ajoute rien) si la voiture est déjà dans le garage.
      */
     async addCar(account: Account): Promise<boolean> {
@@ -27,11 +27,6 @@ export class GarageService {
         this.user.addCar(account);
         await this.save();
         return true;
-    }
-
-    async selectDefaultCar(vin: string): Promise<void> {
-        this.user.setSelectedCar(vin);
-        await this.save();
     }
 
     async moveCar(vin: string, direction: MoveDirection): Promise<void> {

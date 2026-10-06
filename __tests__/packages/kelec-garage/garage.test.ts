@@ -17,7 +17,7 @@ let garage: GarageService;
 
 beforeEach(async () => {
     await AsyncStorage.clear();
-    user = new UserAccount('VIN1', [car('VIN1', 'a@x.fr'), car('VIN2', 'b@x.fr'), car('VIN3', 'c@x.fr')]);
+    user = new UserAccount([car('VIN1', 'a@x.fr'), car('VIN2', 'b@x.fr'), car('VIN3', 'c@x.fr')]);
     saveAccount = jest.spyOn(AccountRepository, 'save').mockResolvedValue();
     garage = new GarageService(user);
 });
@@ -42,12 +42,6 @@ describe('GarageService', () => {
         expect(storageHandlerSaveCalled()).toBe(false);
     });
 
-    test('selectDefaultCar change la voiture par défaut et enregistre', async () => {
-        await garage.selectDefaultCar('VIN2');
-        expect(user.getSelectedCar()).toBe('VIN2');
-        expect(saveAccount).toHaveBeenCalledWith(user);
-    });
-
     test('moveCar réordonne les voitures', async () => {
         await garage.moveCar('VIN2', MoveDirection.UP);
         expect(vins(user)).toEqual(['VIN2', 'VIN1', 'VIN3']);
@@ -69,7 +63,6 @@ describe('GarageService', () => {
 
         expect(clearCredentials).toHaveBeenCalledWith('a@x.fr');
         expect(vins(user)).toEqual(['VIN2', 'VIN3']);
-        expect(user.getSelectedCar()).toBe('VIN2');
         expect(saveAccount).toHaveBeenCalledWith(user);
         expect(await AsyncStorage.getItem('VIN1/image')).toBe('image'); // conservée pour une réimportation
     });

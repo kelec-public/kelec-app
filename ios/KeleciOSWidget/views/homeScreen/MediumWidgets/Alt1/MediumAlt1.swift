@@ -126,7 +126,7 @@ struct MediumCarWidgetAltView: View {
 } timeline: {
   let date = Date() - 60 * 14
   let car = UserCar(email: "email", password: "password", carMaker: "renault")
-  let carAccount = UserAccount(selectedCar: "car", cars: [car])
+  let carAccount = UserAccount(cars: [car])
   let renaultBatteryStatus = RenaultBatteryStatus(
     timestamp: "2025-07-15T08:40:54Z", batteryLevel: 69, batteryAutonomy: 216, batteryCapacity: nil,
     batteryAvailableEnergy: nil, plugStatus: 0, chargingStatus: 0, chargingRemainingTime: 150,

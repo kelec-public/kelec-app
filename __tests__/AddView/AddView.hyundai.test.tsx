@@ -219,7 +219,6 @@ test('Should add A Hyundai car', async () => {
     const account = await AsyncStorage.getItem('account');
     const accountObj = JSON.parse(account!);
     expect(accountObj).toMatchObject({
-        "selectedCar": "VIN1",
         "cars": [
             {
                 "email": "email",

@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { StyleSheet, View, Image, TouchableOpacity, useColorScheme, Animated } from "react-native";
+import { StyleSheet, View, Image, useColorScheme, Animated } from "react-native";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Text from "../../../screen/Common/CustomText";
@@ -18,14 +18,12 @@ type Props = {
     readonly index: number; // position parmi les voitures de l'utilisateur
     readonly isLast: boolean;
     readonly editMode: boolean; // mode édition : monter / descendre les voitures
-    readonly isDefault: boolean;
-    readonly onSelectDefault: () => void;
     readonly onMove: (direction: MoveDirection) => void;
     readonly onRename: (name: string) => void;
     readonly onDelete: () => void;
 }
 
-function CarRow({ carModel, index, isLast, editMode, isDefault, onSelectDefault, onMove, onRename, onDelete }: Props): React.JSX.Element {
+function CarRow({ carModel, index, isLast, editMode, onMove, onRename, onDelete }: Props): React.JSX.Element {
     const isDarkMode = useColorScheme() === 'dark';
     const { languageHandler } = useContext(MainContext);
 
@@ -57,16 +55,6 @@ function CarRow({ carModel, index, isLast, editMode, isDefault, onSelectDefault,
                         </Text>
                     </View>
                 </View>
-                <TouchableOpacity testID="selectAsDefaultCar" onPress={onSelectDefault}>
-                    <View
-                        testID="selectAsDefaultCarIcon"
-                        style={[commonStyles.centerFlex, styles.rounded, {
-                            backgroundColor: isDefault ? iconColour : getGrayBackgroundColour(isDarkMode),
-                            borderColor: iconColour
-                        }]}>
-                        <Icon name="check" color={getGrayBackgroundColour(isDarkMode)} size={20} />
-                    </View>
-                </TouchableOpacity>
             </View>
             <View style={{ flexDirection: 'row' }}>
                 <View style={{ flex: 1 }}>
@@ -156,10 +144,6 @@ const styles = StyleSheet.create({
         width: '100%',
         transform: [{ scale: 1.15 }],
         resizeMode: 'contain'
-    },
-    rounded: {
-        borderRadius: 100,
-        borderWidth: 1,
     },
     logo: {
         width: 30,

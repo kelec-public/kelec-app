@@ -34,7 +34,7 @@ beforeEach(async () => {
     await AsyncStorage.clear();
     jest.clearAllMocks();
     /*     const account: Account = new Account('email', 'password', CarMaker.RENAULT);
-        const userAccount: UserAccount = new UserAccount('', [account]);
+        const userAccount: UserAccount = new UserAccount([account]);
         await AsyncStorage.setItem('account', JSON.stringify(userAccount));
         await AsyncStorage.setItem('carMaker', CarMaker.RENAULT); */
 
@@ -286,7 +286,6 @@ describe('Should add renault group cars', () => {
             const account = await AsyncStorage.getItem('account');
             const accountObj = JSON.parse(account!);
             expect(accountObj).toMatchObject({
-                "selectedCar": "VIN1",
                 "cars": [
                     {
                         "email": "email",

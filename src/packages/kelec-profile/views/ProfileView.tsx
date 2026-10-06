@@ -5,7 +5,6 @@ import commonStyles from '../../../lib/graphics/commonStyle';
 import { useProfileController } from '../controllers/useProfileController';
 import ProfileHeader from './ProfileHeader';
 import CarRow from './CarRow';
-import DefaultCarNotice from './DefaultCarNotice';
 
 /** Onglet « Compte » : les voitures de l'utilisateur. */
 function ProfileView(): React.JSX.Element {
@@ -37,8 +36,6 @@ function ProfileView(): React.JSX.Element {
                                     index={index}
                                     isLast={index === cars.length - 1}
                                     editMode={controller.editMode}
-                                    isDefault={controller.isDefaultCar(vin)}
-                                    onSelectDefault={() => controller.selectDefaultCar(vin)}
                                     onMove={direction => controller.moveCar(vin, direction)}
                                     onRename={name => controller.renameCar(vin, name)}
                                     onDelete={() => controller.confirmDelete(car)}
@@ -46,9 +43,6 @@ function ProfileView(): React.JSX.Element {
                             );
                         })}
                     </ScrollView>
-                    {controller.defaultCarName !== null && (
-                        <DefaultCarNotice carName={controller.defaultCarName} />
-                    )}
                 </View>
             </SafeAreaView>
         </View>

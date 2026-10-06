@@ -56,14 +56,11 @@ export function useProfileController() {
     return {
         cars,
         hasMultipleCars: cars.length > 1,
-        defaultCarName: currentUser.getSelectedCar() !== '' ? currentUser.getSelectedCarName() : null,
-        isDefaultCar: (vin: string) => vin === currentUser.getSelectedCar(),
 
         editMode,
         toggleEditMode: () => setEditMode(mode => !mode),
         openAddCar: () => setCurrentView(ViewsAvailable.LOGIN),
 
-        selectDefaultCar: (vin: string) => run(() => garage.selectDefaultCar(vin)),
         moveCar: (vin: string, direction: MoveDirection) => run(() => garage.moveCar(vin, direction)),
         renameCar: (vin: string, name: string) => run(() => garage.renameCar(vin, name)),
         confirmDelete,

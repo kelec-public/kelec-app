@@ -69,7 +69,7 @@ beforeEach(async () => {
     const account1: Account = new Account('email', '', CarMaker.RENAULT, car1);
     const account2: Account = new Account('email', '', CarMaker.RENAULT, car2);
     const account3: Account = new Account('email', '', CarMaker.RENAULT, car3);
-    const userAccount: UserAccount = new UserAccount('vin1', [account1, account2, account3]);
+    const userAccount: UserAccount = new UserAccount([account1, account2, account3]);
     await AsyncStorage.setItem('account', JSON.stringify(userAccount));
     await AsyncStorage.setItem('kelecNextGen', "true");
 });
@@ -307,7 +307,7 @@ test('should delete cars', async () => {
 
 
     deleteTheCar = screen.queryAllByTestId('deleteTheCar');
-    // delete the first car which is the default car to update the selected car
+    // delete the first car
     await UserEvent.press(deleteTheCar[0]);
     confirmCallback = AlertSpy.mock.calls[1][2][1].onPress;
     await act(async () => confirmCallback());
@@ -320,8 +320,6 @@ test('should delete cars', async () => {
         // verify the order of cars have been changed
         expect(accountParsed?.getCars().length).toBe(1);
         expect(accountParsed?.getCars()[0].car?.getVin()).toBe('vin2');
-        expect(accountParsed?.getSelectedCar()).toBe('vin2');
-
         // and that the view has been rerendered
         const profileCarRowModel = screen.queryAllByTestId('profileCarRowModel');
         expect(profileCarRowModel.length).toBe(1);
@@ -329,7 +327,7 @@ test('should delete cars', async () => {
     });
 
     deleteTheCar = screen.queryAllByTestId('deleteTheCar');
-    // delete the last car and clear the selected car
+    // delete the last car
     await UserEvent.press(deleteTheCar[0]);
 
     // the deleting is cancelled
@@ -350,7 +348,6 @@ test('should delete cars', async () => {
 
         // verify the order of cars have been changed
         expect(accountParsed?.getCars().length).toBe(0);
-        expect(accountParsed?.getSelectedCar()).toBe('');
 
         // and that the view has been rerendered
         const profileCarRowModel = screen.queryAllByTestId('profileCarRowModel');
@@ -361,64 +358,6 @@ test('should delete cars', async () => {
         expect(profileViewEditCarsButton.length).toBe(0);
     });
 });
-
-test('should set selected car', async () => {
-    const user = JSON.parse(await AsyncStorage.getItem('account') ?? "");
-    const accountParsed = (await buildUserAccount(user, async () => null)).user;
-
-    expect(accountParsed?.getCars().length).toBe(3);
-    expect(accountParsed?.getCars()[0].car?.getVin()).toBe('vin1');
-    expect(accountParsed?.getCars()[1].car?.getVin()).toBe('vin2');
-    expect(accountParsed?.getCars()[2].car?.getVin()).toBe('vin3');
-    expect(accountParsed?.getSelectedCar()).toBe('vin1');
-
-    // we should have 3 cars in order
-
-    const UserEvent = userEvent.setup();
-    render(<App />);
-    await waitFor(async () => {
-        const bottomButtonperson = screen.queryAllByTestId('bottomButtonperson');
-        expect(bottomButtonperson.length).toBe(2);
-    });
-    // open the profile tab
-    const bottomButtonperson = screen.queryAllByTestId('bottomButtonperson');
-    await UserEvent.press(bottomButtonperson[0]);
-    await waitFor(() => {
-        expect(screen.getByTestId('profileView')).toBeDefined();
-    });
-
-    await waitFor(async () => {
-        // verify the 3 buttons are available 
-        const selectAsDefaultCar = screen.queryAllByTestId('selectAsDefaultCar');
-        expect(selectAsDefaultCar.length).toBe(3);
-        // check the only the first one is highlighted
-        const selectAsDefaultCarIcon = screen.queryAllByTestId('selectAsDefaultCarIcon');
-        expect(selectAsDefaultCarIcon.length).toBe(3);
-        expect(selectAsDefaultCarIcon[0].props.style[2].backgroundColor).toBe('black');
-        expect(selectAsDefaultCarIcon[1].props.style[2].backgroundColor).toBe('white');
-        expect(selectAsDefaultCarIcon[2].props.style[2].backgroundColor).toBe('white'); // card style
-    });
-
-    const selectAsDefaultCar = screen.queryAllByTestId('selectAsDefaultCar');
-    // select the second car
-    await UserEvent.press(selectAsDefaultCar[1]);
-    await waitFor(async () => {
-        // verify the widgets have been updated (useful in this case)
-        const user = JSON.parse(await AsyncStorage.getItem('account') ?? "");
-        const accountParsed = (await buildUserAccount(user, async () => null)).user;
-
-        // verify the selected car has been changed
-        expect(accountParsed?.getSelectedCar()).toBe('vin2');
-
-        // and that the view has been rerendered
-        const selectAsDefaultCarIcon = screen.queryAllByTestId('selectAsDefaultCarIcon');
-        expect(selectAsDefaultCarIcon.length).toBe(3);
-        expect(selectAsDefaultCarIcon[0].props.style[2].backgroundColor).toBe("white");
-        expect(selectAsDefaultCarIcon[1].props.style[2].backgroundColor).toBe('black');
-        expect(selectAsDefaultCarIcon[2].props.style[2].backgroundColor).toBe("white");
-    });
-});
-
 
 test('should add a car', async () => {
     const user = userEvent.setup();

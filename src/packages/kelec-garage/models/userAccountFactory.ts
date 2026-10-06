@@ -19,7 +19,7 @@ export async function buildUserAccount(
     stored: UserAccountInterface,
     getPassword: (vin: string) => Promise<string | null>,
 ): Promise<BuiltUserAccount> {
-    const user = new UserAccount(stored.selectedCar, []);
+    const user = new UserAccount([]);
     let needsPasswordMigration = false;
 
     for (const raw of stored.cars) {

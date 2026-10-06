@@ -16,7 +16,7 @@ beforeAll(async () => {
     await AsyncStorage.clear();
     const car1 = new HyundaiCar('vin1', 'model1', 'image1', CarMaker.HYUNDAI, 'AA0001AA');
     const account: Account = new Account('email', 'passwod', CarMaker.HYUNDAI, car1);
-    const userAccount: UserAccount = new UserAccount('vin1', [account]);
+    const userAccount: UserAccount = new UserAccount([account]);
     await AsyncStorage.setItem('account', JSON.stringify(userAccount));
     await AsyncStorage.setItem('kelecNextGen', "true");
 });

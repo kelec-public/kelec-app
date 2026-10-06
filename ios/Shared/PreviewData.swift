@@ -9,7 +9,7 @@ import Foundation
 import renaultApi
 
 enum PreviewData {
-  static let account = UserAccount(selectedCar: "mock", cars: [])
+  static let account = UserAccount(cars: [])
   static let userCar = UserCar(email: "", password: "", carMaker: "renault")
   static let carName = "Megane E-Tech"
   static let image = "megane"

@@ -24,7 +24,7 @@ jest.mock('../../../src/packages/kelec-login/services/createLoginSource', () => 
 
 const car = (vin: string) => new CarModel(vin, `model ${vin}`, 'https://x/' + vin, CarMaker.RENAULT);
 const garageWith = (...vins: string[]) =>
-    new UserAccount(vins[0] ?? '', vins.map(vin => new Account('e@x.fr', 'p', CarMaker.RENAULT, car(vin))));
+    new UserAccount(vins.map(vin => new Account('e@x.fr', 'p', CarMaker.RENAULT, car(vin))));
 
 const renderStep = (currentUser: UserAccount) => render(
     <MainContext.Provider value={{ languageHandler: { getTranslation: (key: string) => key }, currentUser } as any}>

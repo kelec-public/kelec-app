@@ -19,7 +19,7 @@ beforeEach(async () => {
     const car1: CarModel = new CarModel('vin1', 'model1', 'url.com', CarMaker.RENAULT, 'AA001AA');
     await AsyncStorage.setItem('vin1/image', 'image1');
     const account1: Account = new Account('email', 'password', CarMaker.RENAULT, car1);
-    const userAccount: UserAccount = new UserAccount('vin1', [account1]);
+    const userAccount: UserAccount = new UserAccount([account1]);
     await AsyncStorage.setItem('account', JSON.stringify(userAccount));
     await AsyncStorage.setItem('kelecNextGen', "true");
 });

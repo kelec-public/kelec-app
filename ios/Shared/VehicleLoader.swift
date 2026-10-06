@@ -76,7 +76,7 @@ func widgetCar(account: UserAccount, configuredVin: String?) -> UserCar? {
   return account.cars.first
 }
 
-// watch: the car selected in the iPhone app, else the first car
+// watch: the first car
 func watchCar(account: UserAccount) -> UserCar? {
-  account.cars.first { $0.car?.vin == account.selectedCar } ?? account.cars.first
+  account.cars.first
 }

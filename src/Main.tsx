@@ -35,7 +35,7 @@ function Main(): React.JSX.Element {
     const [currentView, setCurrentView] = useState(ViewsAvailable.LOADING);
 
     // to current user on the app
-    const [currentUser, setCurrentUser] = useState<UserAccount>(() => new UserAccount("", []));
+    const [currentUser, setCurrentUser] = useState<UserAccount>(() => new UserAccount([]));
     // to store the app preferences
     const [appPreferences, setAppPreferences] = useState<AppPreferences>(() => new AppPreferences());
 
@@ -75,7 +75,7 @@ function Main(): React.JSX.Element {
             setTest(''); // IF REMOVED ALL TESTS WILL FAIL (like why ??)
             return;
         }
-        setCurrentUser(new UserAccount("", []));
+        setCurrentUser(new UserAccount([]));
         setCurrentView(ViewsAvailable.LOGIN);
 
 

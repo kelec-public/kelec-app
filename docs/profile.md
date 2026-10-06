@@ -1,6 +1,6 @@
 # Packages `kelec-profile` et `kelec-garage`
 
-L'onglet « Compte » liste les voitures de l'utilisateur. Il permet d'en choisir une par défaut, de les réordonner,
+L'onglet « Compte » liste les voitures de l'utilisateur. Il permet de les réordonner,
 de les renommer, de les supprimer et d'en ajouter une.
 
 - **`kelec-profile`** (feature) : l'écran, avec ses contrôleurs et ses vues.
@@ -27,7 +27,7 @@ kelec-garage/                         (domaine partagé, importé via index.ts)
 │   ├── passwordVault.ts        Mots de passe dans le stockage chiffré natif (clé <vin>_password)
 │   ├── carTypeRepository.ts    Modèle technique de la voiture (<vin>/carType)
 │   ├── carImageRepository.ts   Image de la voiture : get / save (+ envoi aux widgets natifs), toImageUri
-│   ├── garageService.ts        selectDefaultCar, moveCar, renameCar, deleteCar (modifie le UserAccount + enregistre)
+│   ├── garageService.ts        moveCar, renameCar, deleteCar (modifie le UserAccount + enregistre)
 │   └── session.ts              logOut : efface les identifiants du trousseau, tout le stockage local et le compte des widgets
 ├── controllers/
 │   └── useCarImage.ts          Hook : image d'une voiture
@@ -40,10 +40,9 @@ kelec-profile/                        (feature)
 └── views/
     ├── ProfileView.tsx         Écran (onglet « Compte »)
     ├── ProfileHeader.tsx       Titre + boutons (édition / ajout, ou « Ajouter une voiture » s'il n'y a qu'une voiture)
-    ├── CarRow.tsx              Une voiture : logo, nom, plaque ou VIN, image, sélection par défaut, actions
+    ├── CarRow.tsx              Une voiture : logo, nom, plaque ou VIN, image, actions
     ├── CarRowAction.tsx        Bouton icône + libellé (et emplacement vide pour garder l'alignement)
     ├── RenameCarDialog.tsx     Boîte de dialogue de renommage
-    └── DefaultCarNotice.tsx    « <voiture> est sélectionnée par défaut »
 ```
 
 Il n'y a ni source ni Provider : Profile ne fait aucun appel réseau et ne dépend pas du constructeur.
@@ -60,7 +59,6 @@ La suppression passe d'abord par une alerte de confirmation. Les boutons sont da
 ## Suppression d'une voiture
 
 - Les identifiants enregistrés pour l'email du compte sont effacés (`RenaultCredentials.clearCredentials`), puis la voiture est retirée.
-  Si c'était la voiture par défaut, la première voiture restante le devient.
 - **Les données locales de la voiture sont volontairement conservées** : historique de charge, image, caches…
   Elles sont réutilisées si la voiture est réimportée. Il ne faut pas les « nettoyer ».
 
@@ -69,7 +67,7 @@ La suppression passe d'abord par une alerte de confirmation. Les boutons sont da
 | Clé | Contenu | Propriétaire |
 |---|---|---|
 | `<vin>/image` | Image de la voiture (base64 JPEG), aussi envoyée aux widgets natifs | `kelec-garage` (`CarImageRepository`) |
-| `account` | `UserAccount` (liste des voitures, voiture par défaut), **sans mot de passe** | `kelec-garage` (`AccountRepository`) |
+| `account` | `UserAccount` (liste des voitures), **sans mot de passe**. L'ancien champ `selectedCar` (voiture par défaut) n'est plus écrit ni lu | `kelec-garage` (`AccountRepository`) |
 | `kelecNextGen` | Marqueur de la nouvelle interface d'ajout : sans lui, `load` ignore le compte | `kelec-garage` (`AccountRepository`) |
 | `<vin>/carType` | Modèle technique de la voiture (batterie, puissances, V2G…) | `kelec-garage` (`CarTypeRepository`) |
 | `<vin>_password` (stockage chiffré natif) | Mot de passe du compte. **Nom à ne pas changer** : lu par les widgets et l'intent Siri | `kelec-garage` (`PasswordVault`) |

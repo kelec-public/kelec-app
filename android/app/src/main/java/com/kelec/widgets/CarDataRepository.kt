@@ -20,9 +20,7 @@ class CarDataRepository(context: Context) {
     fun loadAccount(): AccountSnapshot {
         val data = parseAccountData() ?: return AccountSnapshot.NotLoggedIn
         if (data.cars.isEmpty()) return AccountSnapshot.NoCars
-        return data.cars.find { it.vin == data.selectedVin }
-            ?.let { AccountSnapshot.Ok(it) }
-            ?: AccountSnapshot.Ok(data.cars.first())
+        return AccountSnapshot.Ok(data.cars.first())
     }
 
     fun loadAllCars(): List<SelectedCar> = parseAccountData()?.cars ?: emptyList()
@@ -50,10 +48,10 @@ class CarDataRepository(context: Context) {
                 kamereonAccountID = car.optString("kamereonAccountID", "")
             )
         }
-        return AccountData(user.optString("selectedCar", ""), cars)
+        return AccountData(cars)
     }
 
-    private data class AccountData(val selectedVin: String, val cars: List<SelectedCar>)
+    private data class AccountData(val cars: List<SelectedCar>)
 
     fun saveVinForWidget(appWidgetId: Int, vin: String) {
         prefs.edit().putString(widgetVinKey(appWidgetId), vin).apply()

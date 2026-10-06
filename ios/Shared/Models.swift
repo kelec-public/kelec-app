@@ -10,10 +10,9 @@ import renaultApi
 
 public struct UserAccount:Codable, Equatable{
   public static func == (lhs: UserAccount, rhs: UserAccount) -> Bool {
-    return lhs.selectedCar == rhs.selectedCar && lhs.cars == rhs.cars
+    return lhs.cars == rhs.cars
   }
   
-  var selectedCar: String
   var cars: [UserCar]
   
 }

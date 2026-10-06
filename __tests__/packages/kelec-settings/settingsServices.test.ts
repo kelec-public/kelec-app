@@ -15,8 +15,8 @@ const account = (firstName?: string, lastName?: string) => {
 };
 
 test('getUserDisplayName : dernier compte avec prénom et nom, sinon null', () => {
-    expect(getUserDisplayName(new UserAccount('', [account(), account('Jean')]))).toBeNull();
-    expect(getUserDisplayName(new UserAccount('', [account('A', 'B'), account(), account('C', 'D')])))
+    expect(getUserDisplayName(new UserAccount([account(), account('Jean')]))).toBeNull();
+    expect(getUserDisplayName(new UserAccount([account('A', 'B'), account(), account('C', 'D')])))
         .toEqual({ firstName: 'C', lastName: 'D' });
 });
 
@@ -31,6 +31,6 @@ test('watchPasswords : uniquement les mots de passe Hyundai, par VIN', () => {
         new HyundaiCar('vinHyundai', 'model', 'image', CarMaker.HYUNDAI, 'AA0002AA'));
     const hyundaiWithoutCar = new HyundaiAccount('email', 'otherPassword', '1234');
 
-    expect(watchPasswords(new UserAccount('', [renault, hyundai, hyundaiWithoutCar])))
+    expect(watchPasswords(new UserAccount([renault, hyundai, hyundaiWithoutCar])))
         .toEqual({ vinHyundai: 'hyundaiPassword' });
 });

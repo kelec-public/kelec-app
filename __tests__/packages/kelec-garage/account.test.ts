@@ -26,7 +26,7 @@ afterEach(() => {
 
 describe('AccountRepository.save', () => {
     test('mots de passe dans le stockage chiffré, jamais dans le JSON ni pour les widgets', async () => {
-        const user = new UserAccount('VIN1', [renault('VIN1', 'secret-r'), hyundai('VIN2', 'secret-h')]);
+        const user = new UserAccount([renault('VIN1', 'secret-r'), hyundai('VIN2', 'secret-h')]);
         await AccountRepository.save(user);
 
         // stockage chiffré : clé <vin>_password (lue par les widgets et l'intent Siri)
@@ -40,7 +40,7 @@ describe('AccountRepository.save', () => {
     });
 
     test('ne modifie pas le compte en mémoire', async () => {
-        const user = new UserAccount('VIN1', [renault('VIN1', 'secret-r')]);
+        const user = new UserAccount([renault('VIN1', 'secret-r')]);
         await AccountRepository.save(user);
         expect(user.getCars()[0].getPassword()).toBe('secret-r');
     });
@@ -50,17 +50,16 @@ describe('AccountRepository.load', () => {
     test('null sans compte, ou sans le marqueur de la nouvelle interface', async () => {
         expect(await AccountRepository.load()).toBeNull();
 
-        await AsyncStorage.setItem('account', JSON.stringify(new UserAccount('', [])));
+        await AsyncStorage.setItem('account', JSON.stringify(new UserAccount([])));
         expect(await AccountRepository.load()).toBeNull();
     });
 
     test('reconstruit le bon type de compte avec le mot de passe chiffré', async () => {
-        await AccountRepository.save(new UserAccount('VIN2', [renault('VIN1', 'secret-r'), hyundai('VIN2', 'secret-h')]));
+        await AccountRepository.save(new UserAccount([renault('VIN1', 'secret-r'), hyundai('VIN2', 'secret-h')]));
         saveNativeAccount.mockClear();
 
         const user = await AccountRepository.load();
 
-        expect(user?.getSelectedCar()).toBe('VIN2');
         expect(user?.getCars()[0]).toBeInstanceOf(RenaultAccount);
         expect(user?.getCars()[1]).toBeInstanceOf(HyundaiAccount);
         expect(user?.getCars().map(account => account.getPassword())).toEqual(['secret-r', 'secret-h']);
@@ -68,7 +67,7 @@ describe('AccountRepository.load', () => {
     });
 
     test('migre un ancien mot de passe en clair vers le stockage chiffré', async () => {
-        const legacy = new UserAccount('VIN1', [new Account('r@x.fr', 'old-clear', CarMaker.RENAULT, new CarModel('VIN1', 'Zoé', '', CarMaker.RENAULT))]);
+        const legacy = new UserAccount([new Account('r@x.fr', 'old-clear', CarMaker.RENAULT, new CarModel('VIN1', 'Zoé', '', CarMaker.RENAULT))]);
         await AsyncStorage.setItem('account', JSON.stringify(legacy));
         await AsyncStorage.setItem('kelecNextGen', 'true');
 
@@ -109,7 +108,7 @@ describe('logOut', () => {
 
     test('efface les identifiants de chaque voiture, le stockage local et le compte des widgets', async () => {
         await AsyncStorage.setItem('account', '{}');
-        await logOut(new UserAccount('VIN1', [renault('VIN1', 'secret-r'), hyundai('VIN2', 'secret-h')]));
+        await logOut(new UserAccount([renault('VIN1', 'secret-r'), hyundai('VIN2', 'secret-h')]));
 
         const clearedKeys = clearCrypted.mock.calls.map(call => call[0]);
         expect(clearedKeys).toEqual(expect.arrayContaining([
@@ -124,7 +123,7 @@ describe('logOut', () => {
         clearCrypted.mockRejectedValueOnce(new Error('introuvable'));
         await AsyncStorage.setItem('account', '{}');
 
-        await logOut(new UserAccount('VIN1', [renault('VIN1', 'secret-r')]));
+        await logOut(new UserAccount([renault('VIN1', 'secret-r')]));
 
         expect(await AsyncStorage.getItem('account')).toBeNull();
         expect(saveNativeAccount).toHaveBeenCalledWith(null);

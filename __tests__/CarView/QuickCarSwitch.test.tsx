@@ -10,7 +10,7 @@ beforeEach(async () => {
     await AsyncStorage.clear();
     const car1 = new HyundaiCar('vin1', 'model1', 'image1', CarMaker.HYUNDAI, 'AA0001AA');
     const account: Account = new Account('email', 'passwod', CarMaker.HYUNDAI, car1);
-    const userAccount: UserAccount = new UserAccount('vin1', [account]);
+    const userAccount: UserAccount = new UserAccount([account]);
     await AsyncStorage.setItem('account', JSON.stringify(userAccount));
     await AsyncStorage.setItem('kelecNextGen', "true");
 });
@@ -28,7 +28,7 @@ test('should display the quick car switch button', async () => {
     const car2 = new HyundaiCar('vin2', 'model2', 'image2', CarMaker.HYUNDAI, 'AA0002AA');
     const account: Account = new Account('email', 'passwod', CarMaker.HYUNDAI, car1);
     const account2: Account = new Account('email', 'passwod', CarMaker.HYUNDAI, car2);
-    const userAccount: UserAccount = new UserAccount('vin1', [account, account2]);
+    const userAccount: UserAccount = new UserAccount([account, account2]);
     await AsyncStorage.setItem('account', JSON.stringify(userAccount));
     await AsyncStorage.setItem('kelecNextGen', "true");
 
@@ -45,7 +45,7 @@ test('should display the quick car switch button and change the car', async () =
     const car2 = new HyundaiCar('vin2', 'model2', 'image2', CarMaker.HYUNDAI, 'AA0002AA');
     const account: Account = new Account('email', 'passwod', CarMaker.HYUNDAI, car1);
     const account2: Account = new Account('email', 'passwod', CarMaker.HYUNDAI, car2);
-    const userAccount: UserAccount = new UserAccount('vin1', [account, account2]);
+    const userAccount: UserAccount = new UserAccount([account, account2]);
     await AsyncStorage.setItem('account', JSON.stringify(userAccount));
     await AsyncStorage.setItem('kelecNextGen', "true");
 
