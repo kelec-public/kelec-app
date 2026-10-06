@@ -372,11 +372,18 @@ const DebugZoneView = ({ setShowDebugZone }: DebugZoneProps): React.JSX.Element 
                 onPress={() => showMileageHistory(car)}
             />
             <Text style={styles.subtitle}>Logs</Text>
-            <ScrollView style={[styles.logs, { borderColor: getBlackColour(isDarkMode) }]}>
-                {logs.length === 0
-                    ? <Text style={styles.logLine}>No logs available</Text>
-                    : logs.map((log, index) => <Text key={index} style={styles.logLine}>{log}</Text>)}
-            </ScrollView>
+            <View style={[styles.logs, { borderColor: getBlackColour(isDarkMode) }]}>
+                <ScrollView
+                    style={styles.container}
+                    contentContainerStyle={styles.logsContent}
+                    nestedScrollEnabled
+                    showsVerticalScrollIndicator
+                >
+                    {logs.length === 0
+                        ? <Text style={styles.logLine}>No logs available</Text>
+                        : logs.map((log, index) => <Text key={index} style={styles.logLine}>{log}</Text>)}
+                </ScrollView>
+            </View>
         </>
     );
 
@@ -424,8 +431,12 @@ const styles = StyleSheet.create({
     },
     logs: {
         flex: 1,
+        minHeight: 0,
         borderWidth: StyleSheet.hairlineWidth,
         borderRadius: 10,
+        overflow: 'hidden',
+    },
+    logsContent: {
         padding: 10,
     },
     logLine: {
