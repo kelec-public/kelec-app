@@ -1,12 +1,11 @@
 //
-//  storageHandler.swift
+//  RenaultSession.swift
 //  Kelec
 //
-//  Created by Kelyan PEGEOT SELME on 04/06/2026.
+//  Renault group session cookies, saved in the keychain by the RN app (and by the watch sync).
 //
 
 import Foundation
-
 
 public struct GigyaTokenFunctionResponse: Codable {
   public var canLogin: Bool

@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-import SwiftUI
-
 struct ContentView: View {
   @StateObject var model = ViewModelWatch()
   @State var account: UserAccount?

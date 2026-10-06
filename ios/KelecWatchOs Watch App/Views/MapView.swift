@@ -75,12 +75,12 @@ struct MapView: View {
     
     do{
       let fetchedApiLocation = try await client.getMapCoordinates(vin: vin)
-      zeServices.saveLoadedLocation(vin: vin, latitude: fetchedApiLocation.0, longitude: fetchedApiLocation.1)
+      VehicleCache.saveLocation(vin: vin, latitude: fetchedApiLocation.0, longitude: fetchedApiLocation.1)
       self.mapLatitude = fetchedApiLocation.0
       self.mapLongitude = fetchedApiLocation.1
     }catch{
       // try to load from local saved
-//      if let savedLocation = zeServices.loadSavedLocations(vin: vin){
+//      if let savedLocation = VehicleCache.loadLocation(vin: vin){
 //        self.mapLatitude = savedLocation.latitude
 //        self.mapLongitude = savedLocation.longitude
 //      }else{

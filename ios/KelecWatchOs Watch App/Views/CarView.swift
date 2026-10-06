@@ -110,14 +110,6 @@ struct CarView: View {
   
 }
 
-//struct CarView_Previews: PreviewProvider {
-//  static var previews: some View {
-//    CarView(account: UserAccount(selectedCar: "ABC", cars: [UserCar(email: "", password: "", carMaker: "hyundai", car: CarModel(vin: "ABC", image: "image", imageUrl: "image", model: "abc"))]), carApi: AppCarApi(data: AppCar(type: "", id: "", attributes: AppAttributes(timestamp: Date().ISO8601Format(), batteryLevel: 50, batteryAutonomy: 250, batteryCapacity: 10, batteryAvailableEnergy: 0, plugStatus: 1, chargingStatus: 1.0, chargingRemainingTime: 150, chargingInstantaneousPower: 0, batteryTemperature: 0, isLocked: true, chargeLimit: 80))), carAccount: UserCar(email: "", password: "", carMaker: ""))
-//  }
-//}
-//
-//
-
 #Preview {
   let carModel = CarModel(vin: "VIN", image: "image", imageUrl: "https://api.kelec.app/ioniq", model: "DEMO")
   let car = UserCar(email: "", password: "", carMaker: "demo", car: carModel)

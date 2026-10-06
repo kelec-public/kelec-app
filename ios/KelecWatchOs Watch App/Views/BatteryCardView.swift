@@ -257,22 +257,3 @@ struct BatteryCardView: View{
   }
   
 }
-
-//struct BatteryCardView_Previews: PreviewProvider {
-//  static var previews: some View {
-//    BatteryCardView(refreshApi: testRefesh, imageUrl: URL(string: "")!, zecar: AppAttributes(timestamp: "", batteryLevel: 30, batteryAutonomy: 30, batteryCapacity: 03, batteryAvailableEnergy: 03, plugStatus: 0, chargingStatus: 0.2, chargingRemainingTime: 10, chargingInstantaneousPower: 1000.0, batteryTemperature: 0, isLocked: true, chargeLimit: 0), carMaker: "hyundai")
-//  }
-//
-//
-//}
-
-func testRefesh () -> Void{
-  
-}
-
-extension Double{
-  func rounded(toPlaces places:Int) -> Double{
-    let divisor = pow(10.0, Double(places))
-    return (self * divisor).rounded() / divisor
-  }
-}

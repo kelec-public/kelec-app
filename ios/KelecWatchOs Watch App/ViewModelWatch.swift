@@ -15,7 +15,6 @@ import Combine
 class ViewModelWatch: NSObject, WCSessionDelegate, ObservableObject{
   @Published var shouldRefreshView = false
   var session: WCSession
-  var recieved = ""
   init(session: WCSession = .default){
     self.session = session
     super.init()
@@ -110,10 +109,6 @@ class ViewModelWatch: NSObject, WCSessionDelegate, ObservableObject{
   
   func endRefresh()->Void{
     self.shouldRefreshView = false
-  }
-  
-  func getShouldRefresh()->Bool{
-    return self.shouldRefreshView
   }
 }
 

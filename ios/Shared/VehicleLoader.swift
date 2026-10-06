@@ -25,7 +25,7 @@ enum VehicleLoader {
     do {
       let fetchedApiHandler = try await getCarMakerApiClient(usercar: userCar).getVehicleInfo(vin: vin)
       writeWidgetLog(message: "Data successfully fecthed")
-      zeServices.saveLoadedCar(vin: vin, zecar: fetchedApiHandler)
+      VehicleCache.saveStatus(vin: vin, apiHandler: fetchedApiHandler)
       return fetchedApiHandler
     } catch {
       writeWidgetLog(message: "Loading cache data")
@@ -34,7 +34,7 @@ enum VehicleLoader {
   }
 
   static func cachedStatus(userCar: UserCar) -> ApiHandler? {
-    zeServices.loadSavedCar(vin: userCar.car?.vin ?? "", carMaker: parseCarMaker(carMaker: userCar.carMaker))
+    VehicleCache.loadStatus(vin: userCar.car?.vin ?? "", carMaker: parseCarMaker(carMaker: userCar.carMaker))
   }
 
   // account, preferences, car (chosen by `selectCar`), image and status
