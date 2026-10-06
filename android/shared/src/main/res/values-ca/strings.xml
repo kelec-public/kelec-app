@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="not_yet_logged_in">Primer has d\'iniciar sessió a l\'aplicació</string>
+    <string name="no_car_added">Primer has de seleccionar un cotxe a l\'aplicació</string>
+    <string name="widget_server_error">No es pot connectar al servidor</string>
+    <string name="scheduled_charge_status">"CÀRREGA PROGRAMADA | "</string>
+    <string name="ended_charge_status">"CÀRREGA FINALITZADA | "</string>
+    <string name="charging_status">"CARREGANT | "</string>
+    <string name="not_charging_status">"NO CARREGANT | "</string>
+</resources>

@@ -1,0 +1,19 @@
+// Code natif partagé par l'app (bridge RN, widget) et, plus tard, l'app Wear OS :
+// clés de stockage, modèles, chargement d'une voiture, mise en forme, textes traduits.
+// Java 17 et les dépôts sont réglés par le plugin Gradle de React Native pour tous les modules.
+apply plugin: "com.android.library"
+apply plugin: "org.jetbrains.kotlin.android"
+
+android {
+    namespace "com.kelec.shared"
+    compileSdk rootProject.ext.compileSdkVersion
+
+    defaultConfig {
+        minSdk rootProject.ext.minSdkVersion
+    }
+}
+
+dependencies {
+    api project(':carapi')
+    implementation 'androidx.security:security-crypto:1.1.0-alpha06'
+}

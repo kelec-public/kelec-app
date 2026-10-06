@@ -16,13 +16,6 @@
     <string name="widget_last_refresh">22:56</string>
     <string name="time_remaining_text">5h38</string>
     <string name="end_time_text">04:34</string>
-    <string name="ended_charge_status">"ENDED CHARGE | "</string>
-    <string name="charging_status">"CHARGING | "</string>
-    <string name="no_car_added">You must add a vehicle on the app first</string>
-    <string name="not_yet_logged_in">You must log in on the app first</string>
     <string name="widget_configure_subtitle">Choose the car to display in this widget</string>
-    <string name="scheduled_charge_status">"SCHEDULED CHARGE | "</string>
-    <string name="not_charging_status">"NOT CHARGING | "</string>
     <string name="widget_configure_title">Select a car</string>
-    <string name="widget_server_error">Impossible to connect to server</string>
 </resources>

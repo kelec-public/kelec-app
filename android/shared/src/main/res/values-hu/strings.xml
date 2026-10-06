@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="not_yet_logged_in">Először be kell jelentkeznie az alkalmazásba</string>
+    <string name="no_car_added">Először ki kell választania egy autót az alkalmazásban</string>
+    <string name="widget_server_error">Nem lehet csatlakozni a szerverhez</string>
+    <string name="scheduled_charge_status">"TÖLTÉS ÜTEMEZVE | "</string>
+    <string name="ended_charge_status">"TÖLTÉS BEFEJEZŐDÖTT | "</string>
+    <string name="charging_status">"TÖLTÉS ALATT | "</string>
+    <string name="not_charging_status">"NINCS TÖLTÉS | "</string>
+</resources>

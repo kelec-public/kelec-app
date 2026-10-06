@@ -129,13 +129,12 @@ android {
 }
 
 dependencies {
+    implementation project(':shared')
     implementation 'androidx.work:work-runtime:2.11.2'
 
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
     implementation project(':react-native-config')
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation project(':react-native-fs')
     implementation 'androidx.glance:glance-appwidget:1.1.1'
     implementation 'androidx.security:security-crypto:1.1.0-alpha06'

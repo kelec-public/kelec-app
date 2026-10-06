@@ -16,13 +16,6 @@
     <string name="widget_last_refresh">22:56</string>
     <string name="time_remaining_text">5h38</string>
     <string name="end_time_text">04:34</string>
-    <string name="ended_charge_status">"Приключено зареждане | "</string>
-    <string name="charging_status">"Зареждане | "</string>
-    <string name="no_car_added">Първо трябва да изберете кола в приложението</string>
-    <string name="not_yet_logged_in">Първо трябва да влезете в приложението</string>
     <string name="widget_configure_subtitle">Изберете автомобила, който да се показва в този уиджет</string>
-    <string name="scheduled_charge_status">"Отложено зареждане | "</string>
-    <string name="not_charging_status">"Не зарежда | "</string>
     <string name="widget_configure_title">Изберете автомобил</string>
-    <string name="widget_server_error">Невъзможно свързване със сървъра</string>
 </resources>

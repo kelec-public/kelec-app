@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="not_yet_logged_in">Najpierw musisz zalogować się do aplikacji</string>
+    <string name="no_car_added">Najpierw musisz wybrać samochód w aplikacji</string>
+    <string name="widget_server_error">Nie można połączyć się z serwerem</string>
+    <string name="scheduled_charge_status">"ŁADOWANIE ZAPLANOWANE | "</string>
+    <string name="ended_charge_status">"ŁADOWANIE ZAKOŃCZONE | "</string>
+    <string name="charging_status">"ŁADUJE | "</string>
+    <string name="not_charging_status">"NIE ŁADUJE | "</string>
+</resources>

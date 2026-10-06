@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="not_yet_logged_in">Du må først logge inn i appen</string>
+    <string name="no_car_added">Du må først velge en bil i appen</string>
+    <string name="widget_server_error">Kan ikke koble til serveren</string>
+    <string name="scheduled_charge_status">"LADING ER PLANLAGT | "</string>
+    <string name="ended_charge_status">"LADING FULLFØRT | "</string>
+    <string name="charging_status">"LADER | "</string>
+    <string name="not_charging_status">"LADER IKKE | "</string>
+</resources>

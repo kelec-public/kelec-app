@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="not_yet_logged_in">Vous devez d\'abord vous connecter sur l\'appli</string>
+    <string name="no_car_added">Vous devez d\'abord sélectionner une voiture sur l\'appli</string>
+    <string name="widget_server_error">Impossible de se connecter au serveur</string>
+    <string name="scheduled_charge_status">CHARGE PLANIFIÉE | </string>
+    <string name="ended_charge_status">CHARGE TERMINÉE | </string>
+    <string name="charging_status">EN CHARGE | </string>
+    <string name="not_charging_status">NE CHARGE PAS | </string>
+</resources>

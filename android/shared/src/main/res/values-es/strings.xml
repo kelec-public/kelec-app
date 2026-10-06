@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="not_yet_logged_in">Primero debes iniciar sesión en la aplicación.</string>
+    <string name="no_car_added">Primero debes añadir un vehículo en la aplicación.</string>
+    <string name="widget_server_error">Imposible conectar ahora con servidor</string>
+    <string name="scheduled_charge_status">"CARGA PROGRAMADA | "</string>
+    <string name="ended_charge_status">"CARGA FINALIZADA | "</string>
+    <string name="charging_status">"CARGANDO | "</string>
+    <string name="not_charging_status">"NO CARGA | "</string>
+</resources>

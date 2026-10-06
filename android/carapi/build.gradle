@@ -1,0 +1,12 @@
+// Clients d'API des constructeurs, en Kotlin pur (sans Android) : utilisés par l'app et, plus tard, la montre.
+// Java 17 et les dépôts sont réglés par le plugin Gradle de React Native pour tous les modules.
+apply plugin: "org.jetbrains.kotlin.jvm"
+
+dependencies {
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+    api("com.google.code.gson:gson:2.10.1")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    testImplementation("junit:junit:4.13.2")
+}

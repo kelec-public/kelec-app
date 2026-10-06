@@ -16,13 +16,6 @@
     <string name="widget_last_refresh">22:56</string>
     <string name="time_remaining_text">5h38</string>
     <string name="end_time_text">04:34</string>
-    <string name="ended_charge_status">"Punjenje završeno | "</string>
-    <string name="charging_status">"Punjenje | "</string>
-    <string name="not_charging_status">"Ne puni se | "</string>
-    <string name="not_yet_logged_in">Prvo se morate prijaviti u aplikaciju</string>
     <string name="widget_configure_subtitle">Odaberite automobil koji će se prikazivati u ovom widgetu</string>
-    <string name="scheduled_charge_status">"Punjenje zakazano | "</string>
-    <string name="no_car_added">Prvo morate odabrati automobil u aplikaciji</string>
     <string name="widget_configure_title">Odaberite automobil</string>
-    <string name="widget_server_error">Nije moguće povezivanje sa serverom</string>
 </resources>

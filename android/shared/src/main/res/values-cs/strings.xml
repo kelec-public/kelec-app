@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="not_yet_logged_in">Nejprve se musíte přihlásit do aplikace</string>
+    <string name="no_car_added">Nejprve přidejte vozidlo do aplikace na iPhonu</string>
+    <string name="widget_server_error">Nelze se připojit k serveru</string>
+    <string name="scheduled_charge_status">"NABÍJENÍ NAPLÁNOVÁNO | "</string>
+    <string name="ended_charge_status">"NABÍJENÍ UKONČENO | "</string>
+    <string name="charging_status">"DOBÍJENÍ | "</string>
+    <string name="not_charging_status">"NENABÍJÍ | "</string>
+</resources>

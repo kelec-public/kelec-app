@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="not_yet_logged_in">Trebuie mai întâi să te conectezi la aplicație</string>
+    <string name="no_car_added">Mai întâi trebuie să selectați o mașină din aplicație</string>
+    <string name="widget_server_error">Nu se poate conecta la server</string>
+    <string name="scheduled_charge_status">"ÎNCĂRCARE PROGRAMATĂ | "</string>
+    <string name="ended_charge_status">"ÎNCĂRCARE ÎNCHEIATĂ | "</string>
+    <string name="charging_status">"SE ÎNCARCĂ | "</string>
+    <string name="not_charging_status">"NU SE ÎNCARCĂ | "</string>
+</resources>

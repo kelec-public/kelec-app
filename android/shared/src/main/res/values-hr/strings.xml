@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="not_yet_logged_in">Prvo se morate prijaviti u aplikaciju</string>
+    <string name="no_car_added">Prvo morate odabrati automobil u aplikaciji</string>
+    <string name="widget_server_error">Nije moguće povezivanje sa serverom</string>
+    <string name="scheduled_charge_status">"Punjenje zakazano | "</string>
+    <string name="ended_charge_status">"Punjenje završeno | "</string>
+    <string name="charging_status">"Punjenje | "</string>
+    <string name="not_charging_status">"Ne puni se | "</string>
+</resources>
