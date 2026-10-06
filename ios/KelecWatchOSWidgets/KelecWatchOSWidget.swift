@@ -48,13 +48,13 @@ extension SimpleEntry {
 }
 
 struct KelecWatchOSWidgetEntryView : View {
-  var alternative: Int = 0
+  var style: WidgetStyle = .standard
   var entry: Provider.Entry
   @Environment(\.widgetFamily) var family
   var body: some View{
     switch family{
     case .accessoryCircular:
-      KelecLockScreenCircularView(apiHandler: entry.apiHandler, alternative: alternative)
+      KelecLockScreenCircularView(apiHandler: entry.apiHandler, style: style)
         .widgetBackground()
     case .accessoryInline:
       CarWidgetStateView(account: entry.account, userCar: entry.userCar, apiHandler: entry.apiHandler) { _, _, apiHandler in
@@ -104,7 +104,7 @@ struct KelecWatchOSWidgetAlternative: Widget {
 
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: Provider()) { entry in
-          KelecWatchOSWidgetEntryView(alternative: 1, entry: entry)
+          KelecWatchOSWidgetEntryView(style: .alternative, entry: entry)
         }
         .configurationDisplayName("Renault E-Tech Alternative")
         .description("watchWidgetDescription")

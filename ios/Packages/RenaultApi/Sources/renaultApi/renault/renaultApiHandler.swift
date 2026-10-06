@@ -23,8 +23,8 @@ public struct RenaultApiHandler: ApiHandler{
         self.cockpitStatus = cockpitStatus
     }
     
-    public func getApiData() -> Any {
-        return self.batteryStatus
+    public func getVehicleData() -> VehicleData {
+        return .renault(self.batteryStatus)
     }
     
     public func getLastRefreshDate() -> String {

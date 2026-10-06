@@ -7,10 +7,17 @@
 
 import Foundation
 
+// raw data returned by the car maker API (what the app keeps in its cache)
+public enum VehicleData {
+    case renault(RenaultBatteryStatus)
+    case hyundai(HyundaiLayerReturn)
+    case demo
+}
+
 public protocol ApiHandler: Codable, Decodable{
     var carMaker: CarMaker { get set }
 
-    func getApiData()->Any
+    func getVehicleData() -> VehicleData
     
     func getLastRefreshDate()-> String
     func getIsCarPlugged()->Bool

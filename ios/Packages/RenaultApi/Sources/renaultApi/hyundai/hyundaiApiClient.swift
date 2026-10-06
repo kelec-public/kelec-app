@@ -32,7 +32,10 @@ public struct HyundaiApiClient: ApiClient{
         components.scheme = "https"
         components.host = self.baseURL
         components.path = "/car/status"
-        var urlRequest = URLRequest(url: URL(string: components.string!)!)
+        guard let url = components.url else {
+            throw ApiClientError.invalidURL
+        }
+        var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "POST"
         
         let body: [String: String] = ["email": self.email, "password": self.password,  "pin": self.pin, "vin": vin]
@@ -59,7 +62,10 @@ public struct HyundaiApiClient: ApiClient{
         components.scheme = "https"
         components.host = self.baseURL
         components.path = "/car/launchHVAC"
-        var urlRequest = URLRequest(url: URL(string: components.string!)!)
+        guard let url = components.url else {
+            throw ApiClientError.invalidURL
+        }
+        var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "POST"
         
         let body: [String: String ] = [

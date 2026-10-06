@@ -54,7 +54,7 @@ extension SimpleEntry {
 
 struct KeleciOSWidgetEntryView : View {
   var entry: Provider.Entry
-  var alternative: Int = 0
+  var style: WidgetStyle = .standard
   @Environment(\.widgetFamily) var family
   var body: some View{
     switch family{
@@ -65,7 +65,7 @@ struct KeleciOSWidgetEntryView : View {
       }
     case .systemMedium:
       CarWidgetStateView(account: entry.account, userCar: entry.userCar, apiHandler: entry.apiHandler) { _, userCar, apiHandler in
-        if self.alternative == 1 {
+        if self.style == .alternative {
           MediumCarWidgetAltView(apiHandler: apiHandler, carName: entry.carName, image: entry.image, appPreferences: entry.appPreferences)
             .widgetBackground()
         } else {
@@ -99,7 +99,7 @@ struct KeleciOSWidgetAlternative: Widget {
   
   var body: some WidgetConfiguration {
     AppIntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: Provider()) { entry in
-      KeleciOSWidgetEntryView(entry: entry, alternative: 1)
+      KeleciOSWidgetEntryView(entry: entry, style: .alternative)
     }
 
     .contentMarginsDisabled()
@@ -111,7 +111,7 @@ struct KeleciOSWidgetAlternative: Widget {
 
 struct KelecLockScreenWidgetEntryView:View {
   var entry: Provider.Entry
-  var alternative: Int = 0
+  var style: WidgetStyle = .standard
   @Environment(\.widgetFamily) var family
   var body: some View {
     switch family{
@@ -125,7 +125,7 @@ struct KelecLockScreenWidgetEntryView:View {
           .widgetBackground()
       }
     case .accessoryCircular:
-      KelecLockScreenCircularView(apiHandler: entry.apiHandler, alternative: alternative)
+      KelecLockScreenCircularView(apiHandler: entry.apiHandler, style: style)
         .widgetBackground()
     default:
       Text("error")
@@ -151,7 +151,7 @@ struct KelecLockScreenWidgetAlternative: Widget{
   
   var body: some WidgetConfiguration {
     AppIntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: Provider()) { entry in
-      KelecLockScreenWidgetEntryView(entry: entry, alternative: 1)
+      KelecLockScreenWidgetEntryView(entry: entry, style: .alternative)
     }
     .configurationDisplayName("Renault E-Tech")
     .description(localized("widgetLockScreenDescription"))

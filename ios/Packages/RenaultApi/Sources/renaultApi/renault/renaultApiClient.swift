@@ -206,7 +206,10 @@ public struct RenaultApiClient: ApiClient {
         components.queryItems = [
             URLQueryItem(name: "country", value: "FR")
         ]
-        var urlRequest = URLRequest(url: URL(string: components.string!)!)
+        guard let url = components.url else {
+            throw ApiClientError.invalidURL
+        }
+        var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "POST"
 
         let body: [String: Any] = [

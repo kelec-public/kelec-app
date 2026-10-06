@@ -48,8 +48,8 @@ struct TempoLockScreenEntryView: View {
 struct TempoLockScreenInlineView: View {
   var tempoApi: tempoFinalReturn?
   var body: some View {
-    if(tempoApi != nil){
-      Text("\(TempoStyle.formatDate(tempoApi!.latestDate)) \(localized(tempoApi!.latestColour))")
+    if let tempoApi = tempoApi {
+      Text("\(TempoStyle.formatDate(tempoApi.latestDate)) \(localized(tempoApi.latestColour))")
           .fontWeight(.bold)
     }else{
       Text("tempoLoadingError")
@@ -60,16 +60,16 @@ struct TempoLockScreenInlineView: View {
 struct TempoLockScreenRectangularView: View {
   var tempoApi: tempoFinalReturn?
   var body: some View {
-    if(tempoApi != nil){
+    if let tempoApi = tempoApi {
       VStack{
-        Text(TempoStyle.formatDate(tempoApi!.latestDate))
+        Text(TempoStyle.formatDate(tempoApi.latestDate))
           .fontWeight(.bold)
         Spacer()
-        Text("\(localized(tempoApi!.latestColour))")
+        Text("\(localized(tempoApi.latestColour))")
           .fontWeight(.bold)
         Spacer()
         HStack(spacing: 10){
-          Text("HP \(String(format: "%.2f", TempoStyle.hpPrice(tempoApi!.latestColour))) / HC \(String(format: "%.2f", TempoStyle.hcPrice(tempoApi!.latestColour)))")
+          Text("HP \(String(format: "%.2f", TempoStyle.hpPrice(tempoApi.latestColour))) / HC \(String(format: "%.2f", TempoStyle.hcPrice(tempoApi.latestColour)))")
             .font(.caption)
         }
        

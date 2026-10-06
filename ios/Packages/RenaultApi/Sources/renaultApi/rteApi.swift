@@ -24,7 +24,10 @@ public struct rteApi {
         components.scheme = "https"
         components.host = self.apiUrl
         components.path = "/token/oauth/"
-        var urlRequest = URLRequest(url: URL(string: components.string!)!)
+        guard let url = components.url else {
+            throw ApiClientError.invalidURL
+        }
+        var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "POST"
         urlRequest.setValue("Basic \(self.basicAuth)", forHTTPHeaderField: "Authorization")
         guard let (data, _) = try? await URLSession.shared.data(for: urlRequest) else {

@@ -18,6 +18,12 @@ extension View {
   }
 }
 
+// the "Alternative" widgets show the same data with another layout
+enum WidgetStyle {
+  case standard
+  case alternative
+}
+
 // Shows why the car can't be displayed (not logged, no car, server error),
 // else the content with the unwrapped data.
 struct CarWidgetStateView<Content: View>: View {

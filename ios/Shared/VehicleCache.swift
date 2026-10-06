@@ -31,14 +31,12 @@ struct SavedLocation: Codable {
 
 enum VehicleCache {
   static func saveStatus(vin: String, apiHandler: ApiHandler) {
-    switch apiHandler.getCarMaker() {
-    case .RENAULT, .DACIA, .ALPINE:
-      guard let batteryStatus = apiHandler.getApiData() as? RenaultBatteryStatus else { return }
+    switch apiHandler.getVehicleData() {
+    case .renault(let batteryStatus):
       upsert(RenaultSaved(vin: vin, batteryStatus: batteryStatus), key: StorageKey.renaultCarsCache)
-    case .HYUNDAI:
-      guard let hyundaiStatus = apiHandler.getApiData() as? HyundaiLayerReturn else { return }
+    case .hyundai(let hyundaiStatus):
       upsert(HyundaiSaved(vin: vin, hyundaiStatus: hyundaiStatus), key: StorageKey.hyundaiCarsCache)
-    case .DEMO:
+    case .demo:
       // no need to save anything for the demo car
       return
     }

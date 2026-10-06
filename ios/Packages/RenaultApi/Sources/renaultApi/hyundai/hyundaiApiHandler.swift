@@ -9,8 +9,8 @@ import Foundation
 
 public struct HyundaiApiHandler: ApiHandler {
     
-    public func getApiData() -> Any {
-        return self.apiData
+    public func getVehicleData() -> VehicleData {
+        return .hyundai(self.apiData)
     }
     public var carMaker: CarMaker
     private let apiData: HyundaiLayerReturn
@@ -98,29 +98,12 @@ public struct HyundaiApiHandler: ApiHandler {
     
     
     public func getHyundaiChargingLimit(hyundaiApi: HyundaiLayerReturn) -> Int {
-      var targetSOC = hyundaiApi.status.vehicleStatus.evStatus.reservChargeInfos?.targetSOClist
-      if (targetSOC == nil){
+      guard let targetSOC = hyundaiApi.status.vehicleStatus.evStatus.reservChargeInfos?.targetSOClist else {
         return 100
-      }else{
-        targetSOC = targetSOC!
       }
-      if (hyundaiApi.status.vehicleStatus.evStatus.batteryPlugin == 1){
-        // DC CHARGING
-        for i in 0..<targetSOC!.count{
-          if (targetSOC![i].plugType == 0){
-            return targetSOC![i].targetSOClevel
-          }
-        }
-      }else{
-        // AC CHARGING
-        for i in 0..<targetSOC!.count{
-          if (targetSOC![i].plugType == 1){
-            return targetSOC![i].targetSOClevel
-          }
-        }
-      }
-      
-      return 100;
+      // plugType 0: DC charging limit, 1: AC charging limit
+      let plugType = hyundaiApi.status.vehicleStatus.evStatus.batteryPlugin == 1 ? 0 : 1
+      return targetSOC.first(where: { $0.plugType == plugType })?.targetSOClevel ?? 100
     }
     
     public func getMapLatitude() -> Latitude {

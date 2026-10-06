@@ -9,8 +9,8 @@ import Foundation
 
 public struct DemoApiHandler: ApiHandler{
     
-    public func getApiData() -> Any {
-        return ""
+    public func getVehicleData() -> VehicleData {
+        return .demo
     }
     public func getLastRefreshDate() -> String {
         return Date().ISO8601Format()

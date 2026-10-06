@@ -12,12 +12,12 @@ import renaultApi
 
 struct KelecLockScreenCircularView:View{
   var apiHandler: ApiHandler?
-  var alternative: Int
+  var style: WidgetStyle
   var body: some View{
     Gauge(value: Double(apiHandler?.getBatteryLevel() ?? 0) , in: 0...100) {
       Image(systemName: apiHandler?.getIsCarCharging() ?? false  ? (apiHandler?.getIsCarPlugged() ?? false ? "bolt.car.fill" : "bolt") : "car.fill")
     }currentValueLabel: {
-      if(alternative == 1){
+      if(style == .alternative){
         Image(systemName: apiHandler?.getIsCarCharging() ?? false  ? (apiHandler?.getIsCarPlugged() ?? false ? "bolt.car.fill" : "bolt") : "car.fill")
           .resizable()
           .scaledToFit()
@@ -38,7 +38,7 @@ struct KelecLockScreenCircularView:View{
   }
   
   private var isCapacityStyle: Bool {
-    return self.alternative == 1
+    return self.style == .alternative
   }
   
 }

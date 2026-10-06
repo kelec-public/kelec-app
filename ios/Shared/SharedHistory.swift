@@ -39,7 +39,7 @@ func writeWidgetLog(message: String) {
 enum SharedHistory {
   // saves what the RN app reads after each successful fetch
   static func record(vin: String, apiHandler: ApiHandler) {
-    if let batteryStatus = apiHandler.getApiData() as? RenaultBatteryStatus {
+    if case .renault(let batteryStatus) = apiHandler.getVehicleData() {
       saveBatteryStatus(vin: vin, batteryStatus: batteryStatus)
     }
     if let odometer = apiHandler.getOdometerInKm() {
