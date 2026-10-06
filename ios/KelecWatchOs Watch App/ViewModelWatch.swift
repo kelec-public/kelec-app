@@ -62,16 +62,16 @@ class ViewModelWatch: NSObject, WCSessionDelegate, ObservableObject{
     if let passwordsJson = payload["passwords"] as? String,
        let passwords = try? decoder.decode([String: String].self, from: Data(passwordsJson.utf8)) {
       for (vin, password) in passwords where !password.isEmpty {
-        saveToKeychain(key: "\(vin)_password", value: password)
+        Keychain.save(StorageKey.password(vin: vin), value: password)
       }
     }
     
     if let appPreferencesJson = payload["appPreferences"] as? String {
       if let appPreferencesRecieved = try? decoder.decode(AppPreferences.self, from: Data(appPreferencesJson.utf8)){
         print("app preferences recieved an decoded")
-        let currentAppPreferences = getUserAppPreferencesFromUserDefaults()
+        let currentAppPreferences = SharedStore.loadPreferences()
         if (currentAppPreferences == nil || currentAppPreferences != appPreferencesRecieved){
-          saveAppPreferencesToUserDefaults(appPreferences: appPreferencesRecieved)
+          SharedStore.savePreferences(appPreferencesRecieved)
           hasChanged = true
         }
       }else{
@@ -83,9 +83,9 @@ class ViewModelWatch: NSObject, WCSessionDelegate, ObservableObject{
     if let accountJson = payload["message"] as? String,
        let accountRecieved = try? decoder.decode(UserAccount.self, from: Data(accountJson.utf8)) {
       print("message reçu et décodé")
-      let currentAccount = getAccountFromUserDefaults()
+      let currentAccount = SharedStore.loadAccount()
       if(currentAccount == nil || currentAccount != accountRecieved){
-        saveAccountToUserDefaults(account: accountRecieved)
+        SharedStore.saveAccount(accountRecieved)
         hasChanged = true
       }
     }
@@ -101,37 +101,12 @@ class ViewModelWatch: NSObject, WCSessionDelegate, ObservableObject{
   }
   
   func saveCookieMapToKeychain(cookieMap: CookieMap) {
-      for (email, entry) in cookieMap {
-          guard let data = try? JSONEncoder().encode(entry),
-                let value = String(data: data, encoding: .utf8) else { continue }
-          
-          saveToKeychain(key: "cookieValue_\(email)", value: value)
-      }
+    for (email, entry) in cookieMap {
+      guard let data = try? JSONEncoder().encode(entry),
+            let value = String(data: data, encoding: .utf8) else { continue }
+      Keychain.save(StorageKey.cookieValue(email: email), value: value)
+    }
   }
-  
-  func saveToKeychain(key: String, value: String) {
-      guard let data = value.data(using: .utf8) else { return }
-      
-      // Supprime l'ancien si existe
-      let deleteQuery: [String: Any] = [
-          kSecClass as String: kSecClassGenericPassword,
-          kSecAttrAccount as String: key,
-          kSecAttrAccessGroup as String: "group.kelyanselme.MyRenaultPlus"
-      ]
-      SecItemDelete(deleteQuery as CFDictionary)
-      
-      // Sauvegarde le nouveau
-      let addQuery: [String: Any] = [
-          kSecClass as String: kSecClassGenericPassword,
-          kSecAttrAccount as String: key,
-          kSecValueData as String: data,
-          kSecAttrAccessGroup as String: "group.kelyanselme.MyRenaultPlus",
-          kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlock
-      ]
-      
-      let status = SecItemAdd(addQuery as CFDictionary, nil)
-  }
-  
   
   func endRefresh()->Void{
     self.shouldRefreshView = false

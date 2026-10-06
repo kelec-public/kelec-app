@@ -72,7 +72,7 @@ struct ContentView: View {
   }
   
   func loadAccount(){
-    let account = getAccountFromUserDefaults()
+    let account = SharedStore.loadAccount()
     if (account != nil){
       self.account = account
     }

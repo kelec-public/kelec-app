@@ -89,33 +89,18 @@ struct CarView: View {
       
     }
   }
-  func convertTimestamp(date: String) -> Date{
-    let formatter = DateFormatter()
-    formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZZ"
-    return(formatter.date(from: date) ?? Date.now)
-  }
-  
   func fetchApi(account: UserAccount, carAccount: UserCar) async{
 
     // load user preferences
-    self.appPreferences = getUserAppPreferencesFromUserDefaults()
+    self.appPreferences = SharedStore.loadPreferences()
     
-    // load the rest
+    // display the cached data first, then refresh it
     self.isLightLoading = true
-    let carMaker = parseCarMaker(carMaker: carAccount.carMaker)
-    let vin = carAccount.car?.vin ?? "VIN"
-    self.apiHandler = zeServices.loadSavedCar(vin: vin, carMaker: carMaker)
+    self.apiHandler = VehicleLoader.cachedStatus(userCar: carAccount)
     if(self.apiHandler != nil){
       self.isLoading = false
     }
-    let client = getCarMakerApiClient(usercar: carAccount)
-    do{
-      let fetchedApiHandler = try await client.getVehicleInfo(vin: vin)
-      zeServices.saveLoadedCar(vin: vin, zecar: fetchedApiHandler)
-      self.apiHandler = fetchedApiHandler
-    }catch{
-      apiHandler = zeServices.loadSavedCar(vin: vin, carMaker: carMaker)
-    }
+    self.apiHandler = await VehicleLoader.fetchStatus(userCar: carAccount)
     self.isLoading = false
     self.isLightLoading = false
     

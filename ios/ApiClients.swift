@@ -19,10 +19,7 @@ func getRteClient() -> rteApi {
 // the password is stored in the keychain under "<vin>_password".
 // the password in the account JSON is only a fallback for watches synced before passwords were moved to the keychain
 func getCarPassword(usercar: UserCar) -> String {
-  if let passwordFromKeychain = try? getPasswordFromKeychain(key: "\(usercar.car?.vin ?? "")_password") {
-    return passwordFromKeychain
-  }
-  return usercar.getPassword()
+  return Keychain.read(StorageKey.password(vin: usercar.car?.vin ?? "")) ?? usercar.getPassword()
 }
 
 public func getCarMakerApiClient(usercar: UserCar) -> ApiClient{

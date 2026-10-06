@@ -26,26 +26,16 @@ struct CarEntity: AppEntity, Codable{
 struct CarQuery: EntityQuery{
   
   func entities(for identifiers: [CarEntity.ID]) async throws -> [CarEntity] {
-    if let userBundle = UserDefaults.init(suiteName: "group.kelyanselme.MyRenaultPlus"){
-      // try to get the account
-      let userAccount = getUserAccount(userBundle: userBundle)
-      let allCars = buildCarWidgetEntityFromUserCars(userCars: userAccount?.cars ?? [])
-      
-      // an unknown id (car deleted) returns nothing: widgets then fall back to the first car themselves
-      return identifiers.compactMap { id in
-        allCars.first(where: {$0.id == id})
-      }
+    let allCars = buildCarWidgetEntityFromUserCars(userCars: SharedStore.loadAccount()?.cars ?? [])
+    
+    // an unknown id (car deleted) returns nothing: widgets then fall back to the first car themselves
+    return identifiers.compactMap { id in
+      allCars.first(where: {$0.id == id})
     }
-    return []
   }
   
   func suggestedEntities() async throws -> [CarEntity] {
-    if let userBundle = UserDefaults.init(suiteName: "group.kelyanselme.MyRenaultPlus"){
-      // try to get the account
-      let userAccount = getUserAccount(userBundle: userBundle)
-      return buildCarWidgetEntityFromUserCars(userCars: userAccount?.cars ?? [])
-    }
-    return []
+    buildCarWidgetEntityFromUserCars(userCars: SharedStore.loadAccount()?.cars ?? [])
   }
   
   func defaultResult() async -> CarEntity? {

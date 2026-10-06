@@ -75,72 +75,35 @@ struct KeleciOSTempoMediumView: View{
         
         
         VStack{
-          Text(formatDate(date: tempoApi.latestDate))
+          Text(TempoStyle.formatDate(tempoApi.latestDate))
             .font(.title3)
             .fontWeight(.bold)
-            .foregroundStyle(self.getFgColour())
+            .foregroundStyle(TempoStyle.foregroundColour(tempoApi.latestColour))
             .accentColor(.clear)
           Spacer()
           Text("\(LocalizedStringKey(tempoApi.latestColour).stringValue())")
             .font(.title2)
             .fontWeight(.bold)
-            .foregroundStyle(self.getFgColour())
+            .foregroundStyle(TempoStyle.foregroundColour(tempoApi.latestColour))
             .accentColor(.clear)
           Spacer()
-          Text("HP \(String(format: "%.2f", self.getHPPrice())) c/kWh")
+          Text("HP \(String(format: "%.2f", TempoStyle.hpPrice(tempoApi.latestColour))) c/kWh")
             .widgetAccentable(false)
             .font(.caption)
-            .foregroundColor(self.getFgColour())
+            .foregroundColor(TempoStyle.foregroundColour(tempoApi.latestColour))
             
-          Text("HC \(String(format: "%.2f", self.getHCPrice())) c/kWh")
+          Text("HC \(String(format: "%.2f", TempoStyle.hcPrice(tempoApi.latestColour))) c/kWh")
             .font(.caption)
-            .foregroundStyle(self.getFgColour())
+            .foregroundStyle(TempoStyle.foregroundColour(tempoApi.latestColour))
             .accentColor(.clear)
         }
         .padding()
         .frame(width: geo.size.width/2, height: geo.size.height)
-        .foregroundStyle(self.getBgColour())
-        .background(self.getBgColour())
+        .foregroundStyle(TempoStyle.backgroundColour(tempoApi.latestColour))
+        .background(TempoStyle.backgroundColour(tempoApi.latestColour))
         
       }
       
-    }
-  }
-  private func formatDate(date: Date) -> String {
-          let dateFormatter = DateFormatter()
-          dateFormatter.dateFormat = "dd/MM"
-          return dateFormatter.string(from: date)
-      }
-  
-  func getHPPrice()->Float{
-    let client = getRteClient()
-    return client.getHPPrice(colour: self.tempoApi.latestColour)
-  }
-  
-  func getHCPrice()->Float{
-    let client = getRteClient()
-    return client.getHCPrice(colour: self.tempoApi.latestColour)
-  }
-  
-  func getBgColour()->Color{
-    switch(self.tempoApi.latestColour){
-    case "BLUE":
-      return Color.blue
-    case "WHITE":
-      return Color.white
-    case "RED":
-      return Color.red
-    default:
-      return Color.pink
-    }
-  }
-  
-  func getFgColour()->Color{
-    switch(self.tempoApi.latestColour){
-    case "WHITE":
-      return Color.black
-    default:
-      return Color.white
     }
   }
 }

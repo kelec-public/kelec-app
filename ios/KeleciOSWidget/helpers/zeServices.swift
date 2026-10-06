@@ -31,23 +31,13 @@ struct HyundaiSaved: Codable, VehicleToSave{
 }
 
 struct zeServices{
-  static func saveTempoData(tempo: tempoFinalReturn)->Bool{
-    let encoder = JSONEncoder()
-    if let encoded = try? encoder.encode(tempo){
-      UserDefaults.standard.set(encoded, forKey: "tempo")
-      return true
-    }
-    return false
-  }
-  
-  
   static func saveLoadedCar(vin: String, zecar: ApiHandler)->Bool{
     var finalCars:[VehicleToSave] = []
     var carToSave: VehicleToSave
     switch (zecar.getCarMaker()){
     case .RENAULT, .DACIA, .ALPINE:
       carToSave = RenaultSaved(vin: vin, batteryStatus: zecar.getApiData() as! RenaultBatteryStatus)
-      if let data = UserDefaults.standard.data(forKey: "RENAULT_carsLoaded")
+      if let data = UserDefaults.standard.data(forKey: StorageKey.renaultCarsCache)
       {
         let decoder = JSONDecoder()
         if let loadedCars = try? decoder.decode([RenaultSaved].self, from: data){
@@ -56,7 +46,7 @@ struct zeServices{
       }
     case .HYUNDAI:
       carToSave = HyundaiSaved(vin: vin, hyundaiStatus: zecar.getApiData() as! HyundaiLayerReturn)
-      if let data = UserDefaults.standard.data(forKey: "HYUNDAI_carsLoaded")
+      if let data = UserDefaults.standard.data(forKey: StorageKey.hyundaiCarsCache)
       {
         let decoder = JSONDecoder()
         if let loadedCars = try? decoder.decode([HyundaiSaved].self, from: data){
@@ -87,7 +77,7 @@ struct zeServices{
       let finalConvertedCars = finalCars as! [RenaultSaved]
       let encoder = JSONEncoder()
       if let encoded = try? encoder.encode(finalConvertedCars){
-        UserDefaults.standard.set(encoded, forKey: "RENAULT_carsLoaded")
+        UserDefaults.standard.set(encoded, forKey: StorageKey.renaultCarsCache)
         return true
       }
       break
@@ -95,7 +85,7 @@ struct zeServices{
       let finalConvertedCars = finalCars as! [HyundaiSaved]
       let encoder = JSONEncoder()
       if let encoded = try? encoder.encode(finalConvertedCars){
-        UserDefaults.standard.set(encoded, forKey: "HYUNDAI_carsLoaded")
+        UserDefaults.standard.set(encoded, forKey: StorageKey.hyundaiCarsCache)
         return true
       }
       break
@@ -111,12 +101,12 @@ struct zeServices{
     let locationToSave = saveLocation(vin: vin, latitude: latitude, longitude: longitude)
     let encoder = JSONEncoder()
     if let encodedData = try? encoder.encode(locationToSave){
-      UserDefaults.standard.set(encodedData, forKey: "savedLocation_\(vin)")
+      UserDefaults.standard.set(encodedData, forKey: StorageKey.savedLocation(vin: vin))
     }
   }
   
   static func loadSavedLocations(vin: String)->saveLocation?{
-    if let data = UserDefaults.standard.data(forKey: "savedLocation_\(vin)"){
+    if let data = UserDefaults.standard.data(forKey: StorageKey.savedLocation(vin: vin)){
       let decoder = JSONDecoder()
       if let loadedLocation = try? decoder.decode(saveLocation.self, from: data){
         return loadedLocation
@@ -129,7 +119,7 @@ struct zeServices{
     switch(carMaker){
     case .RENAULT, .DACIA, .ALPINE:
       var carsLoaded: [RenaultSaved] = []
-      if let data = UserDefaults.standard.data(forKey: "RENAULT_carsLoaded"){
+      if let data = UserDefaults.standard.data(forKey: StorageKey.renaultCarsCache){
         let decoder = JSONDecoder()
         if let loadedCars = try? decoder.decode([RenaultSaved].self, from: data){
           carsLoaded = loadedCars
@@ -143,7 +133,7 @@ struct zeServices{
       return nil
     case .HYUNDAI:
       var carsLoaded: [HyundaiSaved] = []
-      if let data = UserDefaults.standard.data(forKey: "HYUNDAI_carsLoaded"){
+      if let data = UserDefaults.standard.data(forKey: StorageKey.hyundaiCarsCache){
         let decoder = JSONDecoder()
         if let loadedCars = try? decoder.decode([HyundaiSaved].self, from: data){
           carsLoaded = loadedCars
@@ -163,15 +153,6 @@ struct zeServices{
   
 
   
-  static func loadTempoData()->tempoFinalReturn?{
-    if let data = UserDefaults.standard.data(forKey: "tempo"){
-      let decoder = JSONDecoder()
-      if let loadedTempo = try? decoder.decode(tempoFinalReturn.self, from: data){
-        return loadedTempo
-      }
-    }
-    return nil
-  }
 
 }
 

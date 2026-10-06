@@ -14,98 +14,21 @@ import renaultApi
 
 struct Provider: AppIntentTimelineProvider {
   func placeholder(in context: Context) -> SimpleEntry {
-    let mockAccount = UserAccount(selectedCar: "mock", cars: [])
-    let mockRenaultBatteryStatus = RenaultBatteryStatus(timestamp: "2022-01-01", batteryLevel: 50, batteryAutonomy: 50, batteryCapacity: 0, batteryAvailableEnergy: 10, plugStatus: 1, chargingStatus: 1.0,  chargingRemainingTime: 50, chargingInstantaneousPower: 10)
-    let mockData = RenaultApiHandler(batteryStatus: mockRenaultBatteryStatus)
-    let mockUserCar = UserCar(email: "", password: "", carMaker: "renault")
-    return SimpleEntry(date: Date(), account: mockAccount, userCar: mockUserCar, carName: "Megane E-Tech", image: "megane", appPreferences: nil, apiHandler: mockData)
+    SimpleEntry.preview
   }
   
   func snapshot(for configuration: ConfigurationAppIntent, in context: Context) async -> SimpleEntry {
-    let mockAccount = UserAccount(selectedCar: "mock", cars: [])
-    let mockRenaultBatteryStatus = RenaultBatteryStatus(timestamp: "2022-01-01", batteryLevel: 50, batteryAutonomy: 50, batteryCapacity: 0, batteryAvailableEnergy: 10, plugStatus: 1, chargingStatus: 1.0,  chargingRemainingTime: 50, chargingInstantaneousPower: 10)
-    let mockData = RenaultApiHandler(batteryStatus: mockRenaultBatteryStatus)
-    let mockUserCar = UserCar(email: "", password: "", carMaker: "renault")
-    return SimpleEntry(date: Date(), account: mockAccount, userCar: mockUserCar, carName: "Megane E-Tech", image: "megane", appPreferences: nil, apiHandler: mockData)
+    SimpleEntry.preview
   }
   
   func timeline(for configuration: ConfigurationAppIntent, in context: Context) async -> Timeline<SimpleEntry>  {
     let currentDate = Date()
     let nextRefresh = Calendar.current.date(byAdding: .minute, value: 15, to: currentDate)!
-    
-    // to store the main user account
-    var userAccount: UserAccount? = nil
-    // to store the car selected for the widgets
-    var userCar: UserCar? = nil
-    // to store the fetched api data
-    var apiHandler: ApiHandler? = nil
-    // to store the app preferences (use miles instead of km etc..)
-    var appPreferences: AppPreferences? = nil
-    // to store the car name
-    var carName: String = ""
-    // to store the car image
-    var carImage: String = "" // base 64 image
-    
-    if let userBundle = UserDefaults.init(suiteName: "group.kelyanselme.MyRenaultPlus") {
-      // try to get the account
-      
-      userAccount = getUserAccount(userBundle: userBundle)
-      
-      // try to get the app preferences
-      appPreferences = getUserAppPreferences(userBundle: userBundle)
-      
-      // write log
-      if (appPreferences == nil){
-        writeWidgetLog(message: "APP PREFERENCES POSSIBLY FOUND BUT COULDN'T BE DECODED")
-      }else{
-        writeWidgetLog(message: "APP PREFERENCES FOUND AND DECODED")
-      }
+    let data = await VehicleLoader.loadWidgetData { account in
+      widgetCar(account: account, configuredVin: configuration.car?.id)
     }
-    
-    // if the user is logged, we can proceed
-    if (userAccount != nil){
-      // first, find which car is selected for widgets
-      let cars = userAccount?.cars ?? []
-      
-      if let configuredVin = configuration.car?.id {
-        userCar = cars.first{ $0.car?.vin == configuredVin }
-        if userCar == nil {
-          writeWidgetLog(message: "Configured car not found (vin: \(configuredVin), falling back to first car")
-          userCar = cars.first
-        }
-      } else {
-        writeWidgetLog(message: "No car configured, using first available car")
-        userCar = cars.first
-      }
-      // then update the car name
-      carName = userCar?.car?.model ?? "ERROR"
-      // then get the image
-      if let userBundle = UserDefaults.init(suiteName: "group.kelyanselme.MyRenaultPlus"){
-        carImage = getCarImage(vin: userCar?.car?.vin ?? "", userBundle: userBundle)
-      }
-      
-      // keep going only if the userCar is not undefined
-      if let userCar = userCar {
-        let carMaker = parseCarMaker(carMaker: userCar.carMaker)
-        let client = getCarMakerApiClient(usercar: userCar)
-        do {
-          let fetchedApiHandler = try await client.getVehicleInfo(vin: userCar.car?.vin ?? "")
-          apiHandler = fetchedApiHandler
-          writeWidgetLog(message: "Data successfully fecthed")
-          zeServices.saveLoadedCar(vin: userCar.car?.vin ?? "", zecar: fetchedApiHandler)
-        } catch {
-          // Fallback to local data if fetching fails
-          writeWidgetLog(message: "Loading cache data")
-          apiHandler = zeServices.loadSavedCar(vin: userCar.car?.vin ?? "", carMaker: carMaker)
-        }
-        
-
-      }
-    }
-    
-    let entry = SimpleEntry(date: currentDate, account: userAccount, userCar: userCar, carName: carName, image: carImage, appPreferences: appPreferences, apiHandler: apiHandler)
-    let timeline = Timeline(entries: [entry], policy: .after(nextRefresh))
-    return timeline
+    let entry = SimpleEntry(date: currentDate, data: data)
+    return Timeline(entries: [entry], policy: .after(nextRefresh))
   }
 }
 
@@ -117,6 +40,16 @@ struct SimpleEntry: TimelineEntry {
   let image: String
   let appPreferences: AppPreferences?
   let apiHandler: ApiHandler?
+}
+
+extension SimpleEntry {
+  init(date: Date, data: CarWidgetData) {
+    self.init(date: date, account: data.account, userCar: data.userCar, carName: data.carName, image: data.image, appPreferences: data.appPreferences, apiHandler: data.apiHandler)
+  }
+
+  static var preview: SimpleEntry {
+    SimpleEntry(date: Date(), account: PreviewData.account, userCar: PreviewData.userCar, carName: PreviewData.carName, image: PreviewData.image, appPreferences: nil, apiHandler: PreviewData.apiHandler)
+  }
 }
 
 struct KeleciOSWidgetEntryView : View {

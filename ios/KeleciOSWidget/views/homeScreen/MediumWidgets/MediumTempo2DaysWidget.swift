@@ -49,64 +49,37 @@ struct KeleciOSTempoMedium2DaysWidgetView: View {
         VStack(spacing: 0) {
           // partie du haut, previous
           VStack{
-            Text(formatDate(date: tempoApi.previousDate))
+            Text(TempoStyle.formatDate(tempoApi.previousDate))
               .font(.title3)
               .fontWeight(.bold)
-              .foregroundStyle(self.getFgColour(colour: tempoApi.previousColour))
+              .foregroundStyle(TempoStyle.foregroundColour(tempoApi.previousColour))
               .accentColor(.clear)
             Text("\(LocalizedStringKey(tempoApi.previousColour).stringValue())")
               .font(.title2)
               .fontWeight(.bold)
-              .foregroundStyle(self.getFgColour(colour: tempoApi.previousColour))
+              .foregroundStyle(TempoStyle.foregroundColour(tempoApi.previousColour))
               .accentColor(.clear)
           }
           .frame(maxWidth: .infinity, maxHeight: .infinity)
-          .background(self.getBgColour(colour: tempoApi.previousColour))
+          .background(TempoStyle.backgroundColour(tempoApi.previousColour))
           
           VStack{
-            Text(formatDate(date: tempoApi.latestDate))
+            Text(TempoStyle.formatDate(tempoApi.latestDate))
               .font(.title3)
               .fontWeight(.bold)
-              .foregroundStyle(self.getFgColour(colour: tempoApi.latestColour))
+              .foregroundStyle(TempoStyle.foregroundColour(tempoApi.latestColour))
               .accentColor(.clear)
             Text("\(LocalizedStringKey(tempoApi.latestColour).stringValue())")
               .font(.title2)
               .fontWeight(.bold)
-              .foregroundStyle(self.getFgColour(colour: tempoApi.latestColour))
+              .foregroundStyle(TempoStyle.foregroundColour(tempoApi.latestColour))
               .accentColor(.clear)
           }
           .frame(maxWidth: .infinity, maxHeight: .infinity)
-          .background(self.getBgColour(colour: tempoApi.latestColour))
+          .background(TempoStyle.backgroundColour(tempoApi.latestColour))
         }
         .frame(width: geo.size.width/2, height: geo.size.height)
       }
-    }
-  }
-  private func formatDate(date: Date) -> String {
-    let dateFormatter = DateFormatter()
-    dateFormatter.dateFormat = "dd/MM"
-    return dateFormatter.string(from: date)
-  }
-  
-  func getBgColour(colour: String) -> Color{
-    switch(colour){
-    case "BLUE":
-      return Color.blue
-    case "WHITE":
-      return Color.white
-    case "RED":
-      return Color.red
-    default:
-      return Color.pink
-    }
-  }
-  
-  func getFgColour(colour: String) -> Color{
-    switch(colour){
-    case "WHITE":
-      return Color.black
-    default:
-      return Color.white
     }
   }
 }

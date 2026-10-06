@@ -12,36 +12,19 @@ import renaultApi
 
 struct LockScreenTempoProvider: TimelineProvider{
   func placeholder(in context: Context) -> TempoLockScreenEntry {
-    let today = Date()
-    let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: today)!
-    let mockTempo = tempoFinalReturn(previousColour: "RED", previousDate: yesterday, latestColour: "RED", latestDate: today, latestIsTomorrow: true)
-    return TempoLockScreenEntry(date: Date(), tempoApi: mockTempo)
+    TempoLockScreenEntry(date: Date(), tempoApi: PreviewData.tempo)
   }
   
   func getSnapshot(in context: Context, completion: @escaping (TempoLockScreenEntry) -> Void) {
-    let today = Date()
-    let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: today)!
-    let mockTempo = tempoFinalReturn(previousColour: "RED", previousDate: yesterday, latestColour: "RED", latestDate: today, latestIsTomorrow: true)
-    let entry =  TempoLockScreenEntry(date: Date(), tempoApi: mockTempo)
-    completion(entry)
+    completion(TempoLockScreenEntry(date: Date(), tempoApi: PreviewData.tempo))
   }
   
   func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> Void) {
     Task{
       let entryDate = Date()
-      var tempoApi: tempoFinalReturn? = nil
       let nextRefresh = Calendar.current.date(byAdding: .minute, value: 15, to: entryDate)!
-      let rteClient = getRteClient()
-      if let tempoReturn = try? await rteClient.getTempo(){
-        tempoApi = tempoReturn
-        zeServices.saveTempoData(tempo: tempoReturn)
-      }else{
-        tempoApi = zeServices.loadTempoData()
-      }
-      let entry = TempoLockScreenEntry(date: entryDate, tempoApi: tempoApi)
-      let timeline = Timeline(entries: [entry], policy: .after(nextRefresh))
-      completion(timeline)
-      return
+      let entry = TempoLockScreenEntry(date: entryDate, tempoApi: await TempoService.fetch())
+      completion(Timeline(entries: [entry], policy: .after(nextRefresh)))
     }
   }
 
@@ -66,29 +49,12 @@ struct iosTempoLockScreenInline: View {
   var tempoApi: tempoFinalReturn?
   var body: some View {
     if(tempoApi != nil){
-      Text("\(formatDate(date: tempoApi!.latestDate)) \(LocalizedStringKey(tempoApi!.latestColour).stringValue())")
+      Text("\(TempoStyle.formatDate(tempoApi!.latestDate)) \(LocalizedStringKey(tempoApi!.latestColour).stringValue())")
           .fontWeight(.bold)
     }else{
       Text("ERREUR CHARGEMENT DONNÉES")
     }
   }
-  
-  private func formatDate(date: Date) -> String {
-          let dateFormatter = DateFormatter()
-          dateFormatter.dateFormat = "dd/MM"
-          return dateFormatter.string(from: date)
-      }
-  
-  func getHPPrice()->Float{
-    let client = getRteClient()
-    return client.getHPPrice(colour: self.tempoApi!.latestColour)
-  }
-  
-  func getHCPrice()->Float{
-    let client = getRteClient()
-    return client.getHCPrice(colour: self.tempoApi!.latestColour)
-  }
-  
 }
 
 struct iosTempoLockScreenRectangular: View {
@@ -96,14 +62,14 @@ struct iosTempoLockScreenRectangular: View {
   var body: some View {
     if(tempoApi != nil){
       VStack{
-        Text(formatDate(date: tempoApi!.latestDate))
+        Text(TempoStyle.formatDate(tempoApi!.latestDate))
           .fontWeight(.bold)
         Spacer()
         Text("\(LocalizedStringKey(tempoApi!.latestColour).stringValue())")
           .fontWeight(.bold)
         Spacer()
         HStack(spacing: 10){
-          Text("HP \(String(format: "%.2f", self.getHPPrice())) / HC \(String(format: "%.2f", self.getHCPrice()))")
+          Text("HP \(String(format: "%.2f", TempoStyle.hpPrice(tempoApi!.latestColour))) / HC \(String(format: "%.2f", TempoStyle.hcPrice(tempoApi!.latestColour)))")
             .font(.caption)
         }
        
@@ -112,23 +78,6 @@ struct iosTempoLockScreenRectangular: View {
       Text("ERREUR CHARGEMENT DONNÉES")
     }
   }
-  
-  private func formatDate(date: Date) -> String {
-          let dateFormatter = DateFormatter()
-          dateFormatter.dateFormat = "dd/MM"
-          return dateFormatter.string(from: date)
-      }
-  
-  func getHPPrice()->Float{
-    let client = getRteClient()
-    return client.getHPPrice(colour: self.tempoApi!.latestColour)
-  }
-  
-  func getHCPrice()->Float{
-    let client = getRteClient()
-    return client.getHCPrice(colour: self.tempoApi!.latestColour)
-  }
-  
 }
 
 
