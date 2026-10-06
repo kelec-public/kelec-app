@@ -58,9 +58,7 @@ class WidgetConfigureActivity : AppCompatActivity() {
     private fun onCarSelected(store: SharedStore, vin: String) {
         store.saveWidgetVin(appWidgetId, vin)
 
-        val updateIntent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE, null, applicationContext, KelecMainWIdget::class.java)
-        updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, intArrayOf(appWidgetId))
-        sendBroadcast(updateIntent)
+        KelecMainWIdget.requestUpdate(applicationContext)
 
         val resultIntent = Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
         setResult(RESULT_OK, resultIntent)

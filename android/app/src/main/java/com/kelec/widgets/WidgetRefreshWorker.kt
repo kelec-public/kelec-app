@@ -1,0 +1,61 @@
+package com.kelec.widgets
+
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
+import android.content.Context
+import androidx.work.CoroutineWorker
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.WorkerParameters
+import com.kelec.KelecMainWIdget
+import java.util.concurrent.TimeUnit
+
+/**
+ * Recharge les widgets en arrière-plan : toutes les 15 min, et à la demande (bridge RN, bouton du widget).
+ * Le travail se fait ici plutôt que dans le BroadcastReceiver, limité à ~10 s par goAsync().
+ * NE PAS RENOMMER la classe ni [PERIODIC_WORK] : WorkManager garde la tâche périodique avec ces noms.
+ */
+class WidgetRefreshWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
+
+    override suspend fun doWork(): Result {
+        WidgetUpdater.update(applicationContext, widgetIds(applicationContext))
+        return Result.success()
+    }
+
+    companion object {
+        private const val PERIODIC_WORK = "kelec_widget_refresh"
+        private const val ONE_TIME_WORK = "kelec_widget_refresh_now"
+
+        fun widgetIds(context: Context): IntArray =
+            AppWidgetManager.getInstance(context).getAppWidgetIds(ComponentName(context, KelecMainWIdget::class.java))
+
+        /**
+         * Recharge les widgets maintenant (sans effet s'il n'y en a aucun).
+         * La tâche périodique est aussi (re)programmée : tant qu'une tâche reste en attente, WorkManager ne désactive pas
+         * son RescheduleReceiver, ce qui renverrait APPWIDGET_UPDATE et relancerait un rafraîchissement en boucle.
+         */
+        fun refreshNow(context: Context) {
+            if (widgetIds(context).isEmpty()) return
+            schedule(context)
+            WorkManager.getInstance(context).enqueueUniqueWork(
+                ONE_TIME_WORK, ExistingWorkPolicy.REPLACE, OneTimeWorkRequestBuilder<WidgetRefreshWorker>().build()
+            )
+        }
+
+        fun schedule(context: Context) {
+            WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+                PERIODIC_WORK,
+                ExistingPeriodicWorkPolicy.KEEP,
+                PeriodicWorkRequestBuilder<WidgetRefreshWorker>(15, TimeUnit.MINUTES).build()
+            )
+        }
+
+        fun cancel(context: Context) {
+            WorkManager.getInstance(context).cancelUniqueWork(PERIODIC_WORK)
+            WorkManager.getInstance(context).cancelUniqueWork(ONE_TIME_WORK)
+        }
+    }
+}
