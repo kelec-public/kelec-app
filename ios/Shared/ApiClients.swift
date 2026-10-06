@@ -24,8 +24,8 @@ func getCarPassword(usercar: UserCar) -> String {
 
 public func getCarMakerApiClient(usercar: UserCar) -> ApiClient{
   let password = getCarPassword(usercar: usercar)
-  switch (usercar.getCarMaker()){
-  case "renault", "dacia", "alpine":
+  switch usercar.maker {
+  case .RENAULT, .DACIA, .ALPINE:
     let gigyaApiKey = envVar("GIGYA_API_KEY")
     let kamareonApiKey = envVar("KAMEREON_API_KEY")
     
@@ -44,9 +44,9 @@ public func getCarMakerApiClient(usercar: UserCar) -> ApiClient{
         writeWidgetLog(message: "Crypted cookie value loaded")
       }
     return apiClient
-  case "hyundai":
+  case .HYUNDAI:
     return HyundaiApiClient(email: usercar.getEmail(), password: password, pin: usercar.pinCode ?? "")
-  default:
+  case .DEMO:
     return DemoApiClient()
   }
 }

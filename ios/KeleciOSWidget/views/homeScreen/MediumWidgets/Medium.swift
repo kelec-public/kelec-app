@@ -26,7 +26,7 @@ struct MediumCarWidgetView: View{
           Image("\(userCar.getCarMaker())Logo")
             .resizable()
             .scaledToFit()
-            .frame(width: userCar.getCarMaker() == "renault" ? 20 : 40)
+            .frame(width: userCar.maker == .RENAULT ? 20 : 40)
           
           // car name
           Text("\(carName)")

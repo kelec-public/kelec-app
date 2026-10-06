@@ -35,7 +35,7 @@ enum VehicleLoader {
   }
 
   static func cachedStatus(userCar: UserCar) -> ApiHandler? {
-    VehicleCache.loadStatus(vin: userCar.car?.vin ?? "", carMaker: parseCarMaker(carMaker: userCar.carMaker))
+    VehicleCache.loadStatus(vin: userCar.car?.vin ?? "", carMaker: userCar.maker)
   }
 
   // account, preferences, car (chosen by `selectCar`), image and status

@@ -55,27 +55,16 @@ public struct UserCar: Codable, Equatable{
     return self.carMaker
   }
   
+  // carMaker stays a String in the stored JSON; unknown values are the demo car
+  var maker: CarMaker {
+    return CarMaker(rawValue: carMaker) ?? .DEMO
+  }
+  
   func getPassword() -> String{
     return self.password
   }
   
   func getEmail() -> String{
     return self.email
-  }
-}
-
-public func parseCarMaker(carMaker: String)->CarMaker{
-  // parse a carMaker string as usable enum
-  switch (carMaker){
-  case "renault":
-    return .RENAULT
-  case "dacia":
-    return .DACIA
-  case "alpine":
-    return .ALPINE
-  case "hyundai":
-    return .HYUNDAI
-  default:
-    return .DEMO
   }
 }
