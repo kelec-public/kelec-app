@@ -2,7 +2,9 @@
 //  VehicleCache.swift
 //  Kelec
 //
-//  Last fetched car status and location, kept in UserDefaults.standard (local to each target).
+//  Last fetched car status and location.
+//  Kept in the App Group: the app and the widgets of a device share the cache (the last fetch wins).
+//  The RN app reads the last Renault status through SharedHistory (`<vin>_batteryStatus`), written at the same time.
 //  The JSON format and the keys are already stored on the devices: keep them.
 //
 
@@ -30,6 +32,10 @@ struct SavedLocation: Codable {
 }
 
 enum VehicleCache {
+  private static var store: UserDefaults {
+    AppGroup.userDefaults ?? .standard
+  }
+
   static func saveStatus(vin: String, apiHandler: ApiHandler) {
     switch apiHandler.getVehicleData() {
     case .renault(let batteryStatus):
@@ -57,7 +63,7 @@ enum VehicleCache {
 
   static func saveLocation(vin: String, latitude: Latitude, longitude: Longitude) {
     if let encoded = try? JSONEncoder().encode(SavedLocation(vin: vin, latitude: latitude, longitude: longitude)) {
-      UserDefaults.standard.set(encoded, forKey: StorageKey.savedLocation(vin: vin))
+      store.set(encoded, forKey: StorageKey.savedLocation(vin: vin))
     }
   }
 
@@ -74,12 +80,12 @@ enum VehicleCache {
       vehicles.append(vehicle)
     }
     if let encoded = try? JSONEncoder().encode(vehicles) {
-      UserDefaults.standard.set(encoded, forKey: key)
+      store.set(encoded, forKey: key)
     }
   }
 
   private static func load<T: Decodable>(_ type: T.Type, key: String) -> T? {
-    guard let data = UserDefaults.standard.data(forKey: key) else { return nil }
+    guard let data = store.data(forKey: key) else { return nil }
     return try? JSONDecoder().decode(type, from: data)
   }
 }

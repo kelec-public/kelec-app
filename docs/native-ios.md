@@ -84,8 +84,9 @@ et l'app RN en lit une partie.
 | `watchWidgetCar` | App Group (montre) | VIN choisi dans les Réglages de la montre | `WatchSettingsView` | Widgets de la montre |
 | `<vin>_password` | Keychain | Mot de passe du compte | Stockage chiffré RN / `WatchSync` (Hyundai) | Clients d'API, intent |
 | `cookieValue_<email>` | Keychain | Session Renault | App RN / `WatchSync` | Client Renault |
-| `RENAULT_carsLoaded`, `HYUNDAI_carsLoaded` | UserDefaults.standard | Cache du dernier statut par VIN | `VehicleCache` | Widgets, montre (local à chaque target) |
-| `tempo`, `savedLocation_<vin>` | UserDefaults.standard | Cache Tempo, dernière position | `TempoService`, `VehicleCache` | Widgets, montre |
+| `RENAULT_carsLoaded`, `HYUNDAI_carsLoaded` | App Group | Cache du dernier statut par VIN | `VehicleCache` | App et widgets (iPhone et montre) : le dernier chargement gagne |
+| `savedLocation_<vin>` | App Group | Dernière position | `VehicleCache` | Idem |
+| `tempo` | UserDefaults.standard | Cache Tempo | `TempoService` | Widgets iOS (local) |
 
 ## Bridge RN (`RNSharedWidget`)
 

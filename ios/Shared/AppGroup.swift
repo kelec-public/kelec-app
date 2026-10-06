@@ -33,9 +33,10 @@ enum StorageKey {
   static func password(vin: String) -> String { "\(vin)_password" }
   static func cookieValue(email: String) -> String { "cookieValue_\(email)" }
 
-  // UserDefaults.standard: cache local to each target
+  // Vehicle cache (VehicleCache), in the App Group
   static let renaultCarsCache = "RENAULT_carsLoaded"
   static let hyundaiCarsCache = "HYUNDAI_carsLoaded"
+  // Tempo: UserDefaults.standard, iOS widgets only
   static let tempo = "tempo"
   static func savedLocation(vin: String) -> String { "savedLocation_\(vin)" }
 }
