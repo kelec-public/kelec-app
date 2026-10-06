@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import { ScrollView, StyleSheet, TouchableOpacity, useColorScheme, View } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import { useTheme } from "@react-navigation/native";
 import Text from "../../../../screen/Common/CustomText";
 import { getBlackColour, getWhiteColour } from "../../../../lib/graphics/utils";
 import commonStyles, { fontFamilyBold } from "../../../../lib/graphics/commonStyle";
@@ -16,6 +17,7 @@ import Button from '../../../kelec-model/view/Button';
 import { RenaultCredentials } from "../../../../lib/clients/carMakers/renaultCredentials";
 import { formatMileageEntry, lastMileageEntries } from "../../services/mileageHistoryDebug";
 import SettingRow from "../SettingRow";
+import { shareTextFile } from "../../services/fileShare";
 import { OptionType } from "../../controllers/settingsTypes";
 
 type DebugZoneProps = {
@@ -292,6 +294,7 @@ const DebugZoneView = ({ setShowDebugZone }: DebugZoneProps): React.JSX.Element 
 
 
     const isDarkMode = useColorScheme() === 'dark';
+    const theme = useTheme();
 
     const { currentUser } = useContext(MainContext);
 
@@ -395,6 +398,15 @@ const DebugZoneView = ({ setShowDebugZone }: DebugZoneProps): React.JSX.Element 
                     <View style={[styles.container, commonStyles.gap10]}>
                         {selectedCar ? carActions(selectedCar) : carList()}
                     </View>
+                    {selectedCar ? (
+                        <Button
+                            text="Export"
+                            icon="ios-share"
+                            buttonStyle={theme.buttons.neutral}
+                            disabled={logs.length === 0}
+                            onPress={() => shareTextFile(`debugLogs${Date.now()}.txt`, logs.join('\n'), 'text/plain')}
+                        />
+                    ) : null}
                     <Button
                         text="Close"
                         onPress={() => {
