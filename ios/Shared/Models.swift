@@ -23,6 +23,7 @@ public struct CarModel: Codable, Equatable{
   var image: String
   var imageUrl: String
   var model: String // car name
+  var registrationNumber: String? // license plate, absent for some cars
 }
 
 public struct UserCar: Codable, Equatable{

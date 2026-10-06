@@ -13,12 +13,19 @@ struct CarEntity: AppEntity, Codable{
   
   var name: String
   var id: String // vin
+  var registrationNumber: String?
   
   static var typeDisplayRepresentation: TypeDisplayRepresentation = "Car"
   static var defaultQuery = CarQuery()
   
+  // the plate when the car has one, the VIN otherwise
+  private var plateOrVin: String {
+    guard let plate = registrationNumber, !plate.isEmpty else { return id }
+    return plate
+  }
+  
   public var displayRepresentation: DisplayRepresentation {
-    DisplayRepresentation(title: "\(name)")
+    DisplayRepresentation(title: "\(name)", subtitle: "\(plateOrVin)")
   }
 }
 
@@ -46,7 +53,7 @@ struct CarQuery: EntityQuery{
 
 func buildCarWidgetEntityFromUserCars(userCars: [UserCar]) -> [CarEntity] {
   var carWidgetEntities: [CarEntity] = []
-  userCars.forEach { carWidgetEntities.append(CarEntity(name: $0.car?.model ?? "ERROR", id: $0.car?.vin ?? "ERROR")) }
+  userCars.forEach { carWidgetEntities.append(CarEntity(name: $0.car?.model ?? "ERROR", id: $0.car?.vin ?? "ERROR", registrationNumber: $0.car?.registrationNumber)) }
   return carWidgetEntities
 }
 

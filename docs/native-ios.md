@@ -118,6 +118,12 @@ Côté JS, tout passe par `src/lib/storage/sharedPlatformsData.tsx`. Les appels 
 | Widgets de la montre | La voiture choisie dans les **Réglages de l'app de la montre**, sinon la première |
 | Widgets Android | La voiture configurée sur le widget, sinon la première (avant : la voiture par défaut) |
 
+### Liste de choix de la voiture (widget iOS et intents)
+
+- `CarEntity` (`ios/Intents/CarEntity.swift`) affiche le nom de la voiture, avec en sous-titre la plaque brute (`registrationNumber`, non formatée) ou, à défaut, le VIN.
+- `CarModel.registrationNumber` (`ios/Shared/Models.swift`) est optionnel : champ déjà sérialisé par l'app, absent pour certaines voitures.
+- L'entité est partagée avec l'intent Siri/Raccourcis (`LaunchHVACIntent`) : le sous-titre y apparaît aussi.
+
 ## Package `renaultApi` (`ios/Packages/RenaultApi`)
 
 - Ancien dépôt `github.com/kelec-public/renault-api-swift-client` (1.0.9), repris avec le correctif du crash portugais.
@@ -135,6 +141,7 @@ Côté JS, tout passe par `src/lib/storage/sharedPlatformsData.tsx`. Les appels 
   `widgetHomeScreenDescription`, `widgetLockScreenDescription`, `tempo*`, `watch*`…
 - En SwiftUI, `Text("clé")` avec une chaîne littérale est traduit. `Text(variable)` ne l'est pas : utiliser `LocalizedStringKey` ou `localized(_:)`.
 - Les fichiers ne contiennent plus le doublon de `error`. Les erreurs de traduction existantes (catalan, croate, norvégien, tchèque, italien) sont corrigées.
+- Montre et Siri/Raccourcis : « préchauffage » devient « confort thermique » en français (`preHeatLaunched`, `launchPreHeat`, `launchPreHeat ${car}`, `areYouSureYouWantToLaunchPreheating`). Les clés ne changent pas, et les autres langues et `localizations.json` non plus.
 - La clé RN `isSelectedAsDefault` de `localizations.json` n'est plus utilisée (fichier non modifié).
 
 ## Commits
