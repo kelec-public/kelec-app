@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SwiftUI
 
 public struct HyundaiApiHandler: ApiHandler {
     
@@ -83,15 +82,15 @@ public struct HyundaiApiHandler: ApiHandler {
         }else{
             if(self.getBatteryLevel() > self.getChargeLimit()){
                 // charge is over
-                return LocalizedStringKey("CHARGE TERMINÉE | ").stringValue()
+                return localized("CHARGE TERMINÉE | ")
             }
             
             if(self.getIsCarCharging()){
-                return LocalizedStringKey("EN CHARGE | ").stringValue()
+                return localized("EN CHARGE | ")
             }
             
             // all other cases
-            return LocalizedStringKey("NE CHARGE PAS | ").stringValue()
+            return localized("NE CHARGE PAS | ")
         }
     }
     
@@ -136,6 +135,10 @@ public struct HyundaiApiHandler: ApiHandler {
         return self.apiData.status.odometer.value
     }
     
+    public func getOdometerInKm() -> Double? {
+        return self.apiData.status.odometer.value
+    }
+
     public func getIsV2GorV2L() -> Bool {
         return false
     }

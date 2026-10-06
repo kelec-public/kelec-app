@@ -58,7 +58,7 @@ struct MediumTempoWidgetView: View{
             .foregroundStyle(TempoStyle.foregroundColour(tempoApi.latestColour))
             .accentColor(.clear)
           Spacer()
-          Text("\(LocalizedStringKey(tempoApi.latestColour).stringValue())")
+          Text("\(localized(tempoApi.latestColour))")
             .font(.title2)
             .fontWeight(.bold)
             .foregroundStyle(TempoStyle.foregroundColour(tempoApi.latestColour))

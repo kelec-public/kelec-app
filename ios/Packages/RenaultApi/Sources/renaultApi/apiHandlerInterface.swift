@@ -32,6 +32,8 @@ public protocol ApiHandler: Codable, Decodable{
     func getMapLongitude()->Longitude
     
     func getMilage(appPreferences: AppPreferences?) -> Double
+    // odometer in km, nil when the car maker didn't return it
+    func getOdometerInKm() -> Double?
     
     func getIsV2GorV2L() -> Bool
     

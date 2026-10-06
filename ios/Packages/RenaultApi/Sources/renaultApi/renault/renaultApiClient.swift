@@ -40,13 +40,16 @@ public struct RenaultApiClient: ApiClient {
     private var kamareonURL = "api-wired-prod-1-euw1.wrd-aws.com"
     private var kamareonAPI: String
     private var cookieValue: String = "";
+    // debug messages (the app writes them in its widget logs)
+    private let logger: (String) -> Void
 
-    public init(username: String, password: String, kamereonAccountId: String, gigyaApiKey: String, kamareonApiKey: String) {
+    public init(username: String, password: String, kamereonAccountId: String, gigyaApiKey: String, kamareonApiKey: String, logger: @escaping (String) -> Void = { _ in }) {
         self.myRenaultUser = username
         self.myRenaultPass = password
         self.kamereonAccountId = kamereonAccountId
         self.gigyaAPI = gigyaApiKey
         self.kamareonAPI = kamareonApiKey
+        self.logger = logger
     }
 
     public mutating func setPassword(password: String) {
@@ -84,15 +87,12 @@ public struct RenaultApiClient: ApiClient {
             throw ApiClientError.decodeError
         }
 
-        saveStoredApiData(vin: vin, batteryStatus: parsedBatteryStatus.data.attributes)
-
         var renaultApiHandler = RenaultApiHandler(
             batteryStatus: parsedBatteryStatus.data.attributes)
 
         do {
             let cockpitStatus = try await self.getCockpit(vin: vin, jwt_token: jwtSession.id_token)
             renaultApiHandler.setCockpitStatus(cockpitStatus: cockpitStatus)
-            saveMileageHistory(vin: vin, mileage: cockpitStatus.totalMileage)
 
         } catch {
             print("Error fetching cockpit status for vin \(vin): \(error)")
@@ -156,15 +156,15 @@ public struct RenaultApiClient: ApiClient {
         bodyComponents.queryItems = bodyItems
         urlRequest.httpBody = bodyComponents.query?.data(using: .utf8)
         guard let (data, _) = try? await URLSession.shared.data(for: urlRequest) else {
-            writeWidgetLog(message: "ERROR : UNABLE TO FETCH JWT TOKEN FROM URL \(actualURL)")
+            logger("ERROR : UNABLE TO FETCH JWT TOKEN FROM URL \(actualURL)")
             throw ApiClientError.invalidURL
         }
         guard let jwtToken = try? JSONDecoder().decode(JWTTokenFetch.self, from: data) else {
             let str = String(decoding: data, as: UTF8.self)
-            writeWidgetLog(message: "ERROR : UNABLE TO DECODE ACCOUNT TOKEN FROM URL :  \(str)")
+            logger("ERROR : UNABLE TO DECODE ACCOUNT TOKEN FROM URL :  \(str)")
             throw ApiClientError.missingData
         }
-        writeWidgetLog(message: "JWT token fetch and decode OK.")
+        logger("JWT token fetch and decode OK.")
         return jwtToken
     }
 
@@ -188,10 +188,10 @@ public struct RenaultApiClient: ApiClient {
         urlRequest.setValue(jwtToken, forHTTPHeaderField: "x-gigya-id_token")
         urlRequest.setValue("application/vnd.api+json", forHTTPHeaderField: "Content-Type")
         guard let (data, _) = try? await URLSession.shared.data(for: urlRequest) else {
-            writeWidgetLog(message: "ERROR : UNABLE TO FETCH BATTERY STATUS FROM URL \(urlRequest)")
+            logger("ERROR : UNABLE TO FETCH BATTERY STATUS FROM URL \(urlRequest)")
             throw ApiClientError.invalidURL
         }
-        writeWidgetLog(message: "battery status ok.")
+        logger("battery status ok.")
         return data
     }
 
@@ -227,7 +227,7 @@ public struct RenaultApiClient: ApiClient {
         urlRequest.httpBody = finalBody
 
         guard let (data, _) = try? await URLSession.shared.data(for: urlRequest) else {
-            writeWidgetLog(message: "ERROR : UNABLE TO LAUNCH HVAC STATUS FROM URL \(urlRequest)")
+            logger("ERROR : UNABLE TO LAUNCH HVAC STATUS FROM URL \(urlRequest)")
             throw ApiClientError.invalidURL
         }
 

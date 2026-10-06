@@ -49,7 +49,7 @@ struct TempoLockScreenInlineView: View {
   var tempoApi: tempoFinalReturn?
   var body: some View {
     if(tempoApi != nil){
-      Text("\(TempoStyle.formatDate(tempoApi!.latestDate)) \(LocalizedStringKey(tempoApi!.latestColour).stringValue())")
+      Text("\(TempoStyle.formatDate(tempoApi!.latestDate)) \(localized(tempoApi!.latestColour))")
           .fontWeight(.bold)
     }else{
       Text("tempoLoadingError")
@@ -65,7 +65,7 @@ struct TempoLockScreenRectangularView: View {
         Text(TempoStyle.formatDate(tempoApi!.latestDate))
           .fontWeight(.bold)
         Spacer()
-        Text("\(LocalizedStringKey(tempoApi!.latestColour).stringValue())")
+        Text("\(localized(tempoApi!.latestColour))")
           .fontWeight(.bold)
         Spacer()
         HStack(spacing: 10){

@@ -65,7 +65,7 @@ struct KeleciOSTempoWidget: Widget {
     }
     .contentMarginsDisabled()
     .configurationDisplayName("Renault E-Tech Tempo")
-    .description(LocalizedStringKey("tempoWidgetDescription").stringValue())
+    .description(localized("tempoWidgetDescription"))
     .supportedFamilies([.systemMedium])
   }
 }
@@ -79,7 +79,7 @@ struct KeleciOSTempo2DaysWidget: Widget {
     }
     .contentMarginsDisabled()
     .configurationDisplayName("Renault E-Tech Tempo")
-    .description(LocalizedStringKey("tempo2DaysWidgetDescription").stringValue())
+    .description(localized("tempo2DaysWidgetDescription"))
     .supportedFamilies([.systemMedium])
   }
 }

@@ -26,6 +26,7 @@ enum VehicleLoader {
       let fetchedApiHandler = try await getCarMakerApiClient(usercar: userCar).getVehicleInfo(vin: vin)
       writeWidgetLog(message: "Data successfully fecthed")
       VehicleCache.saveStatus(vin: vin, apiHandler: fetchedApiHandler)
+      SharedHistory.record(vin: vin, apiHandler: fetchedApiHandler)
       return fetchedApiHandler
     } catch {
       writeWidgetLog(message: "Loading cache data")

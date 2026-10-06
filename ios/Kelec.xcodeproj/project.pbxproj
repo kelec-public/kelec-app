@@ -21,8 +21,10 @@
 		24BDC979B5E210E5D0DE63DE /* VehicleCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31931830D897FCA4F47DF7AE /* VehicleCache.swift */; };
 		27CFC1640B2790ECAEDB1536 /* WatchSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13EE766F9F9476F2DA5C7C93 /* WatchSync.swift */; };
 		3FD99B40031937DDE2A3A904 /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82D3A947D978E8DABF716AA3 /* SharedStore.swift */; };
+		42919F79CF8DF2810094786B /* SharedHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B748D26B442D53310A6ECA6 /* SharedHistory.swift */; };
 		42F8A0292585AFA11DBBAE07 /* RenaultSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B53AE419075ECE912D2A1B /* RenaultSession.swift */; };
 		4304D3C858A08FB1747C19EE /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82D3A947D978E8DABF716AA3 /* SharedStore.swift */; };
+		4BA0EF2DB6E0C72925CA4014 /* SharedHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B748D26B442D53310A6ECA6 /* SharedHistory.swift */; };
 		516DBEF07CAD4C67AE0CD2F3 /* NouvelRSemibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BDA16CE28C8F45C693C500CC /* NouvelRSemibold.ttf */; };
 		53D81EBD2DC7EDC53094645C /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7F486009640FB55D626BE43 /* Models.swift */; };
 		543A0922E6C0F74544F75AC1 /* PreviewData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 783F92D76DA3869D1D196954 /* PreviewData.swift */; };
@@ -100,7 +102,9 @@
 		CB2456A9E4DCAF1586A12645 /* PreviewData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 783F92D76DA3869D1D196954 /* PreviewData.swift */; };
 		CF60F6C753C90F8AADF8D387 /* libPods-Kelec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B67617AAF409ECA0533B98A2 /* libPods-Kelec.a */; };
 		D4E42A74467E599989EF7CC3 /* RenaultSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B53AE419075ECE912D2A1B /* RenaultSession.swift */; };
+		DA194AD1E573B30C8A8802DD /* SharedHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B748D26B442D53310A6ECA6 /* SharedHistory.swift */; };
 		DA5C3D69D8DE4F74BCA9290B /* NouvelRExtrabold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7D4DDF6B05B94D7984A043B8 /* NouvelRExtrabold.ttf */; };
+		DAA8E4769395E9EC0ACC063A /* SharedHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B748D26B442D53310A6ECA6 /* SharedHistory.swift */; };
 		DD70E7F6770A8131B0F8CD60 /* RenaultSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B53AE419075ECE912D2A1B /* RenaultSession.swift */; };
 		E350B546851FE63430C13339 /* AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0484D79BAF8B9723903AA259 /* AppGroup.swift */; };
 		E4E4789D7365D3F23627DD71 /* VehicleLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CFF2DD73D40078FF86337F /* VehicleLoader.swift */; };
@@ -205,6 +209,7 @@
 		13EE766F9F9476F2DA5C7C93 /* WatchSync.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WatchSync.swift; sourceTree = "<group>"; };
 		2262E3A1AF04AEB72802C70E /* CarViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CarViewModel.swift; sourceTree = "<group>"; };
 		2AA3C74DAF974BC5AB76E7E5 /* NouvelRBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = NouvelRBold.ttf; path = ../assets/fonts/Renault/NouvelRBold.ttf; sourceTree = "<group>"; };
+		2B748D26B442D53310A6ECA6 /* SharedHistory.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SharedHistory.swift; sourceTree = "<group>"; };
 		31931830D897FCA4F47DF7AE /* VehicleCache.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VehicleCache.swift; sourceTree = "<group>"; };
 		53B53AE419075ECE912D2A1B /* RenaultSession.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RenaultSession.swift; sourceTree = "<group>"; };
 		5E858BB876E9BCE7314FF9A4 /* Tempo.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tempo.swift; sourceTree = "<group>"; };
@@ -591,6 +596,7 @@
 				9E0E227B58D232E3A68F80A5 /* Formatting.swift */,
 				53B53AE419075ECE912D2A1B /* RenaultSession.swift */,
 				DF671DF3293ADF6C2184565F /* ApiClients.swift */,
+				2B748D26B442D53310A6ECA6 /* SharedHistory.swift */,
 			);
 			name = Shared;
 			path = Shared;
@@ -957,6 +963,7 @@
 				D4E42A74467E599989EF7CC3 /* RenaultSession.swift in Sources */,
 				C502E4C627A6E995A1BB5816 /* ApiClients.swift in Sources */,
 				6E8FEFE03DAC35D1153AE63B /* RNSharedWidget.swift in Sources */,
+				DA194AD1E573B30C8A8802DD /* SharedHistory.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -981,6 +988,7 @@
 				27CFC1640B2790ECAEDB1536 /* WatchSync.swift in Sources */,
 				B0071A9FAF06119EC22C4F52 /* CarViewModel.swift in Sources */,
 				839DAED20C66016A17C30E75 /* WatchSettingsView.swift in Sources */,
+				DAA8E4769395E9EC0ACC063A /* SharedHistory.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1015,6 +1023,7 @@
 				8F32DC50AA786099C9F661D2 /* Formatting.swift in Sources */,
 				E6BB9A1407139F3B43BA844D /* RenaultSession.swift in Sources */,
 				5B8CFD18C4A7A20058F883A0 /* ApiClients.swift in Sources */,
+				42919F79CF8DF2810094786B /* SharedHistory.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1038,6 +1047,7 @@
 				034DDA17759C5EF34D57CDE7 /* Formatting.swift in Sources */,
 				DD70E7F6770A8131B0F8CD60 /* RenaultSession.swift in Sources */,
 				A60CEBBC422A85CA4AC6A7E9 /* ApiClients.swift in Sources */,
+				4BA0EF2DB6E0C72925CA4014 /* SharedHistory.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

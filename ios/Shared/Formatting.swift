@@ -31,3 +31,8 @@ func formatChargingTime(minutes: Int) -> String {
 func getChargingColour(isV2GorV2L: Bool)->Color {
   return isV2GorV2L ? .orange : .green
 }
+
+// localized text for a key only known at runtime (Tempo colours, alert texts)
+func localized(_ key: String) -> String {
+  return NSLocalizedString(key, comment: "")
+}

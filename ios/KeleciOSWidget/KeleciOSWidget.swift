@@ -141,7 +141,7 @@ struct KelecLockScreenWidget: Widget {
       KelecLockScreenWidgetEntryView(entry: entry)
     }
     .configurationDisplayName("Renault E-Tech")
-    .description(LocalizedStringKey("widgetLockScreenDescription").stringValue())
+    .description(localized("widgetLockScreenDescription"))
     .supportedFamilies([.accessoryRectangular, .accessoryInline, .accessoryCircular])
   }
 }
@@ -154,7 +154,7 @@ struct KelecLockScreenWidgetAlternative: Widget{
       KelecLockScreenWidgetEntryView(entry: entry, alternative: 1)
     }
     .configurationDisplayName("Renault E-Tech")
-    .description(LocalizedStringKey("widgetLockScreenDescription").stringValue())
+    .description(localized("widgetLockScreenDescription"))
     .supportedFamilies([.accessoryCircular])
   }
   

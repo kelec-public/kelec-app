@@ -229,11 +229,11 @@ struct BatteryCardView: View{
       // launch HVAC
       let hasLaunchedHVAC = await launchHVAC()
       if(hasLaunchedHVAC){
-        self.hvacAlertTitle = LocalizedStringKey("informationSent").stringValue()
-        self.hvacAlertMessage = LocalizedStringKey("preHeatLaunched").stringValue()
+        self.hvacAlertTitle = localized("informationSent")
+        self.hvacAlertMessage = localized("preHeatLaunched")
       }else{
-        self.hvacAlertTitle = LocalizedStringKey("error").stringValue()
-        self.hvacAlertMessage = LocalizedStringKey("commandSendError").stringValue()
+        self.hvacAlertTitle = localized("error")
+        self.hvacAlertMessage = localized("commandSendError")
       }
       
       // open modal

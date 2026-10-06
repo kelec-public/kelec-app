@@ -32,15 +32,15 @@ struct LaunchHVACIntent: AppIntent {
     
     if(isASuccess){
       // hvac has been launched
-      let informationSent = LocalizedStringKey("informationSent").stringValue()
-      let preheatActive = LocalizedStringKey("preHeatLaunched").stringValue()
+      let informationSent = localized("informationSent")
+      let preheatActive = localized("preHeatLaunched")
       
       
       return .result(dialog: "\(informationSent). \(preheatActive). \(car.name)")
     }else{
       // couldn't launch hvac
-      let error = LocalizedStringKey("error").stringValue()
-      let commandSendError = LocalizedStringKey("commandSendError").stringValue()
+      let error = localized("error")
+      let commandSendError = localized("commandSendError")
       return .result(dialog: "\(error). \(commandSendError). \(car.name)")
     }
   }

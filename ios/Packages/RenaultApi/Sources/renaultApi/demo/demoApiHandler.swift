@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SwiftUI
 
 public struct DemoApiHandler: ApiHandler{
     
@@ -51,7 +50,7 @@ public struct DemoApiHandler: ApiHandler{
     }
     
     public func getChargeText() -> String {
-        return LocalizedStringKey("EN CHARGE | ").stringValue()
+        return localized("EN CHARGE | ")
     }
     
     public var carMaker: CarMaker
@@ -72,6 +71,10 @@ public struct DemoApiHandler: ApiHandler{
         return 134234.2
     }
     
+    public func getOdometerInKm() -> Double? {
+        return nil
+    }
+
     public func getIsV2GorV2L() -> Bool {
         return false
     }

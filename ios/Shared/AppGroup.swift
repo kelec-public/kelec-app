@@ -22,6 +22,10 @@ enum StorageKey {
   static let account = "account"
   static let appPreferences = "appPreferences"
   static func carImage(vin: String) -> String { "\(vin)/image" }
+  // read by the RN app: widget logs export, mileage history, last Renault battery status
+  static let widgetLogs = "widgetLogs"
+  static func mileageHistory(vin: String) -> String { "\(vin)_mileageHistory" }
+  static func batteryStatus(vin: String) -> String { "\(vin)_batteryStatus" }
   // watch only: vin of the car shown by the watch widgets (watch app settings)
   static let watchWidgetCar = "watchWidgetCar"
 

@@ -34,7 +34,8 @@ public func getCarMakerApiClient(usercar: UserCar) -> ApiClient{
       password: password,
       kamereonAccountId: usercar.kamereonAccountID ?? "",
       gigyaApiKey: gigyaApiKey,
-      kamareonApiKey: kamareonApiKey
+      kamareonApiKey: kamareonApiKey,
+      logger: { writeWidgetLog(message: $0) }
     )
       
     // try to get cookie value from keychain

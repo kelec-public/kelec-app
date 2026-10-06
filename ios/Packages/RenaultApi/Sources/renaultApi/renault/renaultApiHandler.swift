@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SwiftUI
 
 public struct RenaultApiHandler: ApiHandler{
     
@@ -74,15 +73,15 @@ public struct RenaultApiHandler: ApiHandler{
         }else{
             switch(actualChargingStatus){
             case 0.1:
-                return LocalizedStringKey("CHARGE PLANIFIÉE | ").stringValue()
+                return localized("CHARGE PLANIFIÉE | ")
             case 0.2:
-                return LocalizedStringKey("CHARGE TERMINÉE | ").stringValue()
+                return localized("CHARGE TERMINÉE | ")
             case 0.3:
-                return LocalizedStringKey("CHARGE PLANIFIÉE | ").stringValue()
+                return localized("CHARGE PLANIFIÉE | ")
             case 1.0:
-                return LocalizedStringKey("EN CHARGE | ").stringValue()
+                return localized("EN CHARGE | ")
             default:
-                return LocalizedStringKey("NE CHARGE PAS | ").stringValue()
+                return localized("NE CHARGE PAS | ")
             }
         }
         
@@ -109,6 +108,10 @@ public struct RenaultApiHandler: ApiHandler{
         return range
     }
     
+    public func getOdometerInKm() -> Double? {
+        return self.cockpitStatus?.totalMileage
+    }
+
     public func getIsV2GorV2L() -> Bool {
         let actualChargingStatus = (self.batteryStatus.chargingStatus ?? 0).rounded(toPlaces: 1)
         return actualChargingStatus <= -1.3;

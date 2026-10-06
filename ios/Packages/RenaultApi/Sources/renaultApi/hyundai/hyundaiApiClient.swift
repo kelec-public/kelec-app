@@ -49,11 +49,7 @@ public struct HyundaiApiClient: ApiClient{
             throw ApiClientError.decodeError
         }
         
-        let apiHandler = HyundaiApiHandler(apiData: vehicleStatus)
-        
-        // save the mileage
-        saveMileageHistory(vin: vin, mileage: vehicleStatus.status.odometer.value)
-        return apiHandler
+        return HyundaiApiHandler(apiData: vehicleStatus)
         
     }
     
