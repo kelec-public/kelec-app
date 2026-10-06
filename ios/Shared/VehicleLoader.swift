@@ -80,13 +80,3 @@ func widgetCar(account: UserAccount, configuredVin: String?) -> UserCar? {
 func watchCar(account: UserAccount) -> UserCar? {
   account.cars.first { $0.car?.vin == account.selectedCar } ?? account.cars.first
 }
-
-// watch widgets: the car configured on the widget, else the watch rule above
-// (widgets added before they were configurable have no car)
-func watchWidgetCar(account: UserAccount, configuredVin: String?) -> UserCar? {
-  if let configuredVin = configuredVin,
-     let configuredCar = account.cars.first(where: { $0.car?.vin == configuredVin }) {
-    return configuredCar
-  }
-  return watchCar(account: account)
-}

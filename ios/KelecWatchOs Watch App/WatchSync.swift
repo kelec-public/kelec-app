@@ -85,10 +85,6 @@ final class WatchSync: NSObject, WCSessionDelegate, ObservableObject {
     let preferencesChanged = savePreferences(payload["appPreferences"] as? String)
     let accountChanged = saveAccount(payload["message"] as? String)
 
-    if accountChanged {
-      // the widgets offered on the watch are one per car
-      WidgetCenter.shared.invalidateConfigurationRecommendations()
-    }
     if preferencesChanged || accountChanged {
       WidgetCenter.shared.reloadAllTimelines()
       DispatchQueue.main.async {
