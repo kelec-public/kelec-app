@@ -60,5 +60,10 @@ class KelecMainWIdget : AppWidgetProvider() {
 
         private const val TAG = "KelecMainWIdget"
         private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
+        /** Recharge tous les widgets (bridge RN, rafraîchissement périodique). */
+        fun requestUpdate(context: Context) {
+            context.sendBroadcast(Intent(context, KelecMainWIdget::class.java).setAction(ACTION_AUTO_UPDATE))
+        }
     }
 }

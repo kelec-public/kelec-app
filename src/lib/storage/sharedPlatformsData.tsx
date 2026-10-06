@@ -3,12 +3,15 @@ import * as Watch from 'react-native-watch-connectivity';
 import { UserAccountInterface } from "../clients/accounts/userAccount";
 import AppPreferences from "../appPreferences/model/appPreferences";
 import { GigyaTokenFunctionResponse } from "../clients/carMakers/renaultClient";
-/** Module natif iOS (ios/Kelec/RNSharedWidget.swift) : toutes ses méthodes renvoient une promesse. Absent dans les tests. */
+/**
+ * Module natif du stockage partagé avec les widgets, même API sur les deux plateformes
+ * (ios/Kelec/RNSharedWidget.swift, android/.../bridge/RNSharedWidget.kt) : toutes ses méthodes renvoient une promesse.
+ * Absent dans les tests.
+ */
 const { RNSharedWidget } = NativeModules;
-const SharedStorage = NativeModules.SharedStorage;
 
-/** Écrit une chaîne dans l'App Group iOS (lue par les widgets) : les widgets sont rechargés une fois après une série d'écritures. */
-const setIosSharedData = async (key: string, value: string): Promise<void> => {
+/** Écrit une chaîne dans le stockage partagé (lu par les widgets) : les widgets sont rechargés une fois après une série d'écritures. */
+const setSharedData = async (key: string, value: string): Promise<void> => {
     try {
         await RNSharedWidget?.setData(key, value);
     } catch (error) {
@@ -16,8 +19,8 @@ const setIosSharedData = async (key: string, value: string): Promise<void> => {
     }
 };
 
-/** null si la clé n'existe pas dans l'App Group iOS. */
-const getIosSharedData = async (key: string): Promise<string | null> => {
+/** null si la clé n'existe pas dans le stockage partagé. */
+const getSharedData = async (key: string): Promise<string | null> => {
     try {
         return (await RNSharedWidget?.getData(key)) ?? null;
     } catch {
@@ -30,87 +33,37 @@ const getIosSharedData = async (key: string): Promise<string | null> => {
  * voir AccountRepository.save (kelec-garage). null à la déconnexion.
  */
 const saveNativeAccount = async (account: UserAccountInterface | null): Promise<void> => {
-    if (Platform.OS === 'ios') {
-        await setIosSharedData('account', JSON.stringify(account));
-    }
-    if (Platform.OS === 'android') {
-        const setMethod = SharedStorage?.set;
-        if (setMethod != undefined)
-            SharedStorage.set('account', JSON.stringify(account));
-    }
+    await setSharedData('account', JSON.stringify(account));
 };
 
 const setNativeCryptedData = async (key: string, value: string): Promise<void> => {
-    if (Platform.OS === 'ios') {
-        const cryptedMethod = RNSharedWidget?.setCryptedData;
-        if (cryptedMethod != undefined) {
-            await RNSharedWidget.setCryptedData(key, value);
-        }
-
-    }
-    if (Platform.OS === 'android') {
-        const cryptedMethod = SharedStorage?.setEncrypted;
-        if (cryptedMethod != undefined)
-            await SharedStorage.setEncrypted(key, value);
-    }
+    await RNSharedWidget?.setCryptedData(key, value);
 }
 
 const clearNativeCryptedData = async (key: string): Promise<void> => {
-    if (Platform.OS === 'ios') {
-        const cryptedMethod = RNSharedWidget?.clearCryptedData;
-        if (cryptedMethod != undefined) {
-            await RNSharedWidget.clearCryptedData(key);
-        }
-    };
-
-    if (Platform.OS === 'android') {
-        const cryptedMethod = SharedStorage?.clearEncrypted;
-        if (cryptedMethod != undefined)
-            await SharedStorage.clearEncrypted(key);
-    }
+    await RNSharedWidget?.clearCryptedData(key);
 }
 
+/** null si la clé est absente ou illisible. */
 const getNativeCryptedData = async (key: string): Promise<string | null> => {
-    if (Platform.OS === 'ios') {
-        if (RNSharedWidget?.getCryptedData == undefined) {
-            return ""; // for tests
-        }
-        try {
-            return await RNSharedWidget.getCryptedData(key);
-        } catch {
-            return null;
-        }
+    if (RNSharedWidget?.getCryptedData == undefined) {
+        return ""; // for tests
     }
-
-    return new Promise((resolve) => {
-        if (Platform.OS === 'android') {
-            const cryptedMethod = SharedStorage?.getEncrypted;
-            if (cryptedMethod == undefined) {
-                resolve(""); // for tests
-            }
-            SharedStorage.getEncrypted(key, (password: string | null) => {
-                resolve(password);
-            });
-        }
-    });
+    try {
+        return await RNSharedWidget.getCryptedData(key);
+    } catch {
+        return null;
+    }
 }
 
 const saveNativePreferences = async (appPreferences: AppPreferences): Promise<void> => {
-    if (Platform.OS === 'ios') {
-        await setIosSharedData('appPreferences', JSON.stringify(appPreferences));
-    }
-    if (Platform.OS === 'android') {
-        SharedStorage.set('appPreferences', JSON.stringify(appPreferences));
-    }
+    await setSharedData('appPreferences', JSON.stringify(appPreferences));
 };
 
+/** Image de la voiture, affichée par les widgets iOS seulement. */
 const saveNativeImage = async (image: string, car_vin: string): Promise<void> => {
     if (Platform.OS === 'ios') {
-        await setIosSharedData(car_vin + '/image', image);
-    }
-    if (Platform.OS === 'android') {
-        //useless for now
-        SharedStorage.set(car_vin + '/image', image);
+        await setSharedData(car_vin + '/image', image);
     }
 }
 
@@ -136,16 +89,11 @@ const sendDataToAppleWatch = async (account: UserAccountInterface, appPreference
 }
 
 const refreshWidget = async (): Promise<void> => {
-    if (Platform.OS === 'ios') {
-        await RNSharedWidget?.refreshWidgets();
-    }
+    await RNSharedWidget?.refreshWidgets();
 };
 
 const getWidgetsLogs = async (): Promise<string | null> => {
-    if (Platform.OS === 'ios') {
-        return (await getIosSharedData("widgetLogs")) || null;
-    }
-    return null;
+    return (await getSharedData("widgetLogs")) || null;
 }
 
 export interface MileageLog {
@@ -154,29 +102,13 @@ export interface MileageLog {
 }
 
 const getMileageHistory = async (vin: string): Promise<MileageLog[] | null> => {
-    if (Platform.OS === 'ios') {
-        try {
-            const response = await getIosSharedData(`${vin}_mileageHistory`);
-            return response !== null ? JSON.parse(response) : null;
-        } catch {
-            console.log("unable to get mileage history")
-            return null;
-        }
-    }
-
-    if (Platform.OS === 'android') {
-        try {
-            const response = await SharedStorage.async_get(`${vin}_mileageHistory`);
-            if (response !== null) {
-                return JSON.parse(response);
-            }
-        } catch (err) {
-            console.error("Failed to get mileage history", err);
-        }
+    try {
+        const response = await getSharedData(`${vin}_mileageHistory`);
+        return response !== null ? JSON.parse(response) : null;
+    } catch {
+        console.log("unable to get mileage history")
         return null;
     }
-
-    return null;
 }
 
 const getKeyboardAvoidingView = (): 'padding' | 'height' => {
@@ -184,23 +116,8 @@ const getKeyboardAvoidingView = (): 'padding' | 'height' => {
 }
 
 const getNativeBatteryStatus = async (vin: string): Promise<string | null> => {
-    try {
-        if (Platform.OS === 'ios') {
-            return await getIosSharedData(vin + "_batteryStatus");
-        }
-
-        if (Platform.OS === 'android') {
-            const response = await SharedStorage.async_get(vin + "_batteryStatus");
-            return response;
-        }
-    } catch {
-        return null;
-    }
-
-    return null;
+    return getSharedData(vin + "_batteryStatus");
 };
-
-
 
 export {
     saveNativeAccount,

@@ -9,6 +9,7 @@ import com.facebook.react.ReactNativeHost
 import com.facebook.react.ReactPackage
 import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
+import com.kelec.bridge.KelecPackage
 import com.kelec.modules.autofill.AutofillPackage
 import com.lugg.RNCConfig.RNCConfigPackage
 
@@ -20,8 +21,7 @@ class MainApplication : Application(), ReactApplication {
                 PackageList(this).packages.apply {
                     // Packages that cannot be autolinked yet can be added manually here, for example:
                     // add(MyReactNativePackage())
-                    add(SharedStoragePackager())
-                    add(NativeLanguagePackager())
+                    add(KelecPackage())
                     add(RNCConfigPackage())
                     add(AutofillPackage())
                 }
