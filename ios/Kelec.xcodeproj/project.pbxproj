@@ -40,6 +40,7 @@
 		8142FCCA34FD434BA35AB5F8 /* NouvelRLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A6578D399A67482C95C2B086 /* NouvelRLight.ttf */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		81B59805529D141DD7A7E026 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 98AF216D67FFDBBEE44349ED /* PrivacyInfo.xcprivacy */; };
+		839DAED20C66016A17C30E75 /* WatchSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FF1701AA71F44B3276B4102 /* WatchSettingsView.swift */; };
 		8916EACE2BA8C55F00AF4659 /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8916EACD2BA8C55F00AF4659 /* MaterialCommunityIcons.ttf */; };
 		8916EAE12BA8C82200AF4659 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8916EACF2BA8C82100AF4659 /* Entypo.ttf */; };
 		8916EAE22BA8C82200AF4659 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8916EAD02BA8C82100AF4659 /* SimpleLineIcons.ttf */; };
@@ -197,6 +198,7 @@
 
 /* Begin PBXFileReference section */
 		0484D79BAF8B9723903AA259 /* AppGroup.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppGroup.swift; sourceTree = "<group>"; };
+		0FF1701AA71F44B3276B4102 /* WatchSettingsView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WatchSettingsView.swift; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Kelec.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Kelec.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Kelec/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Kelec/Info.plist; sourceTree = "<group>"; };
@@ -495,6 +497,7 @@
 				8931F4192C2EB7180088CD21 /* CarView.swift */,
 				8931F41B2C2EB7380088CD21 /* BatteryCardView.swift */,
 				EBD8A0262D5164E8007F7FBE /* MapView.swift */,
+				0FF1701AA71F44B3276B4102 /* WatchSettingsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -977,6 +980,7 @@
 				68555E0BB2E877291BF772FD /* ApiClients.swift in Sources */,
 				27CFC1640B2790ECAEDB1536 /* WatchSync.swift in Sources */,
 				B0071A9FAF06119EC22C4F52 /* CarViewModel.swift in Sources */,
+				839DAED20C66016A17C30E75 /* WatchSettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

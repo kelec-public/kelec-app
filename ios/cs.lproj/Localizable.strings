@@ -111,3 +111,5 @@
 "tempoWidgetDescription" = "Shromažďuje informace o vašem Renaultu E-Tech na domovské obrazovce s ukazatelem Tempo";
 "tempo2DaysWidgetDescription" = "Shromažďuje informace o vašem Renaultu E-Tech na domovské obrazovce s ukazatelem Tempo na 2 dny";
 "watchWidgetDescription" = "Úroveň nabití vašeho Renaultu E-Tech";
+"watchSettings" = "Nastavení";
+"watchWidgetCar" = "Vůz ve widgetech";

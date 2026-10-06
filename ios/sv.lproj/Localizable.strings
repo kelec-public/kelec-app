@@ -110,3 +110,5 @@
 "tempoWidgetDescription" = "Visar information om din E-Tech Renault på din hemskärm med Tempo-indikatorn";
 "tempo2DaysWidgetDescription" = "Visar information om din E-Tech Renault på din hemskärm med Tempo-indikatorn för 2 dagar";
 "watchWidgetDescription" = "Laddningsnivå för din Renault E-Tech";
+"watchSettings" = "Inställningar";
+"watchWidgetCar" = "Bil som visas i widgetar";

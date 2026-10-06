@@ -111,3 +111,5 @@ Primero debes iniciar sesión en la aplicación.";
 "tempoWidgetDescription" = "Muestra información sobre su E-Tech Renault en su pantalla de inicio con la indicación Tempo";
 "tempo2DaysWidgetDescription" = "Muestra información sobre su E-Tech Renault en su pantalla de inicio con la indicación Tempo de 2 días";
 "watchWidgetDescription" = "Nivel de carga de su Renault E-Tech";
+"watchSettings" = "Ajustes";
+"watchWidgetCar" = "Coche de los widgets";

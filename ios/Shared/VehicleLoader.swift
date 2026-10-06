@@ -76,7 +76,11 @@ func widgetCar(account: UserAccount, configuredVin: String?) -> UserCar? {
   return account.cars.first
 }
 
-// watch: the first car
+// watch widgets: the car chosen in the watch app settings, else the first car
 func watchCar(account: UserAccount) -> UserCar? {
-  account.cars.first
+  if let vin = SharedStore.watchWidgetVin(),
+     let chosenCar = account.cars.first(where: { $0.car?.vin == vin }) {
+    return chosenCar
+  }
+  return account.cars.first
 }

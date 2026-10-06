@@ -110,3 +110,5 @@
 "tempoWidgetDescription" = "Viser information om din E-Tech Renault på din startskærm med Tempo-indikatoren";
 "tempo2DaysWidgetDescription" = "Viser information om din E-Tech Renault på din startskærm med Tempo-indikatoren for 2 dage";
 "watchWidgetDescription" = "Opladningsniveau for din Renault E-Tech";
+"watchSettings" = "Indstillinger";
+"watchWidgetCar" = "Bil i widgets";

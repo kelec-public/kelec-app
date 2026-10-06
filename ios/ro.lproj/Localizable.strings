@@ -117,3 +117,5 @@
 "tempoWidgetDescription" = "Colectează informațiile despre Renault E-Tech pe ecranul principal cu indicația Tempo";
 "tempo2DaysWidgetDescription" = "Colectează informațiile despre Renault E-Tech pe ecranul principal cu indicația Tempo pe 2 zile";
 "watchWidgetDescription" = "Nivelul de încărcare al Renault E-Tech";
+"watchSettings" = "Setări";
+"watchWidgetCar" = "Mașina afișată în widgeturi";

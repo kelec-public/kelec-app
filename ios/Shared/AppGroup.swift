@@ -22,6 +22,8 @@ enum StorageKey {
   static let account = "account"
   static let appPreferences = "appPreferences"
   static func carImage(vin: String) -> String { "\(vin)/image" }
+  // watch only: vin of the car shown by the watch widgets (watch app settings)
+  static let watchWidgetCar = "watchWidgetCar"
 
   // Keychain
   static func password(vin: String) -> String { "\(vin)_password" }

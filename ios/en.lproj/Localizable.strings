@@ -110,3 +110,5 @@
 "tempoWidgetDescription" = "Displays information about your E-Tech Renault on your Home Screen with the Tempo indicator";
 "tempo2DaysWidgetDescription" = "Displays information about your E-Tech Renault on your Home Screen with the Tempo indicator for 2 days";
 "watchWidgetDescription" = "Charge level of your Renault E-Tech";
+"watchSettings" = "Settings";
+"watchWidgetCar" = "Car shown on widgets";

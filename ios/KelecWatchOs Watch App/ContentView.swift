@@ -20,11 +20,12 @@ struct ContentView: View {
             loadAccount()
           }
       }else if let account = account, !account.cars.isEmpty {
-        // one page per car
+        // one page per car, then the settings
         TabView{
           ForEach(account.cars, id: \.car?.vin) { car in
             CarView(carAccount: car)
           }
+          WatchSettingsView(account: account)
         }
       }else{
         VStack{

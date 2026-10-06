@@ -117,3 +117,5 @@
 "tempoWidgetDescription" = "Ryhmittelee Renault E-Tech -tietosi ja Tempo-ilmaisimen aloitusnäytölle";
 "tempo2DaysWidgetDescription" = "Ryhmittelee Renault E-Tech -tietosi ja 2 päivän Tempo-ilmaisimen aloitusnäytölle";
 "watchWidgetDescription" = "Renault E-Tech -autosi lataustaso";
+"watchSettings" = "Asetukset";
+"watchWidgetCar" = "Widgeteissä näytettävä auto";

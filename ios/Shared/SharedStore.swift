@@ -22,6 +22,15 @@ enum SharedStore {
     AppGroup.userDefaults?.string(forKey: StorageKey.carImage(vin: vin)) ?? ""
   }
 
+  // watch only: the car chosen in the watch app settings for the watch widgets
+  static func watchWidgetVin() -> String? {
+    AppGroup.userDefaults?.string(forKey: StorageKey.watchWidgetCar)
+  }
+
+  static func saveWatchWidgetVin(_ vin: String) {
+    AppGroup.userDefaults?.set(vin, forKey: StorageKey.watchWidgetCar)
+  }
+
   // only used on the watch: on iPhone, the RN bridge writes these keys
   @discardableResult
   static func saveAccount(_ account: UserAccount) -> Bool {

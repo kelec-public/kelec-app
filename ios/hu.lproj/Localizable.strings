@@ -117,3 +117,5 @@
 "tempoWidgetDescription" = "Összegyűjti a Renault E-Tech adatait és a Tempo jelzést a kezdőképernyőn";
 "tempo2DaysWidgetDescription" = "Összegyűjti a Renault E-Tech adatait és a 2 napos Tempo jelzést a kezdőképernyőn";
 "watchWidgetDescription" = "A Renault E-Tech töltöttségi szintje";
+"watchSettings" = "Beállítások";
+"watchWidgetCar" = "A widgeteken megjelenő autó";

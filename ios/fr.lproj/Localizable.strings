@@ -117,3 +117,5 @@
 "tempoWidgetDescription" = "Regroupe les informations de votre Renault E-Tech sur votre écran d'accueil avec l'indication Tempo";
 "tempo2DaysWidgetDescription" = "Regroupe les informations de votre Renault E-Tech sur votre écran d'accueil avec l'indication Tempo sur 2 jours";
 "watchWidgetDescription" = "Niveau de charge de votre Renault E-Tech";
+"watchSettings" = "Réglages";
+"watchWidgetCar" = "Voiture affichée sur les widgets";

@@ -117,3 +117,5 @@
 "tempoWidgetDescription" = "Združite podatke o svojem vozilu Renault E-Tech na začetnem zaslonu s prikazom Tempo";
 "tempo2DaysWidgetDescription" = "Združite podatke o svojem vozilu Renault E-Tech na začetnem zaslonu s prikazom Tempo za 2 dni";
 "watchWidgetDescription" = "Raven napolnjenosti vašega vozila Renault E-Tech";
+"watchSettings" = "Nastavitve";
+"watchWidgetCar" = "Vozilo v pripomočkih";
