@@ -11,6 +11,7 @@ import Config from 'react-native-config';
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from '../../../kelec-model/view/Button';
 import { RenaultCredentials } from "../../../../lib/clients/carMakers/renaultCredentials";
+import { formatMileageEntry, lastMileageEntries } from "../../services/mileageHistoryDebug";
 
 type DebugZoneProps = {
     readonly setShowDebugZone: (showDebugZone: boolean) => void;
@@ -305,18 +306,23 @@ const DebugZoneView = ({ setShowDebugZone }: DebugZoneProps): React.JSX.Element 
                 }}>Cars available</Text>
         )
         for (const car of currentUser.getCars()) {
+            const vin = car.getCar()?.getVin() ?? '';
             return_node.push(
-                <TouchableOpacity
-                    key={car.getCar()?.getVin()}
-                    onPress={() => {
-                        const new_account = car as unknown as RenaultAccount;
-                        launchDebugForCar(car.getEmail(), car.getPassword(), new_account.getKamereonAccountID(), car.getCar()?.getVin() ?? '');
-                    }}>
-                    <Text style={{
-                        color: 'blue',
-                        fontSize: 20
-                    }}>{car.getCar()?.getModel()}</Text>
-                </TouchableOpacity>
+                <View key={vin} style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <TouchableOpacity
+                        onPress={() => {
+                            const new_account = car as unknown as RenaultAccount;
+                            launchDebugForCar(car.getEmail(), car.getPassword(), new_account.getKamereonAccountID(), vin);
+                        }}>
+                        <Text style={{
+                            color: 'blue',
+                            fontSize: 20
+                        }}>{car.getCar()?.getModel()}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => showMileageHistory(car.getCar()?.getModel() ?? vin, vin)}>
+                        <Text style={{ color: 'blue' }}>Mileage history</Text>
+                    </TouchableOpacity>
+                </View>
             )
         }
         return <View style={{
@@ -344,14 +350,24 @@ const DebugZoneView = ({ setShowDebugZone }: DebugZoneProps): React.JSX.Element 
 
     }
 
+    /** Les 10 dernières entrées de l'historique de kilométrage (écrit par le widget), dans les logs. */
+    const showMileageHistory = async (model: string, vin: string) => {
+        const entries = await lastMileageEntries(vin);
+        writeLog(`Mileage history of ${model} (${entries.length} last entries)`);
+        if (entries.length === 0) {
+            writeLog('No mileage history');
+        }
+        entries.forEach(entry => writeLog(formatMileageEntry(entry)));
+    }
+
     const displayLogs = (): React.ReactNode => {
         if (logs.length === 0) {
             return <Text>No logs available</Text>
         }
         let return_node = []
-        for (const log of logs) {
+        for (const [index, log] of logs.entries()) {
             return_node.push(
-                <Text key={log}>{log}</Text>
+                <Text key={index}>{log}</Text>
             )
         }
         return (
