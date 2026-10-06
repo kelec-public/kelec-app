@@ -91,7 +91,7 @@
 
 "informationSent" = "Informations envoyées";
 
-"preHeatLaunched" = "Préchauffage actif";
+"preHeatLaunched" = "Confort thermique actif";
 
 "error" = "Erreur";
 
@@ -99,11 +99,11 @@
 
 "Car" = "Voiture";
 
-"launchPreHeat"= "Lancer le préchauffage";
+"launchPreHeat"= "Lancer le confort thermique";
 
-"launchPreHeat ${car}" = "Lancer le préchauffage ${car}";
+"launchPreHeat ${car}" = "Lancer le confort thermique ${car}";
 
-"areYouSureYouWantToLaunchPreheating" = "Êtes-vous sûr de vouloir lancer le préchauffage ?";
+"areYouSureYouWantToLaunchPreheating" = "Êtes-vous sûr de vouloir lancer le confort thermique ?";
 
 "confirm" = "Confirmer";
 
