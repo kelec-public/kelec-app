@@ -112,11 +112,10 @@
 
 "cancel" = "Annuler";
 
-/* Texts not translated yet: the value is the text displayed until now */
 "tempoCarServerError" = "Impossible de se connecter au serveur Renault";
 "tempoRteServerError" = "Impossible de se connecter au serveur RTE";
 "tempoLoadingError" = "ERREUR CHARGEMENT DONNÉES";
-"watchCarLocationError" = "Impossible to get car location";
+"watchCarLocationError" = "Impossible de récupérer la position de la voiture";
 "tempoLockScreenWidgetDescription" = "Indication Tempo";
 "tempoWidgetDescription" = "Regroupe les informations de votre Renault E-Tech sur votre écran d'accueil avec l'indication Tempo";
 "tempo2DaysWidgetDescription" = "Regroupe les informations de votre Renault E-Tech sur votre écran d'accueil avec l'indication Tempo sur 2 jours";

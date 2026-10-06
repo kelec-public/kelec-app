@@ -112,12 +112,11 @@
 
 "cancel" = "Anulați";
 
-/* Texts not translated yet: the value is the text displayed until now */
-"tempoCarServerError" = "Impossible de se connecter au serveur Renault";
-"tempoRteServerError" = "Impossible de se connecter au serveur RTE";
-"tempoLoadingError" = "ERREUR CHARGEMENT DONNÉES";
-"watchCarLocationError" = "Impossible to get car location";
-"tempoLockScreenWidgetDescription" = "Indication Tempo";
-"tempoWidgetDescription" = "Regroupe les informations de votre Renault E-Tech sur votre écran d'accueil avec l'indication Tempo";
-"tempo2DaysWidgetDescription" = "Regroupe les informations de votre Renault E-Tech sur votre écran d'accueil avec l'indication Tempo sur 2 jours";
-"watchWidgetDescription" = "Niveau de charge de votre Renault E-Tech";
+"tempoCarServerError" = "Nu se poate conecta la serverul Renault";
+"tempoRteServerError" = "Nu se poate conecta la serverul RTE";
+"tempoLoadingError" = "EROARE LA ÎNCĂRCAREA DATELOR";
+"watchCarLocationError" = "Nu se poate obține locația mașinii";
+"tempoLockScreenWidgetDescription" = "Indicație Tempo";
+"tempoWidgetDescription" = "Colectează informațiile despre Renault E-Tech pe ecranul principal cu indicația Tempo";
+"tempo2DaysWidgetDescription" = "Colectează informațiile despre Renault E-Tech pe ecranul principal cu indicația Tempo pe 2 zile";
+"watchWidgetDescription" = "Nivelul de încărcare al Renault E-Tech";

@@ -112,12 +112,11 @@
 
 "cancel" = "Mégse";
 
-/* Texts not translated yet: the value is the text displayed until now */
-"tempoCarServerError" = "Impossible de se connecter au serveur Renault";
-"tempoRteServerError" = "Impossible de se connecter au serveur RTE";
-"tempoLoadingError" = "ERREUR CHARGEMENT DONNÉES";
-"watchCarLocationError" = "Impossible to get car location";
-"tempoLockScreenWidgetDescription" = "Indication Tempo";
-"tempoWidgetDescription" = "Regroupe les informations de votre Renault E-Tech sur votre écran d'accueil avec l'indication Tempo";
-"tempo2DaysWidgetDescription" = "Regroupe les informations de votre Renault E-Tech sur votre écran d'accueil avec l'indication Tempo sur 2 jours";
-"watchWidgetDescription" = "Niveau de charge de votre Renault E-Tech";
+"tempoCarServerError" = "Nem lehet csatlakozni a Renault szerverhez";
+"tempoRteServerError" = "Nem lehet csatlakozni az RTE szerverhez";
+"tempoLoadingError" = "HIBA AZ ADATOK BETÖLTÉSEKOR";
+"watchCarLocationError" = "Nem sikerült lekérni az autó helyzetét";
+"tempoLockScreenWidgetDescription" = "Tempo jelzés";
+"tempoWidgetDescription" = "Összegyűjti a Renault E-Tech adatait és a Tempo jelzést a kezdőképernyőn";
+"tempo2DaysWidgetDescription" = "Összegyűjti a Renault E-Tech adatait és a 2 napos Tempo jelzést a kezdőképernyőn";
+"watchWidgetDescription" = "A Renault E-Tech töltöttségi szintje";

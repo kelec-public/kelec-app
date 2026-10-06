@@ -106,12 +106,11 @@ Primero debes iniciar sesión en la aplicación.";
 
 "cancel" = "Cancelar";
 
-/* Texts not translated yet: the value is the text displayed until now */
-"tempoCarServerError" = "Impossible de se connecter au serveur Renault";
-"tempoRteServerError" = "Impossible de se connecter au serveur RTE";
-"tempoLoadingError" = "ERREUR CHARGEMENT DONNÉES";
-"watchCarLocationError" = "Impossible to get car location";
-"tempoLockScreenWidgetDescription" = "Indication Tempo";
-"tempoWidgetDescription" = "Regroupe les informations de votre Renault E-Tech sur votre écran d'accueil avec l'indication Tempo";
-"tempo2DaysWidgetDescription" = "Regroupe les informations de votre Renault E-Tech sur votre écran d'accueil avec l'indication Tempo sur 2 jours";
-"watchWidgetDescription" = "Niveau de charge de votre Renault E-Tech";
+"tempoCarServerError" = "Imposible conectar con el servidor de Renault";
+"tempoRteServerError" = "Imposible conectar con el servidor de RTE";
+"tempoLoadingError" = "ERROR AL CARGAR LOS DATOS";
+"watchCarLocationError" = "No se puede obtener la ubicación del coche";
+"tempoLockScreenWidgetDescription" = "Indicación Tempo";
+"tempoWidgetDescription" = "Muestra información sobre su E-Tech Renault en su pantalla de inicio con la indicación Tempo";
+"tempo2DaysWidgetDescription" = "Muestra información sobre su E-Tech Renault en su pantalla de inicio con la indicación Tempo de 2 días";
+"watchWidgetDescription" = "Nivel de carga de su Renault E-Tech";

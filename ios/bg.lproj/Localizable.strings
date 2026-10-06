@@ -57,7 +57,7 @@
 "watchOpenIphoneToSync" = "Отворете приложението на iPhone за синхронизиране";
 
 /* No comment provided by engineer. */
-"refresh" = "Rafraîchir";
+"refresh" = "Опресняване";
 
 /* No comment provided by engineer. */
 "widgetHomeScreenDescription" = "Обединява информация от вашия Renault E-Tech на вашия начален екран";
@@ -112,12 +112,11 @@
 
 "cancel" = "Отказ";
 
-/* Texts not translated yet: the value is the text displayed until now */
-"tempoCarServerError" = "Impossible de se connecter au serveur Renault";
-"tempoRteServerError" = "Impossible de se connecter au serveur RTE";
-"tempoLoadingError" = "ERREUR CHARGEMENT DONNÉES";
-"watchCarLocationError" = "Impossible to get car location";
-"tempoLockScreenWidgetDescription" = "Indication Tempo";
-"tempoWidgetDescription" = "Regroupe les informations de votre Renault E-Tech sur votre écran d'accueil avec l'indication Tempo";
-"tempo2DaysWidgetDescription" = "Regroupe les informations de votre Renault E-Tech sur votre écran d'accueil avec l'indication Tempo sur 2 jours";
-"watchWidgetDescription" = "Niveau de charge de votre Renault E-Tech";
+"tempoCarServerError" = "Невъзможно свързване със сървъра на Renault";
+"tempoRteServerError" = "Невъзможно свързване със сървъра на RTE";
+"tempoLoadingError" = "ГРЕШКА ПРИ ЗАРЕЖДАНЕ НА ДАННИТЕ";
+"watchCarLocationError" = "Местоположението на колата не може да бъде получено";
+"tempoLockScreenWidgetDescription" = "Индикация Tempo";
+"tempoWidgetDescription" = "Обединява информация от вашия Renault E-Tech на вашия начален екран с индикацията Tempo";
+"tempo2DaysWidgetDescription" = "Обединява информация от вашия Renault E-Tech на вашия начален екран с индикацията Tempo за 2 дни";
+"watchWidgetDescription" = "Ниво на заряд на вашия Renault E-Tech";

@@ -112,12 +112,11 @@
 
 "cancel" = "Prekliči";
 
-/* Texts not translated yet: the value is the text displayed until now */
-"tempoCarServerError" = "Impossible de se connecter au serveur Renault";
-"tempoRteServerError" = "Impossible de se connecter au serveur RTE";
-"tempoLoadingError" = "ERREUR CHARGEMENT DONNÉES";
-"watchCarLocationError" = "Impossible to get car location";
-"tempoLockScreenWidgetDescription" = "Indication Tempo";
-"tempoWidgetDescription" = "Regroupe les informations de votre Renault E-Tech sur votre écran d'accueil avec l'indication Tempo";
-"tempo2DaysWidgetDescription" = "Regroupe les informations de votre Renault E-Tech sur votre écran d'accueil avec l'indication Tempo sur 2 jours";
-"watchWidgetDescription" = "Niveau de charge de votre Renault E-Tech";
+"tempoCarServerError" = "Ni mogoče vzpostaviti povezave s strežnikom Renault";
+"tempoRteServerError" = "Ni mogoče vzpostaviti povezave s strežnikom RTE";
+"tempoLoadingError" = "NAPAKA PRI NALAGANJU PODATKOV";
+"watchCarLocationError" = "Lokacije avtomobila ni mogoče pridobiti";
+"tempoLockScreenWidgetDescription" = "Prikaz Tempo";
+"tempoWidgetDescription" = "Združite podatke o svojem vozilu Renault E-Tech na začetnem zaslonu s prikazom Tempo";
+"tempo2DaysWidgetDescription" = "Združite podatke o svojem vozilu Renault E-Tech na začetnem zaslonu s prikazom Tempo za 2 dni";
+"watchWidgetDescription" = "Raven napolnjenosti vašega vozila Renault E-Tech";
