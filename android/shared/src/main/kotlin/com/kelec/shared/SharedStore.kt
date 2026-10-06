@@ -56,7 +56,9 @@ class SharedStore(context: Context) {
     fun removeLegacyCarImages() {
         val keys = prefs.all.keys.filter { it.endsWith(StorageKey.LEGACY_CAR_IMAGE_SUFFIX) }
         if (keys.isEmpty()) return
-        prefs.edit().apply { keys.forEach(::remove) }.apply()
+        val editor = prefs.edit()
+        keys.forEach { editor.remove(it) }
+        editor.apply()
     }
 
     fun widgetVin(appWidgetId: Int): String? = getString(StorageKey.widgetVin(appWidgetId))?.takeIf { it.isNotEmpty() }

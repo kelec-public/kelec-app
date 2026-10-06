@@ -29,10 +29,10 @@ object WidgetUpdater {
             return
         }
 
-        val carByWidget = appWidgetIds.associateWith { account.carFor(store.widgetVin(it)) }
+        val carByWidget = appWidgetIds.mapNotNull { id -> account.carFor(store.widgetVin(id))?.let { id to it } }.toMap()
         val loader = VehicleLoader(context, ApiKeys.renault)
         val statusByVin = coroutineScope {
-            carByWidget.values.filterNotNull().distinctBy { it.vin }
+            carByWidget.values.distinctBy { it.vin }
                 .map { car -> async { car.vin to loader.load(car) } }
                 .awaitAll()
                 .toMap()
@@ -40,7 +40,7 @@ object WidgetUpdater {
 
         val prefs = store.loadPreferences()
         for ((appWidgetId, car) in carByWidget) {
-            val views = when (val status = car?.let { statusByVin[it.vin] }) {
+            val views = when (val status = statusByVin[car.vin]) {
                 is VehicleStatus.Loaded -> KelecWidgetViews.main(context, appWidgetId, status.battery, car, prefs)
                 VehicleStatus.NotLoggedIn -> KelecWidgetViews.error(context, context.getString(SharedR.string.not_yet_logged_in))
                 VehicleStatus.Unavailable, null -> KelecWidgetViews.error(context, context.getString(SharedR.string.widget_server_error))

@@ -31,7 +31,7 @@ class VehicleLoader(context: Context, private val keys: RenaultApiKeys) {
             return VehicleStatus.NotLoggedIn
         }
 
-        val client = RenaultApiClient(car.kamereonAccountId, cookieValue, keys, history::writeWidgetLog)
+        val client = RenaultApiClient(car.kamereonAccountId, cookieValue, keys) { history.writeWidgetLog(it) }
         return try {
             val status = client.fetchStatus(car.vin)
             history.saveBatteryStatus(car.vin, status.battery)
