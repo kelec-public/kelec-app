@@ -38,12 +38,7 @@ enum Keychain {
   static func save(_ key: String, value: String) -> Bool {
     guard let data = value.data(using: .utf8) else { return false }
 
-    let deleteQuery: [String: Any] = [
-      kSecClass as String: kSecClassGenericPassword,
-      kSecAttrAccount as String: key,
-      kSecAttrAccessGroup as String: AppGroup.id,
-    ]
-    SecItemDelete(deleteQuery as CFDictionary)
+    delete(key)
 
     let addQuery: [String: Any] = [
       kSecClass as String: kSecClassGenericPassword,
@@ -53,5 +48,17 @@ enum Keychain {
       kSecValueData as String: data,
     ]
     return SecItemAdd(addQuery as CFDictionary, nil) == errSecSuccess
+  }
+
+  // true when the item is deleted or was already missing
+  @discardableResult
+  static func delete(_ key: String) -> Bool {
+    let query: [String: Any] = [
+      kSecClass as String: kSecClassGenericPassword,
+      kSecAttrAccount as String: key,
+      kSecAttrAccessGroup as String: AppGroup.id,
+    ]
+    let status = SecItemDelete(query as CFDictionary)
+    return status == errSecSuccess || status == errSecItemNotFound
   }
 }

@@ -33,6 +33,7 @@
 		68555E0BB2E877291BF772FD /* ApiClients.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF671DF3293ADF6C2184565F /* ApiClients.swift */; };
 		6B1B546A12F6269678E1A28E /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66BE55BDD7A0395D7A763C6E /* Components.swift */; };
 		6C06E90D93B9480448F62A86 /* VehicleCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31931830D897FCA4F47DF7AE /* VehicleCache.swift */; };
+		6E8FEFE03DAC35D1153AE63B /* RNSharedWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846CAE31E8F3F0A8622A9220 /* RNSharedWidget.swift */; };
 		6FEBDE225E542F7D85D7A4F2 /* VehicleCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31931830D897FCA4F47DF7AE /* VehicleCache.swift */; };
 		73398D730D0D173381EF923E /* VehicleLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CFF2DD73D40078FF86337F /* VehicleLoader.swift */; };
 		7680BD205C7404D7A22EFFBE /* Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E0E227B58D232E3A68F80A5 /* Formatting.swift */; };
@@ -70,8 +71,6 @@
 		8931F41A2C2EB7180088CD21 /* CarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8931F4192C2EB7180088CD21 /* CarView.swift */; };
 		8931F41C2C2EB7380088CD21 /* BatteryCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8931F41B2C2EB7380088CD21 /* BatteryCardView.swift */; };
 		893FFEA82BA8506A006D7475 /* RNSharedWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 893FFEA72BA8506A006D7475 /* RNSharedWidget.m */; };
-		893FFEAC2BA850FC006D7475 /* WidgetKitHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 893FFEAB2BA850FC006D7475 /* WidgetKitHelper.swift */; };
-		893FFEAE2BA85164006D7475 /* RNSharedRefreshWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 893FFEAD2BA85164006D7475 /* RNSharedRefreshWidget.m */; };
 		893FFEB72BA8659A006D7475 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 893FFEB62BA8659A006D7475 /* WidgetKit.framework */; };
 		893FFEB92BA8659A006D7475 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 893FFEB82BA8659A006D7475 /* SwiftUI.framework */; };
 		893FFEBC2BA8659A006D7475 /* KeleciOSWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 893FFEBB2BA8659A006D7475 /* KeleciOSWidgetBundle.swift */; };
@@ -238,6 +237,7 @@
 		7D8FC3E77A32465185812C68 /* NouvelRRegular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = NouvelRRegular.ttf; path = ../assets/fonts/Renault/NouvelRRegular.ttf; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = Kelec/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		82D3A947D978E8DABF716AA3 /* SharedStore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SharedStore.swift; sourceTree = "<group>"; };
+		846CAE31E8F3F0A8622A9220 /* RNSharedWidget.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RNSharedWidget.swift; path = Kelec/RNSharedWidget.swift; sourceTree = "<group>"; };
 		8916EACD2BA8C55F00AF4659 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = MaterialCommunityIcons.ttf; path = "../../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		8916EACF2BA8C82100AF4659 /* Entypo.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = Entypo.ttf; path = "../../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		8916EAD02BA8C82100AF4659 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = SimpleLineIcons.ttf; path = "../../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
@@ -271,11 +271,7 @@
 		8931F4192C2EB7180088CD21 /* CarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarView.swift; sourceTree = "<group>"; };
 		8931F41B2C2EB7380088CD21 /* BatteryCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatteryCardView.swift; sourceTree = "<group>"; };
 		893FFEA72BA8506A006D7475 /* RNSharedWidget.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = RNSharedWidget.m; path = Kelec/RNSharedWidget.m; sourceTree = "<group>"; };
-		893FFEA92BA85082006D7475 /* RNSharedWidget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RNSharedWidget.h; path = Kelec/RNSharedWidget.h; sourceTree = "<group>"; };
 		893FFEAA2BA850FB006D7475 /* Kelec-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Kelec-Bridging-Header.h"; sourceTree = "<group>"; };
-		893FFEAB2BA850FC006D7475 /* WidgetKitHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WidgetKitHelper.swift; path = Kelec/WidgetKitHelper.swift; sourceTree = "<group>"; };
-		893FFEAD2BA85164006D7475 /* RNSharedRefreshWidget.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = RNSharedRefreshWidget.m; path = Kelec/RNSharedRefreshWidget.m; sourceTree = "<group>"; };
-		893FFEAF2BA85170006D7475 /* RNSharedRefreshWidget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RNSharedRefreshWidget.h; path = Kelec/RNSharedRefreshWidget.h; sourceTree = "<group>"; };
 		893FFEB02BA852AE006D7475 /* Kelec.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Kelec.entitlements; path = Kelec/Kelec.entitlements; sourceTree = "<group>"; };
 		893FFEB52BA8659A006D7475 /* KeleciOSWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = KeleciOSWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		893FFEB62BA8659A006D7475 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
@@ -441,12 +437,9 @@
 				EBD5D182306576FB000AEAE1 /* SceneDelegate.swift */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				893FFEA72BA8506A006D7475 /* RNSharedWidget.m */,
-				893FFEAD2BA85164006D7475 /* RNSharedRefreshWidget.m */,
-				893FFEAF2BA85170006D7475 /* RNSharedRefreshWidget.h */,
-				893FFEAB2BA850FC006D7475 /* WidgetKitHelper.swift */,
-				893FFEA92BA85082006D7475 /* RNSharedWidget.h */,
 				893FFEAA2BA850FB006D7475 /* Kelec-Bridging-Header.h */,
 				FA8D1F2F1ABA231C68E0DCBC /* PrivacyInfo.xcprivacy */,
+				846CAE31E8F3F0A8622A9220 /* RNSharedWidget.swift */,
 			);
 			name = Kelec;
 			sourceTree = "<group>";
@@ -1190,12 +1183,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				EB334B602D523C60007CB65D /* LaunchHVACIntent.swift in Sources */,
-				893FFEAC2BA850FC006D7475 /* WidgetKitHelper.swift in Sources */,
 				893FFEA82BA8506A006D7475 /* RNSharedWidget.m in Sources */,
 				EB334B662D524C2B007CB65D /* CarEntity.swift in Sources */,
 				EBD5D183306576FB000AEAE1 /* SceneDelegate.swift in Sources */,
 				EB2EC5602D9DBC7D001C6DD8 /* AppDelegare.swift in Sources */,
-				893FFEAE2BA85164006D7475 /* RNSharedRefreshWidget.m in Sources */,
 				027FF251EF9894ECC6BD27B2 /* AppGroup.swift in Sources */,
 				0522E46CF11C81A722038C23 /* Keychain.swift in Sources */,
 				1DE85FEA504A939EF4862700 /* SharedStore.swift in Sources */,
@@ -1204,6 +1195,7 @@
 				7680BD205C7404D7A22EFFBE /* Formatting.swift in Sources */,
 				D4E42A74467E599989EF7CC3 /* RenaultSession.swift in Sources */,
 				C502E4C627A6E995A1BB5816 /* ApiClients.swift in Sources */,
+				6E8FEFE03DAC35D1153AE63B /* RNSharedWidget.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
