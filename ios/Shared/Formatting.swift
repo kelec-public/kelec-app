@@ -28,6 +28,33 @@ func formatChargingTime(minutes: Int) -> String {
   return "\(minutes/60)h\(minutes%60 <= 9 ? "0" : "")\(minutes%60)"
 }
 
+// number rounded and grouped by thousands with spaces, as "45 801"
+func formatNumber(_ number: Double) -> String {
+  let formatter = NumberFormatter()
+  formatter.numberStyle = .decimal
+  formatter.maximumFractionDigits = 0
+  formatter.roundingMode = .halfUp
+  formatter.usesGroupingSeparator = true
+  formatter.groupingSeparator = " "
+  return formatter.string(from: NSNumber(value: number)) ?? String(Int(number.rounded()))
+}
+
+// SF Symbol of the battery for a level in percent
+func getBatteryIcon(batteryLevel: Int) -> String {
+  switch batteryLevel {
+  case 0...20:
+    return "battery.0percent"
+  case 21...40:
+    return "battery.25percent"
+  case 41...60:
+    return "battery.50percent"
+  case 61...80:
+    return "battery.75percent"
+  default:
+    return "battery.100percent"
+  }
+}
+
 func getChargingColour(isV2GorV2L: Bool)->Color {
   return isV2GorV2L ? .orange : .green
 }

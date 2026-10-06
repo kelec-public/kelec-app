@@ -54,3 +54,20 @@ struct CarWidgetStateView<Content: View>: View {
 func carStatusIcon(isPlugged: Bool, isCharging: Bool) -> String {
   isPlugged ? (isCharging ? "bolt.car.fill" : "bolt") : "car.fill"
 }
+
+extension ApiHandler {
+  // green, or orange when the car gives its energy (V2G / V2L)
+  var chargingColour: Color {
+    getChargingColour(isV2GorV2L: getIsV2GorV2L())
+  }
+
+  // the charging colour while plugged, else the given one
+  func chargingColour(unplugged: Color) -> Color {
+    getIsCarPlugged() ? chargingColour : unplugged
+  }
+
+  // remaining charging time as "2h05", "--h--" when the car is not charging or full
+  var chargingTimeText: String {
+    (!getIsCarCharging() || getBatteryLevel() == 100) ? "--h--" : formatChargingTime(minutes: getChargingRemainingTime())
+  }
+}

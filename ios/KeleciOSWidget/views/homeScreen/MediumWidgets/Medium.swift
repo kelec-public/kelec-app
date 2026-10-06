@@ -69,7 +69,7 @@ struct MediumCarWidgetView: View{
           HStack(spacing: 0) {
             Rectangle()
               .widgetAccentable()
-              .foregroundColor(getChargingColour(isV2GorV2L: apiHandler.getIsV2GorV2L()))
+              .foregroundColor(apiHandler.chargingColour)
               .frame(width: CGFloat(
                 (apiHandler.getChargeLimit()*Int(geo.size.width)))/100, height: 15
               )
@@ -80,7 +80,7 @@ struct MediumCarWidgetView: View{
           HStack(spacing: 0) {
             Rectangle()
               .widgetAccentable()
-              .foregroundColor(apiHandler.getIsCarPlugged() ? getChargingColour(isV2GorV2L: apiHandler.getIsV2GorV2L()) : .blue)
+              .foregroundColor(apiHandler.chargingColour(unplugged: .blue))
               .frame(width: CGFloat((apiHandler.getBatteryLevel()*Int(geo.size.width)))/100, height: 15)
               .cornerRadius(7)
             Spacer()
@@ -110,7 +110,7 @@ struct MediumCarWidgetView: View{
               HStack(spacing: 15){
                 HStack(spacing: 3) {
                   Image(systemName: "hourglass")
-                  Text((!apiHandler.getIsCarCharging() || apiHandler.getBatteryLevel() == 100) ? "--h--" : formatChargingTime(minutes: apiHandler.getChargingRemainingTime()))
+                  Text(apiHandler.chargingTimeText)
                 }
                 HStack(spacing: 3) {
                   Image(systemName: "bolt.batteryblock.fill")
@@ -136,69 +136,8 @@ struct MediumCarWidgetView: View{
 #Preview(as: .systemMedium) {
   KeleciOSWidget()
 } timeline: {
-  let date = Date() - 60 * 14
-  let car = UserCar(email: "email", password: "password", carMaker: "renault")
-  let carAlpine = UserCar(email: "email", password: "password", carMaker: "alpine")
-  let carDacia = UserCar(email: "email", password: "password", carMaker: "dacia")
-  let carAccount = UserAccount(cars: [car])
-  let carAccountAlpine = UserAccount(cars: [carAlpine])
-  let carAccountDacia = UserAccount(cars: [carDacia])
-  let renaultBatteryStatus = RenaultBatteryStatus(
-    timestamp: "2025-07-15T08:40:54Z", batteryLevel: 69, batteryAutonomy: 216, batteryCapacity: nil,
-    batteryAvailableEnergy: nil, plugStatus: 0, chargingStatus: 0, chargingRemainingTime: 150,
-    chargingInstantaneousPower: nil)
-  var renaultApiHandler = RenaultApiHandler(batteryStatus: renaultBatteryStatus)
-
-  let cockpitStatus = RenaultCockpitStatus(totalMilage: 45801)
-  let result: Void = renaultApiHandler.setCockpitStatus(cockpitStatus: cockpitStatus)
-  
-  
-  let renaultBatteryStatus2 = RenaultBatteryStatus(
-    timestamp: "2025-07-15T08:40:54Z", batteryLevel: 69, batteryAutonomy: 216, batteryCapacity: nil,
-    batteryAvailableEnergy: nil, plugStatus: 1, chargingStatus: 1, chargingRemainingTime: 150,
-    chargingInstantaneousPower: nil)
-  var renaultApiHandler2 = RenaultApiHandler(batteryStatus: renaultBatteryStatus2)
-  let result2: Void = renaultApiHandler2.setCockpitStatus(cockpitStatus: cockpitStatus)
-  
-  let renaultBatteryStatus3 = RenaultBatteryStatus(
-    timestamp: "2025-07-15T08:40:54Z", batteryLevel: 69, batteryAutonomy: 216, batteryCapacity: nil,
-    batteryAvailableEnergy: nil, plugStatus: 1, chargingStatus: -1, chargingRemainingTime: 150,
-    chargingInstantaneousPower: nil)
-  var renaultApiHandler3 = RenaultApiHandler(batteryStatus: renaultBatteryStatus3)
-  let result3: Void = renaultApiHandler3.setCockpitStatus(cockpitStatus: cockpitStatus)
-  
-  let renaultBatteryStatus4 = RenaultBatteryStatus(
-    timestamp: "2025-07-15T08:40:54Z", batteryLevel: 100, batteryAutonomy: 216, batteryCapacity: nil,
-    batteryAvailableEnergy: nil, plugStatus: 1, chargingStatus: 0.4, chargingRemainingTime: 150,
-    chargingInstantaneousPower: nil)
-  var renaultApiHandler4 = RenaultApiHandler(batteryStatus: renaultBatteryStatus4)
-  let result4: Void = renaultApiHandler4.setCockpitStatus(cockpitStatus: cockpitStatus)
-  
-  let renaultBatteryStatus5 = RenaultBatteryStatus(
-    timestamp: "2025-07-15T08:40:54Z", batteryLevel: 100, batteryAutonomy: 216, batteryCapacity: nil,
-    batteryAvailableEnergy: nil, plugStatus: 1, chargingStatus: -1.3, chargingRemainingTime: 150,
-    chargingInstantaneousPower: nil)
-  var renaultApiHandler5 = RenaultApiHandler(batteryStatus: renaultBatteryStatus5)
-  let result5: Void = renaultApiHandler5.setCockpitStatus(cockpitStatus: cockpitStatus)
-
-  SimpleEntry(
-    date: Date() - 60 * 12, account: carAccountDacia, userCar: carDacia, carName: "Dacia Spring",
-    image: "megane", appPreferences: nil, apiHandler: renaultApiHandler)
-  // plugged and charging
-  SimpleEntry(
-    date: Date() - 60 * 12, account: carAccountAlpine, userCar: carAlpine, carName: "Alpine A290",
-    image: "megane", appPreferences: nil, apiHandler: renaultApiHandler2)
-  // plugged but not charging
-  SimpleEntry(
-    date: Date() - 60 * 12, account: carAccount, userCar: car, carName: "Megane E-Tech",
-    image: "megane", appPreferences: nil, apiHandler: renaultApiHandler3)
-  // charged 100%
-  SimpleEntry(
-    date: Date() - 60 * 12, account: carAccount, userCar: car, carName: "Megane E-Tech",
-    image: "megane", appPreferences: nil, apiHandler: renaultApiHandler4)
-  // v2g
-  SimpleEntry(
-    date: Date() - 60 * 12, account: carAccount, userCar: car, carName: "Megane E-Tech",
-    image: "megane", appPreferences: nil, apiHandler: renaultApiHandler5)
-  
+  SimpleEntry.previewStates(cars: [
+    (UserCar(email: "", password: "", carMaker: "dacia"), "Dacia Spring"),
+    (UserCar(email: "", password: "", carMaker: "alpine"), "Alpine A290"),
+  ])
 }

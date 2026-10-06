@@ -54,9 +54,9 @@ ios/
 │   ├── ApiClients.swift            getCarMakerApiClient, mot de passe (Keychain), sendHVACCommand, client RTE
 │   ├── RenaultSession.swift        Cookies de session Renault (Keychain)
 │   ├── Models.swift                UserAccount, UserCar (+ maker: CarMaker), CarModel
-│   ├── Formatting.swift            Dates, « 2h05 », couleur de charge, localized(_:)
-│   ├── WidgetComponents.swift      widgetBackground(), CarWidgetStateView, WidgetStyle, carStatusIcon
-│   └── PreviewData.swift           Données de démo des widgets
+│   ├── Formatting.swift            Dates, « 2h05 », « 45 801 », icône de batterie, couleur de charge, localized(_:)
+│   ├── WidgetComponents.swift      widgetBackground(), CarWidgetStateView, WidgetStyle, carStatusIcon, extension `ApiHandler` (couleur et durée de charge)
+│   └── PreviewData.swift           Données de démo des widgets (dont les 5 états des previews)
 ├── Kelec/RNSharedWidget.swift (+ .m)  Bridge RN en Swift, méthodes en promesses
 ├── Intents/                        CarEntity / CarQuery, LaunchHVACIntent (Siri)
 ├── KeleciOSWidget/                 Widgets iOS : providers, vues (Small, Medium, Tempo, écran verrouillé), Tempo.swift
