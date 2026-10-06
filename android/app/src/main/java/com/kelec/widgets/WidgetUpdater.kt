@@ -39,7 +39,7 @@ object WidgetUpdater {
             return
         }
 
-        val carByWidget = appWidgetIds.mapNotNull { id -> widgetCar(account, store.widgetVin(id), history)?.let { id to it } }.toMap()
+        val carByWidget = appWidgetIds.toList().mapNotNull { id -> widgetCar(account, store.widgetVin(id), history)?.let { id to it } }.toMap()
         val loader = VehicleLoader(context, ApiKeys.renault)
         val statusByVin = coroutineScope {
             carByWidget.values.distinctBy { it.vin }

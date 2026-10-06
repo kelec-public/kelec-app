@@ -22,7 +22,7 @@ export async function exportWidgetLogs(): Promise<void> {
         sharing
             ?.then(res => console.log(res))
             .catch(err => {
-                Alert.alert('Erreur 2');
+                Alert.alert('Error');
                 err && console.log(err);
             });
     } catch (e) {
