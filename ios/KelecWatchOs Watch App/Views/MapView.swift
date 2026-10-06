@@ -32,7 +32,7 @@ struct MapView: View {
           await fetchCarLocation()
         }
     case .failed:
-      Text("Impossible to get car location")
+      Text("watchCarLocationError")
     case .loaded(let coordinate):
       Map(
         coordinateRegion: .constant(MKCoordinateRegion(

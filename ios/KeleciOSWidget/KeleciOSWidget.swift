@@ -89,7 +89,7 @@ struct KeleciOSWidget: Widget {
 
     .contentMarginsDisabledIfAvailable()
     .configurationDisplayName("Renault E-Tech")
-    .description(String(localized: "Regroupe les informations de votre Renault E-Tech sur votre écran d'accueil"))
+    .description(String(localized: "widgetHomeScreenDescription"))
     .supportedFamilies([.systemMedium, .systemSmall])
   }
 }
@@ -104,7 +104,7 @@ struct KeleciOSWidget2: Widget {
 
     .contentMarginsDisabledIfAvailable()
     .configurationDisplayName("Renault E-Tech")
-    .description(String(localized: "Regroupe les informations de votre Renault E-Tech sur votre écran d'accueil"))
+    .description(String(localized: "widgetHomeScreenDescription"))
     .supportedFamilies([.systemMedium])
   }
 }
@@ -141,7 +141,7 @@ struct KelecLockScreenWidget: Widget {
       KelecLockScreenWidgetEntryView(entry: entry)
     }
     .configurationDisplayName("Renault E-Tech")
-    .description(LocalizedStringKey("Regroupe les informations de votre Renault E-Tech sur votre écran de verrouillage").stringValue())
+    .description(LocalizedStringKey("widgetLockScreenDescription").stringValue())
     .supportedFamilies([.accessoryRectangular, .accessoryInline, .accessoryCircular])
   }
 }
@@ -154,7 +154,7 @@ struct KelecLockScreenWidgetAlternative: Widget{
       KelecLockScreenWidgetEntryView(entry: entry, alternative: 1)
     }
     .configurationDisplayName("Renault E-Tech")
-    .description(LocalizedStringKey("Regroupe les informations de votre Renault E-Tech sur votre écran de verrouillage").stringValue())
+    .description(LocalizedStringKey("widgetLockScreenDescription").stringValue())
     .supportedFamilies([.accessoryCircular])
   }
   

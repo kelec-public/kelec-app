@@ -29,14 +29,14 @@ struct ContentView: View {
       }else{
         VStack{
           Text(account == nil
-               ? LocalizedStringKey("Ouvrez l'appli sur l'iPhone pour synchroniser")
-               : LocalizedStringKey("Ajoutez un véhicule sur l'appli sur iPhone"))
+               ? LocalizedStringKey("watchOpenIphoneToSync")
+               : LocalizedStringKey("watchAddVehicleOnIphone"))
           Button{
             loadAccount()
           }label: {
             HStack{
               Image(systemName: "arrow.clockwise")
-              Text("Rafraîchir")
+              Text("refresh")
             }
           }
           .buttonStyle(.bordered)

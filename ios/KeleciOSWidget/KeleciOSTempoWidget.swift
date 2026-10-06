@@ -65,7 +65,7 @@ struct KeleciOSTempoWidget: Widget {
     }
     .contentMarginsDisabledIfAvailable()
     .configurationDisplayName("Renault E-Tech Tempo")
-    .description(LocalizedStringKey("Regroupe les informations de votre Renault E-Tech sur votre écran d'accueil avec l'indication Tempo").stringValue())
+    .description(LocalizedStringKey("tempoWidgetDescription").stringValue())
     .supportedFamilies([.systemMedium])
   }
 }
@@ -79,7 +79,7 @@ struct KeleciOSTempo2DaysWidget: Widget {
     }
     .contentMarginsDisabledIfAvailable()
     .configurationDisplayName("Renault E-Tech Tempo")
-    .description(LocalizedStringKey("Regroupe les informations de votre Renault E-Tech sur votre écran d'accueil avec l'indication Tempo sur 2 jours").stringValue())
+    .description(LocalizedStringKey("tempo2DaysWidgetDescription").stringValue())
     .supportedFamilies([.systemMedium])
   }
 }

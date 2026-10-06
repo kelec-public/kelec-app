@@ -100,7 +100,7 @@ struct KelecWatchOSWidget: Widget {
             KelecWatchOSWidgetEntryView(entry: entry)
         }
         .configurationDisplayName("Renault E-Tech")
-        .description("Niveau de charge de votre Renault E-Tech")
+        .description("watchWidgetDescription")
         .supportedFamilies([.accessoryCircular, .accessoryInline, .accessoryRectangular, .accessoryCorner])
     }
 }
@@ -113,7 +113,7 @@ struct KelecWatchOSWidgetAlternative: Widget {
           KelecWatchOSWidgetEntryView(alternative: 1, entry: entry)
         }
         .configurationDisplayName("Renault E-Tech Alternative")
-        .description("Niveau de charge de votre Renault E-Tech")
+        .description("watchWidgetDescription")
         .supportedFamilies([.accessoryCircular])
     }
 }

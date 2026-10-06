@@ -42,37 +42,37 @@
 "| %lldkm" = "| %lldkm";
 
 /* No comment provided by engineer. */
-"Ajoutez un véhicule sur l'appli sur iPhone" = "Dodajte vozilo u aplikaciju na iPhoneu";
+"watchAddVehicleOnIphone" = "Dodajte vozilo u aplikaciju na iPhoneu";
 
 /* No comment provided by engineer. */
 "error" = "error";
 
 /* No comment provided by engineer. */
-"Impossible de se connecter au serveur" = "Nije moguće povezivanje sa serverom";
+"widgetServerError" = "Nije moguće povezivanje sa serverom";
 
 /* No comment provided by engineer. */
-"Impossible de se connecter au serveur %@" = "Nije moguće povezivanje sa serverom %@";
+"carMakerServerError %@" = "Nije moguće povezivanje sa serverom %@";
 
 /* No comment provided by engineer. */
-"Ouvrez l'appli sur l'iPhone pour synchroniser" = "Otvorite aplikaciju na svom iPhoneu za sinkronizaciju";
+"watchOpenIphoneToSync" = "Otvorite aplikaciju na svom iPhoneu za sinkronizaciju";
 
 /* No comment provided by engineer. */
-"Rafraîchir" = "Osvježiti";
+"refresh" = "Osvježiti";
 
 /* No comment provided by engineer. */
-"Regroupe les informations de votre Renault E-Tech sur votre écran d'accueil" = "Grupira informacije o vašem Renault E-Tech uređaju na početnom zaslonu";
+"widgetHomeScreenDescription" = "Grupira informacije o vašem Renault E-Tech uređaju na početnom zaslonu";
 
 /* No comment provided by engineer. */
-"Regroupe les informations de votre Renault E-Tech sur votre écran de verrouillage" = "Grupira podatke o vašem Renault E-Tech uređaju na zaključanom zaslonu";
+"widgetLockScreenDescription" = "Grupira podatke o vašem Renault E-Tech uređaju na zaključanom zaslonu";
 
 /* No comment provided by engineer. */
 "Renault E-Tech" = "Renault E-Tech";
 
 /* No comment provided by engineer. */
-"Vous devez d'abord sélectionner une voiture sur l'appli" = "Prvo morate odabrati automobil u aplikaciji";
+"widgetNoCarSelected" = "Prvo morate odabrati automobil u aplikaciji";
 
 /* No comment provided by engineer. */
-"Vous devez d'abord vous connecter sur l'appli" = "Prvo se morate prijaviti u aplikaciju";
+"widgetNotLoggedIn" = "Prvo se morate prijaviti u aplikaciju";
 
 "CHARGE PLANIFIÉE | " = "Punjenje zakazano | ";
 
@@ -111,3 +111,13 @@
 "confirm" = "Potvrdi";
 
 "cancel" = "Otkazati";
+
+/* Texts not translated yet: the value is the text displayed until now */
+"tempoCarServerError" = "Impossible de se connecter au serveur Renault";
+"tempoRteServerError" = "Impossible de se connecter au serveur RTE";
+"tempoLoadingError" = "ERREUR CHARGEMENT DONNÉES";
+"watchCarLocationError" = "Impossible to get car location";
+"tempoLockScreenWidgetDescription" = "Indication Tempo";
+"tempoWidgetDescription" = "Regroupe les informations de votre Renault E-Tech sur votre écran d'accueil avec l'indication Tempo";
+"tempo2DaysWidgetDescription" = "Regroupe les informations de votre Renault E-Tech sur votre écran d'accueil avec l'indication Tempo sur 2 jours";
+"watchWidgetDescription" = "Niveau de charge de votre Renault E-Tech";

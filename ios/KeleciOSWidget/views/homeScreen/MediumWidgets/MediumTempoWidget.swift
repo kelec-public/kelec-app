@@ -17,7 +17,7 @@ struct KeleciOSTempoEntryView: View {
   var body: some View{
     switch family{
     case .systemMedium:
-      CarWidgetStateView(account: entry.account, userCar: entry.userCar, apiHandler: entry.apiHandler, serverError: "Impossible de se connecter au serveur Renault") { account, userCar, apiHandler in
+      CarWidgetStateView(account: entry.account, userCar: entry.userCar, apiHandler: entry.apiHandler, serverError: "tempoCarServerError") { account, userCar, apiHandler in
         if let tempoApi = entry.tempoApi {
           if (self.twoDays) {
             KeleciOSTempoMedium2DaysWidgetView(date: entry.date, carAccount: account, apiHandler: apiHandler, userCar: userCar, image: entry.image, value: entry.carName, appPreferences: entry.appPreferences, tempoApi: tempoApi)
@@ -27,7 +27,7 @@ struct KeleciOSTempoEntryView: View {
               .widgetBackground()
           }
         } else {
-          Text("Impossible de se connecter au serveur RTE")
+          Text("tempoRteServerError")
         }
       }
     default:

@@ -39,7 +39,7 @@ struct CarView: View {
                 .resizable()
                 .scaledToFit()
 
-              Text("Impossible de se connecter au serveur \(carAccount.getCarMaker())")
+              Text("carMakerServerError \(carAccount.getCarMaker())")
               Button{
                 Task{
                   await viewModel.load()

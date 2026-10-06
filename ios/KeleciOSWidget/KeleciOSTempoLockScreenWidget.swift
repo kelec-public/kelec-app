@@ -52,7 +52,7 @@ struct iosTempoLockScreenInline: View {
       Text("\(TempoStyle.formatDate(tempoApi!.latestDate)) \(LocalizedStringKey(tempoApi!.latestColour).stringValue())")
           .fontWeight(.bold)
     }else{
-      Text("ERREUR CHARGEMENT DONNÉES")
+      Text("tempoLoadingError")
     }
   }
 }
@@ -75,7 +75,7 @@ struct iosTempoLockScreenRectangular: View {
        
       }
     }else{
-      Text("ERREUR CHARGEMENT DONNÉES")
+      Text("tempoLoadingError")
     }
   }
 }
@@ -94,7 +94,7 @@ struct iosTempoLockScreen: Widget {
       iosTempoLockScreenEntryView(entry: entry)
     }
     .configurationDisplayName("Tempo")
-    .description("Indication Tempo")
+    .description("tempoLockScreenWidgetDescription")
     .supportedFamilies([.accessoryRectangular, .accessoryInline, .accessoryCircular])
   }
 }

@@ -13,6 +13,7 @@
 		0522E46CF11C81A722038C23 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96768361AC72CE554B71B05 /* Keychain.swift */; };
 		0699818AD13121B6A49E8C16 /* AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0484D79BAF8B9723903AA259 /* AppGroup.swift */; };
 		0CA493BBD944CC98E256ABD8 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96768361AC72CE554B71B05 /* Keychain.swift */; };
+		108337CD00330DB1A4F1F155 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 89F9E84E2C2C927F00CF7619 /* Localizable.strings */; };
 		110CEAA297B19DF2B7A3C165 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96768361AC72CE554B71B05 /* Keychain.swift */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		1576436AB6B5C6F002090E87 /* AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0484D79BAF8B9723903AA259 /* AppGroup.swift */; };
@@ -1036,6 +1037,7 @@
 			files = (
 				EB94F8812FB3C22F004E0BB4 /* Config.xcconfig in Resources */,
 				89E47DC82C2EDB8C00CD1A27 /* Assets.xcassets in Resources */,
+				108337CD00330DB1A4F1F155 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -28,7 +28,7 @@ struct CarWidgetStateView<Content: View>: View {
   var account: UserAccount?
   var userCar: UserCar?
   var apiHandler: ApiHandler?
-  var serverError: LocalizedStringKey = "Impossible de se connecter au serveur"
+  var serverError: LocalizedStringKey = "widgetServerError"
   @ViewBuilder var content: (UserAccount, UserCar, ApiHandler) -> Content
 
   var body: some View {
@@ -40,10 +40,10 @@ struct CarWidgetStateView<Content: View>: View {
           Text(serverError)
         }
       } else {
-        Text("Vous devez d'abord sélectionner une voiture sur l'appli")
+        Text("widgetNoCarSelected")
       }
     } else {
-      Text("Vous devez d'abord vous connecter sur l'appli")
+      Text("widgetNotLoggedIn")
     }
   }
 }
