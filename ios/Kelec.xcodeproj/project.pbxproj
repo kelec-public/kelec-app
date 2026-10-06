@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		00E356F31AD99517003FC87E /* KelecTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* KelecTests.m */; };
 		027FF251EF9894ECC6BD27B2 /* AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0484D79BAF8B9723903AA259 /* AppGroup.swift */; };
 		034DDA17759C5EF34D57CDE7 /* Formatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E0E227B58D232E3A68F80A5 /* Formatting.swift */; };
 		0522E46CF11C81A722038C23 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96768361AC72CE554B71B05 /* Keychain.swift */; };
@@ -30,7 +29,6 @@
 		568D49E7F0A160C6BED20438 /* VehicleCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31931830D897FCA4F47DF7AE /* VehicleCache.swift */; };
 		5B8CFD18C4A7A20058F883A0 /* ApiClients.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF671DF3293ADF6C2184565F /* ApiClients.swift */; };
 		5C6A7AC9B97884F8DFE646C9 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = FA8D1F2F1ABA231C68E0DCBC /* PrivacyInfo.xcprivacy */; };
-		620ADEEF920BA2F39935574C /* libPods-Kelec-KelecTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D594780007EADAB715A8B525 /* libPods-Kelec-KelecTests.a */; };
 		65BBCDE07F59BDE0F9570AED /* WidgetComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95387443BC55A8F2134CF2D6 /* WidgetComponents.swift */; };
 		68555E0BB2E877291BF772FD /* ApiClients.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF671DF3293ADF6C2184565F /* ApiClients.swift */; };
 		6B1B546A12F6269678E1A28E /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66BE55BDD7A0395D7A763C6E /* Components.swift */; };
@@ -65,9 +63,6 @@
 		8931F3EA2C2EB57B0088CD21 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8931F3E92C2EB57B0088CD21 /* ContentView.swift */; };
 		8931F3EC2C2EB57C0088CD21 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8931F3EB2C2EB57C0088CD21 /* Assets.xcassets */; };
 		8931F3EF2C2EB57C0088CD21 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8931F3EE2C2EB57C0088CD21 /* Preview Assets.xcassets */; };
-		8931F3F92C2EB57C0088CD21 /* KelecWatchOs_Watch_AppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8931F3F82C2EB57C0088CD21 /* KelecWatchOs_Watch_AppTests.swift */; };
-		8931F4032C2EB57C0088CD21 /* KelecWatchOs_Watch_AppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8931F4022C2EB57C0088CD21 /* KelecWatchOs_Watch_AppUITests.swift */; };
-		8931F4052C2EB57C0088CD21 /* KelecWatchOs_Watch_AppUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8931F4042C2EB57C0088CD21 /* KelecWatchOs_Watch_AppUITestsLaunchTests.swift */; };
 		8931F4082C2EB57C0088CD21 /* Kelec.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 8931F3E52C2EB57B0088CD21 /* Kelec.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		8931F41A2C2EB7180088CD21 /* CarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8931F4192C2EB7180088CD21 /* CarView.swift */; };
 		8931F41C2C2EB7380088CD21 /* BatteryCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8931F41B2C2EB7380088CD21 /* BatteryCardView.swift */; };
@@ -141,27 +136,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		00E356F41AD99517003FC87E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
-			remoteInfo = Kelec;
-		};
-		8931F3F52C2EB57C0088CD21 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 8931F3E42C2EB57B0088CD21;
-			remoteInfo = "KelecWatchOs Watch App";
-		};
-		8931F3FF2C2EB57C0088CD21 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 8931F3E42C2EB57B0088CD21;
-			remoteInfo = "KelecWatchOs Watch App";
-		};
 		8931F4062C2EB57C0088CD21 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
@@ -222,9 +196,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		00E356EE1AD99517003FC87E /* KelecTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KelecTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		00E356F21AD99517003FC87E /* KelecTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KelecTests.m; sourceTree = "<group>"; };
 		0484D79BAF8B9723903AA259 /* AppGroup.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppGroup.swift; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Kelec.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Kelec.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Kelec/Images.xcassets; sourceTree = "<group>"; };
@@ -266,11 +237,6 @@
 		8931F3E92C2EB57B0088CD21 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		8931F3EB2C2EB57C0088CD21 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8931F3EE2C2EB57C0088CD21 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		8931F3F42C2EB57C0088CD21 /* KelecWatchOs Watch AppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "KelecWatchOs Watch AppTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		8931F3F82C2EB57C0088CD21 /* KelecWatchOs_Watch_AppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KelecWatchOs_Watch_AppTests.swift; sourceTree = "<group>"; };
-		8931F3FE2C2EB57C0088CD21 /* KelecWatchOs Watch AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "KelecWatchOs Watch AppUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		8931F4022C2EB57C0088CD21 /* KelecWatchOs_Watch_AppUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KelecWatchOs_Watch_AppUITests.swift; sourceTree = "<group>"; };
-		8931F4042C2EB57C0088CD21 /* KelecWatchOs_Watch_AppUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KelecWatchOs_Watch_AppUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		8931F4192C2EB7180088CD21 /* CarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarView.swift; sourceTree = "<group>"; };
 		8931F41B2C2EB7380088CD21 /* BatteryCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatteryCardView.swift; sourceTree = "<group>"; };
 		893FFEA72BA8506A006D7475 /* RNSharedWidget.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = RNSharedWidget.m; path = Kelec/RNSharedWidget.m; sourceTree = "<group>"; };
@@ -305,9 +271,7 @@
 		90869F49878796ACE139FE0E /* Pods-Kelec.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Kelec.release.xcconfig"; path = "Target Support Files/Pods-Kelec/Pods-Kelec.release.xcconfig"; sourceTree = "<group>"; };
 		95387443BC55A8F2134CF2D6 /* WidgetComponents.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WidgetComponents.swift; sourceTree = "<group>"; };
 		98AF216D67FFDBBEE44349ED /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = ../Kelec/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		9BD43CFC6B0D84DED96AD390 /* Pods-Kelec-KelecTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Kelec-KelecTests.debug.xcconfig"; path = "Target Support Files/Pods-Kelec-KelecTests/Pods-Kelec-KelecTests.debug.xcconfig"; sourceTree = "<group>"; };
 		9E0E227B58D232E3A68F80A5 /* Formatting.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Formatting.swift; sourceTree = "<group>"; };
-		A57F85118AC76635FD2C7DA8 /* Pods-Kelec-KelecTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Kelec-KelecTests.release.xcconfig"; path = "Target Support Files/Pods-Kelec-KelecTests/Pods-Kelec-KelecTests.release.xcconfig"; sourceTree = "<group>"; };
 		A6578D399A67482C95C2B086 /* NouvelRLight.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = NouvelRLight.ttf; path = ../assets/fonts/Renault/NouvelRLight.ttf; sourceTree = "<group>"; };
 		AA1E7CA07A354F8C8294F4EB /* NouvelRBook.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = NouvelRBook.ttf; path = ../assets/fonts/Renault/NouvelRBook.ttf; sourceTree = "<group>"; };
 		ABDCFF6C81D7AEB3E7F72F09 /* Pods-Kelec.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Kelec.debug.xcconfig"; path = "Target Support Files/Pods-Kelec/Pods-Kelec.debug.xcconfig"; sourceTree = "<group>"; };
@@ -315,7 +279,6 @@
 		B67617AAF409ECA0533B98A2 /* libPods-Kelec.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Kelec.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7F486009640FB55D626BE43 /* Models.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		BDA16CE28C8F45C693C500CC /* NouvelRSemibold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = NouvelRSemibold.ttf; path = ../assets/fonts/Renault/NouvelRSemibold.ttf; sourceTree = "<group>"; };
-		D594780007EADAB715A8B525 /* libPods-Kelec-KelecTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Kelec-KelecTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DF671DF3293ADF6C2184565F /* ApiClients.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ApiClients.swift; sourceTree = "<group>"; };
 		E96768361AC72CE554B71B05 /* Keychain.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Keychain.swift; sourceTree = "<group>"; };
 		EB024F142CDAB35100DB6143 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -350,14 +313,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		00E356EB1AD99517003FC87E /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				620ADEEF920BA2F39935574C /* libPods-Kelec-KelecTests.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		13B07F8C1A680F5B00A75B9A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -372,20 +327,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				EB16FA882F9A395D00624723 /* renaultApi in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8931F3F12C2EB57C0088CD21 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8931F3FB2C2EB57C0088CD21 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -412,23 +353,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		00E356EF1AD99517003FC87E /* KelecTests */ = {
-			isa = PBXGroup;
-			children = (
-				00E356F21AD99517003FC87E /* KelecTests.m */,
-				00E356F01AD99517003FC87E /* Supporting Files */,
-			);
-			path = KelecTests;
-			sourceTree = "<group>";
-		};
-		00E356F01AD99517003FC87E /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				00E356F11AD99517003FC87E /* Info.plist */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
 		13B07FAE1A68108700A75B9A /* Kelec */ = {
 			isa = PBXGroup;
 			children = (
@@ -454,7 +378,6 @@
 				893FFEB62BA8659A006D7475 /* WidgetKit.framework */,
 				893FFEB82BA8659A006D7475 /* SwiftUI.framework */,
 				B67617AAF409ECA0533B98A2 /* libPods-Kelec.a */,
-				D594780007EADAB715A8B525 /* libPods-Kelec-KelecTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -490,11 +413,8 @@
 				8916EACC2BA8C54500AF4659 /* Fonts */,
 				13B07FAE1A68108700A75B9A /* Kelec */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
-				00E356EF1AD99517003FC87E /* KelecTests */,
 				893FFEBA2BA8659A006D7475 /* KeleciOSWidget */,
 				8931F3E62C2EB57B0088CD21 /* KelecWatchOs Watch App */,
-				8931F3F72C2EB57C0088CD21 /* KelecWatchOs Watch AppTests */,
-				8931F4012C2EB57C0088CD21 /* KelecWatchOs Watch AppUITests */,
 				89E47DC42C2EDB8B00CD1A27 /* KelecWatchOSWidgets */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
@@ -511,11 +431,8 @@
 			isa = PBXGroup;
 			children = (
 				13B07F961A680F5B00A75B9A /* Kelec.app */,
-				00E356EE1AD99517003FC87E /* KelecTests.xctest */,
 				893FFEB52BA8659A006D7475 /* KeleciOSWidgetExtension.appex */,
 				8931F3E52C2EB57B0088CD21 /* Kelec.app */,
-				8931F3F42C2EB57C0088CD21 /* KelecWatchOs Watch AppTests.xctest */,
-				8931F3FE2C2EB57C0088CD21 /* KelecWatchOs Watch AppUITests.xctest */,
 				89E47DC12C2EDB8B00CD1A27 /* KelecWatchOSWidgetsExtension.appex */,
 			);
 			name = Products;
@@ -570,23 +487,6 @@
 				8931F3EE2C2EB57C0088CD21 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
-			sourceTree = "<group>";
-		};
-		8931F3F72C2EB57C0088CD21 /* KelecWatchOs Watch AppTests */ = {
-			isa = PBXGroup;
-			children = (
-				8931F3F82C2EB57C0088CD21 /* KelecWatchOs_Watch_AppTests.swift */,
-			);
-			path = "KelecWatchOs Watch AppTests";
-			sourceTree = "<group>";
-		};
-		8931F4012C2EB57C0088CD21 /* KelecWatchOs Watch AppUITests */ = {
-			isa = PBXGroup;
-			children = (
-				8931F4022C2EB57C0088CD21 /* KelecWatchOs_Watch_AppUITests.swift */,
-				8931F4042C2EB57C0088CD21 /* KelecWatchOs_Watch_AppUITestsLaunchTests.swift */,
-			);
-			path = "KelecWatchOs Watch AppUITests";
 			sourceTree = "<group>";
 		};
 		8931F4182C2EB70E0088CD21 /* Views */ = {
@@ -698,8 +598,6 @@
 			children = (
 				ABDCFF6C81D7AEB3E7F72F09 /* Pods-Kelec.debug.xcconfig */,
 				90869F49878796ACE139FE0E /* Pods-Kelec.release.xcconfig */,
-				9BD43CFC6B0D84DED96AD390 /* Pods-Kelec-KelecTests.debug.xcconfig */,
-				A57F85118AC76635FD2C7DA8 /* Pods-Kelec-KelecTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -724,27 +622,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		00E356ED1AD99517003FC87E /* KelecTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "KelecTests" */;
-			buildPhases = (
-				21D5AB1C74CDEA03CC8AC1BE /* [CP] Check Pods Manifest.lock */,
-				00E356EA1AD99517003FC87E /* Sources */,
-				00E356EB1AD99517003FC87E /* Frameworks */,
-				00E356EC1AD99517003FC87E /* Resources */,
-				8F074E6DE730BC255887A9B9 /* [CP] Embed Pods Frameworks */,
-				14B390D75F8029EF7A97EDE9 /* [CP] Copy Pods Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				00E356F51AD99517003FC87E /* PBXTargetDependency */,
-			);
-			name = KelecTests;
-			productName = KelecTests;
-			productReference = 00E356EE1AD99517003FC87E /* KelecTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 		13B07F861A680F5B00A75B9A /* Kelec */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Kelec" */;
@@ -794,42 +671,6 @@
 			productName = "KelecWatchOs Watch App";
 			productReference = 8931F3E52C2EB57B0088CD21 /* Kelec.app */;
 			productType = "com.apple.product-type.application";
-		};
-		8931F3F32C2EB57C0088CD21 /* KelecWatchOs Watch AppTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 8931F4112C2EB57C0088CD21 /* Build configuration list for PBXNativeTarget "KelecWatchOs Watch AppTests" */;
-			buildPhases = (
-				8931F3F02C2EB57C0088CD21 /* Sources */,
-				8931F3F12C2EB57C0088CD21 /* Frameworks */,
-				8931F3F22C2EB57C0088CD21 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				8931F3F62C2EB57C0088CD21 /* PBXTargetDependency */,
-			);
-			name = "KelecWatchOs Watch AppTests";
-			productName = "KelecWatchOs Watch AppTests";
-			productReference = 8931F3F42C2EB57C0088CD21 /* KelecWatchOs Watch AppTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		8931F3FD2C2EB57C0088CD21 /* KelecWatchOs Watch AppUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 8931F4122C2EB57C0088CD21 /* Build configuration list for PBXNativeTarget "KelecWatchOs Watch AppUITests" */;
-			buildPhases = (
-				8931F3FA2C2EB57C0088CD21 /* Sources */,
-				8931F3FB2C2EB57C0088CD21 /* Frameworks */,
-				8931F3FC2C2EB57C0088CD21 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				8931F4002C2EB57C0088CD21 /* PBXTargetDependency */,
-			);
-			name = "KelecWatchOs Watch AppUITests";
-			productName = "KelecWatchOs Watch AppUITests";
-			productReference = 8931F3FE2C2EB57C0088CD21 /* KelecWatchOs Watch AppUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 		893FFEB42BA8659A006D7475 /* KeleciOSWidgetExtension */ = {
 			isa = PBXNativeTarget;
@@ -940,24 +781,14 @@
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* Kelec */,
-				00E356ED1AD99517003FC87E /* KelecTests */,
 				893FFEB42BA8659A006D7475 /* KeleciOSWidgetExtension */,
 				8931F3E42C2EB57B0088CD21 /* KelecWatchOs Watch App */,
-				8931F3F32C2EB57C0088CD21 /* KelecWatchOs Watch AppTests */,
-				8931F3FD2C2EB57C0088CD21 /* KelecWatchOs Watch AppUITests */,
 				89E47DC02C2EDB8B00CD1A27 /* KelecWatchOSWidgetsExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		00E356EC1AD99517003FC87E /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		13B07F8E1A680F5B00A75B9A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1004,20 +835,6 @@
 				8931F3EF2C2EB57C0088CD21 /* Preview Assets.xcassets in Resources */,
 				8931F3EC2C2EB57C0088CD21 /* Assets.xcassets in Resources */,
 				81B59805529D141DD7A7E026 /* PrivacyInfo.xcprivacy in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8931F3F22C2EB57C0088CD21 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8931F3FC2C2EB57C0088CD21 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1077,45 +894,6 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Kelec/Pods-Kelec-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		14B390D75F8029EF7A97EDE9 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Kelec-KelecTests/Pods-Kelec-KelecTests-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Kelec-KelecTests/Pods-Kelec-KelecTests-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Kelec-KelecTests/Pods-Kelec-KelecTests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		21D5AB1C74CDEA03CC8AC1BE /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Kelec-KelecTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
 		2A2E9C11A03DBADC728E820F /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1155,34 +933,9 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Kelec/Pods-Kelec-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		8F074E6DE730BC255887A9B9 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Kelec-KelecTests/Pods-Kelec-KelecTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Kelec-KelecTests/Pods-Kelec-KelecTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Kelec-KelecTests/Pods-Kelec-KelecTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		00E356EA1AD99517003FC87E /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				00E356F31AD99517003FC87E /* KelecTests.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		13B07F871A680F5B00A75B9A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1224,23 +977,6 @@
 				68555E0BB2E877291BF772FD /* ApiClients.swift in Sources */,
 				27CFC1640B2790ECAEDB1536 /* WatchSync.swift in Sources */,
 				B0071A9FAF06119EC22C4F52 /* CarViewModel.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8931F3F02C2EB57C0088CD21 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				8931F3F92C2EB57C0088CD21 /* KelecWatchOs_Watch_AppTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8931F3FA2C2EB57C0088CD21 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				8931F4032C2EB57C0088CD21 /* KelecWatchOs_Watch_AppUITests.swift in Sources */,
-				8931F4052C2EB57C0088CD21 /* KelecWatchOs_Watch_AppUITestsLaunchTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1304,21 +1040,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		00E356F51AD99517003FC87E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 13B07F861A680F5B00A75B9A /* Kelec */;
-			targetProxy = 00E356F41AD99517003FC87E /* PBXContainerItemProxy */;
-		};
-		8931F3F62C2EB57C0088CD21 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 8931F3E42C2EB57B0088CD21 /* KelecWatchOs Watch App */;
-			targetProxy = 8931F3F52C2EB57C0088CD21 /* PBXContainerItemProxy */;
-		};
-		8931F4002C2EB57C0088CD21 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 8931F3E42C2EB57B0088CD21 /* KelecWatchOs Watch App */;
-			targetProxy = 8931F3FF2C2EB57C0088CD21 /* PBXContainerItemProxy */;
-		};
 		8931F4072C2EB57C0088CD21 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 8931F3E42C2EB57B0088CD21 /* KelecWatchOs Watch App */;
@@ -1366,59 +1087,6 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		00E356F61AD99517003FC87E /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9BD43CFC6B0D84DED96AD390 /* Pods-Kelec-KelecTests.debug.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = KelecTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-lc++",
-					"$(inherited)",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Kelec.app/Kelec";
-			};
-			name = Debug;
-		};
-		00E356F71AD99517003FC87E /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = A57F85118AC76635FD2C7DA8 /* Pods-Kelec-KelecTests.release.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				COPY_PHASE_STRIP = NO;
-				INFOPLIST_FILE = KelecTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-lc++",
-					"$(inherited)",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Kelec.app/Kelec";
-			};
-			name = Release;
-		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = ABDCFF6C81D7AEB3E7F72F09 /* Pods-Kelec.debug.xcconfig */;
@@ -1758,146 +1426,6 @@
 			};
 			name = Release;
 		};
-		8931F40C2C2EB57C0088CD21 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = A67QZT46J7;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.kelyanselme.KelecWatchOs-Watch-AppTests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = watchos;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 4;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/KelecWatchOs Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/KelecWatchOs Watch App";
-				WATCHOS_DEPLOYMENT_TARGET = 10.0;
-			};
-			name = Debug;
-		};
-		8931F40D2C2EB57C0088CD21 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = A67QZT46J7;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.kelyanselme.KelecWatchOs-Watch-AppTests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = watchos;
-				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 4;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/KelecWatchOs Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/KelecWatchOs Watch App";
-				WATCHOS_DEPLOYMENT_TARGET = 10.0;
-			};
-			name = Release;
-		};
-		8931F40E2C2EB57C0088CD21 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = A67QZT46J7;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.kelyanselme.KelecWatchOs-Watch-AppUITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = watchos;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 4;
-				TEST_TARGET_NAME = "KelecWatchOs Watch App";
-				WATCHOS_DEPLOYMENT_TARGET = 10.0;
-			};
-			name = Debug;
-		};
-		8931F40F2C2EB57C0088CD21 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = A67QZT46J7;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.kelyanselme.KelecWatchOs-Watch-AppUITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = watchos;
-				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 4;
-				TEST_TARGET_NAME = "KelecWatchOs Watch App";
-				WATCHOS_DEPLOYMENT_TARGET = 10.0;
-			};
-			name = Release;
-		};
 		893FFEC82BA8659B006D7475 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2079,15 +1607,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "KelecTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				00E356F61AD99517003FC87E /* Debug */,
-				00E356F71AD99517003FC87E /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Kelec" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -2111,24 +1630,6 @@
 			buildConfigurations = (
 				8931F40A2C2EB57C0088CD21 /* Debug */,
 				8931F40B2C2EB57C0088CD21 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		8931F4112C2EB57C0088CD21 /* Build configuration list for PBXNativeTarget "KelecWatchOs Watch AppTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				8931F40C2C2EB57C0088CD21 /* Debug */,
-				8931F40D2C2EB57C0088CD21 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		8931F4122C2EB57C0088CD21 /* Build configuration list for PBXNativeTarget "KelecWatchOs Watch AppUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				8931F40E2C2EB57C0088CD21 /* Debug */,
-				8931F40F2C2EB57C0088CD21 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
