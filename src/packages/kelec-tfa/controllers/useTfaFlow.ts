@@ -28,10 +28,8 @@ type Params = {
 export function useTfaFlow({ regToken, successMessageKey, onExit }: Params) {
     const { languageHandler } = useContext(MainContext);
 
-    const clientRef = useRef<RenaultTfaClient | null>(null);
-    if (!clientRef.current) {
-        clientRef.current = new RenaultTfaClient(regToken);
-    }
+    // un seul client pour toute la séquence (créé au premier rendu)
+    const [client] = useState(() => new RenaultTfaClient(regToken));
 
     const [status, setStatus] = useState<TfaStepStatus>(TfaStepStatus.LOADING);
     const [email, setEmail] = useState<TfaEmail | null>(null);
@@ -65,7 +63,7 @@ export function useTfaFlow({ regToken, successMessageKey, onExit }: Params) {
         (async () => {
             setStatus(TfaStepStatus.LOADING);
             try {
-                setEmail(await startTfa(clientRef.current!));
+                setEmail(await startTfa(client));
                 startCooldown();
                 setStatus(TfaStepStatus.DONE);
             } catch (error) {
@@ -82,7 +80,7 @@ export function useTfaFlow({ regToken, successMessageKey, onExit }: Params) {
         setCode('');
         setStatus(TfaStepStatus.LOADING);
         try {
-            await clientRef.current!.sendTfaCode();
+            await client.sendTfaCode();
             startCooldown();
             setStatus(TfaStepStatus.DONE);
         } catch (error) {
@@ -93,7 +91,7 @@ export function useTfaFlow({ regToken, successMessageKey, onExit }: Params) {
     const validate = async () => {
         setIsValidating(true);
         try {
-            await validateTfa(clientRef.current!, code);
+            await validateTfa(client, code);
         } catch (error) {
             const message = errorMessageOf(error);
             switch (message) {

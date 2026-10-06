@@ -45,7 +45,8 @@ const AsyncDropDown = (props: DropDownViewProps) => {
             const data: DropDownData[] = await loadOptions();
             setDropDownData(data);
             setViewState(ViewState.LOADED);
-        } catch (_) {
+        } catch (error) {
+            console.error(`Unable to load ${title} options:`, error);
             setViewState(ViewState.ERROR);
         }
     };
