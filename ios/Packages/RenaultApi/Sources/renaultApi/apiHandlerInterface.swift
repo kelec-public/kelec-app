@@ -14,7 +14,8 @@ public enum VehicleData {
     case demo
 }
 
-// charge status, same cases as the RN app (getChargeText of the api handlers)
+// charge status, same cases as the RN app (getChargeText of the api handlers).
+// getChargeText and getIsV2GorV2L are derived from it.
 public enum ChargeStatus: String, CaseIterable {
     case notPlugged
     case notCharging
@@ -44,8 +45,6 @@ public protocol ApiHandler: Codable, Decodable{
     
     func getChargeInstantaneousPowerInWatts()->Double
     
-    func getChargeText()->String
-
     func getChargeStatus() -> ChargeStatus
     
     func getMapLatitude()->Latitude
@@ -54,14 +53,28 @@ public protocol ApiHandler: Codable, Decodable{
     func getMilage(appPreferences: AppPreferences?) -> Double
     // odometer in km, nil when the car maker didn't return it
     func getOdometerInKm() -> Double?
-    
-    func getIsV2GorV2L() -> Bool
-    
-    
 }
 
 extension ApiHandler{
     public func getCarMaker()->CarMaker{
         return self.carMaker
+    }
+
+    // "EN CHARGE | " (translated), "" when the car is not plugged in
+    public func getChargeText() -> String {
+        switch getChargeStatus() {
+        case .notPlugged: return ""
+        case .notCharging: return localized("NE CHARGE PAS | ")
+        case .charging: return localized("EN CHARGE | ")
+        case .scheduled: return localized("CHARGE PLANIFIÉE | ")
+        case .ended: return localized("CHARGE TERMINÉE | ")
+        case .v2g: return "V2G | "
+        case .v2l: return "V2L | "
+        }
+    }
+
+    public func getIsV2GorV2L() -> Bool {
+        let chargeStatus = getChargeStatus()
+        return chargeStatus == .v2g || chargeStatus == .v2l
     }
 }

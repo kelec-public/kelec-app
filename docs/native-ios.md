@@ -220,6 +220,8 @@ Bouton du Centre de contrôle, de l'écran verrouillé et du bouton Action, dans
 | Tempo (1 ou 2 jours) | Couleur du jour (et du lendemain) et prix HP / HC, avec les données de la voiture |
 | Montre | Rond, en ligne, rectangulaire (comme l'écran verrouillé), coin : niveau et barre de progression |
 
+- Statut de charge : `ApiHandler.getChargeStatus()` (un par constructeur) ; `getChargeText()` (« EN CHARGE | », « V2G | »…,
+  vide si non branchée) et `getIsV2GorV2L()` en sont déduits une seule fois, dans l'extension du protocole.
 - Couleur de charge (`ApiHandler.chargingColour`) : vert, orange en V2G / V2L ; gris ou noir quand elle n'est pas branchée.
 - Durée restante : « --h-- » si elle ne charge pas ou est pleine (`chargingTimeText`).
 - Autonomie convertie selon `AppPreferences`, unité « mi » si `displayMiles` (`getUnitsText`).

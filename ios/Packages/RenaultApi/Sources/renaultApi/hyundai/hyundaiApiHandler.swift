@@ -75,29 +75,8 @@ public struct HyundaiApiHandler: ApiHandler {
     private func getAvailableEnergy() -> Double{
         return Double(self.getBatteryLevel()) / 100.0 * 38.0
     }
-    
-    public func getChargeText() -> String {
-        if(!self.getIsCarPlugged()){
-            return ""
-        }else{
-            if(self.getBatteryLevel() > self.getChargeLimit()){
-                // charge is over
-                return localized("CHARGE TERMINÉE | ")
-            }
-            
-            if(self.getIsCarCharging()){
-                return localized("EN CHARGE | ")
-            }
-            
-            // all other cases
-            return localized("NE CHARGE PAS | ")
-        }
-    }
-    
 
-    
-    
-    // same rules as getChargeText
+    // ended when above the charge limit, else charging or not
     public func getChargeStatus() -> ChargeStatus {
         if !self.getIsCarPlugged() {
             return .notPlugged
@@ -131,9 +110,5 @@ public struct HyundaiApiHandler: ApiHandler {
     
     public func getOdometerInKm() -> Double? {
         return self.apiData.status.odometer.value
-    }
-
-    public func getIsV2GorV2L() -> Bool {
-        return false
     }
 }
