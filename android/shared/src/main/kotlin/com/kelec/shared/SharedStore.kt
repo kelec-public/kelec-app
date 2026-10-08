@@ -34,6 +34,7 @@ class SharedStore(context: Context) {
                 maker = CarMaker.fromRaw(account.optString("carMaker", "")),
                 email = account.optString("email", ""),
                 kamereonAccountId = account.optString("kamereonAccountID", ""),
+                imageUrl = car.optString("imageUrl", ""),
             )
         }
         return UserAccount(cars)
@@ -58,4 +59,14 @@ class SharedStore(context: Context) {
     fun saveWidgetVin(appWidgetId: Int, vin: String) = putString(StorageKey.widgetVin(appWidgetId), vin)
 
     fun clearWidgetVin(appWidgetId: Int) = remove(StorageKey.widgetVin(appWidgetId))
+
+    /** Montre : VIN de la voiture des complications, choisi dans les Réglages de l'app de la montre. */
+    fun watchWidgetVin(): String? = getString(StorageKey.WATCH_WIDGET_CAR)?.takeIf { it.isNotEmpty() }
+
+    fun saveWatchWidgetVin(vin: String) = putString(StorageKey.WATCH_WIDGET_CAR, vin)
+
+    /** Montre : dernière température du confort thermique de la voiture (« 21 »), même format que l'app RN. */
+    fun savedTemperature(vin: String): String? = getString(StorageKey.savedTemperature(vin))
+
+    fun saveTemperature(vin: String, temperature: Int) = putString(StorageKey.savedTemperature(vin), temperature.toString())
 }

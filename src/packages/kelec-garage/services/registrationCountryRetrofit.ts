@@ -47,7 +47,7 @@ export async function retrofitRegistrationCountry(account: Account): Promise<boo
         if (response.hasError) return false;
 
         // voiture absente (supprimée du compte constructeur) ou sans pays : rien à enregistrer
-        const country = response.vehicles.find(vehicle => vehicle.vin === vin)?.vehicleDetails.registrationCountry?.code;
+        const country = response.vehicles.find(vehicle => vehicle.vin === vin)?.vehicleDetails?.registrationCountry?.code;
         const saved = country !== undefined && country !== '' && await saveCountry(vin, country);
         if (saved) car.setRegistrationCountry(country);
 

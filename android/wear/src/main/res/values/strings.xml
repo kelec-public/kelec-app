@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Textes de l'app Wear OS, repris des Localizable.strings iOS (« iPhone » remplacé par « téléphone »). -->
+<resources>
+    <string name="app_name" translatable="false">Kelec</string>
+    <string name="watch_open_phone_to_sync">Ouvrez l\'appli sur le téléphone pour synchroniser</string>
+    <string name="watch_add_vehicle_on_phone">Ajoutez un véhicule sur l\'appli du téléphone</string>
+    <string name="refresh">Rafraîchir</string>
+    <string name="car_maker_server_error">Impossible de se connecter au serveur %1$s</string>
+    <string name="watch_widget_car">Voiture affichée sur les widgets</string>
+    <string name="watch_settings">Réglages</string>
+    <string name="watch_car_location_error">Impossible de récupérer la position de la voiture</string>
+    <string name="information_sent">Informations envoyées</string>
+    <string name="pre_heat_launched">Confort thermique actif</string>
+    <string name="error">Erreur</string>
+    <string name="command_send_error">Erreur lors de l\'envoi de la commande au serveur. Veuillez réessayer plus tard.</string>
+    <string name="launch_pre_heat">Lancer le confort thermique</string>
+    <string name="are_you_sure_launch_pre_heating">Êtes-vous sûr de vouloir lancer le confort thermique ?</string>
+    <string name="confirm">Confirmer</string>
+    <string name="cancel">Annuler</string>
+    <string name="watch_widget_description">Niveau de charge de votre Renault E-Tech</string>
+</resources>

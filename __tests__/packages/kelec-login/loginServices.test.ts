@@ -1,4 +1,5 @@
 import { CarMaker } from "../../../src/lib/clients/accounts/account";
+import RenaultAccount from "../../../src/lib/clients/accounts/renaultAccount";
 import { CarMakerClientErrors } from "../../../src/lib/clients/carMakers/carMakerClient";
 import { SELECTABLE_CAR_MAKERS } from "../../../src/packages/kelec-login/models/carMakers";
 import { loginErrorMessageKey } from "../../../src/packages/kelec-login/services/loginErrors";
@@ -8,8 +9,9 @@ import { HyundaiLoginSource } from "../../../src/packages/kelec-login/services/s
 import { PLACEHOLDER_CAR_IMAGE, RenaultLoginSource, pickRenaultImage } from "../../../src/packages/kelec-login/services/sources/renaultLoginSource";
 
 const mockGetKamereonAccount = jest.fn();
+const mockGetVehicles = jest.fn();
 jest.mock('../../../src/lib/clients/carMakers/renaultClient', () =>
-    jest.fn().mockImplementation(() => ({ getKamereonAccount: mockGetKamereonAccount })));
+    jest.fn().mockImplementation(() => ({ getKamereonAccount: mockGetKamereonAccount, getVehicles: mockGetVehicles })));
 
 test('constructeurs proposés, dans l\'ordre, avec leur nom affiché', () => {
     expect(SELECTABLE_CAR_MAKERS).toEqual([
@@ -74,4 +76,25 @@ describe('RenaultLoginSource.authenticate', () => {
 test('démo : deux voitures de démonstration', async () => {
     const cars = await new DemoLoginSource().listVehicles();
     expect(cars.map(car => car.getVin())).toEqual(['VF1AA', 'VF1AA2']);
+});
+
+test('RenaultLoginSource.listVehicles : un véhicule sans détails ou sans modèle ne fait pas planter la liste', async () => {
+    mockGetVehicles.mockResolvedValueOnce({
+        hasError: false,
+        vehicles: [
+            { vin: 'VIN1', vehicleDetails: { model: { label: 'ZOE' }, registrationNumber: 'AB123CD', registrationCountry: { code: 'FR' } } },
+            { vin: 'VIN2' },
+            { vin: 'VIN3', vehicleDetails: { registrationNumber: '' } },
+        ],
+    });
+    const account = new RenaultAccount('email', 'password', 'kamereon');
+
+    const cars = await new RenaultLoginSource(CarMaker.RENAULT).listVehicles(account);
+
+    expect(cars.map(car => [car.getVin(), car.getModel(), car.getImageUrl()])).toEqual([
+        ['VIN1', 'ZOE', PLACEHOLDER_CAR_IMAGE],
+        ['VIN2', 'VIN2', PLACEHOLDER_CAR_IMAGE],
+        ['VIN3', 'VIN3', PLACEHOLDER_CAR_IMAGE],
+    ]);
+    expect(cars[0].getRegistrationCountry()).toBe('FR');
 });

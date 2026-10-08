@@ -6,7 +6,7 @@ La migration avance par petites PR : ne pas élargir une tâche à d'autres pack
 
 Natif iOS (widgets, bridge RN, Apple Watch, package local `renaultApi`) : lire [docs/native-ios.md](docs/native-ios.md)
 avant de toucher à `ios/`. Les clés de stockage partagé et leurs formats y sont listés : ne jamais les renommer.
-Natif Android (widget, bridge RN, modules `:carapi` / `:shared`, future app Wear OS) : lire
+Natif Android (widgets, bridge RN, modules `:carapi` / `:shared`, app Wear OS `:wear`) : lire
 [docs/native-android.md](docs/native-android.md) avant de toucher à `android/`. Ne jamais renommer `KelecMainWIdget` ni les clés de stockage.
 
 **Invariant métier** : un VIN est unique dans toute l'app, et chaque VIN a exactement un compte (`Account`).

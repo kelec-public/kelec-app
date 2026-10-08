@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Textes de l'app Wear OS, repris des Localizable.strings iOS (« iPhone » remplacé par « téléphone »). -->
+<resources>
+    <string name="watch_open_phone_to_sync">Open the app on the phone to sync</string>
+    <string name="watch_add_vehicle_on_phone">Add a vehicle in the app on the phone</string>
+    <string name="refresh">Refresh</string>
+    <string name="car_maker_server_error">Impossible to connect to server %1$s</string>
+    <string name="watch_widget_car">Car shown on widgets</string>
+    <string name="watch_settings">Settings</string>
+    <string name="watch_car_location_error">Unable to get the car location</string>
+    <string name="information_sent">Information sent</string>
+    <string name="pre_heat_launched">Pre-heating started</string>
+    <string name="error">Error</string>
+    <string name="command_send_error">Error while sending command to server. Please try again later.</string>
+    <string name="launch_pre_heat">Start pre-heating</string>
+    <string name="are_you_sure_launch_pre_heating">Are you sure you want to launch pre-heating?</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="watch_widget_description">Charge level of your Renault E-Tech</string>
+</resources>
