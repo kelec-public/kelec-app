@@ -11,12 +11,13 @@ const XLSX_MIME = 'application/vnd.openxmlformats-officedocument.spreadsheetml.s
  * Une charge fusionnée donne une seule ligne : le détail des sous-charges est remplacé par leur nombre.
  */
 export const toRows = (charges: Charge[]) => charges.map(charge => {
-    const { subCharges, ...fields } = charge;
+    // Les colonnes de fusion sont retirées puis ajoutées ensemble en fin de ligne.
+    const { isAMergeCharge, subCharges, ...fields } = charge;
     return {
         ...fields,
         chargeStartDate: charge.getStartDate().toLocaleString(),
         chargeEndDate: charge.getEndDate().toLocaleString(),
-        isAMergeCharge: charge.getIsAMergeCharge(),
+        isAMergeCharge: isAMergeCharge ?? false,
         subChargesCount: subCharges.length,
     };
 });

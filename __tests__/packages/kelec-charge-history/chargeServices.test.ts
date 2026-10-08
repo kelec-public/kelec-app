@@ -134,5 +134,6 @@ describe('chargesExport', () => {
 
         expect(singleRow.isAMergeCharge).toBe(false);
         expect(singleRow.subChargesCount).toBe(0);
+        expect(Object.keys(singleRow).slice(-2)).toEqual(['isAMergeCharge', 'subChargesCount']);
     });
 });
