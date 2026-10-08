@@ -107,6 +107,7 @@
 "launchPreHeatSummary ${car} ${temperature}" = "Pornire preîncălzire pentru ${car} la ${temperature} °C";
 "preHeatLaunchedOn %@ %@" = "Preîncălzirea pentru %1$@ a pornit la %2$@ °C.";
 "preHeatLaunchError %@" = "Preîncălzirea pentru %@ nu a putut fi pornită. Vă rugăm să încercați din nou mai târziu.";
+"launchPreHeatControlDescription" = "Pornește preîncălzirea mașinii alese la temperatura aleasă.";
 
 "areYouSureYouWantToLaunchPreheating" = "Sigur doriți să porniți preîncălzirea?";
 

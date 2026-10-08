@@ -101,6 +101,7 @@ Primero debes iniciar sesión en la aplicación.";
 "launchPreHeatSummary ${car} ${temperature}" = "Iniciar el preacondicionamiento de ${car} a ${temperature} °C";
 "preHeatLaunchedOn %@ %@" = "Preacondicionamiento de %1$@ iniciado a %2$@ °C.";
 "preHeatLaunchError %@" = "No se pudo iniciar el preacondicionamiento de %@. Inténtelo de nuevo más tarde.";
+"launchPreHeatControlDescription" = "Inicia el preacondicionamiento del coche elegido a la temperatura elegida.";
 
 "areYouSureYouWantToLaunchPreheating" = "¿Está seguro de que desea iniciar el preacondicionamiento?";
 

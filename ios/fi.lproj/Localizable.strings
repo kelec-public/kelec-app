@@ -107,6 +107,7 @@
 "launchPreHeatSummary ${car} ${temperature}" = "Käynnistä esilämmitys: ${car}, ${temperature} °C";
 "preHeatLaunchedOn %@ %@" = "Esilämmitys käynnistetty: %1$@, %2$@ °C.";
 "preHeatLaunchError %@" = "Esilämmityksen käynnistys epäonnistui: %@. Yritä myöhemmin uudelleen.";
+"launchPreHeatControlDescription" = "Käynnistää valitun auton esilämmityksen valittuun lämpötilaan.";
 
 "areYouSureYouWantToLaunchPreheating" = "Oletko varma, että haluat käynnistää esilämmityksen?";
 

@@ -100,6 +100,7 @@
 "launchPreHeatSummary ${car} ${temperature}" = "Pre-heat ${car} to ${temperature} °C";
 "preHeatLaunchedOn %@ %@" = "Pre-heating started for %1$@ at %2$@ °C.";
 "preHeatLaunchError %@" = "Couldn't start pre-heating for %@. Please try again later.";
+"launchPreHeatControlDescription" = "Starts pre-heating the chosen car at the chosen temperature.";
 
 "areYouSureYouWantToLaunchPreheating" = "Are you sure you want to launch pre-heating?";
 

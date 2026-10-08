@@ -100,6 +100,7 @@
 "launchPreHeatSummary ${car} ${temperature}" = "Start forvarmning af ${car} til ${temperature} °C";
 "preHeatLaunchedOn %@ %@" = "Forvarmning af %1$@ startet til %2$@ °C.";
 "preHeatLaunchError %@" = "Forvarmning af %@ kunne ikke startes. Prøv igen senere.";
+"launchPreHeatControlDescription" = "Starter forvarmning af den valgte bil til den valgte temperatur.";
 
 "areYouSureYouWantToLaunchPreheating" = "Er du sikker på, at du vil starte forvarmningen?";
 

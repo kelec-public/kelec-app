@@ -107,6 +107,7 @@
 "launchPreHeatSummary ${car} ${temperature}" = "Vorklimatisierung von ${car} auf ${temperature} °C starten";
 "preHeatLaunchedOn %@ %@" = "Vorklimatisierung von %1$@ auf %2$@ °C gestartet.";
 "preHeatLaunchError %@" = "Die Vorklimatisierung von %@ konnte nicht gestartet werden. Bitte versuchen Sie es später noch einmal.";
+"launchPreHeatControlDescription" = "Startet die Vorklimatisierung des gewählten Fahrzeugs mit der gewählten Temperatur.";
 
 "areYouSureYouWantToLaunchPreheating" = "Sind Sie sicher, dass Sie die Vorklimatisierung starten möchten?";
 

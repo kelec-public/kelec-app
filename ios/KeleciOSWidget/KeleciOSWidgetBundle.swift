@@ -17,5 +17,9 @@ struct KeleciOSWidgetBundle: WidgetBundle {
     KeleciOSTempoWidget()
     KeleciOSTempo2DaysWidget()
     TempoLockScreenWidget()
+    // Control Center / lock screen / Action button
+    if #available(iOS 18.0, *) {
+      LaunchHVACControl()
+    }
   }
 }

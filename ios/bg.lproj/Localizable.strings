@@ -107,6 +107,7 @@
 "launchPreHeatSummary ${car} ${temperature}" = "Стартиране на подгряването на ${car} до ${temperature} °C";
 "preHeatLaunchedOn %@ %@" = "Подгряването на %1$@ до %2$@ °C започна.";
 "preHeatLaunchError %@" = "Подгряването на %@ не можа да бъде стартирано. Моля, опитайте по-късно.";
+"launchPreHeatControlDescription" = "Стартира подгряването на избрания автомобил до избраната температура.";
 
 "areYouSureYouWantToLaunchPreheating" = "Сигурни ли сте, че искате да стартирате подгряването на купето?";
 

@@ -107,6 +107,7 @@
 "launchPreHeatSummary ${car} ${temperature}" = "Zaženi predgrevanje za ${car} na ${temperature} °C";
 "preHeatLaunchedOn %@ %@" = "Predgrevanje za %1$@ zagnano na %2$@ °C.";
 "preHeatLaunchError %@" = "Predgrevanja za %@ ni bilo mogoče zagnati. Poskusite znova pozneje.";
+"launchPreHeatControlDescription" = "Zažene predgrevanje izbranega avtomobila na izbrano temperaturo.";
 
 "areYouSureYouWantToLaunchPreheating" = "Ali ste prepričani, da želite začeti s predgrevanjem?";
 

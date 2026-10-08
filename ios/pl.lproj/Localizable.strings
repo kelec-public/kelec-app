@@ -108,6 +108,7 @@
 "launchPreHeatSummary ${car} ${temperature}" = "Uruchom wstępne ogrzewanie: ${car}, ${temperature} °C";
 "preHeatLaunchedOn %@ %@" = "Wstępne ogrzewanie uruchomione: %1$@, %2$@ °C.";
 "preHeatLaunchError %@" = "Nie udało się uruchomić wstępnego ogrzewania: %@. Spróbuj ponownie później.";
+"launchPreHeatControlDescription" = "Uruchamia wstępne ogrzewanie wybranego samochodu do wybranej temperatury.";
 
 "areYouSureYouWantToLaunchPreheating" = "Czy na pewno chcesz uruchomić wstępne ogrzewanie?";
 

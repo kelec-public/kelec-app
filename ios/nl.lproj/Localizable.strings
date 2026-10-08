@@ -108,6 +108,7 @@
 "launchPreHeatSummary ${car} ${temperature}" = "Klimaatregeling op afstand van ${car} starten op ${temperature} °C";
 "preHeatLaunchedOn %@ %@" = "Klimaatregeling op afstand van %1$@ gestart op %2$@ °C.";
 "preHeatLaunchError %@" = "Kan de klimaatregeling op afstand van %@ niet starten. Probeer het later opnieuw.";
+"launchPreHeatControlDescription" = "Start de klimaatregeling op afstand van het gekozen voertuig op de gekozen temperatuur.";
 
 "areYouSureYouWantToLaunchPreheating" = "Weet u zeker dat u de klimaatregeling op afstand wilt starten?";
 

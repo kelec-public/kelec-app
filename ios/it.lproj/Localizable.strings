@@ -100,6 +100,7 @@
 "launchPreHeatSummary ${car} ${temperature}" = "Avvia il preriscaldamento di ${car} a ${temperature} °C";
 "preHeatLaunchedOn %@ %@" = "Preriscaldamento di %1$@ avviato a %2$@ °C.";
 "preHeatLaunchError %@" = "Impossibile avviare il preriscaldamento di %@. Riprova più tardi.";
+"launchPreHeatControlDescription" = "Avvia il preriscaldamento dell'auto scelta alla temperatura scelta.";
 
 "areYouSureYouWantToLaunchPreheating" = "Sei sicuro di voler avviare il preriscaldamento?";
 

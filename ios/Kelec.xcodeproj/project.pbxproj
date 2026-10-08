@@ -98,6 +98,7 @@
 		C3BA62CD560D7B6BF30E279F /* Tempo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E858BB876E9BCE7314FF9A4 /* Tempo.swift */; };
 		C4DD11C3E79E4071898E0D62 /* NouvelRRegular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7D8FC3E77A32465185812C68 /* NouvelRRegular.ttf */; };
 		C502E4C627A6E995A1BB5816 /* ApiClients.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF671DF3293ADF6C2184565F /* ApiClients.swift */; };
+		C98B44B09CA5B859DB69F486 /* LaunchHVACControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD54E783DC690DB1642D1C07 /* LaunchHVACControl.swift */; };
 		CA2F611B9F09D94215268C17 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7F486009640FB55D626BE43 /* Models.swift */; };
 		CB2456A9E4DCAF1586A12645 /* PreviewData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 783F92D76DA3869D1D196954 /* PreviewData.swift */; };
 		CF60F6C753C90F8AADF8D387 /* libPods-Kelec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B67617AAF409ECA0533B98A2 /* libPods-Kelec.a */; };
@@ -317,6 +318,7 @@
 		EBF321DB2D25781300EA72BC /* WidgetsIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetsIntent.swift; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		FA8D1F2F1ABA231C68E0DCBC /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = Kelec/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		FD54E783DC690DB1642D1C07 /* LaunchHVACControl.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = LaunchHVACControl.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -519,6 +521,7 @@
 				893FFEBF2BA8659A006D7475 /* KeleciOSWidget.swift */,
 				893FFEC12BA8659B006D7475 /* Assets.xcassets */,
 				893FFEC32BA8659B006D7475 /* Info.plist */,
+				FD54E783DC690DB1642D1C07 /* LaunchHVACControl.swift */,
 			);
 			path = KeleciOSWidget;
 			sourceTree = "<group>";
@@ -1024,6 +1027,7 @@
 				E6BB9A1407139F3B43BA844D /* RenaultSession.swift in Sources */,
 				5B8CFD18C4A7A20058F883A0 /* ApiClients.swift in Sources */,
 				42919F79CF8DF2810094786B /* SharedHistory.swift in Sources */,
+				C98B44B09CA5B859DB69F486 /* LaunchHVACControl.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

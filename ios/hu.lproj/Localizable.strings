@@ -107,6 +107,7 @@
 "launchPreHeatSummary ${car} ${temperature}" = "${car} előfűtésének indítása ${temperature} °C hőmérsékletre";
 "preHeatLaunchedOn %@ %@" = "%1$@ előfűtése elindítva (%2$@ °C).";
 "preHeatLaunchError %@" = "Nem sikerült elindítani a(z) %@ előfűtését. Kérjük, később próbálja újra.";
+"launchPreHeatControlDescription" = "Elindítja a kiválasztott autó előfűtését a kiválasztott hőmérsékletre.";
 
 "areYouSureYouWantToLaunchPreheating" = "Biztosan el szeretné indítani az előfűtést?";
 

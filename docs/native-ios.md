@@ -59,7 +59,8 @@ ios/
 │   └── PreviewData.swift           Données de démo des widgets (dont les 5 états des previews)
 ├── Kelec/RNSharedWidget.swift (+ .m)  Bridge RN en Swift, méthodes en promesses
 ├── Intents/                        CarEntity / CarQuery, LaunchHVACIntent (Siri)
-├── KeleciOSWidget/                 Widgets iOS : providers, vues (Small, Medium, Tempo, écran verrouillé), Tempo.swift
+├── KeleciOSWidget/                 Widgets iOS : providers, vues (Small, Medium, Tempo, écran verrouillé), Tempo.swift,
+│                                   contrôle « confort thermique » (LaunchHVACControl, iOS 18)
 ├── KelecWatchOs Watch App/         WatchSync, CarViewModel, vues (CarView, BatteryCardView, MapView, WatchSettingsView)
 ├── KelecWatchOSWidgets/            Widgets de la montre (configuration statique)
 └── Packages/RenaultApi/            Package local renaultApi : clients Renault group, Hyundai, démo, RTE Tempo
@@ -169,6 +170,20 @@ envoie `sendHVACCommand` (`launchHvac` du client du constructeur) et répond par
 (`preHeatLaunchedOn %@ %@` ou `preHeatLaunchError %@`). Textes du raccourci : `launchPreHeatSummary ${car} ${temperature}`,
 `launchPreHeatTemperature`, `launchPreHeatCarDescription`, `launchPreHeatTemperatureDescription`.
 
+### Contrôle « confort thermique » (`LaunchHVACControl`, iOS 18)
+
+Bouton du Centre de contrôle, de l'écran verrouillé et du bouton Action, dans l'extension des widgets iOS
+(`if #available(iOS 18.0, *)` dans le bundle, l'extension ciblant iOS 17.6).
+
+- Un contrôle ne peut rien demander au tap : la voiture et la température (17 à 27 °C, 21 °C par défaut) se choisissent
+  à l'ajout (`LaunchHVACControlConfiguration`, `promptsForUserConfiguration`), puis par appui long → Modifier.
+  Plusieurs contrôles peuvent coexister (autre voiture, autre température).
+- Au tap, `LaunchHVACControlIntent` (masqué de Raccourcis, l'intent Siri reste `LaunchHVACIntent`) s'exécute dans
+  l'extension : compte de l'App Group, puis `sendHVACCommand`. En cas d'échec il lève une erreur
+  (`widgetNoCarSelected` ou `commandSendError`) et écrit dans `widgetLogs`.
+- Pas de dernière température de l'app : elle est dans AsyncStorage, illisible depuis le natif.
+- Textes : `launchPreHeat`, `launchPreHeatControlDescription`, et ceux de l'intent Siri pour les paramètres.
+
 ## Affichage des widgets
 
 `CarWidgetStateView` (`Shared/WidgetComponents.swift`) choisit l'état avant d'afficher le contenu :
@@ -232,6 +247,7 @@ envoie `sendHVACCommand` (`launchHvac` du client du constructeur) et répond par
   - synchro de la montre depuis Réglages → « Synchroniser avec l'Apple Watch », app de la montre fermée ;
   - choix de la voiture des widgets de la montre (Réglages de la montre) ;
   - Siri / Raccourcis : « confort thermique » sur une voiture.
+  - Contrôle du Centre de contrôle (iOS 18) : ajout (choix de la voiture et de la température), tap, échec réseau.
 - Débogage : Réglages → Debug → « export widget logs » (`widgetLogs`, 5 jours, messages de `VehicleLoader`,
   `getCarMakerApiClient` et du client Renault), et « Debug zone » (choix d'une voiture, « Battery status »
   pas à pas, « Mileage history » : 10 dernières entrées de `<vin>_mileageHistory`, export des logs en texte).
