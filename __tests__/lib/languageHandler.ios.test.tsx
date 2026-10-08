@@ -21,7 +21,7 @@ jest.mock('react-native', () => ({
 test('should test languageHandler', async () => {
     const languageHandler = new LanguageHandler();
     // should be in swedish
-    expect(languageHandler.getTranslation('login')).toBe('Logga in');
+    expect(languageHandler.getTranslation('logOut')).toBe('Logga ut');
     // should not be known
     expect(languageHandler.getTranslation('unknown')).toBe('unknown');
 });

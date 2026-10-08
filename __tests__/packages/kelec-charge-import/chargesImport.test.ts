@@ -5,7 +5,7 @@ import { mergeCharges } from "../../../src/packages/kelec-charge-history/service
 import { buildImportPreview, summarizeImport } from "../../../src/packages/kelec-charge-import/services/importPreview";
 import { readSpreadsheetRows } from "../../../src/packages/kelec-charge-import/services/readSpreadsheet";
 import { parseChargeRow, toApiDate } from "../../../src/packages/kelec-charge-import/services/rowParser";
-import { createDateParser } from "../../../src/packages/kelec-charge-import/services/dateFormat";
+import { createDateParser, DateOrder, deviceDateOrder } from "../../../src/packages/kelec-charge-import/services/dateFormat";
 
 /** Fichier xlsx en base64, tel que l'écrit l'export (`json_to_sheet` sur des objets). */
 const toXlsxBase64 = (rows: object[]): string => {
@@ -14,8 +14,8 @@ const toXlsxBase64 = (rows: object[]): string => {
     return XLSX.write(workbook, { type: 'base64', bookType: 'xlsx' });
 };
 
-const previewOf = (rows: object[], existing: Charge[] = []) =>
-    buildImportPreview(readSpreadsheetRows(toXlsxBase64(rows)), existing, 'DMY');
+const previewOf = (rows: object[], existing: Charge[] = [], fallbackDateOrder: DateOrder = 'DMY') =>
+    buildImportPreview(readSpreadsheetRows(toXlsxBase64(rows)), existing, fallbackDateOrder);
 
 describe("versions successives de l'export", () => {
     test('mai → déc. 2024 : 7 colonnes, dates ISO, lignes dans le désordre, niveau 0', () => {
@@ -72,7 +72,9 @@ describe("versions successives de l'export", () => {
         const second = new Charge('2026-10-05T22:00:00Z', '2026-10-05T23:30:00Z', 90, 45, 70, 13, 'ok');
         const [merged] = mergeCharges([first, second]);
 
-        const { newCharges } = previewOf(toRows([merged]));
+        // toRows écrit les dates dans la locale de la machine : sans jour > 12, l'import retombe
+        // sur l'ordre de cette même locale, comme dans l'app (export et import sur le même téléphone).
+        const { newCharges } = previewOf(toRows([merged]), [], deviceDateOrder());
 
         expect(newCharges).toHaveLength(1);
         expect(newCharges[0]).toMatchObject({

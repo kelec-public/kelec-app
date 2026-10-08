@@ -29,12 +29,12 @@ test('should test languageHandler', async () => {
     mockGetLanguage.mockReturnValueOnce('sv-SE');
     const languageHandler = new LanguageHandler();
     // should be in swedish
-    expect(languageHandler.getTranslation('login')).toBe('Logga in');
+    expect(languageHandler.getTranslation('logOut')).toBe('Logga ut');
 });
 
 test('should test languageHandler with english', async () => {
     mockGetLanguage.mockReturnValueOnce('ab-AB');
     const languageHandler = new LanguageHandler();
     // should be in english
-    expect(languageHandler.getTranslation('login')).toBe('Log in');
+    expect(languageHandler.getTranslation('logOut')).toBe('Log out');
 });
