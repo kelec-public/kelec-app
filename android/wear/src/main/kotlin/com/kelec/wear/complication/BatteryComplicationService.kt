@@ -1,7 +1,9 @@
 package com.kelec.wear.complication
 
+import android.app.PendingIntent
 import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.graphics.drawable.Icon
 import androidx.wear.watchface.complications.data.ComplicationData
 import androidx.wear.watchface.complications.data.ComplicationText
@@ -20,6 +22,7 @@ import com.kelec.shared.AppPreferences
 import com.kelec.shared.Formatting
 import com.kelec.shared.SharedStore
 import com.kelec.shared.VehicleStatus
+import com.kelec.wear.MainActivity
 import com.kelec.wear.R
 import com.kelec.wear.vehicleLoader
 import com.kelec.wear.watchCar
@@ -36,11 +39,33 @@ class BatteryComplicationService : SuspendingComplicationDataSourceService() {
 
     override suspend fun onComplicationRequest(request: ComplicationRequest): ComplicationData {
         val store = SharedStore(this)
-        val account = store.loadAccount() ?: return NoDataComplicationData()
-        val car = watchCar(account, store) ?: return NoDataComplicationData()
-        val battery = (vehicleLoader(this).load(car) as? VehicleStatus.Loaded)?.battery ?: return NoDataComplicationData()
-        return build(request.complicationType, car.model, battery, store.loadPreferences() ?: AppPreferences())
-            ?: NoDataComplicationData()
+        val type = request.complicationType
+        // pas de compte, pas de voiture ou pas de statut : « -- », et le toucher ouvre l'app (pour synchroniser)
+        val account = store.loadAccount() ?: return unavailable(type)
+        val car = watchCar(account, store) ?: return unavailable(type)
+        val battery = (vehicleLoader(this).load(car) as? VehicleStatus.Loaded)?.battery ?: return unavailable(type)
+        return build(type, car.model, battery, store.loadPreferences() ?: AppPreferences()) ?: NoDataComplicationData()
+    }
+
+    private fun unavailable(type: ComplicationType): ComplicationData {
+        val dashes = text("--")
+        val icon = MonochromaticImage.Builder(Icon.createWithResource(this, R.drawable.ic_car)).build()
+        return when (type) {
+            ComplicationType.RANGED_VALUE -> RangedValueComplicationData.Builder(0f, 0f, 100f, dashes)
+                .setText(dashes)
+                .setMonochromaticImage(icon)
+                .setTapAction(openApp())
+                .build()
+            ComplicationType.SHORT_TEXT -> ShortTextComplicationData.Builder(dashes, dashes)
+                .setMonochromaticImage(icon)
+                .setTapAction(openApp())
+                .build()
+            ComplicationType.LONG_TEXT -> LongTextComplicationData.Builder(dashes, dashes)
+                .setMonochromaticImage(icon)
+                .setTapAction(openApp())
+                .build()
+            else -> NoDataComplicationData()
+        }
     }
 
     override fun getPreviewData(type: ComplicationType): ComplicationData? =
@@ -59,18 +84,29 @@ class BatteryComplicationService : SuspendingComplicationDataSourceService() {
             ComplicationType.RANGED_VALUE -> RangedValueComplicationData.Builder(level.toFloat(), 0f, 100f, description)
                 .setText(levelText)
                 .setMonochromaticImage(icon)
+                .setTapAction(openApp())
                 .build()
             ComplicationType.SHORT_TEXT -> ShortTextComplicationData.Builder(levelText, description)
                 .setTitle(text(range))
                 .setMonochromaticImage(icon)
+                .setTapAction(openApp())
                 .build()
             ComplicationType.LONG_TEXT -> LongTextComplicationData.Builder(text("$level% · $range"), description)
                 .setTitle(text(carName))
                 .setMonochromaticImage(icon)
+                .setTapAction(openApp())
                 .build()
             else -> null
         }
     }
+
+    /** Toucher la complication ouvre l'app de la montre (comme les widgets de l'Apple Watch). */
+    private fun openApp(): PendingIntent = PendingIntent.getActivity(
+        this,
+        0,
+        Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+    )
 
     private fun text(value: String): ComplicationText = PlainComplicationText.Builder(value).build()
 
