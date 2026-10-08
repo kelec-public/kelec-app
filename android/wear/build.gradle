@@ -16,8 +16,8 @@ android {
         minSdk 30
         targetSdk 34
         // doit être différent de celui de l'app du téléphone (même fiche Play Store)
-        versionCode 2000294
-        versionName '2.6.6'
+        versionCode 2000300
+        versionName '2.7.0'
     }
 
     buildFeatures {
