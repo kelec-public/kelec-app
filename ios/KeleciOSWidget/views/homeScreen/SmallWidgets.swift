@@ -92,5 +92,7 @@ struct SmallCarWidgetView: View{
 #Preview(as: .systemSmall) {
   KeleciOSWidget()
 } timeline: {
-  SimpleEntry.previewStates()
+  for entry in SimpleEntry.previewStates() {
+    entry
+  }
 }

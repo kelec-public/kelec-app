@@ -136,8 +136,10 @@ struct MediumCarWidgetView: View{
 #Preview(as: .systemMedium) {
   KeleciOSWidget()
 } timeline: {
-  SimpleEntry.previewStates(cars: [
+  for entry in SimpleEntry.previewStates(cars: [
     (UserCar(email: "", password: "", carMaker: "dacia"), "Dacia Spring"),
     (UserCar(email: "", password: "", carMaker: "alpine"), "Alpine A290"),
-  ])
+  ]) {
+    entry
+  }
 }

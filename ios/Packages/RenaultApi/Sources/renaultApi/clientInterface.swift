@@ -14,6 +14,7 @@ public protocol ApiClient {
     mutating func setPassword(password: String) -> Void
     mutating func setCookieValue(cookieValue: String) -> Void // uniquement pour Renault group
     func getVehicleInfo(vin: String) async throws -> ApiHandler
-    func launchHvac(vin: String) async throws -> Bool
+    // temperature: target temperature in °C
+    func launchHvac(vin: String, temperature: Int) async throws -> Bool
     func getMapCoordinates(vin: String) async throws -> (Latitude, Longitude)
 }

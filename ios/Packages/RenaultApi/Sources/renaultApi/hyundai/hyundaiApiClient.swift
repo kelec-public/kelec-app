@@ -57,7 +57,7 @@ public struct HyundaiApiClient: ApiClient{
     }
     
     
-    public func launchHvac(vin: String) async throws -> Bool {
+    public func launchHvac(vin: String, temperature: Int) async throws -> Bool {
         var components = URLComponents()
         components.scheme = "https"
         components.host = self.baseURL
@@ -73,7 +73,7 @@ public struct HyundaiApiClient: ApiClient{
             "password": self.password,
             "pin": self.pin,
             "vin": vin,
-            "temperature": "22"
+            "temperature": String(temperature)
         ]
         print(body)
         let finalBody = try? JSONSerialization.data(withJSONObject: body)

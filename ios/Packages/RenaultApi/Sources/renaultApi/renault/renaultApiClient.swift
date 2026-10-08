@@ -101,7 +101,7 @@ public struct RenaultApiClient: ApiClient {
 
     }
 
-    public func launchHvac(vin: String) async throws -> Bool {
+    public func launchHvac(vin: String, temperature: Int) async throws -> Bool {
         // then get jwt token
         guard
             let jwtSession = try? await self.getJWTToken(
@@ -113,7 +113,8 @@ public struct RenaultApiClient: ApiClient {
         // then get hvac response data
         guard
             let hvacLaunch = try? await self.launchActionHVAC(
-                jwtToken: jwtSession.id_token, vin: vin, kamareonAccountId: self.kamereonAccountId)
+                jwtToken: jwtSession.id_token, vin: vin, kamareonAccountId: self.kamereonAccountId,
+                temperature: temperature)
         else {
             throw ApiClientError.serverError
         }
@@ -195,7 +196,9 @@ public struct RenaultApiClient: ApiClient {
         return data
     }
 
-    private func launchActionHVAC(jwtToken: String, vin: String, kamareonAccountId: String)
+    private func launchActionHVAC(
+        jwtToken: String, vin: String, kamareonAccountId: String, temperature: Int
+    )
         async throws -> Data
     {
         var components = URLComponents()
@@ -219,7 +222,7 @@ public struct RenaultApiClient: ApiClient {
                 "attributes": [
                     "action": "start",
                     "id": "-------",
-                    "targetTemperature": 22,
+                    "targetTemperature": temperature,
                 ],
             ]
         ]

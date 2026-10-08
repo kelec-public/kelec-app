@@ -18,10 +18,24 @@ final class CarViewModel: ObservableObject {
   // a fetch is running
   @Published private(set) var isRefreshing = false
 
+  // last target temperature chosen for this car, saved on each change like the RN app (TemperaturePreferences):
+  // "<vin>/savedTemperature", in the watch's own storage
+  @Published var savedTemperature: Int {
+    didSet {
+      UserDefaults.standard.set(String(savedTemperature), forKey: Self.temperatureKey(userCar))
+    }
+  }
+
   let userCar: UserCar
 
   init(userCar: UserCar) {
     self.userCar = userCar
+    let stored = Int(UserDefaults.standard.string(forKey: Self.temperatureKey(userCar)) ?? "")
+    savedTemperature = stored.flatMap { HvacTemperature.values.contains($0) ? $0 : nil } ?? HvacTemperature.defaultValue
+  }
+
+  private static func temperatureKey(_ userCar: UserCar) -> String {
+    "\(userCar.car?.vin ?? "")/savedTemperature"
   }
 
   func load() async {
@@ -37,8 +51,8 @@ final class CarViewModel: ObservableObject {
   }
 
   // false when the command could not be sent
-  func launchHVAC() async -> Bool {
-    await sendHVACCommand(userCar: userCar)
+  func launchHVAC(temperature: Int) async -> Bool {
+    await sendHVACCommand(userCar: userCar, temperature: temperature)
   }
 
   // reloads the car and the watch widgets

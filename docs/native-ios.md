@@ -82,6 +82,7 @@ et l'app RN en lit une partie.
 | `<vin>_mileageHistory` | App Group | Kilométrage du dernier mois (`[{mileage, timestamp ISO}]`) | `SharedHistory` | App RN (historique de charge) |
 | `<vin>_batteryStatus` | App Group | Dernier `RenaultBatteryStatus` | `SharedHistory` | App RN |
 | `watchWidgetCar` | App Group (montre) | VIN choisi dans les Réglages de la montre | `WatchSettingsView` | Widgets de la montre |
+| `<vin>/savedTemperature` | UserDefaults.standard (montre) | Dernière température du préchauffage (`"21"`), même clé et format que l'app RN (AsyncStorage) | `CarViewModel` | App de la montre |
 | `<vin>_password` | Keychain | Mot de passe du compte | Stockage chiffré RN / `WatchSync` (Hyundai) | Clients d'API, intent |
 | `cookieValue_<email>` | Keychain | Session Renault | App RN / `WatchSync` | Client Renault |
 | `RENAULT_carsLoaded`, `HYUNDAI_carsLoaded` | App Group | Cache du dernier statut par VIN | `VehicleCache` | App et widgets (iPhone et montre) : le dernier chargement gagne |
@@ -156,11 +157,14 @@ seulement si une voiture est affichée.
 - **App** : `ContentView` lit le compte (une page par voiture, puis les Réglages) et se recharge à chaque synchro
   (`WatchSync.lastSyncDate`). `CarViewModel.load()` affiche d'abord le cache (`VehicleLoader.cachedStatus`), puis le
   statut chargé ; `refresh()` recharge aussi les widgets de la montre.
+- **Préchauffage** : la confirmation est une feuille (une alerte ne peut pas contenir de réglage) avec un `Stepper`
+  et la Digital Crown. Températures de `HvacTemperature` (`Shared/ApiClients.swift`) : 17 à 27 °C, LOW / HIGH aux
+  bornes, 21 °C par défaut, comme `kelec-hvac/models/Temperature.ts`. Enregistrée par voiture à chaque changement.
 
 ### Intent Siri / Raccourcis (`LaunchHVACIntent`)
 
-Retrouve la voiture par VIN dans le compte, envoie `sendHVACCommand` (`launchHvac` du client du constructeur)
-et répond par un dialogue traduit (`informationSent`, `preHeatLaunched` ou `error`, `commandSendError`).
+Retrouve la voiture par VIN dans le compte, envoie `sendHVACCommand` (`launchHvac` du client du constructeur,
+à la température par défaut, 21 °C) et répond par un dialogue traduit (`informationSent`, `preHeatLaunched` ou `error`, `commandSendError`).
 
 ## Affichage des widgets
 

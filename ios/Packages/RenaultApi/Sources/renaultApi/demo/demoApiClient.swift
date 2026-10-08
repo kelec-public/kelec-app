@@ -16,7 +16,7 @@ public struct DemoApiClient: ApiClient{
         return
     }
     
-    public func launchHvac(vin: String) async throws -> Bool {
+    public func launchHvac(vin: String, temperature: Int) async throws -> Bool {
         return true
     }
     

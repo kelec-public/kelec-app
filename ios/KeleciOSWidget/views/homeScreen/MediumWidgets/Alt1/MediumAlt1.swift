@@ -92,5 +92,7 @@ struct MediumCarWidgetAltView: View {
 #Preview(as: .systemMedium) {
   KeleciOSWidgetAlternative()
 } timeline: {
-  SimpleEntry.previewStates()
+  for entry in SimpleEntry.previewStates() {
+    entry
+  }
 }

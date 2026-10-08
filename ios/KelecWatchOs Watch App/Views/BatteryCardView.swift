@@ -14,7 +14,9 @@ import renaultApi
 struct BatteryCardView: View{
   @Environment(\.isLuminanceReduced) var isLuminanceReduced
   var refreshApi: () -> Void
-  var launchHVAC: () async -> Bool
+  var launchHVAC: (_ temperature: Int) async -> Bool
+  // target temperature of the pre-heating, saved for this car on each change
+  @Binding var temperature: Int
   var imageUrl: URL?
   var apiHandler: ApiHandler
   var appPreferences: AppPreferences?
@@ -199,18 +201,9 @@ struct BatteryCardView: View{
     } message: {
       Text(hvacAlertMessage)
     }
-    .alert(isPresented: $shouldShowHVACConfirm){
-      Alert(
-        title: Text(LocalizedStringKey("launchPreHeat")),
-        message: Text(LocalizedStringKey("areYouSureYouWantToLaunchPreheating")),
-        primaryButton: .default(
-          Text(LocalizedStringKey("confirm")),
-          action: confirmLaunchHVAC
-        ),
-        secondaryButton: .cancel(
-          Text(LocalizedStringKey("cancel"))
-        )
-      )
+    // an alert cannot hold the temperature picker: confirmation in a sheet
+    .sheet(isPresented: $shouldShowHVACConfirm){
+      HVACConfirmView(temperature: $temperature, onConfirm: confirmLaunchHVAC)
     }
     
     .sheet(isPresented: $shouldShowMapModal){
@@ -227,7 +220,7 @@ struct BatteryCardView: View{
       self.shouldShowHVACConfirm = false
       self.isLightLoadingHVAC = true
       // launch HVAC
-      let hasLaunchedHVAC = await launchHVAC()
+      let hasLaunchedHVAC = await launchHVAC(temperature)
       if(hasLaunchedHVAC){
         self.hvacAlertTitle = localized("informationSent")
         self.hvacAlertMessage = localized("preHeatLaunched")
@@ -244,4 +237,65 @@ struct BatteryCardView: View{
   
   
   
+}
+
+// pre-heating confirmation with the target temperature (- / + like the RN app, or the Digital Crown)
+private struct HVACConfirmView: View {
+  @Binding var temperature: Int
+  var onConfirm: () -> Void
+  @Environment(\.dismiss) private var dismiss
+
+  var body: some View {
+    ScrollView {
+      VStack(spacing: 8) {
+        Text(LocalizedStringKey("launchPreHeat"))
+          .font(.headline)
+          .multilineTextAlignment(.center)
+        Text(LocalizedStringKey("areYouSureYouWantToLaunchPreheating"))
+          .font(.footnote)
+          .foregroundColor(.gray)
+          .multilineTextAlignment(.center)
+
+        Stepper(value: $temperature, in: HvacTemperature.min...HvacTemperature.max) {
+          Text(HvacTemperature.label(temperature))
+            .font(.title2)
+            .fontWeight(.bold)
+            .foregroundColor(temperatureColour)
+            .monospacedDigit()
+        }
+        .focusable()
+        .digitalCrownRotation(
+          crownTemperature,
+          from: Double(HvacTemperature.min),
+          through: Double(HvacTemperature.max),
+          by: 1,
+          sensitivity: .low,
+          isContinuous: false,
+          isHapticFeedbackEnabled: true
+        )
+
+        Button(LocalizedStringKey("confirm"), action: onConfirm)
+          .buttonStyle(.borderedProminent)
+        Button(LocalizedStringKey("cancel"), role: .cancel) {
+          dismiss()
+        }
+      }
+    }
+  }
+
+  // LOW in blue, HIGH in red, like the RN app
+  private var temperatureColour: Color {
+    switch temperature {
+    case HvacTemperature.min: return .blue
+    case HvacTemperature.max: return .red
+    default: return .primary
+    }
+  }
+
+  private var crownTemperature: Binding<Double> {
+    Binding(
+      get: { Double(temperature) },
+      set: { temperature = Int($0.rounded()) }
+    )
+  }
 }

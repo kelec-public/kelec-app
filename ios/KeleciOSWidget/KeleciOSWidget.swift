@@ -54,7 +54,7 @@ extension SimpleEntry {
   // one entry per state of PreviewData.apiHandlerStates; `cars` replaces the car of the first entries
   static func previewStates(cars: [(userCar: UserCar, name: String)] = []) -> [SimpleEntry] {
     PreviewData.apiHandlerStates.enumerated().map { index, apiHandler in
-      let car = index < cars.count ? cars[index] : (PreviewData.userCar, PreviewData.carName)
+      let car: (userCar: UserCar, name: String) = index < cars.count ? cars[index] : (PreviewData.userCar, PreviewData.carName)
       return SimpleEntry(date: Date() - 60 * 12, account: PreviewData.account, userCar: car.userCar, carName: car.name, image: PreviewData.image, appPreferences: nil, apiHandler: apiHandler)
     }
   }

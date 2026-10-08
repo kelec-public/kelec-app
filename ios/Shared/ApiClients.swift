@@ -51,8 +51,25 @@ public func getCarMakerApiClient(usercar: UserCar) -> ApiClient{
   }
 }
 
+// target temperatures of the pre-heating (°C), same as the RN app (kelec-hvac/models/Temperature.ts).
+// The bounds are displayed LOW / HIGH.
+enum HvacTemperature {
+  static let values = Array(17...27)
+  static let min = values.first!
+  static let max = values.last!
+  static let defaultValue = 21
+
+  static func label(_ temperature: Int) -> String {
+    switch temperature {
+    case min: return "LOW"
+    case max: return "HIGH"
+    default: return "\(temperature)°C"
+    }
+  }
+}
+
 // sends the pre-heating command, false when it could not be sent
-func sendHVACCommand(userCar: UserCar) async -> Bool {
+func sendHVACCommand(userCar: UserCar, temperature: Int = HvacTemperature.defaultValue) async -> Bool {
   let client = getCarMakerApiClient(usercar: userCar)
-  return (try? await client.launchHvac(vin: userCar.car?.vin ?? "")) ?? false
+  return (try? await client.launchHvac(vin: userCar.car?.vin ?? "", temperature: temperature)) ?? false
 }
