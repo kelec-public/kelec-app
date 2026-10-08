@@ -7,6 +7,7 @@ import { fontFamilyBold, fontWeightBold } from "../../../../../lib/graphics/comm
 import { getBlackColour, getWhiteColour } from "../../../../../lib/graphics/utils";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from '../../../../../packages/kelec-model/view/Button';
+import { modalSafeAreaEdges } from '../../../../../packages/kelec-model/view/modalSafeArea';
 import { ThemeContext } from '@react-navigation/native';
 
 type SendCoffeeCardProps = {
@@ -23,7 +24,7 @@ function SendCoffeeCard({ navigation }: SendCoffeeCardProps): React.JSX.Element 
             style={{ flex: 1, backgroundColor: getWhiteColour(isDarkMode), padding: 15 }}
             testID="sendCoffeeView"
         >
-            <SafeAreaView style={{ flex: 1, display: 'flex', gap: 15, }} >
+            <SafeAreaView edges={modalSafeAreaEdges(['top', 'right', 'bottom', 'left'])} style={{ flex: 1, display: 'flex', gap: 15, }} >
                 <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 15 }}>
                     <MaterialIcon style={{ transform: [{ translateY: 3 }] }} name="coffee-outline" size={30} color={getBlackColour(isDarkMode)}></MaterialIcon>
                     <Text style={{
