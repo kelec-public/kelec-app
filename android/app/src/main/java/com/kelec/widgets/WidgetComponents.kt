@@ -5,6 +5,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.glance.ColorFilter
 import androidx.glance.GlanceModifier
 import androidx.glance.Image
 import androidx.glance.ImageProvider
@@ -22,6 +23,7 @@ import androidx.glance.layout.Row
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
+import androidx.glance.layout.size
 import androidx.glance.layout.padding
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
@@ -98,21 +100,21 @@ fun BatteryBar(battery: BatteryStatus, height: Int = 10) {
     )
 }
 
-/** Heure de la dernière mise à jour ; la toucher relance le chargement. */
+/** Heure de la dernière mise à jour avec l'icône de rechargement ; la toucher relance le chargement. */
 @Composable
-fun LastRefreshLabel(battery: BatteryStatus, fontSize: TextUnit = 11.sp, withIcon: Boolean = false) {
+fun LastRefreshLabel(battery: BatteryStatus, fontSize: TextUnit = 11.sp) {
     val text = Formatting.parseTimestamp(battery.timestamp)?.let { Formatting.lastRefresh(it) } ?: "--:--"
     Row(
         modifier = GlanceModifier.clickable(actionRunCallback<RefreshWidgetsAction>()),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (withIcon) {
-            Image(
-                provider = ImageProvider(R.drawable.refresh_24),
-                contentDescription = null,
-                modifier = GlanceModifier.height(16.dp),
-            )
-        }
+        // même gris que l'heure : l'icône noire du drawable ne se voyait pas en mode sombre
+        Image(
+            provider = ImageProvider(R.drawable.refresh_24),
+            contentDescription = null,
+            modifier = GlanceModifier.size((fontSize.value + 4).dp),
+            colorFilter = ColorFilter.tint(WidgetColors.secondary),
+        )
         Text(text = text, style = TextStyle(color = WidgetColors.secondary, fontSize = fontSize))
     }
 }

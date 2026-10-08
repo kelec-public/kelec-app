@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.glance.ColorFilter
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.Image
@@ -100,7 +101,7 @@ private fun CarBarView(state: CarWidgetState.Loaded) {
                 ChargeAndRange(state, 12)
                 if (battery.isPlugged) ChargingTimes(battery, 12)
             }
-            LastRefreshLabel(battery, 12.sp, withIcon = true)
+            LastRefreshLabel(battery, 12.sp)
         }
     }
 }
@@ -216,7 +217,12 @@ private fun ChargingTimes(battery: BatteryStatus, fontSize: Int) {
         )
         if (endTime != null) {
             Spacer(GlanceModifier.width(8.dp))
-            Image(provider = ImageProvider(R.drawable.ic_baseline_battery_full_24), contentDescription = null, modifier = GlanceModifier.size(iconSize))
+            Image(
+                provider = ImageProvider(R.drawable.ic_baseline_battery_full_24),
+                contentDescription = null,
+                modifier = GlanceModifier.size(iconSize),
+                colorFilter = ColorFilter.tint(WidgetColors.secondary),
+            )
             Text(
                 text = Formatting.localTime(endTime),
                 style = TextStyle(color = WidgetColors.secondary, fontSize = fontSize.sp),
