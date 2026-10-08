@@ -1,12 +1,12 @@
-import { Charge } from "../../kelec-charge-history";
+import { Charge, KnownChargeStarts } from "../../kelec-charge-history";
 import { ImportPreview, ImportSummary } from "../models/ImportPreview";
 import { SpreadsheetRow } from "../models/SpreadsheetRow";
 import { createDateParser, DateOrder } from "./dateFormat";
 import { DATE_COLUMNS, parseChargeRow } from "./rowParser";
 
 /**
- * Lit les lignes du fichier et les compare à l'historique : seules les charges dont l'instant
- * de début n'y est pas encore (ni plus haut dans le fichier) seront ajoutées.
+ * Lit les lignes du fichier et les compare à l'historique : seules les charges dont le début
+ * n'y est pas encore (ni plus haut dans le fichier, à quelques secondes près) seront ajoutées.
  */
 export const buildImportPreview = (
     rows: SpreadsheetRow[],
@@ -16,7 +16,7 @@ export const buildImportPreview = (
     const dateSamples = rows.flatMap(({ cells }) => DATE_COLUMNS.map(column => cells[column]));
     const parseDate = createDateParser(dateSamples, fallbackDateOrder);
 
-    const knownStarts = new Set(existing.map(charge => charge.getStartDate().getTime()));
+    const knownStarts = new KnownChargeStarts(existing);
     const preview: ImportPreview = { newCharges: [], alreadyKnownCount: 0, rejectedLines: [] };
 
     for (const row of rows) {
@@ -26,12 +26,11 @@ export const buildImportPreview = (
             continue;
         }
 
-        const start = charge.getStartDate().getTime();
-        if (knownStarts.has(start)) {
+        if (knownStarts.has(charge)) {
             preview.alreadyKnownCount++;
             continue;
         }
-        knownStarts.add(start);
+        knownStarts.add(charge);
         preview.newCharges.push(charge);
     }
     return preview;

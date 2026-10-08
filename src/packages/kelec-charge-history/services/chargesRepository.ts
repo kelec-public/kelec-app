@@ -1,6 +1,7 @@
 import { getMileageHistory } from "../../../lib/storage/sharedPlatformsData";
 import BatchedList from "../../kelec-storage/BatchedList";
 import Charge, { ChargeJSON } from "../models/Charge";
+import KnownChargeStarts from "./knownChargeStarts";
 import { findMileageAtStart } from "./mileageAtStart";
 
 const storedCharges = new BatchedList<ChargeJSON>({
@@ -35,18 +36,16 @@ class ChargesRepository {
     }
 
     /**
-     * Dédoublonne sur l'instant de début (la première occurrence l'emporte), trie par date,
-     * complète le kilométrage puis enregistre. L'instant, et non le texte, sert de clé :
-     * une même date peut être écrite avec ou sans millisecondes.
+     * Dédoublonne sur le début (la première occurrence l'emporte, voir `KnownChargeStarts`), trie par date,
+     * complète le kilométrage puis enregistre.
      */
     private static async save(vin: string, candidates: Charge[]): Promise<Charge[]> {
-        const seen = new Set<number>();
+        const known = new KnownChargeStarts();
         const charges = candidates
             .filter(charge => {
                 if (charge.chargeStartDate === undefined) return false;
-                const start = charge.getStartDate().getTime();
-                if (seen.has(start)) return false;
-                seen.add(start);
+                if (known.has(charge)) return false;
+                known.add(charge);
                 return true;
             })
             .sort((a, b) => a.getStartDate().getTime() - b.getStartDate().getTime());

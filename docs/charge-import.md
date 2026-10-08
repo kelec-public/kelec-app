@@ -54,7 +54,8 @@ colonnes suit celui des propriétés au moment de l'export. **Les colonnes sont 
   (le fichier a très probablement été exporté depuis ce téléphone). Une date qui commence par une année à 4 chiffres est lue
   année-mois-jour. Les indicateurs AM / PM (en, el, ko, zh, ja) sont gérés. L'heure est interprétée dans le fuseau de l'appareil.
 - **Dates enregistrées** au format de l'API (`…T07:57:41Z`, sans millisecondes), comme les charges venant de l'API.
-- **Doublons** : une charge dont l'instant de début est déjà dans l'historique (ou plus haut dans le fichier) n'est pas importée ;
+- **Doublons** : une charge dont le début est déjà dans l'historique (ou plus haut dans le fichier), à 5 secondes près
+  (`KnownChargeStarts`, kelec-charge-history), n'est pas importée. Les anciens exports ISO ont la même charge avec une seconde d'écart ;
   la charge déjà stockée l'emporte (`ChargesRepository.addMissingCharges`).
 - **Lignes fusionnées** : importées comme une charge simple (`isAMergeCharge = false`), le détail des sous-charges n'étant pas dans le fichier.
 - **Fichier illisible** : xlsx lit n'importe quel fichier comme une feuille vide ; un fichier sans aucune ligne est donc traité comme une erreur.

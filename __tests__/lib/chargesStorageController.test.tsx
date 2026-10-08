@@ -87,3 +87,16 @@ test('les charges importées restent stockées après une nouvelle synchro avec 
     expect(stored!.map(charge => charge.chargeStartDate)).toEqual(['2023-01-01T10:00:00Z', '2024-02-01T10:00:00Z']);
     expect(stored![1].chargeDuration).toBe(60); // la charge stockée a gagné contre le doublon importé
 });
+
+test('une charge renvoyée avec une seconde d\'écart remplace la charge stockée au lieu de la dupliquer', async () => {
+    const stored = new Charge('2024-08-23T07:57:41Z', '2024-08-23T11:35:52Z', 218, 20, 80, 30, 'ok');
+    const fromApi = new Charge('2024-08-23T07:57:42Z', '2024-08-23T11:35:52Z', 218, 20, 80, 31, 'ok');
+    const importedDuplicate = new Charge('2024-08-23T07:57:40Z', '2024-08-23T11:35:52Z', 1, 1, 2, 1, 'ok');
+
+    await ChargesRepository.saveNewCharges('vin', [stored]);
+    await ChargesRepository.saveNewCharges('vin', [fromApi]);
+    await ChargesRepository.addMissingCharges('vin', [importedDuplicate]);
+    const charges = await ChargesRepository.getCharges('vin');
+
+    expect(charges!.map(charge => charge.chargeStartDate)).toEqual(['2024-08-23T07:57:42Z']);
+});
