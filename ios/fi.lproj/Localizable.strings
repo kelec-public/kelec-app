@@ -127,9 +127,9 @@
 "watchWidgetCar" = "Widgeteissä näytettävä auto";
 
 "getCarStatus" = "Hae auton tila";
-"getCarStatusDescription" = "Palauttaa valitun auton akun varaustason, toimintasäteen, lataustilan ym. seuraavia toimintoja varten.";
+"getCarStatusDescription" = "Palauttaa valitun auton akun varaustason, toimintasäteen, lataustilan ym. seuraavia toimintoja varten. Lukitus ja latausraja jäävät tyhjiksi Renault-, Dacia- ja Alpine-autoissa, koska niiden API ei anna niitä.";
 "getCarStatusSummary ${car}" = "Hae tila: ${car}";
-"getCarStatusCarDescription" = "Auto, jonka tila haetaan.";
+"getCarStatusCarDescription" = "Auto, jonka tilan haluat tietää.";
 "carStatus" = "Auton tila";
 "carStatusBatteryLevel" = "Akun varaustaso";
 "carStatusRange" = "Toimintasäde";

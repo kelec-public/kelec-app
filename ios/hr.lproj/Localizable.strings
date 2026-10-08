@@ -127,9 +127,9 @@
 "watchWidgetCar" = "Automobil na widgetima";
 
 "getCarStatus" = "Dohvati stanje automobila";
-"getCarStatusDescription" = "Vraća razinu baterije, domet, stanje punjenja itd. odabranog automobila za sljedeće radnje.";
+"getCarStatusDescription" = "Vraća razinu baterije, domet, stanje punjenja itd. odabranog automobila za sljedeće radnje. Zaključavanje i ograničenje punjenja ostaju prazni za Renault, Daciju i Alpine jer ih njihov API ne pruža.";
 "getCarStatusSummary ${car}" = "Dohvati stanje za ${car}";
-"getCarStatusCarDescription" = "Automobil čije se stanje dohvaća.";
+"getCarStatusCarDescription" = "Automobil čije stanje želite saznati.";
 "carStatus" = "Stanje automobila";
 "carStatusBatteryLevel" = "Razina baterije";
 "carStatusRange" = "Domet";

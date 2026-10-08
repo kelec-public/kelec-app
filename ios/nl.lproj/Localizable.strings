@@ -102,7 +102,7 @@
 
 "launchPreHeat"= "Start klimaatregeling op afstand";
 
-"launchPreHeatCarDescription" = "Het voertuig waarvan de klimaatregeling moet starten.";
+"launchPreHeatCarDescription" = "Het voertuig waarvan de klimaatregeling op afstand moet starten.";
 "launchPreHeatTemperature" = "Temperatuur";
 "launchPreHeatTemperatureDescription" = "Gewenste temperatuur in het interieur, in °C.";
 "launchPreHeatSummary ${car} ${temperature}" = "Klimaatregeling op afstand van ${car} starten op ${temperature} °C";
@@ -128,9 +128,9 @@
 "watchWidgetCar" = "Auto in de widgets";
 
 "getCarStatus" = "Voertuigstatus ophalen";
-"getCarStatusDescription" = "Geeft het batterijniveau, de actieradius, de laadstatus enz. van het gekozen voertuig terug, voor de volgende acties.";
+"getCarStatusDescription" = "Geeft het batterijniveau, de actieradius, de laadstatus enz. van het gekozen voertuig terug, voor de volgende acties. Vergrendeling en laadlimiet blijven leeg bij Renault, Dacia en Alpine, omdat hun API ze niet levert.";
 "getCarStatusSummary ${car}" = "Status van ${car} ophalen";
-"getCarStatusCarDescription" = "Het voertuig waarvan de status wordt opgehaald.";
+"getCarStatusCarDescription" = "Het voertuig waarvan u de status wilt weten.";
 "carStatus" = "Voertuigstatus";
 "carStatusBatteryLevel" = "Batterijniveau";
 "carStatusRange" = "Actieradius";

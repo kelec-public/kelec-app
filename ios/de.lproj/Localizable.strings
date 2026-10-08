@@ -127,9 +127,9 @@
 "watchWidgetCar" = "Fahrzeug in den Widgets";
 
 "getCarStatus" = "Fahrzeugstatus abrufen";
-"getCarStatusDescription" = "Gibt Akkustand, Reichweite, Ladestatus usw. des gewählten Fahrzeugs für die nächsten Aktionen zurück.";
+"getCarStatusDescription" = "Gibt Akkustand, Reichweite, Ladestatus usw. des gewählten Fahrzeugs für die nächsten Aktionen zurück. Verriegelung und Ladelimit bleiben bei Renault, Dacia und Alpine leer, da deren API sie nicht liefert.";
 "getCarStatusSummary ${car}" = "Status von ${car} abrufen";
-"getCarStatusCarDescription" = "Das Fahrzeug, dessen Status abgerufen werden soll.";
+"getCarStatusCarDescription" = "Das Fahrzeug, dessen Status Sie abrufen möchten.";
 "carStatus" = "Fahrzeugstatus";
 "carStatusBatteryLevel" = "Akkustand";
 "carStatusRange" = "Reichweite";

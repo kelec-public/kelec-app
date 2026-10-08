@@ -127,9 +127,9 @@
 "watchWidgetCar" = "Vozilo v pripomočkih";
 
 "getCarStatus" = "Pridobi stanje avtomobila";
-"getCarStatusDescription" = "Vrne raven baterije, doseg, stanje polnjenja itd. izbranega avtomobila za naslednja dejanja.";
+"getCarStatusDescription" = "Vrne raven baterije, doseg, stanje polnjenja itd. izbranega avtomobila za naslednja dejanja. Zaklepanje in omejitev polnjenja ostaneta prazna pri vozilih Renault, Dacia in Alpine, ker ju njihov API ne posreduje.";
 "getCarStatusSummary ${car}" = "Pridobi stanje za ${car}";
-"getCarStatusCarDescription" = "Avtomobil, katerega stanje želite pridobiti.";
+"getCarStatusCarDescription" = "Avtomobil, katerega stanje želite izvedeti.";
 "carStatus" = "Stanje avtomobila";
 "carStatusBatteryLevel" = "Raven baterije";
 "carStatusRange" = "Doseg";

@@ -127,9 +127,9 @@
 "watchWidgetCar" = "A widgeteken megjelenő autó";
 
 "getCarStatus" = "Autó állapotának lekérése";
-"getCarStatusDescription" = "Visszaadja a kiválasztott autó töltöttségi szintjét, hatótávját, töltési állapotát stb. a következő műveletekhez.";
+"getCarStatusDescription" = "Visszaadja a kiválasztott autó töltöttségi szintjét, hatótávját, töltési állapotát stb. a következő műveletekhez. A zárolás és a töltési korlát üres marad a Renault, Dacia és Alpine autóknál, mert az API-juk nem adja meg.";
 "getCarStatusSummary ${car}" = "${car} állapotának lekérése";
-"getCarStatusCarDescription" = "Az autó, amelynek az állapotát le kell kérni.";
+"getCarStatusCarDescription" = "Az autó, amelynek az állapotát meg szeretné tudni.";
 "carStatus" = "Autó állapota";
 "carStatusBatteryLevel" = "Töltöttségi szint";
 "carStatusRange" = "Hatótáv";

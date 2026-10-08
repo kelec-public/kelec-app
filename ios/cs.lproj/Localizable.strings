@@ -121,9 +121,9 @@
 "watchWidgetCar" = "Vůz ve widgetech";
 
 "getCarStatus" = "Získat stav vozu";
-"getCarStatusDescription" = "Vrátí stav baterie, dojezd, stav nabíjení a další údaje zvoleného vozu pro další akce.";
+"getCarStatusDescription" = "Vrátí stav baterie, dojezd, stav nabíjení a další údaje zvoleného vozu pro další akce. Zamčení a limit nabíjení zůstávají u vozů Renault, Dacia a Alpine prázdné, protože je jejich API neposkytuje.";
 "getCarStatusSummary ${car}" = "Získat stav vozu ${car}";
-"getCarStatusCarDescription" = "Vůz, jehož stav se má získat.";
+"getCarStatusCarDescription" = "Vůz, jehož stav chcete zjistit.";
 "carStatus" = "Stav vozu";
 "carStatusBatteryLevel" = "Stav baterie";
 "carStatusRange" = "Dojezd";

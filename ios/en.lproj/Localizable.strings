@@ -120,9 +120,9 @@
 "watchWidgetCar" = "Car shown on widgets";
 
 "getCarStatus" = "Get car status";
-"getCarStatusDescription" = "Returns the battery level, range, charge status and more of the chosen car, to use in the next actions.";
+"getCarStatusDescription" = "Returns the battery level, range, charge status and more of the chosen car, to use in the next actions. Lock status and charge limit stay empty for Renault, Dacia and Alpine cars, whose API doesn't provide them.";
 "getCarStatusSummary ${car}" = "Get the status of ${car}";
-"getCarStatusCarDescription" = "The car to get the status of.";
+"getCarStatusCarDescription" = "The car whose status you want.";
 "carStatus" = "Car status";
 "carStatusBatteryLevel" = "Battery level";
 "carStatusRange" = "Range";

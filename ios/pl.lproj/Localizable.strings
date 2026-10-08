@@ -128,9 +128,9 @@
 "watchWidgetCar" = "Samochód w widżetach";
 
 "getCarStatus" = "Pobierz stan samochodu";
-"getCarStatusDescription" = "Zwraca poziom baterii, zasięg, stan ładowania itp. wybranego samochodu do użycia w kolejnych czynnościach.";
+"getCarStatusDescription" = "Zwraca poziom baterii, zasięg, stan ładowania itp. wybranego samochodu do użycia w kolejnych czynnościach. Blokada i limit ładowania pozostają puste dla samochodów Renault, Dacia i Alpine, ponieważ ich API ich nie udostępnia.";
 "getCarStatusSummary ${car}" = "Pobierz stan: ${car}";
-"getCarStatusCarDescription" = "Samochód, którego stan ma zostać pobrany.";
+"getCarStatusCarDescription" = "Samochód, którego stan chcesz poznać.";
 "carStatus" = "Stan samochodu";
 "carStatusBatteryLevel" = "Poziom baterii";
 "carStatusRange" = "Zasięg";

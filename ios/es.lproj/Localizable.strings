@@ -121,9 +121,9 @@ Primero debes iniciar sesión en la aplicación.";
 "watchWidgetCar" = "Coche de los widgets";
 
 "getCarStatus" = "Obtener el estado del coche";
-"getCarStatusDescription" = "Devuelve el nivel de batería, la autonomía, el estado de carga, etc. del coche elegido, para usarlos en las siguientes acciones.";
+"getCarStatusDescription" = "Devuelve el nivel de batería, la autonomía, el estado de carga, etc. del coche elegido, para usarlos en las siguientes acciones. El bloqueo y el límite de carga quedan vacíos en los Renault, Dacia y Alpine, cuya API no los proporciona.";
 "getCarStatusSummary ${car}" = "Obtener el estado de ${car}";
-"getCarStatusCarDescription" = "El coche cuyo estado se va a obtener.";
+"getCarStatusCarDescription" = "El coche cuyo estado desea conocer.";
 "carStatus" = "Estado del coche";
 "carStatusBatteryLevel" = "Nivel de batería";
 "carStatusRange" = "Autonomía";

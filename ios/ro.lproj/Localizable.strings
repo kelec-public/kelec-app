@@ -127,9 +127,9 @@
 "watchWidgetCar" = "Mașina afișată în widgeturi";
 
 "getCarStatus" = "Obținere stare mașină";
-"getCarStatusDescription" = "Returnează nivelul bateriei, autonomia, starea încărcării etc. pentru mașina aleasă, pentru acțiunile următoare.";
+"getCarStatusDescription" = "Returnează nivelul bateriei, autonomia, starea încărcării etc. pentru mașina aleasă, pentru acțiunile următoare. Încuierea și limita de încărcare rămân goale pentru Renault, Dacia și Alpine, al căror API nu le furnizează.";
 "getCarStatusSummary ${car}" = "Obținere stare pentru ${car}";
-"getCarStatusCarDescription" = "Mașina a cărei stare se obține.";
+"getCarStatusCarDescription" = "Mașina a cărei stare doriți să o aflați.";
 "carStatus" = "Starea mașinii";
 "carStatusBatteryLevel" = "Nivelul bateriei";
 "carStatusRange" = "Autonomie";

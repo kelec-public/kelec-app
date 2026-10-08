@@ -127,9 +127,9 @@
 "watchWidgetCar" = "Cotxe dels widgets";
 
 "getCarStatus" = "Obtén l'estat del cotxe";
-"getCarStatusDescription" = "Retorna el nivell de bateria, l'autonomia, l'estat de càrrega, etc. del cotxe triat, per a les accions següents.";
+"getCarStatusDescription" = "Retorna el nivell de bateria, l'autonomia, l'estat de càrrega, etc. del cotxe triat, per a les accions següents. El bloqueig i el límit de càrrega queden buits als Renault, Dacia i Alpine, perquè la seva API no els proporciona.";
 "getCarStatusSummary ${car}" = "Obtén l'estat de ${car}";
-"getCarStatusCarDescription" = "El cotxe del qual cal obtenir l'estat.";
+"getCarStatusCarDescription" = "El cotxe del qual voleu conèixer l'estat.";
 "carStatus" = "Estat del cotxe";
 "carStatusBatteryLevel" = "Nivell de bateria";
 "carStatusRange" = "Autonomia";

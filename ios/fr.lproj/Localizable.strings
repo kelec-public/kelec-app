@@ -101,7 +101,7 @@
 
 "launchPreHeat"= "Lancer le confort thermique";
 
-"launchPreHeatCarDescription" = "La voiture dont il faut lancer le confort thermique.";
+"launchPreHeatCarDescription" = "La voiture sur laquelle lancer le confort thermique.";
 "launchPreHeatTemperature" = "Température";
 "launchPreHeatTemperatureDescription" = "Température souhaitée dans l'habitacle, en °C.";
 "launchPreHeatSummary ${car} ${temperature}" = "Lancer le confort thermique de ${car} à ${temperature} °C";
@@ -127,9 +127,9 @@
 "watchWidgetCar" = "Voiture affichée sur les widgets";
 
 "getCarStatus" = "Obtenir l'état de la voiture";
-"getCarStatusDescription" = "Renvoie le niveau de batterie, l'autonomie, le statut de charge… de la voiture choisie, pour les actions suivantes.";
+"getCarStatusDescription" = "Renvoie le niveau de batterie, l'autonomie, le statut de charge… de la voiture choisie, pour les actions suivantes. Le verrouillage et la limite de charge restent vides pour les Renault, Dacia et Alpine, dont l'API ne les fournit pas.";
 "getCarStatusSummary ${car}" = "Obtenir l'état de ${car}";
-"getCarStatusCarDescription" = "La voiture dont obtenir l'état.";
+"getCarStatusCarDescription" = "La voiture dont vous voulez connaître l'état.";
 "carStatus" = "État de la voiture";
 "carStatusBatteryLevel" = "Niveau de batterie";
 "carStatusRange" = "Autonomie";

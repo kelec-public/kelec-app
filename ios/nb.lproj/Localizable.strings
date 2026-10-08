@@ -127,9 +127,9 @@
 "watchWidgetCar" = "Bil som vises i widgets";
 
 "getCarStatus" = "Hent bilens status";
-"getCarStatusDescription" = "Returnerer batterinivå, rekkevidde, ladestatus m.m. for den valgte bilen til bruk i de neste handlingene.";
+"getCarStatusDescription" = "Returnerer batterinivå, rekkevidde, ladestatus m.m. for den valgte bilen til bruk i de neste handlingene. Låsestatus og ladegrense er tomme for Renault, Dacia og Alpine, fordi API-et deres ikke gir dem.";
 "getCarStatusSummary ${car}" = "Hent status for ${car}";
-"getCarStatusCarDescription" = "Bilen du vil hente status for.";
+"getCarStatusCarDescription" = "Bilen du vil se statusen til.";
 "carStatus" = "Bilens status";
 "carStatusBatteryLevel" = "Batterinivå";
 "carStatusRange" = "Rekkevidde";
