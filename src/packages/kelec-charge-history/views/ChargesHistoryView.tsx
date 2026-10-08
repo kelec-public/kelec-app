@@ -89,7 +89,7 @@ function ChargesHistoryView({ navigation, onImport }: Props): React.JSX.Element 
                     )}
                     onEndReached={controller.loadMoreMonths}
                     onEndReachedThreshold={0.5}
-                    ListFooterComponent={controller.hasMoreMonths ? <ActivityIndicator size="large" color="#0000ff" /> : null}
+                    ListFooterComponent={controller.hasMoreMonths ? <ActivityIndicator size="large" color="#0000ff" /> : undefined}
                 />
             </ChargesFiltersContext.Provider>
         </SafeAreaView>

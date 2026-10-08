@@ -66,7 +66,9 @@ Tous les éléments blancs posés sur les cartes (météo, retour, plein écran,
   les fait grossir sans limite. C'était le cas lors d'un premier essai : boutons énormes, et « Marcher vers… » poussé hors de l'écran.
 - `selected` : fond gris et bordure (plan/satellite).
 - La carte plein écran s'ouvre en modale : il n'y a pas de marge de sécurité en haut (la ligne du haut a donc une marge de 15),
-  mais il y en a une en bas (barre d'accueil) : le bloc du bas est dans un `SafeAreaView edges={['bottom']}`, plus une marge de 15.
+  mais il y en a une en bas (barre d'accueil) : le bloc du bas est dans un `SafeAreaView edges={modalSafeAreaEdges(['bottom'])}`, plus une marge de 15.
+  Sur Android, native-stack ne gère pas les modales : la carte s'ouvre comme une page classique au-dessus de la barre d'onglets,
+  qui gère déjà le bas de l'écran. `modalSafeAreaEdges` (`kelec-model`) retire donc la marge du bas sur Android.
 - Les tailles réelles ne sont pas calculées par jest : le rendu se vérifie à l'écran (iOS et Android).
 
 ## Pin de la voiture (`CarMarker`)

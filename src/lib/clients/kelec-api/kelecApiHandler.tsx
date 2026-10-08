@@ -1,6 +1,4 @@
-import { DropDownData } from "../../../screen/Common/DropDown";
-
-interface BrandApi extends DropDownData {
+interface BrandApi {
     display_name: string;
     name: string;
 }

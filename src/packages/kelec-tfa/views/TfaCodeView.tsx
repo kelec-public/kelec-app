@@ -1,6 +1,6 @@
 import { Keyboard, Pressable, StyleSheet, TextInput, View } from "react-native";
 import Text from "../../../screen/Common/CustomText";
-import { useContext, useRef, useState } from "react";
+import { ComponentRef, useContext, useRef, useState } from "react";
 import MainContext from "../../../lib/Contexts/MainContext";
 import { fontFamilyBold, fontWeightBold } from "../../kelec-model/lib/fonts";
 import { TFA_CODE_LENGTH } from "../controllers/useTfaFlow";
@@ -15,7 +15,7 @@ const TfaCodeView = ({ email, onChangeCode }: Props) => {
 
     const [userInputCode, setUserInputCode] = useState<string>('');
 
-    const inputRef = useRef<TextInput>(null);
+    const inputRef = useRef<ComponentRef<typeof TextInput>>(null);
 
 
     const handleCodeChange = (text: string) => {

@@ -79,6 +79,8 @@ kelec-charge-history/
 - **Filtre date** : les dates choisies couvrent des **journées entières** (début à 00:00:00, fin à 23:59:59.999), quelle que soit l'heure de la sélection.
 - **Filtres numériques** : un champ vide n'impose pas de borne (0 pour le min, 9999 pour le max). Vider les deux champs retire le filtre.
 - **Pagination** : 2 mois affichés au départ, un de plus à chaque fin de liste. On revient à 2 quand on change le tri.
+  Le nombre de mois disponibles (`countMonths`) est calculé après la fusion : un mois dont toutes les charges sont fusionnées
+  dans une charge du mois précédent n'est pas compté (sinon « charger plus » ajouterait un mois vide).
 - **Export** : les charges affichées (filtrées, fusionnées si l'option est active), dans l'ordre du tri, avec les dates en heure locale.
   Une ligne fusionnée a `isAMergeCharge = true` et le nombre de sous-charges dans `subChargesCount` (dernières colonnes).
 
@@ -100,6 +102,13 @@ kelec-charge-history/
 
 ## Tests
 
-- `__tests__/packages/kelec-charge-history/chargeServices.test.ts` : filtres (dont les journées entières du filtre date), regroupement par mois, fusion, jours du graphique.
+- `__tests__/packages/kelec-charge-history/chargeServices.test.ts` :
+  - filtres (dont les journées entières du filtre date), regroupement par mois, jours du graphique ;
+  - fusion : critères (±1 % de niveau, moins de 12 h d'écart, même type V2G), fusion d'une liste non triée (`selectCharges`),
+    mois non comptés après fusion (`countMonths`) ;
+  - lignes d'export (`toRows`) : `isAMergeCharge` et `subChargesCount` en dernières colonnes, sans le détail `subCharges`.
+- `__tests__/lib/chargesStorageController.test.tsx` : stockage via `ChargesRepository`, dédoublonnage sur l'instant de début,
+  charges importées (`addMissingCharges`) conservées après une nouvelle synchro avec l'API.
 - `__tests__/packages/kelec-storage/BatchedList.test.ts` : stockage par lots et migration de l'ancien format.
-- Tests d'intégration existants : `__tests__/CarView/ChargesCard.renault.test.tsx` (dont « pas de fetch des charges si la batterie est en erreur »), `ChargesView.renault.test.tsx`, `FilterView/`, `Charges/MergeCharges.test.tsx`, `Elements/ChargeCard/`.
+- Tests d'intégration : `__tests__/CarView/ChargesCard.renault.test.tsx` (dont « pas de fetch des charges si la batterie est en erreur »), `ChargesView.renault.test.tsx`, `FilterView/`, `Charges/MergeCharges.test.tsx`, `Elements/ChargeCard/`.
+  Le parcours d'import (bouton « Importer » de la feuille d'options) est couvert par `Charges/ImportCharges.test.tsx`, décrit dans [charge-import.md](./charge-import.md).

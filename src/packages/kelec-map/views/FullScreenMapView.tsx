@@ -8,6 +8,7 @@ import commonStyles from "../../../lib/graphics/commonStyle";
 import MainContext from "../../../lib/Contexts/MainContext";
 import { getBlackColour, getDisplayDate } from "../../../lib/graphics/utils";
 import FloatingPill, { FLOATING_PILL_ICON_SIZE } from "../../kelec-model/view/FloatingPill";
+import { modalSafeAreaEdges } from "../../kelec-model/view/modalSafeArea";
 import { usePreferences } from "../../kelec-preferences";
 import { WeatherBadge } from "../../kelec-weather";
 import { useCarImage } from "../../kelec-garage";
@@ -88,8 +89,8 @@ const FullScreenMapView = ({ navigation }: Props): React.JSX.Element => {
                 </View>
             </SafeAreaView>
             {/* en bas à droite : recentrer, type de carte, itinéraire */}
-            {/* SafeAreaView : au-dessus de la barre d'accueil (la marge du bas s'applique aussi en modale) */}
-            <SafeAreaView edges={['bottom']} style={styles.bottomArea} pointerEvents="box-none">
+            {/* SafeAreaView : au-dessus de la barre d'accueil en modale iOS ; sur Android, la barre d'onglets s'en charge */}
+            <SafeAreaView edges={modalSafeAreaEdges(['bottom'])} style={styles.bottomArea} pointerEvents="box-none">
                 <View style={styles.bottom} pointerEvents="box-none">
                     {hasRegionChanged && (
                         <View style={styles.bottomRow} pointerEvents="box-none">
