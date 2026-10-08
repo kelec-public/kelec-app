@@ -132,6 +132,9 @@ type VehicleLinkApi = {
             lable: string;
         }
         registrationNumber?: string;
+        registrationCountry?: {
+            code: string;
+        }
         assets?: Asset[];
     }
 }

@@ -4,15 +4,17 @@ class CarModel {
     private readonly vin: string;
     private model: string;
     private readonly registrationNumber?: string;
+    private readonly registrationCountry?: string; // code ISO du pays d'immatriculation (ex. "FR"), absent si inconnu
     private readonly imageUrl: string;
     private readonly carMaker: CarMaker;
     private image: string;
 
-    constructor(vin: string, model: string, imageUrl: string, carMaker: CarMaker, registrationNumber?: string) {
+    constructor(vin: string, model: string, imageUrl: string, carMaker: CarMaker, registrationNumber?: string, registrationCountry?: string) {
         this.vin = vin;
         this.model = model;
         this.imageUrl = imageUrl;
         this.registrationNumber = registrationNumber;
+        this.registrationCountry = registrationCountry;
         this.carMaker = carMaker;
         this.image = "";
     }
@@ -48,6 +50,10 @@ class CarModel {
         return this.registrationNumber;
     }
 
+    getRegistrationCountry(): string | undefined {
+        return this.registrationCountry;
+    }
+
 
 
     setImageData(image: string): void {
@@ -61,6 +67,7 @@ interface CarModelInterface {
     model: string;
     imageUrl: string;
     registrationNumber?: string;
+    registrationCountry?: string;
     carMaker: CarMaker;
 }
 

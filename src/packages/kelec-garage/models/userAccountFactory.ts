@@ -32,7 +32,7 @@ export async function buildUserAccount(
             password = account.password;
         }
 
-        const carModel = new CarModel(car.vin, car.model, car.imageUrl, car.carMaker, car.registrationNumber);
+        const carModel = new CarModel(car.vin, car.model, car.imageUrl, car.carMaker, car.registrationNumber, car.registrationCountry);
         switch (account.carMaker) {
             case CarMaker.ALPINE:
             case CarMaker.DACIA:
