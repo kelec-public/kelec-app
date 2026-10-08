@@ -4,7 +4,7 @@ class CarModel {
     private readonly vin: string;
     private model: string;
     private readonly registrationNumber?: string;
-    private readonly registrationCountry?: string; // code ISO du pays d'immatriculation (ex. "FR"), absent si inconnu
+    private registrationCountry?: string; // code ISO du pays d'immatriculation (ex. "FR"), absent si inconnu
     private readonly imageUrl: string;
     private readonly carMaker: CarMaker;
     private image: string;
@@ -52,6 +52,10 @@ class CarModel {
 
     getRegistrationCountry(): string | undefined {
         return this.registrationCountry;
+    }
+
+    setRegistrationCountry(country: string): void {
+        this.registrationCountry = country;
     }
 
 

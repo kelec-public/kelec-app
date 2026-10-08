@@ -39,6 +39,16 @@ export class GarageService {
         await this.save();
     }
 
+    /** Enregistre le pays d'immatriculation de la voiture. Renvoie false si la voiture n'est plus dans le garage. */
+    async setRegistrationCountry(vin: string, country: string): Promise<boolean> {
+        const car = this.user.getCars().find(account => account.getCar()?.getVin() === vin)?.getCar();
+        if (!car) return false;
+
+        car.setRegistrationCountry(country);
+        await this.save();
+        return true;
+    }
+
     /**
      * Retire la voiture du compte. Ses données locales (historique de charge, image, caches…)
      * sont volontairement conservées : elles sont réutilisées si la voiture est réimportée.

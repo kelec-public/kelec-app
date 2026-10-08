@@ -25,6 +25,13 @@ Les 27 pays de l'UE sauf ceux où la plaque brute ne suffit pas à savoir où co
   (`renaultLoginSource`) et enregistré dans `CarModel.registrationCountry`. C'est le pays d'immatriculation de la voiture,
   différent du pays du compte (ex. une voiture `GB` sur un compte `FR`).
 - **Hyundai** : pas de pays, la plaque reste brute.
-- **Voitures ajoutées avant ce champ** : pas de pays, la plaque reste brute (jusqu'à ce que la voiture soit ajoutée à nouveau).
+- **Voitures ajoutées avant ce champ** : rattrapage (`retrofitRegistrationCountry`, kelec-garage), lancé par `CarView`
+  dans `onNetworkLoaded`, donc seulement après un fetch batterie réussi (pas pendant un TFA ou une erreur d'authentification).
+  - Il rappelle `/vehicles` et enregistre le pays de la voiture, en mémoire et dans le compte.
+  - **Une seule fois par voiture** : dès que l'API a répondu, le marqueur `<vin>/registrationCountryRetrofit` est posé,
+    même si la voiture n'est plus dans la liste (supprimée du compte constructeur) ou n'a pas de pays.
+  - **En cas d'échec** (réseau, identifiants…), rien n'est écrit, ni pays ni marqueur : on réessaie au prochain chargement réussi.
+  - Le compte est relu juste avant l'écriture, et les écritures passent l'une après l'autre : une voiture supprimée ou renommée
+    pendant l'appel n'est pas écrasée, et les voitures du pager rattrapées en parallèle ne perdent pas leur pays.
 
 `registrationCountry` est un champ optionnel du JSON de la voiture (AsyncStorage `account` et widgets) : les widgets iOS / Android l'ignorent.
