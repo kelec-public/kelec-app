@@ -73,6 +73,18 @@ const buildDate = (year: number, month: number, day: number, hours: number, minu
     return isSameDay ? date : null;
 };
 
+/** Remet les trois nombres de la date dans l'ordre année, mois, jour. */
+const toYearMonthDay = ([first, second, third]: number[], order: DateOrder): number[] => {
+    switch (order) {
+        case 'YMD':
+            return [first, second, third];
+        case 'DMY':
+            return [third, second, first];
+        case 'MDY':
+            return [third, first, second];
+    }
+};
+
 /** Date locale écrite en chiffres (heure locale de l'appareil). */
 const parseLocalDate = (text: string, order: DateOrder): Date | null => {
     const numbers = numbersIn(text).map(Number);
@@ -80,11 +92,8 @@ const parseLocalDate = (text: string, order: DateOrder): Date | null => {
 
     // Une année en tête (sv, lt, ja, ko, en-CA…) se reconnaît à ses 4 chiffres, quel que soit l'ordre du fichier.
     const rowOrder: DateOrder = numbersIn(text)[0].length === 4 ? 'YMD' : order;
-    const [a, b, c, hours = 0, minutes = 0, seconds = 0] = numbers;
-    const [year, month, day] =
-        rowOrder === 'YMD' ? [a, b, c]
-            : rowOrder === 'DMY' ? [c, b, a]
-                : [c, a, b];
+    const [first, second, third, hours = 0, minutes = 0, seconds = 0] = numbers;
+    const [year, month, day] = toYearMonthDay([first, second, third], rowOrder);
 
     let hours24 = hours;
     if (PM_MARKER.test(text) && hours < 12) hours24 += 12;
