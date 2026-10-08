@@ -51,6 +51,7 @@ type CarRowProps = {
 const CarRow = (props: CarRowProps) => {
     const isDarkMode = useColorScheme() === 'dark';
     const { carModel } = props;
+    const registration = carModel.getRegistrationNumber();
 
     return (
         <View
@@ -82,11 +83,11 @@ const CarRow = (props: CarRowProps) => {
                     {carModel.getModel()}
                 </Text>
                 {/* car license plate */}
-                {!!carModel.getRegistrationNumber() && (
+                {!!registration && (
                     <Text
                         testID={'registrationText'}
                         style={subTitle3}
-                    >{formatLicencePlate(carModel.getRegistrationNumber()!, carModel.getRegistrationCountry())}</Text>
+                    >{formatLicencePlate(registration, carModel.getRegistrationCountry())}</Text>
                 )}
                 {/* car vin */}
                 <Text
