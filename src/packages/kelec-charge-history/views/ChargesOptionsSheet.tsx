@@ -40,7 +40,7 @@ function ChargesOptionsSheet({ visible, onClose, sortDesc, onToggleSort, onExpor
                     <Button
                         testID={'importButton'}
                         onPress={onImport}
-                        icon={"file-upload"}
+                        icon={"system-update-alt"}
                         text={languageHandler.getTranslation("import")}
                         buttonStyle={theme.buttons.neutral}
                     />
