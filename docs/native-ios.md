@@ -176,7 +176,8 @@ Action Raccourcis (target de l'app) qui renvoie un `CarStatusEntity` (`Transient
 son type et sert aux actions suivantes du raccourci (« Si [État → Niveau de batterie] < 20 »…).
 
 - Données : `VehicleLoader.fetchStatus` (requête, sinon cache), compilé aussi dans la target de l'app pour cette action.
-- Propriétés : voiture, niveau de batterie, autonomie et kilométrage (mesures en km, Raccourcis convertit), statut de
+- Propriétés : voiture, niveau de batterie, autonomie et kilométrage (mesures dans l'unité de l'app, comme les widgets : unité selon
+  `displayMiles`, autonomie convertie seulement avec `convertToMiles`, kilométrage avec `displayMiles`), statut de
   charge (`CarChargeStatus`, `AppEnum`), branchée, temps de charge restant (seulement en charge), limite de charge et verrouillage (absents chez Renault group),
   dernière mise à jour.
 - Statut de charge : `ApiHandler.getChargeStatus()` du package (`ChargeStatus`), même correspondance que l'app RN

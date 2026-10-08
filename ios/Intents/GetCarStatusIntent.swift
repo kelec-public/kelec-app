@@ -30,9 +30,9 @@ struct GetCarStatusIntent: AppIntent {
       throw CarStatusError.noData
     }
 
-    let status = CarStatusEntity(carName: car.name, apiHandler: apiHandler)
-    // range as displayed by the app and the widgets
     let appPreferences = SharedStore.loadPreferences()
+    let status = CarStatusEntity(carName: car.name, apiHandler: apiHandler, appPreferences: appPreferences)
+    // range as displayed by the app and the widgets
     let range = "\(apiHandler.getBatteryRange(appPreferences: appPreferences)) \(getUnitsText(useMiles: appPreferences?.displayMiles ?? false))"
     let message = String(
       format: localized("carStatusDialog %@ %@ %@ %@"),
@@ -81,15 +81,18 @@ struct CarStatusEntity: TransientAppEntity {
 
   init() {}
 
-  init(carName: String, apiHandler: ApiHandler) {
+  // distances as displayed by the app and the widgets: unit from displayMiles, conversion by the api handler
+  // (range converted only with convertToMiles, mileage with displayMiles)
+  init(carName: String, apiHandler: ApiHandler, appPreferences: AppPreferences?) {
     let isRenaultGroup = apiHandler.getCarMaker() != .HYUNDAI && apiHandler.getCarMaker() != .DEMO
     let chargeStatus = CarChargeStatus(apiHandler.getChargeStatus())
     let isCharging = chargeStatus == .charging
+    let distanceUnit: UnitLength = appPreferences?.displayMiles == true ? .miles : .kilometers
+    let mileage = apiHandler.getMilage(appPreferences: appPreferences)
 
     car = carName
     batteryLevel = apiHandler.getBatteryLevel()
-    // in km: Shortcuts converts the measurement itself
-    range = Measurement(value: Double(apiHandler.getBatteryRange(appPreferences: nil)), unit: .kilometers)
+    range = Measurement(value: Double(apiHandler.getBatteryRange(appPreferences: appPreferences)), unit: distanceUnit)
     self.chargeStatus = chargeStatus
     isPlugged = apiHandler.getIsCarPlugged()
     chargingRemainingTime = isCharging && apiHandler.getChargingRemainingTime() > 0
@@ -97,7 +100,8 @@ struct CarStatusEntity: TransientAppEntity {
       : nil
     chargeLimit = isRenaultGroup ? nil : apiHandler.getChargeLimit()
     isLocked = isRenaultGroup ? nil : apiHandler.getIsCarLocked()
-    mileage = apiHandler.getOdometerInKm().map { Measurement(value: $0, unit: .kilometers) }
+    // negative when the car maker didn't return it
+    self.mileage = mileage >= 0 ? Measurement(value: mileage.rounded(), unit: distanceUnit) : nil
     lastUpdate = convertTimestamp(date: apiHandler.getLastRefreshDate())
   }
 

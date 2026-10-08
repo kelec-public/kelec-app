@@ -104,8 +104,10 @@ public struct HyundaiApiHandler: ApiHandler {
         return self.apiData.status.vehicleLocation.coord.lon
     }
     
+    // in km, in miles when the app displays miles (like the RN app and Renault)
     public func getMilage(appPreferences: AppPreferences?) -> Double {
-        return self.apiData.status.odometer.value
+        let mileage = self.apiData.status.odometer.value
+        return appPreferences?.displayMiles == true ? mileage * 0.621371 : mileage
     }
     
     public func getOdometerInKm() -> Double? {
