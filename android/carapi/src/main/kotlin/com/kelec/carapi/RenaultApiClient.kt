@@ -24,9 +24,7 @@ class RenaultApiClient(
 ) {
     /** @throws RenaultApiException si le jeton ou le statut batterie ne peut pas être obtenu. */
     suspend fun fetchStatus(vin: String): RenaultVehicleStatus = withContext(Dispatchers.IO) {
-        val jwt = request("Unable to get login token") {
-            RenaultServices.gigya.getJWT(loginToken = cookieValue, apiKey = keys.gigyaApiKey).idToken
-        }
+        val jwt = jwt()
         logger("JWT token fetch and decode OK.")
         val battery = request("Unable to get battery status") {
             RenaultServices.kamereon.getBatteryStatus(kamereonAccountId, vin, jwt, keys.kamereonApiKey).data?.attributes
@@ -41,6 +39,35 @@ class RenaultApiClient(
             null
         }
         RenaultVehicleStatus(battery, totalMileage)
+    }
+
+    /** Lance le confort thermique. false si la commande n'a pas été acceptée (même règle que l'app RN). */
+    suspend fun launchHvac(vin: String, temperature: Int): Boolean = withContext(Dispatchers.IO) {
+        try {
+            val jwt = jwt()
+            val response = RenaultServices.kamereon.startHvac(
+                kamereonAccountId, vin, jwt, keys.kamereonApiKey, HvacStartRequest.start(temperature)
+            )
+            response.data?.type == "HvacStart" && response.data.id != null
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            logger("ERROR : Unable to launch HVAC (${e.javaClass.simpleName}: ${e.message})")
+            false
+        }
+    }
+
+    /** @throws RenaultApiException si la position ne peut pas être obtenue. */
+    suspend fun fetchLocation(vin: String): CarLocation = withContext(Dispatchers.IO) {
+        val jwt = jwt()
+        request("Unable to get car location") {
+            RenaultServices.kamereon.getLocation(kamereonAccountId, vin, jwt, keys.kamereonApiKey).data?.attributes
+                ?.takeIf { it.gpsLatitude != null && it.gpsLongitude != null }
+        }
+    }
+
+    private suspend fun jwt(): String = request("Unable to get login token") {
+        RenaultServices.gigya.getJWT(loginToken = cookieValue, apiKey = keys.gigyaApiKey).idToken
     }
 
     private inline fun <T : Any> request(errorMessage: String, block: () -> T?): T {

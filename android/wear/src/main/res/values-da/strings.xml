@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Textes de l'app Wear OS, repris des Localizable.strings iOS (« iPhone » remplacé par « téléphone »). -->
+<resources>
+    <string name="watch_open_phone_to_sync">Åbn appen på telefonen for at synkronisere</string>
+    <string name="watch_add_vehicle_on_phone">Tilføj et køretøj i appen på telefonen</string>
+    <string name="refresh">Opdater</string>
+    <string name="car_maker_server_error">Det er umuligt at oprette forbindelse til serveren %1$s</string>
+    <string name="watch_widget_car">Bil i widgets</string>
+    <string name="watch_settings">Indstillinger</string>
+    <string name="watch_car_location_error">Kan ikke hente bilens placering</string>
+    <string name="information_sent">Information sendt</string>
+    <string name="pre_heat_launched">Forvarmning startet</string>
+    <string name="error">Fejl</string>
+    <string name="command_send_error">Fejl under afsendelse af kommandoen til serveren. Prøv igen senere.</string>
+    <string name="launch_pre_heat">Start forvarmning</string>
+    <string name="are_you_sure_launch_pre_heating">Er du sikker på, at du vil starte forvarmningen?</string>
+    <string name="confirm">Bekræft</string>
+    <string name="cancel">Annuller</string>
+    <string name="watch_widget_description">Opladningsniveau for din Renault E-Tech</string>
+</resources>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Textes de l'app Wear OS, repris des Localizable.strings iOS (« iPhone » remplacé par « téléphone »). -->
+<resources>
+    <string name="watch_open_phone_to_sync">Avaa sovellus puhelimessasi synkronoidaksesi</string>
+    <string name="watch_add_vehicle_on_phone">Lisää ajoneuvo puhelimen sovellukseen</string>
+    <string name="refresh">Päivitä</string>
+    <string name="car_maker_server_error">Palvelimeen ei voida muodostaa yhteyttä %1$s</string>
+    <string name="watch_widget_car">Widgeteissä näytettävä auto</string>
+    <string name="watch_settings">Asetukset</string>
+    <string name="watch_car_location_error">Auton sijaintia ei voida hakea</string>
+    <string name="information_sent">Tiedot lähetetty</string>
+    <string name="pre_heat_launched">Esilämmitys käynnistetty</string>
+    <string name="error">Virhe</string>
+    <string name="command_send_error">Virhe lähetettäessä komentoa palvelimelle. Yritä myöhemmin uudelleen.</string>
+    <string name="launch_pre_heat">Käynnistä esilämmitys</string>
+    <string name="are_you_sure_launch_pre_heating">Oletko varma, että haluat käynnistää esilämmityksen?</string>
+    <string name="confirm">Vahvistaa</string>
+    <string name="cancel">Peruuttaa</string>
+    <string name="watch_widget_description">Renault E-Tech -autosi lataustaso</string>
+</resources>

@@ -22,8 +22,8 @@ export function watchPasswords(user: UserAccount): Record<string, string> {
 }
 
 /**
- * Envoie à l'Apple Watch le compte (sans mot de passe), les préférences, les cookies de session
- * et les mots de passe Hyundai, que la montre range dans son trousseau.
+ * Envoie à la montre (Apple Watch sur iOS, Wear OS sur Android) le compte (sans mot de passe), les préférences,
+ * les cookies de session et les mots de passe Hyundai, que la montre range dans son stockage chiffré.
  */
 export async function syncWithAppleWatch(user: UserAccount, preferences: AppPreferences): Promise<void> {
     const emails = user.getCars().map(account => account.getEmail());

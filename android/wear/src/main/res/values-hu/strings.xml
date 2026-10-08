@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Textes de l'app Wear OS, repris des Localizable.strings iOS (« iPhone » remplacé par « téléphone »). -->
+<resources>
+    <string name="watch_open_phone_to_sync">Nyissa meg az alkalmazást a telefonon a szinkronizáláshoz</string>
+    <string name="watch_add_vehicle_on_phone">Adjon hozzá járművet a telefonos alkalmazásban</string>
+    <string name="refresh">Frissítés</string>
+    <string name="car_maker_server_error">Nem lehet csatlakozni a szerverhez %1$s</string>
+    <string name="watch_widget_car">A widgeteken megjelenő autó</string>
+    <string name="watch_settings">Beállítások</string>
+    <string name="watch_car_location_error">Nem sikerült lekérni az autó helyzetét</string>
+    <string name="information_sent">Információ elküldve</string>
+    <string name="pre_heat_launched">Előfűtés elindítva</string>
+    <string name="error">Hiba</string>
+    <string name="command_send_error">Hiba a parancs kiszolgálónak küldésekor. Kérjük, később próbálja újra.</string>
+    <string name="launch_pre_heat">Előfűtés indítása</string>
+    <string name="are_you_sure_launch_pre_heating">Biztosan el szeretné indítani az előfűtést?</string>
+    <string name="confirm">Megerősít</string>
+    <string name="cancel">Mégse</string>
+    <string name="watch_widget_description">A Renault E-Tech töltöttségi szintje</string>
+</resources>

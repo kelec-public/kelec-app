@@ -21,6 +21,8 @@ data class UserCar(
     val maker: CarMaker,
     val email: String,
     val kamereonAccountId: String,
+    /** Image de la voiture chez le constructeur (affichée par la montre), vide si absente. */
+    val imageUrl: String = "",
 )
 
 data class UserAccount(val cars: List<UserCar>) {

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Textes de l'app Wear OS, repris des Localizable.strings iOS (« iPhone » remplacé par « téléphone »). -->
+<resources>
+    <string name="watch_open_phone_to_sync">Odprite aplikacijo na svojem telefonu za sinhronizacijo</string>
+    <string name="watch_add_vehicle_on_phone">Dodajte vozilo v aplikacijo na telefonu</string>
+    <string name="refresh">Osveži</string>
+    <string name="car_maker_server_error">Ni mogoče vzpostaviti povezave s strežnikom %1$s</string>
+    <string name="watch_widget_car">Vozilo v pripomočkih</string>
+    <string name="watch_settings">Nastavitve</string>
+    <string name="watch_car_location_error">Lokacije avtomobila ni mogoče pridobiti</string>
+    <string name="information_sent">Poslane informacije</string>
+    <string name="pre_heat_launched">Predgrevanje zagnano</string>
+    <string name="error">Napaka</string>
+    <string name="command_send_error">Napaka pri pošiljanju ukaza na strežnik. Poskusite znova pozneje.</string>
+    <string name="launch_pre_heat">Zaženi predgrevanje</string>
+    <string name="are_you_sure_launch_pre_heating">Ali ste prepričani, da želite začeti s predgrevanjem?</string>
+    <string name="confirm">Potrdi</string>
+    <string name="cancel">Prekliči</string>
+    <string name="watch_widget_description">Raven napolnjenosti vašega vozila Renault E-Tech</string>
+</resources>

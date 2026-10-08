@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Textes de l'app Wear OS, repris des Localizable.strings iOS (« iPhone » remplacé par « téléphone »). -->
+<resources>
+    <string name="watch_open_phone_to_sync">Open de app op de telefoon om te synchroniseren</string>
+    <string name="watch_add_vehicle_on_phone">Voeg een voertuig toe aan de app op de telefoon</string>
+    <string name="refresh">Vernieuwen</string>
+    <string name="car_maker_server_error">Kan geen verbinding maken met de server %1$s</string>
+    <string name="watch_widget_car">Auto in de widgets</string>
+    <string name="watch_settings">Instellingen</string>
+    <string name="watch_car_location_error">Kan de locatie van de auto niet ophalen</string>
+    <string name="information_sent">Informatie verzonden</string>
+    <string name="pre_heat_launched">Klimaatregeling op afstand gestart</string>
+    <string name="error">Fout</string>
+    <string name="command_send_error">Fout bij het verzenden van de opdracht naar de server. Probeer het later opnieuw.</string>
+    <string name="launch_pre_heat">Start klimaatregeling op afstand</string>
+    <string name="are_you_sure_launch_pre_heating">Weet u zeker dat u de klimaatregeling op afstand wilt starten?</string>
+    <string name="confirm">Bevestigen</string>
+    <string name="cancel">Annuleren</string>
+    <string name="watch_widget_description">Laadniveau van uw Renault E-Tech</string>
+</resources>

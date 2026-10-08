@@ -70,18 +70,28 @@ const saveNativeImage = async (image: string, car_vin: string): Promise<void> =>
  * dès que possible, même si l'app de la montre est fermée.
  * Le compte doit être passé sans mot de passe : ceux dont la montre a besoin vont dans `passwords` (par VIN).
  */
+/**
+ * Envoie les données à la montre : Apple Watch (`updateApplicationContext`) sur iOS,
+ * montre Wear OS (Wearable Data Layer, module natif `WearSync`) sur Android. Même contenu sur les deux.
+ */
 const sendDataToAppleWatch = async (account: UserAccountInterface, appPreferences: AppPreferences, cookieValue: Record<string, GigyaTokenFunctionResponse>, passwords: Record<string, string>): Promise<void> => {
+    const payload = {
+        "message": JSON.stringify(account),
+        "appPreferences": JSON.stringify(appPreferences),
+        "cookieValue": JSON.stringify(cookieValue),
+        "passwords": JSON.stringify(passwords)
+    }
     if (Platform.OS === 'ios') {
-        const payload = {
-            "message": JSON.stringify(account),
-            "appPreferences": JSON.stringify(appPreferences),
-            "cookieValue": JSON.stringify(cookieValue),
-            "passwords": JSON.stringify(passwords)
-        }
         try {
             Watch.updateApplicationContext(payload);
         } catch (error) {
             console.log("Error sending data to apple watch", error);
+        }
+    } else {
+        try {
+            await NativeModules.WearSync?.sync(payload.message, payload.appPreferences, payload.cookieValue, payload.passwords);
+        } catch (error) {
+            console.log("Error sending data to the Wear OS watch", error);
         }
     }
 }

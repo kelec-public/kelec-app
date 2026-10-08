@@ -21,6 +21,12 @@ object StorageKey {
     /** Derniers jours Tempo connus (cache des widgets Tempo, propre à Android). */
     const val TEMPO = "tempo"
 
+    // En clair, propres à la montre Wear OS
+    /** VIN de la voiture affichée par les complications (même nom de clé que sur l'Apple Watch). */
+    const val WATCH_WIDGET_CAR = "watchWidgetCar"
+    /** Dernière température du confort thermique (« 21 »), même clé que l'app RN et l'Apple Watch. */
+    fun savedTemperature(vin: String) = "$vin/savedTemperature"
+
     // En clair, écrit par le widget et lu par l'app RN
     const val WIDGET_LOGS = "widgetLogs"
     fun batteryStatus(vin: String) = "${vin}_batteryStatus"

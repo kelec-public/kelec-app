@@ -1,4 +1,5 @@
 import { useCallback, useContext, useState } from "react";
+import { Platform } from "react-native";
 import MainContext from "../../../lib/Contexts/MainContext";
 import { BooleanPreference, usePreferences } from "../../kelec-preferences";
 import { logOut as clearSession } from "../../kelec-garage";
@@ -39,8 +40,9 @@ export function useSettingsController() {
                 { title: t("helpTranslateTheApp"), icon: "language", type: OptionType.NAVIGATE, onPress: () => openExternalLink(ExternalLinks.TRANSLATE) },
                 { title: t("joinDiscord"), icon: "group", type: OptionType.NAVIGATE, onPress: () => openExternalLink(ExternalLinks.DISCORD) },
                 {
-                    title: t("syncWithAppleWatch"), icon: "watch", type: OptionType.NAVIGATE,
-                    description: t("watchOnForeground"),
+                    // Apple Watch sur iOS, montre Wear OS sur Android (même synchro)
+                    title: t(Platform.OS === 'ios' ? "syncWithAppleWatch" : "syncWithWearOsWatch"), icon: "watch", type: OptionType.NAVIGATE,
+                    description: Platform.OS === 'ios' ? t("watchOnForeground") : undefined,
                     onPress: () => { syncWithAppleWatch(currentUser, preferences); },
                 },
                 { title: t("logOut"), icon: "logout", type: OptionType.NAVIGATE, onPress: () => { logOut(); } },
