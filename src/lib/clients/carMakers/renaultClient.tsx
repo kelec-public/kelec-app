@@ -123,11 +123,12 @@ type KamereonVehiclesApiResponse = {
 
 type VehicleLinkApi = {
     vin: string;
-    vehicleDetails: {
-        model: {
+    /** Absent pour certains véhicules du compte (ex. véhicule en cours de rattachement). */
+    vehicleDetails?: {
+        model?: {
             label: string;
         }
-        energy: {
+        energy?: {
             code: string;
             lable: string;
         }

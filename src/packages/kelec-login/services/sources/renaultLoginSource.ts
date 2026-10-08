@@ -49,13 +49,14 @@ export class RenaultLoginSource implements LoginSource {
         const vehicles = await client.getVehicles();
         if (vehicles.hasError) throw new Error('Unable to fetch Renault vehicles');
 
+        // certains véhicules du compte n'ont pas de détails (ou pas de modèle) : on les affiche quand même, avec le VIN
         return vehicles.vehicles.map(vehicle => new RenaultCar(
             vehicle.vin,
-            vehicle.vehicleDetails.model.label,
-            pickRenaultImage(vehicle.vehicleDetails.assets),
+            vehicle.vehicleDetails?.model?.label ?? vehicle.vin,
+            pickRenaultImage(vehicle.vehicleDetails?.assets),
             account.getCarMaker(),
-            vehicle.vehicleDetails.registrationNumber,
-            vehicle.vehicleDetails.registrationCountry?.code,
+            vehicle.vehicleDetails?.registrationNumber,
+            vehicle.vehicleDetails?.registrationCountry?.code,
         ));
     }
 }
