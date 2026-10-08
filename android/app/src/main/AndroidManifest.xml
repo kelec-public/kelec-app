@@ -25,6 +25,31 @@
                 android:resource="@xml/kelec_main_w_idget_info" />
         </receiver>
 
+        <!-- Widgets Tempo (Glance). NE PAS RENOMMER les receivers : le lanceur garde les widgets posés par ce nom. -->
+        <receiver
+            android:name=".widgets.KelecTempoWidgetReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/kelec_tempo_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".widgets.KelecTempo2DaysWidgetReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/kelec_tempo_2days_widget_info" />
+        </receiver>
+
         <activity
             android:name=".widgets.WidgetConfigureActivity"
             android:exported="true"

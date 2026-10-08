@@ -14,4 +14,13 @@
     <string name="end_time_text">04:34</string>
     <string name="widget_configure_subtitle">Valitse tässä widgetissä näytettävä auto</string>
     <string name="widget_configure_title">Valitse auto</string>
+
+    <!-- Widgets Tempo -->
+    <string name="tempo_widget_description">Ryhmittelee Renault E-Tech -tietosi ja Tempo-ilmaisimen aloitusnäytölle</string>
+    <string name="tempo_2days_widget_description">Ryhmittelee Renault E-Tech -tietosi ja 2 päivän Tempo-ilmaisimen aloitusnäytölle</string>
+    <string name="tempo_blue">SININEN</string>
+    <string name="tempo_white">VALKOINEN</string>
+    <string name="tempo_red">PUNAINEN</string>
+    <string name="tempo_car_server_error">Renault-palvelimeen ei voida muodostaa yhteyttä</string>
+    <string name="tempo_rte_server_error">RTE-palvelimeen ei voida muodostaa yhteyttä</string>
 </resources>

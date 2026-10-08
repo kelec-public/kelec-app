@@ -28,13 +28,14 @@ les clients d'API Renault. Hyundai reste hors périmètre (le widget Android ne 
 | Sujet | Décision |
 |---|---|
 | Hyundai | **Hors périmètre** : le widget Android ne gère toujours que Renault group et la démo. |
-| Rendu du widget | **RemoteViews gardé** (pas de Glance). Le rendu ne change pas. |
+| Rendu du widget | **Jetpack Glance** (Compose) depuis l'ajout des tailles 2x2 / 4x2 et des widgets Tempo (8 octobre 2026). Le receiver `KelecMainWIdget` est gardé (il hérite de `GlanceAppWidgetReceiver`) : les widgets déjà posés restent. |
 | Stockage chiffré | **Inchangé** : `EncryptedSharedPreferences` (`security-crypto`), fichier `DATA`, partagé avec les données en clair. |
 | Vérification | Pas de build Gradle pendant le refactor : jest et `tsc`. La compilation et les tests sur appareil sont faits à la fin. |
 | Code partagé | **Modules Gradle** `:carapi` et `:shared`, l'équivalent de `ios/Packages/RenaultApi` et `ios/Shared`, pour être réutilisés par l'app Wear OS. |
 | Bridge RN | **Même module que l'iOS** (`RNSharedWidget`, mêmes méthodes) : `sharedPlatformsData.tsx` n'a plus de branche par plateforme pour le stockage. |
 | Statut batterie | Écrit sous une seule clé (`<vin>_batteryStatus`). L'ancienne `<vin>/carData` est encore relue, plus écrite. |
-| Images des voitures | **Gardées** : toujours écrites sur Android (`<vin>/image`), pas encore lues, pour un usage futur (widget, montre). |
+| Images des voitures | Écrites par l'app RN (`<vin>/image`), affichées par les widgets 2x2 et 4x2 (réduites à 400 px de large). |
+| Widgets Tempo | **Comme sur iOS** : Tempo du jour (avec les prix HP / HC) et Tempo 2 jours, en 4x2, la voiture à gauche. Client RTE porté dans `:carapi` (`RteApiClient`). |
 
 ## Organisation actuelle
 
@@ -43,6 +44,8 @@ android/
 ├── carapi/                 Kotlin pur (sans Android), testable en JUnit (`src/test`)
 │   ├── RenaultApiClient    fetchStatus(vin) : jeton Gigya (cookie de session) → batterie → kilométrage (facultatif)
 │   ├── RenaultServices     Retrofit Gigya / Kamereon, RenaultApiKeys (clés passées par l'app)
+│   ├── RteApiClient        Calendrier Tempo de RTE (jeton OAuth puis tempo_like_calendars)
+│   ├── Tempo               Deux derniers jours connus, couleurs et prix HP / HC (mêmes valeurs que iOS)
 │   ├── BatteryStatus       Statut batterie (format JSON relu par l'app RN), BatteryStatus.demo()
 │   └── ChargingState       État de charge à partir du chargingStatus brut
 ├── shared/                 Bibliothèque Android (com.kelec.shared), pour l'app et la future montre
@@ -50,15 +53,18 @@ android/
 │   ├── SharedStore         Stockage en clair : compte, préférences, voiture de chaque widget
 │   ├── SecureStore         Stockage chiffré (inchangé) : get / set / remove, cookie Renault
 │   ├── SharedHistory       Dernier statut batterie, kilométrage (30 jours), widgetLogs (5 jours)
-│   ├── VehicleLoader       Requête + enregistrement + repli sur le cache → VehicleStatus
+│   ├── VehicleLoader       Requête + enregistrement + repli sur le cache → VehicleStatus ; cached() : même résultat sans réseau
+│   ├── TempoLoader         Requête RTE + cache `tempo` + repli sur le cache
 │   ├── Models              UserAccount (carFor), UserCar, CarMaker, AppPreferences
-│   ├── Formatting          « 14:05 », « 2h05 », « 300 km » / « 186 mi », libellés des états de charge
+│   ├── Formatting          « 14:05 », « 07/10 14:05 », « 2h05 », « 300 km » / « 186 mi », prix Tempo, libellés des états de charge
 │   └── res/values*/        Textes du widget partagés (états de charge, erreurs), 19 langues
 └── app/
-    ├── KelecMainWIdget     AppWidgetProvider : délègue tout rafraîchissement à WidgetRefreshWorker
-    ├── ApiKeys             Clés d'API du .env (BuildConfig) pour :carapi
+    ├── KelecMainWIdget     Receiver du widget batterie (CarStatusWidget)
+    ├── ApiKeys             Clés d'API du .env (BuildConfig) pour :carapi (Renault, RTE)
     ├── bridge/             RNSharedWidget, NativeLanguage, KelecPackage
-    ├── widgets/            WidgetUpdater (une requête par VIN), KelecWidgetViews (RemoteViews),
+    ├── widgets/            KelecWidgetReceiver (base des receivers + receivers Tempo, RefreshWidgetsAction),
+    │                       CarStatusWidget (4x1, 2x2, 4x2), TempoWidget / Tempo2DaysWidget, WidgetComponents,
+    │                       WidgetData (état lu sans réseau), WidgetUpdater (réseau puis updateAll),
     │                       WidgetRefreshWorker (CoroutineWorker), WidgetConfigureActivity
     └── modules/autofill/   Autofill du formulaire de connexion
 ```
@@ -67,7 +73,23 @@ Java 17 et les dépôts Maven des nouveaux modules sont réglés par le plugin G
 (`JdkConfiguratorUtils`, `DependencyUtils`) : ne pas fixer `sourceCompatibility` à la main
 (conflit avec la toolchain).
 
-## Rafraîchissement du widget
+## Widgets
+
+| Widget | Receiver (ne jamais renommer) | Tailles | Contenu |
+|---|---|---|---|
+| Batterie | `com.kelec.KelecMainWIdget` | Redimensionnable : barre 4x1 (le widget historique), carré 2x2, large 4x2 | Selon la taille : 4x1 = logo, nom, niveau, jauge, état, autonomie, temps de charge, heure ; 2x2 = petit widget iOS ; 4x2 = widget moyen iOS |
+| Tempo | `com.kelec.widgets.KelecTempoWidgetReceiver` | 4x2 | Voiture (vue 2x2) + dernier jour Tempo connu, avec les prix HP / HC |
+| Tempo 2 jours | `com.kelec.widgets.KelecTempo2DaysWidgetReceiver` | 4x2 | Voiture (vue 2x2) + les deux derniers jours connus |
+
+- **Glance dessine sans réseau** (`WidgetData`) : compte, voiture du widget, `VehicleLoader.cached` (démo, pas de session,
+  dernier statut enregistré), image de la voiture, cache Tempo. C'est exactement le résultat du dernier chargement.
+- **Le réseau passe par `WidgetRefreshWorker`** : `WidgetUpdater.update` charge chaque voiture une fois (et Tempo s'il y a
+  un widget Tempo), ce qui met le cache à jour, puis redessine chaque type de widget (`updateAll`).
+- La mise en page du widget batterie suit `SizeMode.Responsive` (110x40, 110x110, 250x110 dp) : `LocalSize` choisit la vue.
+- Aperçus du sélecteur : `kelec_main_w_idget.xml` (ancien layout RemoteViews, gardé pour l'aperçu seulement) et
+  `tempo_*_widget_preview.xml`.
+
+## Rafraîchissement des widgets
 
 - Tout passe par `WidgetRefreshWorker` : toutes les 15 min (tâche périodique `kelec_widget_refresh`),
   et à la demande en tâche unique `kelec_widget_refresh_now` (bridge RN, bouton de l'heure, choix de la voiture).
@@ -79,14 +101,15 @@ Java 17 et les dépôts Maven des nouveaux modules sont réglés par le plugin G
 
 ### Parcours d'un rafraîchissement
 
-1. Un déclencheur : la tâche périodique, `APPWIDGET_UPDATE` (pose du widget, redémarrage), le bouton de l'heure
-   (`REFRESH_WIDGET_ACTION`), l'app RN (`setData` après 0,5 s ou `refreshWidgets`), le choix de la voiture.
-2. `KelecMainWIdget.onReceive` → `WidgetRefreshWorker.refreshNow` → tâche unique `kelec_widget_refresh_now`.
-3. `WidgetRefreshWorker.doWork` → `WidgetUpdater.update(tous les widgets)` :
+1. Un déclencheur : la tâche périodique, `APPWIDGET_UPDATE` (pose du widget, redémarrage), l'heure du widget
+   (`RefreshWidgetsAction`), l'app RN (`setData` après 0,5 s ou `refreshWidgets`), le choix de la voiture.
+2. `KelecWidgetReceiver.onReceive` → `WidgetRefreshWorker.refreshNow` → tâche unique `kelec_widget_refresh_now`.
+   Pour `APPWIDGET_UPDATE`, Glance dessine d'abord avec le cache.
+3. `WidgetRefreshWorker.doWork` → `WidgetUpdater.update` (tous les widgets, tous types) :
    - lit les préférences et le compte (`SharedStore`) ;
    - choisit la voiture de chaque widget ;
-   - charge chaque voiture une seule fois avec `VehicleLoader.load` ;
-   - construit les vues (`KelecWidgetViews`) et les applique (`AppWidgetManager.updateAppWidget`).
+   - charge chaque voiture une seule fois avec `VehicleLoader.load`, et Tempo avec `TempoLoader.load` s'il y a un widget Tempo ;
+   - redessine les widgets (`CarStatusWidget().updateAll`, `TempoWidget().updateAll`…), qui relisent le cache.
 4. `VehicleLoader.load(car)` :
    - voiture de démo → `BatteryStatus.demo()`, sans réseau ;
    - pas de cookie de session (`SecureStore.renaultCookieValue`) → `NotLoggedIn` ;
@@ -95,12 +118,13 @@ Java 17 et les dépôts Maven des nouveaux modules sont réglés par le plugin G
 
 ## Affichage du widget
 
-| Cas | Affichage (`KelecWidgetViews`) |
+| Cas | Affichage (`WidgetData` → `CarStatusWidget`) |
 |---|---|
 | Pas de compte (déconnecté) | « Vous devez d'abord vous connecter sur l'appli » (`not_yet_logged_in`) |
 | Compte sans voiture | « Vous devez d'abord sélectionner une voiture… » (`no_car_added`) |
 | Pas de session Renault | `not_yet_logged_in` |
-| Échec sans cache | « Impossible de se connecter au serveur » (`widget_server_error`) |
+| Échec sans cache | « Impossible de se connecter au serveur » (`widget_server_error`), « … serveur Renault » sur les widgets Tempo (`tempo_car_server_error`) |
+| Widget Tempo sans données RTE (ni réseau ni cache) | « Impossible de se connecter au serveur RTE » (`tempo_rte_server_error`) |
 | Statut chargé (réseau ou cache) | Logo du constructeur, modèle, niveau (%), barre de progression, autonomie, heure du statut |
 | Branchée | Libellé de l'état (`EN CHARGE |`, `CHARGE PLANIFIÉE |`, `CHARGE TERMINÉE |`, `NE CHARGE PAS |`, `V2G`, `V2L`), barre « en charge » |
 | En charge | Durée restante (« 2h05 ») et heure de fin, sinon « --h-- » |
@@ -113,16 +137,18 @@ Java 17 et les dépôts Maven des nouveaux modules sont réglés par le plugin G
 
 - `shared/src/main/res/values*/strings.xml` : textes utilisés par `:shared` (états de charge, erreurs), à lire avec
   `com.kelec.shared.R` (alias `SharedR` dans l'app).
-- `app/src/main/res/values*/strings.xml` : textes propres à l'app (configuration du widget, textes de prévisualisation du layout).
+- `app/src/main/res/values*/strings.xml` : textes propres à l'app (configuration du widget, widgets Tempo, textes des aperçus).
+  Les textes Tempo viennent des `Localizable.strings` iOS (`BLUE`, `tempoRteServerError`…).
 - `values/` est le français (langue par défaut), puis 18 langues (`values-en`, `values-de`…). Un nouveau texte doit être
   ajouté dans les 19 dossiers ; les traductions des widgets iOS (`ios/<langue>.lproj/Localizable.strings`) peuvent servir.
 
 ## Compiler et tester
 
 - `cd android && ./gradlew :carapi:test` : tests JUnit du client et des modèles (sans émulateur).
-- `./gradlew :app:assembleDebug` : compile les trois modules.
+- `./gradlew :app:assembleDebug` : compile les trois modules (l'app avec Compose et Glance).
 - À vérifier sur appareil après un changement du widget : un widget déjà posé s'affiche toujours, le bouton de l'heure,
-  le choix de la voiture, l'historique de kilométrage dans l'app, l'export des logs.
+  le choix de la voiture, les trois tailles du widget batterie (redimensionner), les widgets Tempo (jour et 2 jours),
+  le mode sombre, l'historique de kilométrage dans l'app, l'export des logs.
 - Réglages → Debug → « Debug zone » (côté RN) : choix d'une voiture, puis « Battery status » (appel Renault pas à pas)
   ou « Mileage history » (10 dernières entrées écrites par le widget), avec export des logs en fichier texte.
 

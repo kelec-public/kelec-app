@@ -1,7 +1,6 @@
 package com.kelec.widgets
 
 import android.appwidget.AppWidgetManager
-import android.content.ComponentName
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.ExistingPeriodicWorkPolicy
@@ -21,7 +20,7 @@ import java.util.concurrent.TimeUnit
 class WidgetRefreshWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
-        WidgetUpdater.update(applicationContext, widgetIds(applicationContext))
+        WidgetUpdater.update(applicationContext)
         return Result.success()
     }
 
@@ -29,8 +28,13 @@ class WidgetRefreshWorker(context: Context, params: WorkerParameters) : Coroutin
         private const val PERIODIC_WORK = "kelec_widget_refresh"
         private const val ONE_TIME_WORK = "kelec_widget_refresh_now"
 
-        fun widgetIds(context: Context): IntArray =
-            AppWidgetManager.getInstance(context).getAppWidgetIds(ComponentName(context, KelecMainWIdget::class.java))
+        /** Tous les widgets posés, tous types confondus (batterie, Tempo, Tempo 2 jours). */
+        fun widgetIds(context: Context): IntArray {
+            val manager = AppWidgetManager.getInstance(context)
+            return listOf(KelecMainWIdget::class.java, KelecTempoWidgetReceiver::class.java, KelecTempo2DaysWidgetReceiver::class.java)
+                .map { WidgetUpdater.idsOf(context, manager, it) }
+                .fold(IntArray(0)) { all, ids -> all + ids }
+        }
 
         /**
          * Recharge les widgets maintenant (sans effet s'il n'y en a aucun).

@@ -22,6 +22,18 @@ class VehicleLoader(context: Context, private val keys: RenaultApiKeys) {
     private val secureStore = SecureStore(context)
     private val history = SharedHistory(context)
 
+    /**
+     * Le statut qu'aurait renvoyé le dernier [load], lu sans réseau : sert au rendu des widgets,
+     * le réseau n'étant appelé que par la tâche de rafraîchissement.
+     */
+    fun cached(car: UserCar): VehicleStatus {
+        if (car.maker == CarMaker.DEMO) return VehicleStatus.Loaded(BatteryStatus.demo(), fromCache = false)
+        if (secureStore.renaultCookieValue(car.email) == null) return VehicleStatus.NotLoggedIn
+        return history.loadBatteryStatus(car.vin)
+            ?.let { VehicleStatus.Loaded(it, fromCache = true) }
+            ?: VehicleStatus.Unavailable
+    }
+
     suspend fun load(car: UserCar): VehicleStatus {
         if (car.maker == CarMaker.DEMO) return VehicleStatus.Loaded(BatteryStatus.demo(), fromCache = false)
 

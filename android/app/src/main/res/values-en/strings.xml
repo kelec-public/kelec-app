@@ -14,4 +14,13 @@
     <string name="end_time_text">04:34</string>
     <string name="widget_configure_subtitle">Choose the car to display in this widget</string>
     <string name="widget_configure_title">Select a car</string>
+
+    <!-- Widgets Tempo -->
+    <string name="tempo_widget_description">Displays information about your E-Tech Renault on your Home Screen with the Tempo indicator</string>
+    <string name="tempo_2days_widget_description">Displays information about your E-Tech Renault on your Home Screen with the Tempo indicator for 2 days</string>
+    <string name="tempo_blue">BLUE</string>
+    <string name="tempo_white">WHITE</string>
+    <string name="tempo_red">RED</string>
+    <string name="tempo_car_server_error">Impossible to connect to Renault server</string>
+    <string name="tempo_rte_server_error">Impossible to connect to RTE server</string>
 </resources>

@@ -2,6 +2,7 @@ package com.kelec.shared
 
 import android.content.Context
 import com.kelec.carapi.ChargingState
+import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -19,6 +20,18 @@ object Formatting {
     /** « 14:05 » dans le fuseau du téléphone. */
     fun localTime(dateTime: ZonedDateTime): String =
         dateTime.withZoneSameInstant(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("HH:mm", Locale.ROOT))
+
+    /** Heure de la dernière mise à jour, précédée de la date (« 07/10 14:05 ») si ce n'est pas aujourd'hui. */
+    fun lastRefresh(dateTime: ZonedDateTime, today: LocalDate = LocalDate.now()): String {
+        val local = dateTime.withZoneSameInstant(ZoneId.systemDefault())
+        return if (local.toLocalDate() == today) localTime(local) else "${dayMonth(local.toLocalDate())} ${localTime(local)}"
+    }
+
+    /** « 08/10 » */
+    fun dayMonth(date: LocalDate): String = date.format(DateTimeFormatter.ofPattern("dd/MM", Locale.ROOT))
+
+    /** Prix Tempo : « 16.12 c/kWh » */
+    fun tempoPrice(cents: Double): String = String.format(Locale.ROOT, "%.2f c/kWh", cents)
 
     /** « 2h05 » */
     fun duration(minutes: Int): String = String.format(Locale.ROOT, "%dh%02d", minutes / 60, minutes % 60)

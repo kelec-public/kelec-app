@@ -16,4 +16,24 @@
         <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
 
+    <!-- Aperçus des widgets Tempo (tempo_*_widget_preview.xml) -->
+    <style name="TempoPreviewDate">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TempoPreviewColour" parent="TempoPreviewDate">
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="TempoPreviewPrice">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">11sp</item>
+    </style>
+
 </resources>

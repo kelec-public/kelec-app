@@ -14,4 +14,13 @@
     <string name="end_time_text">04:34</string>
     <string name="widget_configure_subtitle">Alegeți mașina care va fi afișată în acest widget</string>
     <string name="widget_configure_title">Selectați o mașină</string>
+
+    <!-- Widgets Tempo -->
+    <string name="tempo_widget_description">Colectează informațiile despre Renault E-Tech pe ecranul principal cu indicația Tempo</string>
+    <string name="tempo_2days_widget_description">Colectează informațiile despre Renault E-Tech pe ecranul principal cu indicația Tempo pe 2 zile</string>
+    <string name="tempo_blue">ALBASTRU</string>
+    <string name="tempo_white">ALB</string>
+    <string name="tempo_red">ROŞU</string>
+    <string name="tempo_car_server_error">Nu se poate conecta la serverul Renault</string>
+    <string name="tempo_rte_server_error">Nu se poate conecta la serverul RTE</string>
 </resources>
