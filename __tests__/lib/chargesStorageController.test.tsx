@@ -49,7 +49,7 @@ test('should load from older system, then save through newer system', async () =
 test('charges should be spllitted in batches of 50', async () => {
     const charges = [];
     for (let i = 0; i < 75; i++) {
-        const new_charge = new Charge(new Date(), 'end', i, 0, 100, 60, 'OK');
+        const new_charge = new Charge(new Date(2024, 0, 1, 0, i).toISOString(), 'end', i, 0, 100, 60, 'OK');
         charges.push(new_charge);
     }
     expect(charges.length).toEqual(75);
@@ -71,4 +71,19 @@ test('charges should be spllitted in batches of 50', async () => {
     // check if there are no more charges
     const saved = await AsyncStorage.getItem('vin/chargesHistorySaved');
     expect(saved).toEqual(null);
+});
+test('les charges importées restent stockées après une nouvelle synchro avec l\'API', async () => {
+    const fromApi = new Charge('2024-02-01T10:00:00Z', '2024-02-01T11:00:00Z', 60, 20, 80, 30, 'ok');
+    const imported = new Charge('2023-01-01T10:00:00Z', '2023-01-01T11:00:00Z', 60, 20, 80, 30, 'ok');
+    const importedDuplicate = new Charge('2024-02-01T10:00:00.000Z', '2024-02-01T11:00:00Z', 1, 1, 2, 1, 'ok');
+
+    await ChargesRepository.saveNewCharges('vin', [fromApi]);
+    await ChargesRepository.addMissingCharges('vin', [imported, importedDuplicate]);
+
+    // redémarrage de l'app : relecture du stockage, puis synchro qui renvoie seulement les charges récentes
+    await ChargesRepository.saveNewCharges('vin', [fromApi]);
+    const stored = await ChargesRepository.getCharges('vin');
+
+    expect(stored!.map(charge => charge.chargeStartDate)).toEqual(['2023-01-01T10:00:00Z', '2024-02-01T10:00:00Z']);
+    expect(stored![1].chargeDuration).toBe(60); // la charge stockée a gagné contre le doublon importé
 });

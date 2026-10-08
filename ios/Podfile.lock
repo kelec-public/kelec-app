@@ -1403,6 +1403,27 @@ PODS:
     - react-native-config/App (= 1.5.10)
   - react-native-config/App (1.5.10):
     - React-Core
+  - react-native-document-picker (12.0.2):
+    - hermes-engine
+    - RCTRequired
+    - RCTTypeSafety
+    - React-bridging
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/core
+    - ReactNativeDependencies
+    - Yoga
   - react-native-maps (1.29.11):
     - react-native-maps/Maps (= 1.29.11)
   - react-native-maps/Generated (1.29.11):
@@ -2074,6 +2095,7 @@ DEPENDENCIES:
   - React-microtasksnativemodule (from `../node_modules/react-native/ReactCommon/react/nativemodule/microtasks`)
   - React-mutationobservernativemodule (from `../node_modules/react-native/ReactCommon/react/nativemodule/mutationobserver`)
   - react-native-config (from `../node_modules/react-native-config`)
+  - "react-native-document-picker (from `../node_modules/@react-native-documents/picker`)"
   - react-native-maps (from `../node_modules/react-native-maps`)
   - react-native-pager-view (from `../node_modules/react-native-pager-view`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
@@ -2224,6 +2246,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/react/nativemodule/mutationobserver"
   react-native-config:
     :path: "../node_modules/react-native-config"
+  react-native-document-picker:
+    :path: "../node_modules/@react-native-documents/picker"
   react-native-maps:
     :path: "../node_modules/react-native-maps"
   react-native-pager-view:
@@ -2368,6 +2392,7 @@ SPEC CHECKSUMS:
   React-microtasksnativemodule: 701227a2db4b26d438dbb08e4f9e5c9c49079fe3
   React-mutationobservernativemodule: 4614b4f0c60f09c2d88ab86d03cdb4a346a550f0
   react-native-config: eae2b928a919c9743d710bbff3b7592882268fe8
+  react-native-document-picker: 419fc2eb9ebc9ff7dcfa284b92a223343d602c24
   react-native-maps: 6c0b4fb3d0ec8679274462dd5ed889b54cd47c53
   react-native-pager-view: 5b416b9f28d9943f58d0c2c3ce537d158e9b2ebc
   react-native-safe-area-context: 195ba69f22e0b7d15ec46dcaec82cb35bab082ac

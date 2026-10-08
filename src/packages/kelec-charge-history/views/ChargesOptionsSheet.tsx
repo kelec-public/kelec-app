@@ -11,10 +11,12 @@ type Props = {
     readonly sortDesc: boolean;
     readonly onToggleSort: () => void;
     readonly onExport: () => void;
+    /** Absent : pas de bouton d'import. */
+    readonly onImport?: () => void;
 }
 
-/** Feuille "…" de l'historique : tri et export. */
-function ChargesOptionsSheet({ visible, onClose, sortDesc, onToggleSort, onExport }: Props): React.JSX.Element {
+/** Feuille "…" de l'historique : tri, import et export. */
+function ChargesOptionsSheet({ visible, onClose, sortDesc, onToggleSort, onExport, onImport }: Props): React.JSX.Element {
     const theme = useTheme();
     const { languageHandler } = useContext(MainContext);
 
@@ -34,6 +36,15 @@ function ChargesOptionsSheet({ visible, onClose, sortDesc, onToggleSort, onExpor
                         : languageHandler.getTranslation("sortOlderToNewer")}
                     buttonStyle={theme.buttons.neutral}
                 />
+                {onImport && (
+                    <Button
+                        testID={'importButton'}
+                        onPress={onImport}
+                        icon={"file-upload"}
+                        text={languageHandler.getTranslation("import")}
+                        buttonStyle={theme.buttons.neutral}
+                    />
+                )}
                 <Button
                     testID={'exportButton'}
                     onPress={onExport}

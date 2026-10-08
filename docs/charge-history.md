@@ -1,7 +1,8 @@
 # Package `kelec-charge-history`
 
 Historique des charges d'une voiture : carte résumé sur la page voiture, écran d'historique par mois,
-filtres, tri, fusion des charges et export Excel.
+filtres, tri, fusion des charges et export Excel. L'import d'un export est dans un package à part,
+[`kelec-charge-import`](./charge-import.md), qui passe par l'`index.ts` de ce package.
 
 Pattern général : voir [packages-pattern.md](./packages-pattern.md).
 
@@ -25,21 +26,22 @@ kelec-charge-history/
 │       ├── renaultChargesSource.ts   Renault / Dacia / Alpine : API historique + sessions V2G
 │       └── demoChargesSource.ts      Données de démo
 ├── controllers/
-│   ├── ChargesHistoryProvider.tsx      Historique partagé d'une voiture : useChargesHistory() → { history, sync }
+│   ├── ChargesHistoryProvider.tsx      Historique partagé d'une voiture : useChargesHistory() → { history, sync, importCharges }
 │   ├── useChargesHistoryController.ts  État de l'écran : filtres, tri, pagination, modales, export
 │   ├── ChargesFiltersContext.ts        Filtres actifs, pour les vues de filtres
 │   └── useNumericalFilterController.ts Champs min / max d'un filtre numérique
 ├── views/
 │   ├── ChargesSummaryCard.tsx   Carte de la page voiture (totaux)
 │   ├── ChargesHistoryView.tsx   Écran d'historique
-│   ├── ChargesOptionsSheet.tsx  Feuille « … » : tri et export
+│   ├── ChargesOptionsSheet.tsx  Feuille « … » : tri, import (si proposé) et export
 │   ├── ActiveFiltersRow.tsx     Bouton Filtres + pastilles des filtres actifs
 │   ├── ChargeMonthSection.tsx   Un mois (dépliable)
 │   ├── ChargeMonthHeader.tsx    En-tête du mois : totaux + mini-graphique par jour
 │   ├── ChargeCard.tsx           Une charge (+ détail des sous-charges si fusionnée)
 │   └── filters/                 Modale des filtres (date, numériques, DC uniquement)
 ├── types/chargesSource.ts       Interface ChargesSource
-└── routes.ts                    CHARGES_HISTORY_ROUTE
+├── routes.ts                    CHARGES_HISTORY_ROUTE
+└── index.ts                     API publique : Charge, useChargesHistory (utilisés par kelec-charge-import)
 ```
 
 ## Flux de données
@@ -62,17 +64,23 @@ kelec-charge-history/
 | `<vin>/chargesHistorySaved` | Ancien format (toutes les charges dans une seule entrée) : relu si présent, supprimé à la première écriture |
 
 - Les noms des champs sérialisés de `Charge` (`chargeStartDate`, `V2GEnergyDischarged`…) **ne doivent pas changer** : ils servent au stockage et à l'export.
-- Lors d'un enregistrement (`saveNewCharges`), l'app dédoublonne sur la date de début (les nouvelles charges l'emportent), trie par date croissante et calcule le kilométrage de départ quand l'historique kilométrique natif le permet.
+- Lors d'un enregistrement, l'app dédoublonne sur l'**instant** de début (et non sur le texte de la date, qui peut avoir ou non des millisecondes), trie par date croissante et calcule le kilométrage de départ quand l'historique kilométrique natif le permet.
+  - `saveNewCharges` (API) : en cas de doublon, la nouvelle charge l'emporte.
+  - `addMissingCharges` (import) : en cas de doublon, la charge déjà stockée l'emporte.
+- Import : une source qui stocke les charges implémente `importCharges` (Renault). Le provider expose alors `importCharges`, sinon `null` (démo) et le bouton d'import n'est pas affiché.
+  `ChargesHistoryView` reçoit `onImport` de `CarsPageView`, qui seul connaît la route d'import : `kelec-charge-history` ne dépend pas de `kelec-charge-import`.
 
 ## Règles métier
 
 - **Seuil DC** : une charge est DC si sa puissance moyenne est **≥ 26 kW** (`Charge.DC_THRESHOLD_KW`, `charge.isDCCharge()`).
   Ce seuil est utilisé par le filtre « DC uniquement », le mini-graphique du mois et le surlignage des cartes.
-- **Fusion** (préférence `mergeCharges`) : deux charges qui se suivent sont fusionnées quand le niveau de fin de l'une est égal au niveau de début de la suivante et qu'elles sont du même type (V2G ou non). Les charges d'origine sont gardées en `subCharges`.
+- **Fusion** (préférence `mergeCharges`) : deux charges qui se suivent sont fusionnées quand le niveau de début de la seconde est à ±1 % du niveau de fin de la première, qu'elle commence moins de 12 h après la fin de la première, et qu'elles sont du même type (V2G ou non). Les charges d'origine sont gardées en `subCharges`.
+  La fusion ne sert qu'à l'affichage et à l'export : le stockage garde les charges d'origine. Elle se fait toujours sur une liste triée par date croissante (`selectCharges`).
 - **Filtre date** : les dates choisies couvrent des **journées entières** (début à 00:00:00, fin à 23:59:59.999), quelle que soit l'heure de la sélection.
 - **Filtres numériques** : un champ vide n'impose pas de borne (0 pour le min, 9999 pour le max). Vider les deux champs retire le filtre.
 - **Pagination** : 2 mois affichés au départ, un de plus à chaque fin de liste. On revient à 2 quand on change le tri.
-- **Export** : les charges filtrées, dans l'ordre du tri, avec les dates en heure locale.
+- **Export** : les charges affichées (filtrées, fusionnées si l'option est active), dans l'ordre du tri, avec les dates en heure locale.
+  Une ligne fusionnée a `isAMergeCharge = true` et le nombre de sous-charges dans `subChargesCount` (dernières colonnes).
 
 ## Historique du refactor
 

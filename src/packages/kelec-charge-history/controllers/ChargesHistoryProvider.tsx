@@ -10,11 +10,14 @@ type ChargesHistoryController = {
     history: ChargesHistory;
     /** Synchronise avec l'API. À appeler seulement après un fetch batterie réussi. */
     sync: () => Promise<void>;
+    /** Ajoute des charges importées à l'historique ; null si la source ne permet pas d'importer. */
+    importCharges: ((charges: Charge[]) => Promise<void>) | null;
 };
 
 const ChargesHistoryContext = createContext<ChargesHistoryController>({
     history: ChargesHistory.unavailable(),
     sync: async () => { },
+    importCharges: null,
 });
 
 export const useChargesHistory = (): ChargesHistoryController => useContext(ChargesHistoryContext);
@@ -68,7 +71,15 @@ export function ChargesHistoryProvider({ carModel, account, children }: Props): 
         commit(charges);
     }, [source, commit]);
 
-    const value = useMemo(() => ({ history, sync }), [history, sync]);
+    const importCharges = useMemo(() => {
+        const importIntoSource = source?.importCharges?.bind(source);
+        if (!importIntoSource) return null;
+        return async (charges: Charge[]) => {
+            commit(await importIntoSource(charges));
+        };
+    }, [source, commit]);
+
+    const value = useMemo(() => ({ history, sync, importCharges }), [history, sync, importCharges]);
 
     return (
         <ChargesHistoryContext.Provider value={value}>

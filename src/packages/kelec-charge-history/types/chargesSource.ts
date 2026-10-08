@@ -6,4 +6,9 @@ export interface ChargesSource {
     loadCached(): Promise<Charge[] | null>;
     /** Récupère les nouvelles charges, les enregistre et renvoie l'historique complet ; null si rien n'a pu être récupéré. */
     syncFromNetwork(): Promise<Charge[] | null>;
+    /**
+     * Ajoute des charges importées à l'historique stocké (celles déjà présentes sont gardées)
+     * et renvoie l'historique complet. Absent si la source ne stocke rien (ex. démo).
+     */
+    importCharges?(charges: Charge[]): Promise<Charge[]>;
 }

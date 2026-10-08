@@ -17,18 +17,36 @@ class ChargesRepository {
     }
 
     /**
-     * Fusionne `newCharges` avec l'historique stocké (dédoublonnage sur la date de début,
-     * les nouvelles charges l'emportent), complète le kilométrage, enregistre et renvoie le tout.
+     * Ajoute `newCharges` (venant de l'API) à l'historique stocké : en cas de doublon,
+     * les nouvelles charges l'emportent. Complète le kilométrage, enregistre et renvoie le tout.
      */
     static async saveNewCharges(vin: string, newCharges: Charge[]): Promise<Charge[]> {
         const stored = await this.getCharges(vin) ?? [];
-        const all = [...newCharges.filter(charge => charge.chargeStartDate !== undefined), ...stored];
+        return this.save(vin, [...newCharges, ...stored]);
+    }
 
-        const seen = new Set<string | undefined>();
-        const charges = all
+    /**
+     * Ajoute à l'historique stocké les charges qu'il ne contient pas encore (import) :
+     * en cas de doublon, la charge déjà stockée l'emporte. Enregistre et renvoie le tout.
+     */
+    static async addMissingCharges(vin: string, charges: Charge[]): Promise<Charge[]> {
+        const stored = await this.getCharges(vin) ?? [];
+        return this.save(vin, [...stored, ...charges]);
+    }
+
+    /**
+     * Dédoublonne sur l'instant de début (la première occurrence l'emporte), trie par date,
+     * complète le kilométrage puis enregistre. L'instant, et non le texte, sert de clé :
+     * une même date peut être écrite avec ou sans millisecondes.
+     */
+    private static async save(vin: string, candidates: Charge[]): Promise<Charge[]> {
+        const seen = new Set<number>();
+        const charges = candidates
             .filter(charge => {
-                if (seen.has(charge.chargeStartDate)) return false;
-                seen.add(charge.chargeStartDate);
+                if (charge.chargeStartDate === undefined) return false;
+                const start = charge.getStartDate().getTime();
+                if (seen.has(start)) return false;
+                seen.add(start);
                 return true;
             })
             .sort((a, b) => a.getStartDate().getTime() - b.getStartDate().getTime());

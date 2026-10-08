@@ -13,6 +13,7 @@ import SendCoffeeCard from "./CarView/Elements/SendCoffee";
 import { FullScreenMapView, MAP_ROUTE, MapProvider } from "../../../packages/kelec-map";
 import { CAR_TYPE_ROUTE, CarTypeRouteParams, CarTypeScreen } from "../../../packages/kelec-car-type";
 import { TFA_ROUTE, TfaRouteParams, TfaView } from "../../../packages/kelec-tfa";
+import { CHARGES_IMPORT_ROUTE, ChargesImportView } from "../../../packages/kelec-charge-import";
 
 
 export type CarsViewParamList = {
@@ -21,6 +22,7 @@ export type CarsViewParamList = {
     [CAR_TYPE_ROUTE]: CarTypeRouteParams;
     CarView: undefined;
     [CHARGES_HISTORY_ROUTE]: undefined;
+    [CHARGES_IMPORT_ROUTE]: undefined;
     [TFA_ROUTE]: TfaRouteParams;
 }
 
@@ -69,7 +71,15 @@ function CarsPageView(): React.JSX.Element {
                                     }
                                   </Stack.Screen>
                                   <Stack.Screen name={CHARGES_HISTORY_ROUTE}>
-                                    {props => <ChargesHistoryView {...props} />}
+                                    {props => (
+                                      <ChargesHistoryView
+                                        {...props}
+                                        onImport={() => props.navigation.navigate(CHARGES_IMPORT_ROUTE)}
+                                      />
+                                    )}
+                                  </Stack.Screen>
+                                  <Stack.Screen name={CHARGES_IMPORT_ROUTE}>
+                                    {props => <ChargesImportView onClose={() => props.navigation.goBack()} />}
                                   </Stack.Screen>
                                   <Stack.Screen name={CAR_TYPE_ROUTE}>
                                     {/* modèle enregistré : retour à la page voiture, qui recharge le profil en reprenant le focus */}

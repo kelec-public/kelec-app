@@ -32,4 +32,8 @@ export class RenaultChargesSource implements ChargesSource {
         }
         return charges;
     }
+
+    importCharges(charges: Charge[]): Promise<Charge[]> {
+        return ChargesRepository.addMissingCharges(this.vin, charges);
+    }
 }

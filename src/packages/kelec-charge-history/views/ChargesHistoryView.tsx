@@ -16,15 +16,25 @@ import ChargesFiltersView from "./filters/ChargesFiltersView";
 
 type Props = {
     readonly navigation: { goBack: () => void };
+    /** Ouvre l'écran d'import (fourni par l'écran parent) ; absent : pas d'import. */
+    readonly onImport?: () => void;
 }
 
-function ChargesHistoryView({ navigation }: Props): React.JSX.Element {
+function ChargesHistoryView({ navigation, onImport }: Props): React.JSX.Element {
     const isDarkMode = useColorScheme() === 'dark';
     const { languageHandler } = useContext(MainContext);
-    const { history } = useChargesHistory();
+    const { history, importCharges } = useChargesHistory();
 
     const controller = useChargesHistoryController(history);
     const { months } = controller;
+
+    // L'import n'est proposé que si l'écran parent sait l'ouvrir et que la source sait enregistrer.
+    const openImport = onImport && importCharges
+        ? () => {
+            controller.closeOptions();
+            onImport();
+        }
+        : undefined;
 
     return (
         <SafeAreaView
@@ -39,6 +49,7 @@ function ChargesHistoryView({ navigation }: Props): React.JSX.Element {
                     sortDesc={controller.sortDesc}
                     onToggleSort={controller.toggleSort}
                     onExport={controller.exportFilteredCharges}
+                    onImport={openImport}
                 />
                 <Modal
                     animationType="slide"

@@ -49,9 +49,18 @@ jest.mock('react-native-watch-connectivity', () => {
 jest.mock('react-native-fs', () => {
     return {
         writeFile: jest.fn(() => Promise.resolve(true)),
+        readFile: jest.fn(),
         DocumentDirectoryPath: 'ExternalStorageDirectoryPath',
     };
 });
+
+jest.mock('@react-native-documents/picker', () => ({
+    pick: jest.fn(),
+    keepLocalCopy: jest.fn(),
+    isErrorWithCode: (error) => error !== null && typeof error === 'object' && 'code' in error,
+    errorCodes: { OPERATION_CANCELED: 'OPERATION_CANCELED' },
+    types: { xlsx: 'xlsx', xls: 'xls' },
+}));
 
 jest.mock('react-native-share', () => {
     return {
