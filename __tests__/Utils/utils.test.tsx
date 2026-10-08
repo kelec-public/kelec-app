@@ -7,7 +7,6 @@ import {
     getDisplayDate,
     getLightGray,
     coloursAssets,
-    formatPlate,
     formatNumberWithLeadingZero,
     getCarMakerLogo,
     getAccentOrange,
@@ -67,16 +66,6 @@ describe('getLightGray', () => {
     });
     it('should return lightgray when isDarkMode is false', () => {
         expect(getLightGray(false)).toBe('lightgray');
-    });
-});
-
-describe('formatPlate', () => {
-    it('should format the plate correctly', () => {
-        expect(formatPlate('AA000AA')).toBe('AA-000-AA');
-    });
-
-    it('should be empty', () => {
-        expect(formatPlate()).toBe('');
     });
 });
 

@@ -296,6 +296,7 @@ describe('Should add renault group cars', () => {
                             "model": "ZOE",
                             "imageUrl": "https://3dv.renault.com/ImageFromBookmark?configuration=STANDA%2FB10%2FEA2%2FDG%2FVT002%2FRET02%2FRALU16%2FDRAP03%2FHARM01%2FTEGNE%2FRDAR02%2FALEVA%2FSOP02C%2FTRNOR%2FLVAVIP%2FLVAREL%2FNAV3G3%2FRAD37A%2FSDPCLV%2FTLFRAN%2FSAN913%2FBT4MR1%2FNBT007%2FSKTPOU%2FPRLEX1&databaseId=b4572adc-6c81-48ef-b4b1-2aff24ed7550&bookmarkSet=RSITE&bookmark=EXT_34_DESSUS&profile=HELIOS_OWNERSERVICES_LARGE",
                             "registrationNumber": "DM700AA",
+                            "registrationCountry": "FR",
                             "carMaker": renaultGroupCarMaker,
                             "image": ""
                         },

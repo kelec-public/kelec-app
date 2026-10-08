@@ -1,7 +1,7 @@
 import { View, Image, useColorScheme, ActivityIndicator, StyleSheet } from "react-native";
 import CarModel from "../../../../../lib/clients/cars/carModel";
 import Text from "../../../../../screen/Common/CustomText";
-import { capitlizeFirstLetter, formatPlate, getBlackColour } from "../../../../../lib/graphics/utils";
+import { capitlizeFirstLetter, getBlackColour } from "../../../../../lib/graphics/utils";
 import { getCarMakerLogo } from "../../../../kelec-model/lib/logos";
 import { useEffect, useState } from "react";
 import Icon from "react-native-vector-icons/MaterialIcons";
@@ -10,6 +10,7 @@ import { spacerL, spacerM, spacerS, spacerXL } from "../../../../kelec-model/vie
 import KelecCard from "../../../../kelec-model/view/Card";
 import { subTitle2, subTitle3, title2 } from "../../../../kelec-model/view/Titles";
 import { fetchVehicleImage } from "../../../services/vehicleImages";
+import { formatLicencePlate } from "../../../../kelec-licence-plate";
 
 type Props = {
     selectedCar: CarModel | undefined;
@@ -50,6 +51,7 @@ type CarRowProps = {
 const CarRow = (props: CarRowProps) => {
     const isDarkMode = useColorScheme() === 'dark';
     const { carModel } = props;
+    const registration = carModel.getRegistrationNumber();
 
     return (
         <View
@@ -81,11 +83,11 @@ const CarRow = (props: CarRowProps) => {
                     {carModel.getModel()}
                 </Text>
                 {/* car license plate */}
-                {carModel.getRegistrationNumber() && (
+                {!!registration && (
                     <Text
                         testID={'registrationText'}
                         style={subTitle3}
-                    >{formatPlate(carModel.getRegistrationNumber())}</Text>
+                    >{formatLicencePlate(registration, carModel.getRegistrationCountry())}</Text>
                 )}
                 {/* car vin */}
                 <Text

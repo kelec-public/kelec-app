@@ -16,8 +16,8 @@ export class DemoLoginSource implements LoginSource {
 
     async listVehicles(): Promise<CarModel[]> {
         return [
-            new CarModel('VF1AA', 'Demo car', PLACEHOLDER_CAR_IMAGE, CarMaker.DEMO, 'AA001AA'),
-            new CarModel('VF1AA2', 'Demo car2', PLACEHOLDER_CAR_IMAGE, CarMaker.DEMO, 'BB001BB'),
+            new CarModel('VF1AA', 'Demo car', PLACEHOLDER_CAR_IMAGE, CarMaker.DEMO, 'AA001AA', 'FR'),
+            new CarModel('VF1AA2', 'Demo car2', PLACEHOLDER_CAR_IMAGE, CarMaker.DEMO, 'BB001BB', 'FR'),
         ];
     }
 }

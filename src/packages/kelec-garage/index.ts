@@ -4,5 +4,6 @@ export { CarTypeRepository } from "./services/carTypeRepository";
 export { CarImageRepository, toImageUri } from "./services/carImageRepository";
 export { useCarImage } from "./controllers/useCarImage";
 export { GarageService } from "./services/garageService";
+export { retrofitRegistrationCountry } from "./services/registrationCountryRetrofit";
 export { logOut } from "./services/session";
 export { buildUserAccount } from "./models/userAccountFactory";

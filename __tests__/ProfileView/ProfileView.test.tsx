@@ -62,7 +62,7 @@ jest.mock('../../src/lib/clients/carMakers/renaultClient', () => {
 beforeEach(async () => {
     jest.clearAllMocks();
     await AsyncStorage.clear();
-    const car1: CarModel = new CarModel('vin1', 'model1', 'url.com', CarMaker.RENAULT, 'AA001AA');
+    const car1: CarModel = new CarModel('vin1', 'model1', 'url.com', CarMaker.RENAULT, 'AA001AA', 'FR');
     const car2: CarModel = new CarModel('vin2', 'model2', 'url.com', CarMaker.HYUNDAI, 'BB001BB');
     await AsyncStorage.setItem('vin1/image', 'image1');
     const car3: CarModel = new CarModel('vin3', 'model3', 'url.com', CarMaker.DACIA);
@@ -105,7 +105,7 @@ test('should render the profile view', async () => {
         const vinOrRegistrationCarRow = screen.queryAllByTestId('vinOrRegistrationCarRow');
         expect(vinOrRegistrationCarRow.length).toBe(3);
         expect(vinOrRegistrationCarRow[0].props.children).toBe('AA-001-AA');
-        expect(vinOrRegistrationCarRow[1].props.children).toBe('BB-001-BB');
+        expect(vinOrRegistrationCarRow[1].props.children).toBe('BB001BB');
         expect(vinOrRegistrationCarRow[2].props.children).toBe('vin3');
 
     });

@@ -55,6 +55,7 @@ export class RenaultLoginSource implements LoginSource {
             pickRenaultImage(vehicle.vehicleDetails.assets),
             account.getCarMaker(),
             vehicle.vehicleDetails.registrationNumber,
+            vehicle.vehicleDetails.registrationCountry?.code,
         ));
     }
 }

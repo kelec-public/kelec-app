@@ -4,11 +4,12 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Text from "../../../screen/Common/CustomText";
 import commonStyles from "../../../lib/graphics/commonStyle";
-import { formatPlate, getBlackColour, getCarMakerLogo, getGrayBackgroundColour } from "../../../lib/graphics/utils";
+import { getBlackColour, getCarMakerLogo, getGrayBackgroundColour } from "../../../lib/graphics/utils";
 import MainContext from "../../../lib/Contexts/MainContext";
 import { MoveDirection } from "../../../lib/clients/accounts/account";
 import CarModel from "../../../lib/clients/cars/carModel";
 import { toImageUri, useCarImage } from "../../kelec-garage";
+import { formatLicencePlate } from "../../kelec-licence-plate";
 import { useShakeAnimation } from "../controllers/useShakeAnimation";
 import RenameCarDialog from "./RenameCarDialog";
 import CarRowAction, { ActionSlot } from "./CarRowAction";
@@ -51,7 +52,7 @@ function CarRow({ carModel, index, isLast, editMode, onMove, onRename, onDelete 
                     <View style={{ gap: 5 }}>
                         <Text testID="profileCarRowModel" style={{ flexShrink: 1, flexWrap: 'wrap' }}>{carModel.getModel()}</Text>
                         <Text testID="vinOrRegistrationCarRow" style={commonStyles.verySmallText}>
-                            {registration == undefined ? carModel.getVin() : formatPlate(registration)}
+                            {registration ? formatLicencePlate(registration, carModel.getRegistrationCountry()) : carModel.getVin()}
                         </Text>
                     </View>
                 </View>

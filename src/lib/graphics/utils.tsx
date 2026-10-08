@@ -39,18 +39,6 @@ const capitlizeFirstLetter = (word: string): string => {
     return word.charAt(0).toUpperCase() + word.slice(1);
 }
 
-const formatPlate = (plate: string = "") => {
-    // to format a plate in a french format ex : AA000AA => AA-000-AA
-    let formattedPlate = "";
-    for (let i = 0; i < plate.length; i++) {
-        if (i == 2 || i == 5) {
-            formattedPlate += "-";
-        }
-        formattedPlate += plate[i];
-    }
-    return formattedPlate;
-}
-
 const getDisplayDate = (date: Date) => {
     // return only the hours if it's today, else return the date
     const languageHandler = new LanguageHandler();
@@ -167,7 +155,6 @@ export {
     getGrayBackgroundColour,
     getGrayColour,
     coloursAssets,
-    formatPlate,
     getBlueText,
     getDisplayDate,
     getLightGray,
