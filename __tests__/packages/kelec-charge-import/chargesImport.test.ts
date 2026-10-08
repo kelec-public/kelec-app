@@ -110,6 +110,19 @@ describe('buildImportPreview', () => {
         expect(preview.alreadyKnownCount).toBe(1);
     });
 
+    test("écarte une charge déjà connue dont le début diffère de quelques secondes (anciens exports de l'API)", () => {
+        const existing = [new Charge('2024-08-23T07:57:41Z', '2024-08-23T11:35:52Z', 218, 20, 80, 30, 'ok')];
+        const preview = previewOf([
+            row('2024-08-23T07:57:42Z'), // déjà dans l'historique
+            row('2024-08-23T07:57:35Z'), // 6 s avant : autre charge
+            row('2024-08-23T08:30:00Z'),
+            row('2024-08-23T08:30:03Z'), // déjà plus haut dans le fichier
+        ], existing);
+
+        expect(preview.alreadyKnownCount).toBe(2);
+        expect(preview.newCharges.map(charge => charge.chargeStartDate)).toEqual(['2024-08-23T07:57:35Z', '2024-08-23T08:30:00Z']);
+    });
+
     test('signale les lignes illisibles avec leur numéro dans le tableur', () => {
         const preview = previewOf([
             row('2024-08-23T07:57:41Z'),

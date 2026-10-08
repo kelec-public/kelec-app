@@ -20,6 +20,7 @@ kelec-charge-history/
 │   ├── chargeMonths.ts        Tri, fusion, regroupement par mois, jours du graphique (pur)
 │   ├── mileageAtStart.ts      Kilométrage au début d'une charge (pur)
 │   ├── chargesRepository.ts   Persistance locale (BatchedList de kelec-storage)
+│   ├── knownChargeStarts.ts   Débuts de charge déjà vus, pour les doublons (à 5 s près)
 │   ├── chargesExport.ts       Génération xlsx + feuille de partage
 │   ├── createChargesSource.ts Choix de la source selon le constructeur
 │   └── sources/
@@ -41,7 +42,7 @@ kelec-charge-history/
 │   └── filters/                 Modale des filtres (date, numériques, DC uniquement)
 ├── types/chargesSource.ts       Interface ChargesSource
 ├── routes.ts                    CHARGES_HISTORY_ROUTE
-└── index.ts                     API publique : Charge, useChargesHistory (utilisés par kelec-charge-import)
+└── index.ts                     API publique : Charge, useChargesHistory, KnownChargeStarts (utilisés par kelec-charge-import)
 ```
 
 ## Flux de données
@@ -64,7 +65,7 @@ kelec-charge-history/
 | `<vin>/chargesHistorySaved` | Ancien format (toutes les charges dans une seule entrée) : relu si présent, supprimé à la première écriture |
 
 - Les noms des champs sérialisés de `Charge` (`chargeStartDate`, `V2GEnergyDischarged`…) **ne doivent pas changer** : ils servent au stockage et à l'export.
-- Lors d'un enregistrement, l'app dédoublonne sur l'**instant** de début (et non sur le texte de la date, qui peut avoir ou non des millisecondes), trie par date croissante et calcule le kilométrage de départ quand l'historique kilométrique natif le permet.
+- Lors d'un enregistrement, l'app dédoublonne sur l'**instant** de début, **à 5 secondes près** (`KnownChargeStarts`) : une date peut avoir ou non des millisecondes, et l'API Renault a déjà renvoyé une même charge avec une seconde d'écart d'un jour à l'autre. Elle trie ensuite par date croissante et calcule le kilométrage de départ quand l'historique kilométrique natif le permet.
   - `saveNewCharges` (API) : en cas de doublon, la nouvelle charge l'emporte.
   - `addMissingCharges` (import) : en cas de doublon, la charge déjà stockée l'emporte.
 - Import : une source qui stocke les charges implémente `importCharges` (Renault). Le provider expose alors `importCharges`, sinon `null` (démo) et le bouton d'import n'est pas affiché.

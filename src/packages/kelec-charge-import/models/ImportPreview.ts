@@ -4,7 +4,7 @@ import { Charge } from "../../kelec-charge-history";
 export type ImportPreview = {
     /** Charges du fichier absentes de l'historique : ce sont elles qui seront ajoutées. */
     newCharges: Charge[];
-    /** Nombre de charges du fichier déjà présentes dans l'historique (même instant de début). */
+    /** Nombre de charges du fichier déjà présentes dans l'historique (même début, à quelques secondes près). */
     alreadyKnownCount: number;
     /** Numéros des lignes du fichier qui n'ont pas pu être lues. */
     rejectedLines: number[];
