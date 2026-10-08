@@ -85,7 +85,7 @@ test('should retrieve mileage history with all parameters', async () => {
 describe('should merge charges', () => {
     test('merge charges with two accurate mileage', async () => {
         const charge1 = new Charge('2023-01-01T00:00:00Z', '2023-01-01T01:00:00Z', 50, 0, 60, 60, 'OK');
-        const charge2 = new Charge('2023-01-02T00:00:00Z', '2023-01-02T01:00:00Z', 60, 60, 80, 70, 'OK');
+        const charge2 = new Charge('2023-01-01T06:00:00Z', '2023-01-01T07:00:00Z', 60, 60, 80, 70, 'OK');
         await ChargesRepository.saveNewCharges('vin', [charge1, charge2]);
 
         const charges = await ChargesRepository.getCharges('vin');
@@ -96,7 +96,7 @@ describe('should merge charges', () => {
 
     test('merge charges with two accurate mileage', async () => {
         const charge1 = new Charge('2023-01-01T00:00:00Z', '2023-01-01T01:00:00Z', 50, 0, 60, 60, 'OK', undefined, undefined, 1234, true);
-        const charge2 = new Charge('2023-01-02T00:00:00Z', '2023-01-02T01:00:00Z', 60, 60, 80, 70, 'OK', undefined, undefined, 1234, true);
+        const charge2 = new Charge('2023-01-01T06:00:00Z', '2023-01-01T07:00:00Z', 60, 60, 80, 70, 'OK', undefined, undefined, 1234, true);
         await ChargesRepository.saveNewCharges('vin', [charge1, charge2]);
 
         const charges = await ChargesRepository.getCharges('vin');
@@ -107,7 +107,7 @@ describe('should merge charges', () => {
 
     test('merge charges with one accurate and one inaccurate mileage', async () => {
         const charge1 = new Charge('2023-01-01T00:00:00Z', '2023-01-01T01:00:00Z', 50, 0, 60, 60, 'OK', undefined, undefined, 1234, false);
-        const charge2 = new Charge('2023-01-02T00:00:00Z', '2023-01-02T01:00:00Z', 60, 60, 80, 70, 'OK', undefined, undefined, 1234, true);
+        const charge2 = new Charge('2023-01-01T06:00:00Z', '2023-01-01T07:00:00Z', 60, 60, 80, 70, 'OK', undefined, undefined, 1234, true);
         await ChargesRepository.saveNewCharges('vin', [charge1, charge2]);
 
         const charges = await ChargesRepository.getCharges('vin');
