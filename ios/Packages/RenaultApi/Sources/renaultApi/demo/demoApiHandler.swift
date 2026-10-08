@@ -53,6 +53,10 @@ public struct DemoApiHandler: ApiHandler{
         return localized("EN CHARGE | ")
     }
     
+    public func getChargeStatus() -> ChargeStatus {
+        return .charging
+    }
+
     public var carMaker: CarMaker
     
     public init(){

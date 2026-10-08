@@ -97,6 +97,17 @@ public struct HyundaiApiHandler: ApiHandler {
 
     
     
+    // same rules as getChargeText
+    public func getChargeStatus() -> ChargeStatus {
+        if !self.getIsCarPlugged() {
+            return .notPlugged
+        }
+        if self.getBatteryLevel() > self.getChargeLimit() {
+            return .ended
+        }
+        return self.getIsCarCharging() ? .charging : .notCharging
+    }
+
     public func getHyundaiChargingLimit(hyundaiApi: HyundaiLayerReturn) -> Int {
       guard let targetSOC = hyundaiApi.status.vehicleStatus.evStatus.reservChargeInfos?.targetSOClist else {
         return 100

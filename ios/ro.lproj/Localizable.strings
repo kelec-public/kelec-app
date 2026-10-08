@@ -125,3 +125,26 @@
 "watchWidgetDescription" = "Nivelul de încărcare al Renault E-Tech";
 "watchSettings" = "Setări";
 "watchWidgetCar" = "Mașina afișată în widgeturi";
+
+"getCarStatus" = "Obținere stare mașină";
+"getCarStatusDescription" = "Returnează nivelul bateriei, autonomia, starea încărcării etc. pentru mașina aleasă, pentru acțiunile următoare.";
+"getCarStatusSummary ${car}" = "Obținere stare pentru ${car}";
+"getCarStatusCarDescription" = "Mașina a cărei stare se obține.";
+"carStatus" = "Starea mașinii";
+"carStatusBatteryLevel" = "Nivelul bateriei";
+"carStatusRange" = "Autonomie";
+"carStatusChargeStatus" = "Starea încărcării";
+"carStatusIsPlugged" = "Conectată";
+"carStatusRemainingTime" = "Timp de încărcare rămas";
+"carStatusChargeLimit" = "Limită de încărcare";
+"carStatusIsLocked" = "Încuiată";
+"carStatusMileage" = "Kilometraj";
+"carStatusLastUpdate" = "Ultima actualizare";
+"chargeStatusNotPlugged" = "Neconectată";
+"chargeStatusNotCharging" = "Nu se încarcă";
+"chargeStatusCharging" = "Se încarcă";
+"chargeStatusScheduled" = "Încărcare programată";
+"chargeStatusEnded" = "Încărcare finalizată";
+"chargeStatusV2G" = "V2G";
+"chargeStatusV2L" = "V2L";
+"carStatusDialog %@ %@ %@ %@" = "%1$@: %2$@%% · %3$@ · %4$@";

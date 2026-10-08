@@ -125,3 +125,26 @@
 "watchWidgetDescription" = "Ниво на заряд на вашия Renault E-Tech";
 "watchSettings" = "Настройки";
 "watchWidgetCar" = "Кола в уиджетите";
+
+"getCarStatus" = "Получаване на състоянието на автомобила";
+"getCarStatusDescription" = "Връща нивото на батерията, пробега с един заряд, състоянието на зареждане и др. за избрания автомобил за следващите действия.";
+"getCarStatusSummary ${car}" = "Получаване на състоянието на ${car}";
+"getCarStatusCarDescription" = "Автомобилът, чието състояние да се получи.";
+"carStatus" = "Състояние на автомобила";
+"carStatusBatteryLevel" = "Ниво на батерията";
+"carStatusRange" = "Пробег с един заряд";
+"carStatusChargeStatus" = "Състояние на зареждане";
+"carStatusIsPlugged" = "Включен";
+"carStatusRemainingTime" = "Оставащо време за зареждане";
+"carStatusChargeLimit" = "Лимит на зареждане";
+"carStatusIsLocked" = "Заключен";
+"carStatusMileage" = "Километраж";
+"carStatusLastUpdate" = "Последна актуализация";
+"chargeStatusNotPlugged" = "Не е включен";
+"chargeStatusNotCharging" = "Не зарежда";
+"chargeStatusCharging" = "Зарежда";
+"chargeStatusScheduled" = "Планирано зареждане";
+"chargeStatusEnded" = "Зареждането завърши";
+"chargeStatusV2G" = "V2G";
+"chargeStatusV2L" = "V2L";
+"carStatusDialog %@ %@ %@ %@" = "%1$@: %2$@ %% · %3$@ · %4$@";

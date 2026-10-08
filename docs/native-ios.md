@@ -58,7 +58,7 @@ ios/
 │   ├── WidgetComponents.swift      widgetBackground(), CarWidgetStateView, WidgetStyle, carStatusIcon, extension `ApiHandler` (couleur et durée de charge)
 │   └── PreviewData.swift           Données de démo des widgets (dont les 5 états des previews)
 ├── Kelec/RNSharedWidget.swift (+ .m)  Bridge RN en Swift, méthodes en promesses
-├── Intents/                        CarEntity / CarQuery, LaunchHVACIntent (Siri)
+├── Intents/                        CarEntity / CarQuery, LaunchHVACIntent (Siri), GetCarStatusIntent (état de la voiture)
 ├── KeleciOSWidget/                 Widgets iOS : providers, vues (Small, Medium, Tempo, écran verrouillé), Tempo.swift,
 │                                   contrôle « confort thermique » (LaunchHVACControl, iOS 18)
 ├── KelecWatchOs Watch App/         WatchSync, CarViewModel, vues (CarView, BatteryCardView, MapView, WatchSettingsView)
@@ -170,6 +170,20 @@ envoie `sendHVACCommand` (`launchHvac` du client du constructeur) et répond par
 (`preHeatLaunchedOn %@ %@` ou `preHeatLaunchError %@`). Textes du raccourci : `launchPreHeatSummary ${car} ${temperature}`,
 `launchPreHeatTemperature`, `launchPreHeatCarDescription`, `launchPreHeatTemperatureDescription`.
 
+### Raccourci « Obtenir l'état de [voiture] » (`GetCarStatusIntent`)
+
+Action Raccourcis (target de l'app) qui renvoie un `CarStatusEntity` (`TransientAppEntity`) : chaque propriété garde
+son type et sert aux actions suivantes du raccourci (« Si [État → Niveau de batterie] < 20 »…).
+
+- Données : `VehicleLoader.fetchStatus` (requête, sinon cache), compilé aussi dans la target de l'app pour cette action.
+- Propriétés : voiture, niveau de batterie, autonomie et kilométrage (mesures en km, Raccourcis convertit), statut de
+  charge (`CarChargeStatus`, `AppEnum`), branchée, temps de charge restant (seulement en charge), limite de charge et verrouillage (absents chez Renault group),
+  dernière mise à jour.
+- Statut de charge : `ApiHandler.getChargeStatus()` du package (`ChargeStatus`), même correspondance que l'app RN
+  (`renaultApiHandler.tsx`, codes `chargingStatus` de Renault ; règles de `getChargeText` pour Hyundai).
+- Siri répond par `carStatusDialog %@ %@ %@ %@` (« Zoé : 80 % · 245 km · En charge »), l'autonomie selon les préférences.
+- Erreurs : `widgetNoCarSelected` (voiture introuvable), `widgetServerError` (ni réponse ni cache).
+
 ### Contrôle « confort thermique » (`LaunchHVACControl`, iOS 18)
 
 Bouton du Centre de contrôle, de l'écran verrouillé et du bouton Action, dans l'extension des widgets iOS
@@ -247,6 +261,7 @@ Bouton du Centre de contrôle, de l'écran verrouillé et du bouton Action, dans
   - synchro de la montre depuis Réglages → « Synchroniser avec l'Apple Watch », app de la montre fermée ;
   - choix de la voiture des widgets de la montre (Réglages de la montre) ;
   - Siri / Raccourcis : « confort thermique » sur une voiture.
+  - Raccourci « Obtenir l'état » : propriétés dans une action suivante, condition sur le statut de charge, Renault et Hyundai.
   - Contrôle du Centre de contrôle (iOS 18) : ajout (choix de la voiture et de la température), tap, échec réseau.
 - Débogage : Réglages → Debug → « export widget logs » (`widgetLogs`, 5 jours, messages de `VehicleLoader`,
   `getCarMakerApiClient` et du client Renault), et « Debug zone » (choix d'une voiture, « Battery status »

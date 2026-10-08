@@ -125,3 +125,26 @@
 "watchWidgetDescription" = "Renault E-Tech -autosi lataustaso";
 "watchSettings" = "Asetukset";
 "watchWidgetCar" = "Widgeteissä näytettävä auto";
+
+"getCarStatus" = "Hae auton tila";
+"getCarStatusDescription" = "Palauttaa valitun auton akun varaustason, toimintasäteen, lataustilan ym. seuraavia toimintoja varten.";
+"getCarStatusSummary ${car}" = "Hae tila: ${car}";
+"getCarStatusCarDescription" = "Auto, jonka tila haetaan.";
+"carStatus" = "Auton tila";
+"carStatusBatteryLevel" = "Akun varaustaso";
+"carStatusRange" = "Toimintasäde";
+"carStatusChargeStatus" = "Lataustila";
+"carStatusIsPlugged" = "Kytketty";
+"carStatusRemainingTime" = "Jäljellä oleva latausaika";
+"carStatusChargeLimit" = "Latausraja";
+"carStatusIsLocked" = "Lukittu";
+"carStatusMileage" = "Mittarilukema";
+"carStatusLastUpdate" = "Viimeisin päivitys";
+"chargeStatusNotPlugged" = "Ei kytketty";
+"chargeStatusNotCharging" = "Ei lataa";
+"chargeStatusCharging" = "Lataa";
+"chargeStatusScheduled" = "Ajastettu lataus";
+"chargeStatusEnded" = "Lataus valmis";
+"chargeStatusV2G" = "V2G";
+"chargeStatusV2L" = "V2L";
+"carStatusDialog %@ %@ %@ %@" = "%1$@: %2$@ %% · %3$@ · %4$@";

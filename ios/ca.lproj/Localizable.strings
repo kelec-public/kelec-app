@@ -125,3 +125,26 @@
 "watchWidgetDescription" = "Nivell de càrrega del teu Renault E-Tech";
 "watchSettings" = "Configuració";
 "watchWidgetCar" = "Cotxe dels widgets";
+
+"getCarStatus" = "Obtén l'estat del cotxe";
+"getCarStatusDescription" = "Retorna el nivell de bateria, l'autonomia, l'estat de càrrega, etc. del cotxe triat, per a les accions següents.";
+"getCarStatusSummary ${car}" = "Obtén l'estat de ${car}";
+"getCarStatusCarDescription" = "El cotxe del qual cal obtenir l'estat.";
+"carStatus" = "Estat del cotxe";
+"carStatusBatteryLevel" = "Nivell de bateria";
+"carStatusRange" = "Autonomia";
+"carStatusChargeStatus" = "Estat de càrrega";
+"carStatusIsPlugged" = "Endollat";
+"carStatusRemainingTime" = "Temps de càrrega restant";
+"carStatusChargeLimit" = "Límit de càrrega";
+"carStatusIsLocked" = "Bloquejat";
+"carStatusMileage" = "Quilometratge";
+"carStatusLastUpdate" = "Última actualització";
+"chargeStatusNotPlugged" = "No endollat";
+"chargeStatusNotCharging" = "No carregant";
+"chargeStatusCharging" = "Carregant";
+"chargeStatusScheduled" = "Càrrega programada";
+"chargeStatusEnded" = "Càrrega completada";
+"chargeStatusV2G" = "V2G";
+"chargeStatusV2L" = "V2L";
+"carStatusDialog %@ %@ %@ %@" = "%1$@: %2$@ %% · %3$@ · %4$@";

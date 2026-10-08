@@ -2,7 +2,7 @@
 //  VehicleLoader.swift
 //  Kelec
 //
-//  Loads the car data for the widgets (iOS and watch) and the watch app.
+//  Loads the car data for the widgets (iOS and watch), the watch app and the Shortcuts actions.
 //
 
 import Foundation

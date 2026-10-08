@@ -125,3 +125,26 @@
 "watchWidgetDescription" = "A Renault E-Tech töltöttségi szintje";
 "watchSettings" = "Beállítások";
 "watchWidgetCar" = "A widgeteken megjelenő autó";
+
+"getCarStatus" = "Autó állapotának lekérése";
+"getCarStatusDescription" = "Visszaadja a kiválasztott autó töltöttségi szintjét, hatótávját, töltési állapotát stb. a következő műveletekhez.";
+"getCarStatusSummary ${car}" = "${car} állapotának lekérése";
+"getCarStatusCarDescription" = "Az autó, amelynek az állapotát le kell kérni.";
+"carStatus" = "Autó állapota";
+"carStatusBatteryLevel" = "Töltöttségi szint";
+"carStatusRange" = "Hatótáv";
+"carStatusChargeStatus" = "Töltési állapot";
+"carStatusIsPlugged" = "Csatlakoztatva";
+"carStatusRemainingTime" = "Hátralévő töltési idő";
+"carStatusChargeLimit" = "Töltési korlát";
+"carStatusIsLocked" = "Lezárva";
+"carStatusMileage" = "Kilométeróra-állás";
+"carStatusLastUpdate" = "Utolsó frissítés";
+"chargeStatusNotPlugged" = "Nincs csatlakoztatva";
+"chargeStatusNotCharging" = "Nem tölt";
+"chargeStatusCharging" = "Tölt";
+"chargeStatusScheduled" = "Ütemezett töltés";
+"chargeStatusEnded" = "Töltés befejezve";
+"chargeStatusV2G" = "V2G";
+"chargeStatusV2L" = "V2L";
+"carStatusDialog %@ %@ %@ %@" = "%1$@: %2$@%% · %3$@ · %4$@";

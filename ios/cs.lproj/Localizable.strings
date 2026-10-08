@@ -119,3 +119,26 @@
 "watchWidgetDescription" = "Úroveň nabití vašeho Renaultu E-Tech";
 "watchSettings" = "Nastavení";
 "watchWidgetCar" = "Vůz ve widgetech";
+
+"getCarStatus" = "Získat stav vozu";
+"getCarStatusDescription" = "Vrátí stav baterie, dojezd, stav nabíjení a další údaje zvoleného vozu pro další akce.";
+"getCarStatusSummary ${car}" = "Získat stav vozu ${car}";
+"getCarStatusCarDescription" = "Vůz, jehož stav se má získat.";
+"carStatus" = "Stav vozu";
+"carStatusBatteryLevel" = "Stav baterie";
+"carStatusRange" = "Dojezd";
+"carStatusChargeStatus" = "Stav nabíjení";
+"carStatusIsPlugged" = "Připojeno";
+"carStatusRemainingTime" = "Zbývající doba nabíjení";
+"carStatusChargeLimit" = "Limit nabíjení";
+"carStatusIsLocked" = "Zamčeno";
+"carStatusMileage" = "Stav tachometru";
+"carStatusLastUpdate" = "Poslední aktualizace";
+"chargeStatusNotPlugged" = "Nepřipojeno";
+"chargeStatusNotCharging" = "Nenabíjí";
+"chargeStatusCharging" = "Nabíjí";
+"chargeStatusScheduled" = "Plánované nabíjení";
+"chargeStatusEnded" = "Nabíjení dokončeno";
+"chargeStatusV2G" = "V2G";
+"chargeStatusV2L" = "V2L";
+"carStatusDialog %@ %@ %@ %@" = "%1$@: %2$@ %% · %3$@ · %4$@";

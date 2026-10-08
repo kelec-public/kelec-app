@@ -125,3 +125,26 @@
 "watchWidgetDescription" = "Raven napolnjenosti vašega vozila Renault E-Tech";
 "watchSettings" = "Nastavitve";
 "watchWidgetCar" = "Vozilo v pripomočkih";
+
+"getCarStatus" = "Pridobi stanje avtomobila";
+"getCarStatusDescription" = "Vrne raven baterije, doseg, stanje polnjenja itd. izbranega avtomobila za naslednja dejanja.";
+"getCarStatusSummary ${car}" = "Pridobi stanje za ${car}";
+"getCarStatusCarDescription" = "Avtomobil, katerega stanje želite pridobiti.";
+"carStatus" = "Stanje avtomobila";
+"carStatusBatteryLevel" = "Raven baterije";
+"carStatusRange" = "Doseg";
+"carStatusChargeStatus" = "Stanje polnjenja";
+"carStatusIsPlugged" = "Priključen";
+"carStatusRemainingTime" = "Preostali čas polnjenja";
+"carStatusChargeLimit" = "Omejitev polnjenja";
+"carStatusIsLocked" = "Zaklenjen";
+"carStatusMileage" = "Prevoženi kilometri";
+"carStatusLastUpdate" = "Zadnja posodobitev";
+"chargeStatusNotPlugged" = "Ni priključen";
+"chargeStatusNotCharging" = "Se ne polni";
+"chargeStatusCharging" = "Se polni";
+"chargeStatusScheduled" = "Načrtovano polnjenje";
+"chargeStatusEnded" = "Polnjenje končano";
+"chargeStatusV2G" = "V2G";
+"chargeStatusV2L" = "V2L";
+"carStatusDialog %@ %@ %@ %@" = "%1$@: %2$@ %% · %3$@ · %4$@";

@@ -14,6 +14,17 @@ public enum VehicleData {
     case demo
 }
 
+// charge status, same cases as the RN app (getChargeText of the api handlers)
+public enum ChargeStatus: String, CaseIterable {
+    case notPlugged
+    case notCharging
+    case charging
+    case scheduled
+    case ended
+    case v2g
+    case v2l
+}
+
 public protocol ApiHandler: Codable, Decodable{
     var carMaker: CarMaker { get set }
 
@@ -34,6 +45,8 @@ public protocol ApiHandler: Codable, Decodable{
     func getChargeInstantaneousPowerInWatts()->Double
     
     func getChargeText()->String
+
+    func getChargeStatus() -> ChargeStatus
     
     func getMapLatitude()->Latitude
     func getMapLongitude()->Longitude

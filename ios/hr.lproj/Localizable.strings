@@ -125,3 +125,26 @@
 "watchWidgetDescription" = "Razina napunjenosti vašeg Renault E-Tech";
 "watchSettings" = "Postavke";
 "watchWidgetCar" = "Automobil na widgetima";
+
+"getCarStatus" = "Dohvati stanje automobila";
+"getCarStatusDescription" = "Vraća razinu baterije, domet, stanje punjenja itd. odabranog automobila za sljedeće radnje.";
+"getCarStatusSummary ${car}" = "Dohvati stanje za ${car}";
+"getCarStatusCarDescription" = "Automobil čije se stanje dohvaća.";
+"carStatus" = "Stanje automobila";
+"carStatusBatteryLevel" = "Razina baterije";
+"carStatusRange" = "Domet";
+"carStatusChargeStatus" = "Stanje punjenja";
+"carStatusIsPlugged" = "Priključen";
+"carStatusRemainingTime" = "Preostalo vrijeme punjenja";
+"carStatusChargeLimit" = "Ograničenje punjenja";
+"carStatusIsLocked" = "Zaključan";
+"carStatusMileage" = "Kilometraža";
+"carStatusLastUpdate" = "Posljednje ažuriranje";
+"chargeStatusNotPlugged" = "Nije priključen";
+"chargeStatusNotCharging" = "Ne puni se";
+"chargeStatusCharging" = "Puni se";
+"chargeStatusScheduled" = "Zakazano punjenje";
+"chargeStatusEnded" = "Punjenje završeno";
+"chargeStatusV2G" = "V2G";
+"chargeStatusV2L" = "V2L";
+"carStatusDialog %@ %@ %@ %@" = "%1$@: %2$@ %% · %3$@ · %4$@";

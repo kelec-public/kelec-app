@@ -118,3 +118,26 @@
 "watchWidgetDescription" = "Laddningsnivå för din Renault E-Tech";
 "watchSettings" = "Inställningar";
 "watchWidgetCar" = "Bil som visas i widgetar";
+
+"getCarStatus" = "Hämta bilens status";
+"getCarStatusDescription" = "Returnerar batterinivå, räckvidd, laddningsstatus m.m. för den valda bilen att använda i nästa åtgärder.";
+"getCarStatusSummary ${car}" = "Hämta status för ${car}";
+"getCarStatusCarDescription" = "Bilen vars status ska hämtas.";
+"carStatus" = "Bilens status";
+"carStatusBatteryLevel" = "Batterinivå";
+"carStatusRange" = "Räckvidd";
+"carStatusChargeStatus" = "Laddningsstatus";
+"carStatusIsPlugged" = "Ansluten";
+"carStatusRemainingTime" = "Återstående laddningstid";
+"carStatusChargeLimit" = "Laddningsgräns";
+"carStatusIsLocked" = "Låst";
+"carStatusMileage" = "Mätarställning";
+"carStatusLastUpdate" = "Senast uppdaterad";
+"chargeStatusNotPlugged" = "Inte ansluten";
+"chargeStatusNotCharging" = "Laddar inte";
+"chargeStatusCharging" = "Laddar";
+"chargeStatusScheduled" = "Schemalagd laddning";
+"chargeStatusEnded" = "Laddning klar";
+"chargeStatusV2G" = "V2G";
+"chargeStatusV2L" = "V2L";
+"carStatusDialog %@ %@ %@ %@" = "%1$@: %2$@ %% · %3$@ · %4$@";
