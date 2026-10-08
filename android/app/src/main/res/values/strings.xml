@@ -13,4 +13,21 @@
     <string name="end_time_text">04:34</string>
     <string name="widget_configure_title">Sélectionnez une voiture</string>
     <string name="widget_configure_subtitle">Choisissez la voiture à afficher dans ce widget</string>
+
+    <!-- Widgets Tempo -->
+    <string name="tempo_widget_description">Regroupe les informations de votre Renault E-Tech sur votre écran d\'accueil avec l\'indication Tempo</string>
+    <string name="tempo_2days_widget_description">Regroupe les informations de votre Renault E-Tech sur votre écran d\'accueil avec l\'indication Tempo sur 2 jours</string>
+    <string name="tempo_blue">BLEU</string>
+    <string name="tempo_white">BLANC</string>
+    <string name="tempo_red">ROUGE</string>
+    <string name="tempo_car_server_error">Impossible de se connecter au serveur Renault</string>
+    <string name="tempo_rte_server_error">Impossible de se connecter au serveur RTE</string>
+
+    <!-- Aperçus des widgets Tempo (non traduits) -->
+    <string name="widget_preview_car_name" translatable="false">Mégane E-Tech</string>
+    <string name="widget_preview_date" translatable="false">08/10</string>
+    <string name="widget_preview_next_date" translatable="false">09/10</string>
+    <string name="widget_preview_battery" translatable="false">62 % | 175 km</string>
+    <string name="widget_preview_hp_price" translatable="false">HP 16.12 c/kWh</string>
+    <string name="widget_preview_hc_price" translatable="false">HC 13.25 c/kWh</string>
 </resources>

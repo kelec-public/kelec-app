@@ -14,4 +14,13 @@
     <string name="end_time_text">04:34</string>
     <string name="widget_configure_subtitle">Seleccioneu el cotxe que es mostrarà en aquest giny</string>
     <string name="widget_configure_title">Seleccioneu un cotxe</string>
+
+    <!-- Widgets Tempo -->
+    <string name="tempo_widget_description">Agrupa la informació del teu Renault E-Tech a la pantalla d\'inici amb la indicació Tempo</string>
+    <string name="tempo_2days_widget_description">Agrupa la informació del teu Renault E-Tech a la pantalla d\'inici amb la indicació Tempo de 2 dies</string>
+    <string name="tempo_blue">BLAU</string>
+    <string name="tempo_white">BLANC</string>
+    <string name="tempo_red">VERMELL</string>
+    <string name="tempo_car_server_error">No es pot connectar al servidor de Renault</string>
+    <string name="tempo_rte_server_error">No es pot connectar al servidor de RTE</string>
 </resources>

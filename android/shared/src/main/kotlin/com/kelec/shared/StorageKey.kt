@@ -11,13 +11,15 @@ object StorageKey {
     // En clair, écrit par le bridge RN
     const val ACCOUNT = "account"
     const val APP_PREFERENCES = "appPreferences"
-    /** Image base64 de la voiture : pas encore lue sur Android, gardée pour un usage futur (widget, montre). */
+    /** Image base64 de la voiture, affichée par les widgets 2x2 et 4x2. */
     fun carImage(vin: String) = "$vin/image"
 
     // En clair, écrit par le widget
     fun widgetVin(appWidgetId: Int) = "widget_vin_$appWidgetId"
     /** Ancien cache du widget (même contenu que [batteryStatus]) : seulement relu. */
     fun legacyCarData(vin: String) = "$vin/carData"
+    /** Derniers jours Tempo connus (cache des widgets Tempo, propre à Android). */
+    const val TEMPO = "tempo"
 
     // En clair, écrit par le widget et lu par l'app RN
     const val WIDGET_LOGS = "widgetLogs"

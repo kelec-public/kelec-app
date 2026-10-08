@@ -8,4 +8,7 @@ object ApiKeys {
         gigyaApiKey = BuildConfig.GIGYA_API_KEY,
         kamereonApiKey = BuildConfig.KAMEREON_API_KEY,
     )
+
+    /** Identifiants RTE (Tempo), déjà encodés en base64. */
+    val rteBasicAuth: String = BuildConfig.RTE_BASIC_AUTH
 }

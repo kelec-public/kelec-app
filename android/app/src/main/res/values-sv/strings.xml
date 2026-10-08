@@ -14,4 +14,13 @@
     <string name="end_time_text">04:34</string>
     <string name="widget_configure_subtitle">Välj bilen som ska visas i den här widgeten</string>
     <string name="widget_configure_title">Välj en bil</string>
+
+    <!-- Widgets Tempo -->
+    <string name="tempo_widget_description">Visar information om din E-Tech Renault på din hemskärm med Tempo-indikatorn</string>
+    <string name="tempo_2days_widget_description">Visar information om din E-Tech Renault på din hemskärm med Tempo-indikatorn för 2 dagar</string>
+    <string name="tempo_blue">BLÅ</string>
+    <string name="tempo_white">VIT</string>
+    <string name="tempo_red">RÖD</string>
+    <string name="tempo_car_server_error">Kunde inte ansluta till Renault-servern</string>
+    <string name="tempo_rte_server_error">Kunde inte ansluta till RTE-servern</string>
 </resources>

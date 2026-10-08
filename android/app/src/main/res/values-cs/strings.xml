@@ -14,4 +14,13 @@
     <string name="end_time_text">04:34</string>
     <string name="widget_configure_subtitle">Vyberte auto, které se má zobrazit v tomto widgetu</string>
     <string name="widget_configure_title">Vyberte si auto</string>
+
+    <!-- Widgets Tempo -->
+    <string name="tempo_widget_description">Shromažďuje informace o vašem Renaultu E-Tech na domovské obrazovce s ukazatelem Tempo</string>
+    <string name="tempo_2days_widget_description">Shromažďuje informace o vašem Renaultu E-Tech na domovské obrazovce s ukazatelem Tempo na 2 dny</string>
+    <string name="tempo_blue">MODRÝ</string>
+    <string name="tempo_white">BÍLÝ</string>
+    <string name="tempo_red">ČERVENÝ</string>
+    <string name="tempo_car_server_error">Nelze se připojit k serveru Renault</string>
+    <string name="tempo_rte_server_error">Nelze se připojit k serveru RTE</string>
 </resources>

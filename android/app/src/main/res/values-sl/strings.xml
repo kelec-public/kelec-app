@@ -14,4 +14,13 @@
     <string name="end_time_text">04:34</string>
     <string name="widget_configure_subtitle">Izberite avtomobil, ki bo prikazan v tem gradniku</string>
     <string name="widget_configure_title">Izberite avtomobil</string>
+
+    <!-- Widgets Tempo -->
+    <string name="tempo_widget_description">Združite podatke o svojem vozilu Renault E-Tech na začetnem zaslonu s prikazom Tempo</string>
+    <string name="tempo_2days_widget_description">Združite podatke o svojem vozilu Renault E-Tech na začetnem zaslonu s prikazom Tempo za 2 dni</string>
+    <string name="tempo_blue">MODRA</string>
+    <string name="tempo_white">BELA</string>
+    <string name="tempo_red">RDEČA</string>
+    <string name="tempo_car_server_error">Ni mogoče vzpostaviti povezave s strežnikom Renault</string>
+    <string name="tempo_rte_server_error">Ni mogoče vzpostaviti povezave s strežnikom RTE</string>
 </resources>

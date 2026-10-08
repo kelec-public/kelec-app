@@ -1,5 +1,6 @@
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
+apply plugin: "org.jetbrains.kotlin.plugin.compose"
 apply plugin: "com.facebook.react"
 apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
 
@@ -88,6 +89,10 @@ android {
         versionName '2.6.6'
         resValue "string", "build_config_package", "com.kelec"
     }
+    // widgets de l'écran d'accueil en Jetpack Glance
+    buildFeatures {
+        compose true
+    }
     signingConfigs {
         debug {
             storeFile file('debug.keystore')
@@ -128,6 +133,7 @@ android {
 dependencies {
     implementation project(':shared')
     implementation 'androidx.work:work-runtime-ktx:2.11.2'
+    implementation 'androidx.glance:glance-appwidget:1.1.1'
 
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")

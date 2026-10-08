@@ -15,4 +15,13 @@
     <string name="end_time_text">04:34</string>
     <string name="widget_configure_subtitle">Válassza ki az autót, amely ebben a widgetben jelenjen meg</string>
     <string name="widget_configure_title">Válasszon egy autót</string>
+
+    <!-- Widgets Tempo -->
+    <string name="tempo_widget_description">Összegyűjti a Renault E-Tech adatait és a Tempo jelzést a kezdőképernyőn</string>
+    <string name="tempo_2days_widget_description">Összegyűjti a Renault E-Tech adatait és a 2 napos Tempo jelzést a kezdőképernyőn</string>
+    <string name="tempo_blue">KÉK</string>
+    <string name="tempo_white">FEHÉR</string>
+    <string name="tempo_red">PIROS</string>
+    <string name="tempo_car_server_error">Nem lehet csatlakozni a Renault szerverhez</string>
+    <string name="tempo_rte_server_error">Nem lehet csatlakozni az RTE szerverhez</string>
 </resources>
