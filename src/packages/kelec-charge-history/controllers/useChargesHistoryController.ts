@@ -3,8 +3,8 @@ import MainContext from "../../../lib/Contexts/MainContext";
 import CarsViewContext from "../../../lib/Contexts/CarsViewContext";
 import ChargesHistory from "../models/ChargesHistory";
 import { Filter, FilterName } from "../models/Filter";
-import { applyFilters, removeFilter as withoutFilter, upsertFilter } from "../services/chargesFilters";
-import { buildChargeMonths, countMonths, sortByStartDate } from "../services/chargeMonths";
+import { removeFilter as withoutFilter, upsertFilter } from "../services/chargesFilters";
+import { buildChargeMonths, countMonths, selectCharges } from "../services/chargeMonths";
 import { exportCharges } from "../services/chargesExport";
 import { ChargesFiltersController } from "./ChargesFiltersContext";
 
@@ -37,8 +37,8 @@ export function useChargesHistoryController(history: ChargesHistory) {
     );
 
     const hasMoreMonths = useMemo(
-        () => displayedMonths < countMonths(history.getCharges(), filters),
-        [history, filters, displayedMonths],
+        () => displayedMonths < countMonths(history.getCharges(), filters, appPreferences.mergeCharges),
+        [history, filters, displayedMonths, appPreferences.mergeCharges],
     );
 
     /* --------------------------------- FILTRES -------------------------------- */
@@ -68,9 +68,12 @@ export function useChargesHistoryController(history: ChargesHistory) {
     }, []);
 
     const exportFilteredCharges = useCallback(async () => {
-        const toExport = sortByStartDate(applyFilters(filters, history.getCharges()), sortDesc);
+        const toExport = selectCharges(history.getCharges(), filters, {
+            merge: appPreferences.mergeCharges,
+            sortDesc,
+        });
         await exportCharges(toExport);
-    }, [history, filters, sortDesc]);
+    }, [history, filters, sortDesc, appPreferences.mergeCharges]);
 
     /* --------------------------------- MODALES -------------------------------- */
 

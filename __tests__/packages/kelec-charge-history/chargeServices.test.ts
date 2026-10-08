@@ -1,7 +1,8 @@
 import Charge from "../../../src/packages/kelec-charge-history/models/Charge";
 import { Filter, FilterName, FilterUnit } from "../../../src/packages/kelec-charge-history/models/Filter";
 import { applyFilters, formatFilterLabel, removeFilter, upsertFilter } from "../../../src/packages/kelec-charge-history/services/chargesFilters";
-import { buildChargeMonths, countMonths, getMonthDays, mergeCharges } from "../../../src/packages/kelec-charge-history/services/chargeMonths";
+import { buildChargeMonths, countMonths, getMonthDays, mergeCharges, selectCharges } from "../../../src/packages/kelec-charge-history/services/chargeMonths";
+import { toRows } from "../../../src/packages/kelec-charge-history/services/chargesExport";
 
 // start, end, durée (min), % début, % fin, kWh
 const charge = (start: string, end: string, duration: number, from: number, to: number, kwh: number) =>
@@ -76,8 +77,25 @@ describe('chargeMonths', () => {
     });
 
     test('countMonths compte les mois après filtrage', () => {
-        expect(countMonths(charges, [])).toBe(3);
-        expect(countMonths(charges, [powerFilter(40, 60)])).toBe(1);
+        expect(countMonths(charges, [], false)).toBe(3);
+        expect(countMonths(charges, [powerFilter(40, 60)], false)).toBe(1);
+    });
+
+    test('countMonths ne compte pas un mois dont les charges ont été fusionnées dans le mois précédent', () => {
+        const jan31 = charge('2024-01-31T22:00:00', '2024-01-31T23:00:00', 60, 20, 50, 15);
+        const feb1 = charge('2024-02-01T01:00:00', '2024-02-01T02:00:00', 60, 50, 80, 15);
+        expect(countMonths([jan31, feb1], [], false)).toBe(2);
+        expect(countMonths([jan31, feb1], [], true)).toBe(1);
+    });
+
+    test('selectCharges fusionne même si les charges reçues ne sont pas triées', () => {
+        const selected = selectCharges([feb2, jan15, jan1], [], { merge: true, sortDesc: true });
+        expect(selected).toHaveLength(2);
+        expect(selected[0]).toBe(feb2);
+        expect(selected[1].getSubCharges()).toEqual([jan1, jan15]);
+
+        const asc = selectCharges([feb2, jan15, jan1], [], { merge: false, sortDesc: false });
+        expect(asc).toEqual([jan1, jan15, feb2]);
     });
 
     test('mergeCharges fusionne les charges qui se suivent', () => {
@@ -100,5 +118,21 @@ describe('chargeMonths', () => {
         expect(days[14]).toEqual({ day: 15, hasCharge: true, hasDCCharge: true, isFuture: false });
         expect(days[1].hasCharge).toBe(false);
         expect(days[20].isFuture).toBe(true);
+    });
+});
+
+describe('chargesExport', () => {
+    test('toRows remplace le détail des sous-charges par leur nombre', () => {
+        const [merged, single] = mergeCharges([jan1, jan15, feb2]);
+        const [mergedRow, singleRow] = toRows([merged, single]);
+
+        expect(mergedRow.isAMergeCharge).toBe(true);
+        expect(mergedRow.subChargesCount).toBe(2);
+        expect(mergedRow).not.toHaveProperty('subCharges');
+        expect(mergedRow.chargeStartDate).toBe(jan1.getStartDate().toLocaleString());
+        expect(mergedRow.chargeEndDate).toBe(jan15.getEndDate().toLocaleString());
+
+        expect(singleRow.isAMergeCharge).toBe(false);
+        expect(singleRow.subChargesCount).toBe(0);
     });
 });

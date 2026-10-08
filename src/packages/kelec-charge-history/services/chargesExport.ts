@@ -6,12 +6,20 @@ import Charge from "../models/Charge";
 
 const XLSX_MIME = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
-/** Une ligne par charge, dates converties en heure locale. */
-const toRows = (charges: Charge[]) => charges.map(charge => ({
-    ...charge,
-    chargeStartDate: charge.getStartDate().toLocaleString(),
-    chargeEndDate: charge.getEndDate().toLocaleString(),
-}));
+/**
+ * Une ligne par charge, dates converties en heure locale.
+ * Une charge fusionnée donne une seule ligne : le détail des sous-charges est remplacé par leur nombre.
+ */
+export const toRows = (charges: Charge[]) => charges.map(charge => {
+    const { subCharges, ...fields } = charge;
+    return {
+        ...fields,
+        chargeStartDate: charge.getStartDate().toLocaleString(),
+        chargeEndDate: charge.getEndDate().toLocaleString(),
+        isAMergeCharge: charge.getIsAMergeCharge(),
+        subChargesCount: subCharges.length,
+    };
+});
 
 const buildWorkbook = (charges: Charge[]): string => {
     const wb = XLSX.utils.book_new();
