@@ -77,7 +77,7 @@ Java 17 et les dépôts Maven des nouveaux modules sont réglés par le plugin G
 
 | Widget | Receiver (ne jamais renommer) | Tailles | Contenu |
 |---|---|---|---|
-| Batterie | `com.kelec.KelecMainWIdget` | Redimensionnable : barre 4x1 (le widget historique), carré 2x2, large 4x2 | Selon la taille : 4x1 = logo, nom, niveau, jauge, état, autonomie, temps de charge, heure ; 2x2 = petit widget iOS ; 4x2 = widget moyen iOS |
+| Batterie | `com.kelec.KelecMainWIdget` | 4x2 par défaut, redimensionnable : barre 4x1 (le widget historique), carré 2x2, large 4x2 | Selon la taille : 4x1 = logo, nom, niveau, jauge, état, autonomie, temps de charge, heure ; 2x2 = petit widget iOS ; 4x2 = widget moyen iOS |
 | Tempo | `com.kelec.widgets.KelecTempoWidgetReceiver` | 4x2 | Voiture (vue 2x2) + dernier jour Tempo connu, avec les prix HP / HC |
 | Tempo 2 jours | `com.kelec.widgets.KelecTempo2DaysWidgetReceiver` | 4x2 | Voiture (vue 2x2) + les deux derniers jours connus |
 
@@ -86,8 +86,8 @@ Java 17 et les dépôts Maven des nouveaux modules sont réglés par le plugin G
 - **Le réseau passe par `WidgetRefreshWorker`** : `WidgetUpdater.update` charge chaque voiture une fois (et Tempo s'il y a
   un widget Tempo), ce qui met le cache à jour, puis redessine chaque type de widget (`updateAll`).
 - La mise en page du widget batterie suit `SizeMode.Responsive` (110x40, 110x110, 250x110 dp) : `LocalSize` choisit la vue.
-- Aperçus du sélecteur : `kelec_main_w_idget.xml` (ancien layout RemoteViews, gardé pour l'aperçu seulement) et
-  `tempo_*_widget_preview.xml`.
+- Aperçus du sélecteur : `kelec_main_w_idget.xml` (widget 4x2) et `tempo_*_widget_preview.xml`, des layouts statiques
+  avec la Mégane en dur (`widget_preview_megane`, comme les aperçus iOS).
 
 ## Rafraîchissement des widgets
 

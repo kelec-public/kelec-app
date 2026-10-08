@@ -17,7 +17,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/widget_car_name"
+            android:text="@string/widget_preview_car_name"
             android:textColor="?android:textColorPrimary"
             android:textSize="15sp" />
 
@@ -35,7 +35,7 @@
             android:layout_weight="1"
             android:contentDescription="@string/widget_image_description"
             android:scaleType="fitCenter"
-            android:src="@drawable/renault_logo" />
+            android:src="@drawable/widget_preview_megane" />
     </LinearLayout>
 
     <LinearLayout
