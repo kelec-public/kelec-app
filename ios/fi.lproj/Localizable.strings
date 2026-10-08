@@ -89,9 +89,9 @@
 
 "RED" = "PUNAINEN";
 
-"informationSent" = "Lähetetyt tiedot";
+"informationSent" = "Tiedot lähetetty";
 
-"preHeatLaunched" = "Aktiivinen esilämmitys";
+"preHeatLaunched" = "Esilämmitys käynnistetty";
 
 "error" = "Virhe";
 
@@ -101,7 +101,12 @@
 
 "launchPreHeat"= "Käynnistä esilämmitys";
 
-"launchPreHeat ${car}" = "Käynnistä esilämmitys ${car}";
+"launchPreHeatCarDescription" = "Esilämmitettävä auto.";
+"launchPreHeatTemperature" = "Lämpötila";
+"launchPreHeatTemperatureDescription" = "Haluttu matkustamon lämpötila (°C).";
+"launchPreHeatSummary ${car} ${temperature}" = "Käynnistä esilämmitys: ${car}, ${temperature} °C";
+"preHeatLaunchedOn %@ %@" = "Esilämmitys käynnistetty: %1$@, %2$@ °C.";
+"preHeatLaunchError %@" = "Esilämmityksen käynnistys epäonnistui: %@. Yritä myöhemmin uudelleen.";
 
 "areYouSureYouWantToLaunchPreheating" = "Oletko varma, että haluat käynnistää esilämmityksen?";
 

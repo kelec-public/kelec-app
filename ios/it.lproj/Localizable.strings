@@ -84,7 +84,7 @@
 
 "informationSent" = "Informazione inviata";
 
-"preHeatLaunched" = "Preriscaldamento iniziato";
+"preHeatLaunched" = "Preriscaldamento avviato";
 
 "error" = "Errore";
 
@@ -92,9 +92,14 @@
 
 "Car" = "Auto";
 
-"launchPreHeat"= "Inizia il preriscaldamento";
+"launchPreHeat" = "Avvia il preriscaldamento";
 
-"launchPreHeat ${car}"= "Inizia il preriscaldamento ${car}";
+"launchPreHeatCarDescription" = "L'auto da preriscaldare.";
+"launchPreHeatTemperature" = "Temperatura";
+"launchPreHeatTemperatureDescription" = "Temperatura desiderata nell'abitacolo, in °C.";
+"launchPreHeatSummary ${car} ${temperature}" = "Avvia il preriscaldamento di ${car} a ${temperature} °C";
+"preHeatLaunchedOn %@ %@" = "Preriscaldamento di %1$@ avviato a %2$@ °C.";
+"preHeatLaunchError %@" = "Impossibile avviare il preriscaldamento di %@. Riprova più tardi.";
 
 "areYouSureYouWantToLaunchPreheating" = "Sei sicuro di voler avviare il preriscaldamento?";
 

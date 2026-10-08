@@ -91,7 +91,7 @@
 
 "informationSent" = "Informații trimise";
 
-"preHeatLaunched" = "Preîncălzire activă";
+"preHeatLaunched" = "Preîncălzire pornită";
 
 "error" = "Eroare";
 
@@ -99,11 +99,16 @@
 
 "Car" = "Mașină";
 
-"launchPreHeat"= "Începeți preîncălzirea";
+"launchPreHeat" = "Pornire preîncălzire";
 
-"launchPreHeat ${car}" = "Începeți preîncălzirea ${car}";
+"launchPreHeatCarDescription" = "Mașina de preîncălzit.";
+"launchPreHeatTemperature" = "Temperatură";
+"launchPreHeatTemperatureDescription" = "Temperatura dorită în habitaclu, în °C.";
+"launchPreHeatSummary ${car} ${temperature}" = "Pornire preîncălzire pentru ${car} la ${temperature} °C";
+"preHeatLaunchedOn %@ %@" = "Preîncălzirea pentru %1$@ a pornit la %2$@ °C.";
+"preHeatLaunchError %@" = "Preîncălzirea pentru %@ nu a putut fi pornită. Vă rugăm să încercați din nou mai târziu.";
 
-"areYouSureYouWantToLaunchPreheating" = "Sigur vrei să începi preîncălzirea?";
+"areYouSureYouWantToLaunchPreheating" = "Sigur doriți să porniți preîncălzirea?";
 
 "confirm" = "Confirmați";
 

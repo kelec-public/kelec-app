@@ -90,11 +90,16 @@
 
 "commandSendError" = "Fejl under afsendelse af kommandoen til serveren. Prøv igen senere.";
 
-"Car" = "";
+"Car" = "Bil";
 
 "launchPreHeat"= "Start forvarmning";
 
-"launchPreHeat ${car}"= "Start forvarmning ${car}";
+"launchPreHeatCarDescription" = "Bilen, der skal forvarmes.";
+"launchPreHeatTemperature" = "Temperatur";
+"launchPreHeatTemperatureDescription" = "Ønsket temperatur i kabinen, i °C.";
+"launchPreHeatSummary ${car} ${temperature}" = "Start forvarmning af ${car} til ${temperature} °C";
+"preHeatLaunchedOn %@ %@" = "Forvarmning af %1$@ startet til %2$@ °C.";
+"preHeatLaunchError %@" = "Forvarmning af %@ kunne ikke startes. Prøv igen senere.";
 
 "areYouSureYouWantToLaunchPreheating" = "Er du sikker på, at du vil starte forvarmningen?";
 

@@ -82,7 +82,7 @@
 
 "RED" = "ČERVENÝ";
 
-"informationSent" = "informace byla odeslána";
+"informationSent" = "Informace odeslány";
 
 "preHeatLaunched" = "Předehřev vozu spuštěn";
 
@@ -90,11 +90,16 @@
 
 "commandSendError" = "Chyba při odesílání příkazu na server. Zkuste to prosím znovu později.";
 
-"Car" = "Car";
+"Car" = "Vůz";
 
 "launchPreHeat"= "Spustit předehřev vozu";
 
-"launchPreHeat ${car}"= "Spustit předehřev vozu ${car}";
+"launchPreHeatCarDescription" = "Vůz, který se má předehřát.";
+"launchPreHeatTemperature" = "Teplota";
+"launchPreHeatTemperatureDescription" = "Požadovaná teplota v kabině ve °C.";
+"launchPreHeatSummary ${car} ${temperature}" = "Spustit předehřev vozu ${car} na ${temperature} °C";
+"preHeatLaunchedOn %@ %@" = "Předehřev vozu %1$@ spuštěn na %2$@ °C.";
+"preHeatLaunchError %@" = "Předehřev vozu %@ se nepodařilo spustit. Zkuste to prosím znovu později.";
 
 "areYouSureYouWantToLaunchPreheating" = "Jste si jisti, že chcete spustit předehřívání?";
 

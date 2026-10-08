@@ -101,9 +101,14 @@
 
 "launchPreHeat"= "Iniciar pré-aquecimento";
 
-"launchPreHeat ${car}"= "Iniciar pré-aquecimento ${car}";
+"launchPreHeatCarDescription" = "O carro a pré-aquecer.";
+"launchPreHeatTemperature" = "Temperatura";
+"launchPreHeatTemperatureDescription" = "Temperatura pretendida no habitáculo, em °C.";
+"launchPreHeatSummary ${car} ${temperature}" = "Iniciar o pré-aquecimento de ${car} a ${temperature} °C";
+"preHeatLaunchedOn %@ %@" = "Pré-aquecimento de %1$@ iniciado a %2$@ °C.";
+"preHeatLaunchError %@" = "Não foi possível iniciar o pré-aquecimento de %@. Tente novamente mais tarde.";
 
-"areYouSureYouWantToLaunchPreheating" = "Tem certeza de que deseja iniciar o pré-aquecimento?";
+"areYouSureYouWantToLaunchPreheating" = "Tem a certeza de que pretende iniciar o pré-aquecimento?";
 
 "confirm" = "Confirmar";
 

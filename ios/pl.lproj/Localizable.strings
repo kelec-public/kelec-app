@@ -102,7 +102,12 @@
 
 "launchPreHeat"= "Uruchom wstępne ogrzewanie";
 
-"launchPreHeat ${car}"= "Uruchom wstępne ogrzewanie ${car}";
+"launchPreHeatCarDescription" = "Samochód do wstępnego ogrzania.";
+"launchPreHeatTemperature" = "Temperatura";
+"launchPreHeatTemperatureDescription" = "Docelowa temperatura w kabinie (°C).";
+"launchPreHeatSummary ${car} ${temperature}" = "Uruchom wstępne ogrzewanie: ${car}, ${temperature} °C";
+"preHeatLaunchedOn %@ %@" = "Wstępne ogrzewanie uruchomione: %1$@, %2$@ °C.";
+"preHeatLaunchError %@" = "Nie udało się uruchomić wstępnego ogrzewania: %@. Spróbuj ponownie później.";
 
 "areYouSureYouWantToLaunchPreheating" = "Czy na pewno chcesz uruchomić wstępne ogrzewanie?";
 

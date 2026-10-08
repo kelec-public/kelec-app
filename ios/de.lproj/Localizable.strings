@@ -89,7 +89,7 @@
 
 "RED" = "ROT";
 
-"informationSent" = "Gesendete Informationen";
+"informationSent" = "Informationen gesendet";
 
 "preHeatLaunched" = "Vorklimatisierung gestartet";
 
@@ -101,7 +101,12 @@
 
 "launchPreHeat"= "Vorklimatisierung starten";
 
-"launchPreHeat ${car}"= "Vorklimatisierung starten ${car}";
+"launchPreHeatCarDescription" = "Das Fahrzeug, das vorklimatisiert werden soll.";
+"launchPreHeatTemperature" = "Temperatur";
+"launchPreHeatTemperatureDescription" = "Gewünschte Innenraumtemperatur in °C.";
+"launchPreHeatSummary ${car} ${temperature}" = "Vorklimatisierung von ${car} auf ${temperature} °C starten";
+"preHeatLaunchedOn %@ %@" = "Vorklimatisierung von %1$@ auf %2$@ °C gestartet.";
+"preHeatLaunchError %@" = "Die Vorklimatisierung von %@ konnte nicht gestartet werden. Bitte versuchen Sie es später noch einmal.";
 
 "areYouSureYouWantToLaunchPreheating" = "Sind Sie sicher, dass Sie die Vorklimatisierung starten möchten?";
 

@@ -163,8 +163,11 @@ seulement si une voiture est affichée.
 
 ### Intent Siri / Raccourcis (`LaunchHVACIntent`)
 
-Retrouve la voiture par VIN dans le compte, envoie `sendHVACCommand` (`launchHvac` du client du constructeur,
-à la température par défaut, 21 °C) et répond par un dialogue traduit (`informationSent`, `preHeatLaunched` ou `error`, `commandSendError`).
+Paramètres : la voiture et la température (`Stepper` de 17 à 27 °C, 21 °C par défaut, aussi pour les raccourcis
+créés avant ce paramètre ; valeurs en dur, AppIntents exige des littéraux). Retrouve la voiture par VIN dans le compte,
+envoie `sendHVACCommand` (`launchHvac` du client du constructeur) et répond par un dialogue traduit
+(`preHeatLaunchedOn %@ %@` ou `preHeatLaunchError %@`). Textes du raccourci : `launchPreHeatSummary ${car} ${temperature}`,
+`launchPreHeatTemperature`, `launchPreHeatCarDescription`, `launchPreHeatTemperatureDescription`.
 
 ## Affichage des widgets
 
@@ -211,7 +214,7 @@ Retrouve la voiture par VIN dans le compte, envoie `sendHVACCommand` (`launchHva
   `widgetHomeScreenDescription`, `widgetLockScreenDescription`, `tempo*`, `watch*`…
 - En SwiftUI, `Text("clé")` avec une chaîne littérale est traduit. `Text(variable)` ne l'est pas : utiliser `LocalizedStringKey` ou `localized(_:)`.
 - Les fichiers ne contiennent plus le doublon de `error`. Les erreurs de traduction existantes (catalan, croate, norvégien, tchèque, italien) sont corrigées.
-- Montre et Siri/Raccourcis : « préchauffage » devient « confort thermique » en français (`preHeatLaunched`, `launchPreHeat`, `launchPreHeat ${car}`, `areYouSureYouWantToLaunchPreheating`). Les clés ne changent pas, et les autres langues et `localizations.json` non plus.
+- Montre et Siri/Raccourcis : « préchauffage » devient « confort thermique » en français (`preHeatLaunched`, `launchPreHeat`, `areYouSureYouWantToLaunchPreheating`). Les clés ne changent pas, et les autres langues et `localizations.json` non plus.
 - La clé RN `isSelectedAsDefault` de `localizations.json` n'est plus utilisée (fichier non modifié).
 - Ajouter un texte : une clé (pas une phrase) dans les 19 `Localizable.strings`, puis `Text("clé")` ou `localized("clé")`.
   Les fichiers doivent être membres des targets qui l'affichent (app, widgets iOS, widgets de la montre).

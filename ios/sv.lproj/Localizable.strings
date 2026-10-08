@@ -84,7 +84,7 @@
 
 "informationSent" = "Information skickades";
 
-"preHeatLaunched" = "Förvärmningen startats";
+"preHeatLaunched" = "Förvärmningen har startats";
 
 "error" = "Fel";
 
@@ -92,9 +92,14 @@
 
 "Car" = "Bil";
 
-"launchPreHeat" = "Starta förvärmingen";
+"launchPreHeat" = "Starta förvärmning";
 
-"launchPreHeat ${car}" = "Starta förvärmingen ${car}";
+"launchPreHeatCarDescription" = "Bilen som ska förvärmas.";
+"launchPreHeatTemperature" = "Temperatur";
+"launchPreHeatTemperatureDescription" = "Önskad temperatur i kupén, i °C.";
+"launchPreHeatSummary ${car} ${temperature}" = "Starta förvärmning av ${car} till ${temperature} °C";
+"preHeatLaunchedOn %@ %@" = "Förvärmning av %1$@ startad till %2$@ °C.";
+"preHeatLaunchError %@" = "Det gick inte att starta förvärmningen av %@. Försök igen senare.";
 
 "areYouSureYouWantToLaunchPreheating" = "Är du säker på att du vill starta förvärmningen?";
 

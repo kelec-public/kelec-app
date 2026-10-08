@@ -101,7 +101,12 @@
 
 "launchPreHeat"= "Lancer le confort thermique";
 
-"launchPreHeat ${car}" = "Lancer le confort thermique ${car}";
+"launchPreHeatCarDescription" = "La voiture dont il faut lancer le confort thermique.";
+"launchPreHeatTemperature" = "Température";
+"launchPreHeatTemperatureDescription" = "Température souhaitée dans l'habitacle, en °C.";
+"launchPreHeatSummary ${car} ${temperature}" = "Lancer le confort thermique de ${car} à ${temperature} °C";
+"preHeatLaunchedOn %@ %@" = "Confort thermique lancé sur %1$@ à %2$@ °C.";
+"preHeatLaunchError %@" = "Impossible de lancer le confort thermique sur %@. Veuillez réessayer plus tard.";
 
 "areYouSureYouWantToLaunchPreheating" = "Êtes-vous sûr de vouloir lancer le confort thermique ?";
 

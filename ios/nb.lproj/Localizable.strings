@@ -91,7 +91,7 @@
 
 "informationSent" = "Informasjon sendt";
 
-"preHeatLaunched" = "Aktiv forvarming";
+"preHeatLaunched" = "Forvarming startet";
 
 "error" = "Feil";
 
@@ -99,9 +99,14 @@
 
 "Car" = "Bil";
 
-"launchPreHeat"= "Start forvarmingen";
+"launchPreHeat" = "Start forvarming";
 
-"launchPreHeat ${car}" = "Start forvarmingen ${car}";
+"launchPreHeatCarDescription" = "Bilen som skal forvarmes.";
+"launchPreHeatTemperature" = "Temperatur";
+"launchPreHeatTemperatureDescription" = "Ønsket temperatur i kupeen, i °C.";
+"launchPreHeatSummary ${car} ${temperature}" = "Start forvarming av ${car} til ${temperature} °C";
+"preHeatLaunchedOn %@ %@" = "Forvarming av %1$@ startet til %2$@ °C.";
+"preHeatLaunchError %@" = "Kunne ikke starte forvarming av %@. Prøv igjen senere.";
 
 "areYouSureYouWantToLaunchPreheating" = "Er du sikker på at du vil starte forvarmingen?";
 

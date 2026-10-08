@@ -85,7 +85,7 @@ Primero debes iniciar sesión en la aplicación.";
 
 "informationSent" = "Información enviada";
 
-"preHeatLaunched" = "Pre-acondicionamiento empezado";
+"preHeatLaunched" = "Preacondicionamiento iniciado";
 
 "error" = "Error";
 
@@ -93,11 +93,16 @@ Primero debes iniciar sesión en la aplicación.";
 
 "Car" = "Coche";
 
-"launchPreHeat"= "Comenzar el pre-acondicionamiento";
+"launchPreHeat" = "Iniciar el preacondicionamiento";
 
-"launchPreHeat ${car}"= "Comenzar el pre-acondicionamiento ${car}";
+"launchPreHeatCarDescription" = "El coche que se va a preacondicionar.";
+"launchPreHeatTemperature" = "Temperatura";
+"launchPreHeatTemperatureDescription" = "Temperatura deseada en el habitáculo, en °C.";
+"launchPreHeatSummary ${car} ${temperature}" = "Iniciar el preacondicionamiento de ${car} a ${temperature} °C";
+"preHeatLaunchedOn %@ %@" = "Preacondicionamiento de %1$@ iniciado a %2$@ °C.";
+"preHeatLaunchError %@" = "No se pudo iniciar el preacondicionamiento de %@. Inténtelo de nuevo más tarde.";
 
-"areYouSureYouWantToLaunchPreheating" = "¿Está seguro de que desea iniciar el pre-acondicionamiento?";
+"areYouSureYouWantToLaunchPreheating" = "¿Está seguro de que desea iniciar el preacondicionamiento?";
 
 "confirm" = "Confirmar";
 

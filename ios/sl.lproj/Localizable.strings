@@ -91,7 +91,7 @@
 
 "informationSent" = "Poslane informacije";
 
-"preHeatLaunched" = "Aktivno predgrevanje";
+"preHeatLaunched" = "Predgrevanje zagnano";
 
 "error" = "Napaka";
 
@@ -99,9 +99,14 @@
 
 "Car" = "Avto";
 
-"launchPreHeat"= "Začnite s predgrevanjem";
+"launchPreHeat" = "Zaženi predgrevanje";
 
-"launchPreHeat ${car}" = "Začnite s predgrevanjem ${car}";
+"launchPreHeatCarDescription" = "Avto, ki ga želite predgreti.";
+"launchPreHeatTemperature" = "Temperatura";
+"launchPreHeatTemperatureDescription" = "Želena temperatura v kabini, v °C.";
+"launchPreHeatSummary ${car} ${temperature}" = "Zaženi predgrevanje za ${car} na ${temperature} °C";
+"preHeatLaunchedOn %@ %@" = "Predgrevanje za %1$@ zagnano na %2$@ °C.";
+"preHeatLaunchError %@" = "Predgrevanja za %@ ni bilo mogoče zagnati. Poskusite znova pozneje.";
 
 "areYouSureYouWantToLaunchPreheating" = "Ali ste prepričani, da želite začeti s predgrevanjem?";
 

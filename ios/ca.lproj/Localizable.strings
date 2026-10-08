@@ -91,17 +91,22 @@
 
 "informationSent" = "Informació enviada";
 
-"preHeatLaunched" = "Preescalfament actiu";
+"preHeatLaunched" = "Preescalfament iniciat";
 
 "error" = "Error";
 
 "commandSendError" = "S'ha produït un error en enviar l'ordre al servidor. Torna-ho a provar més tard.";
 
-"Car" = "cotxe";
+"Car" = "Cotxe";
 
-"launchPreHeat"= "Comença el preescalfament";
+"launchPreHeat" = "Inicia el preescalfament";
 
-"launchPreHeat ${car}" = "Comença el preescalfament ${car}";
+"launchPreHeatCarDescription" = "El cotxe que cal preescalfar.";
+"launchPreHeatTemperature" = "Temperatura";
+"launchPreHeatTemperatureDescription" = "Temperatura desitjada a l'habitacle, en °C.";
+"launchPreHeatSummary ${car} ${temperature}" = "Inicia el preescalfament de ${car} a ${temperature} °C";
+"preHeatLaunchedOn %@ %@" = "Preescalfament de %1$@ iniciat a %2$@ °C.";
+"preHeatLaunchError %@" = "No s'ha pogut iniciar el preescalfament de %@. Torneu-ho a provar més tard.";
 
 "areYouSureYouWantToLaunchPreheating" = "Esteu segur que voleu iniciar el preescalfament?";
 
