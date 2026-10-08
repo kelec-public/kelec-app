@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -604,7 +604,6 @@
 				DF671DF3293ADF6C2184565F /* ApiClients.swift */,
 				2B748D26B442D53310A6ECA6 /* SharedHistory.swift */,
 			);
-			name = Shared;
 			path = Shared;
 			sourceTree = "<group>";
 		};
@@ -737,23 +736,11 @@
 				LastSwiftUpdateCheck = 1540;
 				LastUpgradeCheck = 1210;
 				TargetAttributes = {
-					00E356ED1AD99517003FC87E = {
-						CreatedOnToolsVersion = 6.2;
-						TestTargetID = 13B07F861A680F5B00A75B9A;
-					};
 					13B07F861A680F5B00A75B9A = {
 						LastSwiftMigration = 1520;
 					};
 					8931F3E42C2EB57B0088CD21 = {
 						CreatedOnToolsVersion = 15.4;
-					};
-					8931F3F32C2EB57C0088CD21 = {
-						CreatedOnToolsVersion = 15.4;
-						TestTargetID = 8931F3E42C2EB57B0088CD21;
-					};
-					8931F3FD2C2EB57C0088CD21 = {
-						CreatedOnToolsVersion = 15.4;
-						TestTargetID = 8931F3E42C2EB57B0088CD21;
 					};
 					893FFEB42BA8659A006D7475 = {
 						CreatedOnToolsVersion = 15.2;
@@ -790,7 +777,7 @@
 			);
 			mainGroup = 83CBB9F61A601CBA00E9B192;
 			packageReferences = (
-				0021A91824910D9CE23B595B /* XCLocalSwiftPackageReference "RenaultApi" */,
+				0021A91824910D9CE23B595B /* XCLocalSwiftPackageReference "Packages/RenaultApi" */,
 			);
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
@@ -901,9 +888,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Kelec/Pods-Kelec-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Kelec/Pods-Kelec-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -940,9 +931,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Kelec/Pods-Kelec-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Kelec/Pods-Kelec-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1119,7 +1114,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Kelec/Kelec.entitlements;
-				CURRENT_PROJECT_VERSION = 294;
+				CURRENT_PROJECT_VERSION = 300;
 				DEVELOPMENT_TEAM = A67QZT46J7;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Kelec/Info.plist;
@@ -1129,7 +1124,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.6.6;
+				MARKETING_VERSION = 2.7.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -1155,7 +1150,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Kelec/Kelec.entitlements;
-				CURRENT_PROJECT_VERSION = 294;
+				CURRENT_PROJECT_VERSION = 300;
 				DEVELOPMENT_TEAM = A67QZT46J7;
 				INFOPLIST_FILE = Kelec/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
@@ -1164,7 +1159,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.6.6;
+				MARKETING_VERSION = 2.7.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -1259,10 +1254,7 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DRCT_REMOVE_LEGACY_ARCH=1",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				PODFILE_DIR = "$(SRCROOT)";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
@@ -1343,10 +1335,7 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DRCT_REMOVE_LEGACY_ARCH=1",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				PODFILE_DIR = "$(SRCROOT)";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
@@ -1372,7 +1361,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = "KelecWatchOs Watch App/KelecWatchOs Watch App.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 294;
+				CURRENT_PROJECT_VERSION = 300;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_ASSET_PATHS = "\"KelecWatchOs Watch App/Preview Content\"";
 				DEVELOPMENT_TEAM = A67QZT46J7;
@@ -1388,7 +1377,7 @@
 					"@executable_path/Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 2.6.6;
+				MARKETING_VERSION = 2.7.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.kelyanselme.MyRenault.watchkitapp;
@@ -1420,7 +1409,7 @@
 				CODE_SIGN_ENTITLEMENTS = "KelecWatchOs Watch App/KelecWatchOs Watch App.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 294;
+				CURRENT_PROJECT_VERSION = 300;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "\"KelecWatchOs Watch App/Preview Content\"";
 				DEVELOPMENT_TEAM = A67QZT46J7;
@@ -1436,7 +1425,7 @@
 					"@executable_path/Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 2.6.6;
+				MARKETING_VERSION = 2.7.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.kelyanselme.MyRenault.watchkitapp;
 				PRODUCT_NAME = Kelec;
@@ -1464,7 +1453,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = KeleciOSWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 294;
+				CURRENT_PROJECT_VERSION = 300;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = A67QZT46J7;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -1480,7 +1469,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 2.6.6;
+				MARKETING_VERSION = 2.7.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.kelyanselme.MyRenault.iosWidget;
@@ -1509,7 +1498,7 @@
 				CODE_SIGN_ENTITLEMENTS = KeleciOSWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 294;
+				CURRENT_PROJECT_VERSION = 300;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = A67QZT46J7;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -1525,7 +1514,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 2.6.6;
+				MARKETING_VERSION = 2.7.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.kelyanselme.MyRenault.iosWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1551,7 +1540,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = KelecWatchOSWidgetsExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 294;
+				CURRENT_PROJECT_VERSION = 300;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = A67QZT46J7;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -1567,7 +1556,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 2.6.6;
+				MARKETING_VERSION = 2.7.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.kelyanselme.MyRenault.watchkitapp.KelecWatchOSWidgets;
@@ -1598,7 +1587,7 @@
 				CODE_SIGN_ENTITLEMENTS = KelecWatchOSWidgetsExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 294;
+				CURRENT_PROJECT_VERSION = 300;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = A67QZT46J7;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -1614,7 +1603,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 2.6.6;
+				MARKETING_VERSION = 2.7.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.kelyanselme.MyRenault.watchkitapp.KelecWatchOSWidgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1679,7 +1668,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		0021A91824910D9CE23B595B /* XCLocalSwiftPackageReference "RenaultApi" */ = {
+		0021A91824910D9CE23B595B /* XCLocalSwiftPackageReference "Packages/RenaultApi" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/RenaultApi;
 		};
@@ -1688,22 +1677,22 @@
 /* Begin XCSwiftPackageProductDependency section */
 		EB16FA832F9A391F00624723 /* renaultApi */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 0021A91824910D9CE23B595B /* XCLocalSwiftPackageReference "RenaultApi" */;
+			package = 0021A91824910D9CE23B595B /* XCLocalSwiftPackageReference "Packages/RenaultApi" */;
 			productName = renaultApi;
 		};
 		EB16FA852F9A395700624723 /* renaultApi */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 0021A91824910D9CE23B595B /* XCLocalSwiftPackageReference "RenaultApi" */;
+			package = 0021A91824910D9CE23B595B /* XCLocalSwiftPackageReference "Packages/RenaultApi" */;
 			productName = renaultApi;
 		};
 		EB16FA872F9A395D00624723 /* renaultApi */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 0021A91824910D9CE23B595B /* XCLocalSwiftPackageReference "RenaultApi" */;
+			package = 0021A91824910D9CE23B595B /* XCLocalSwiftPackageReference "Packages/RenaultApi" */;
 			productName = renaultApi;
 		};
 		EB16FA892F9A396600624723 /* renaultApi */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 0021A91824910D9CE23B595B /* XCLocalSwiftPackageReference "RenaultApi" */;
+			package = 0021A91824910D9CE23B595B /* XCLocalSwiftPackageReference "Packages/RenaultApi" */;
 			productName = renaultApi;
 		};
 /* End XCSwiftPackageProductDependency section */
