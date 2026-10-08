@@ -1,26 +1,5 @@
 {
-  "compilerOptions": {
-    "target": "es2017", /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017','ES2018' or 'ESNEXT'. */
-    "module": "esnext", /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', or 'ESNext'. */
-    "jsx": "react-native", /* Specify JSX code generation: 'preserve', 'react-native', or 'react'. */
-    "lib": [
-      "esnext",
-      "dom"
-    ],
-    "strict": true,
-    "allowJs": true, /* Allow javascript files to be compiled. */
-    "moduleResolution": "node", /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */
-    "esModuleInterop": true,
-    "sourceMap": true,
-    "paths": {
-      "*": [
-        "types/*"
-      ]
-    },
-    "resolveJsonModule": true, /* Allows importing modules with a ‘.json’ extension, which is a common practice in node projects. */
-    "isolatedModules": true, /* Transpile each file as a separate module (similar to 'ts.transpileModule'). */
-    "skipLibCheck": true, /* Skip type checking of declaration files. */
-  },
+  "extends": "@react-native/typescript-config",
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
@@ -29,12 +8,5 @@
   "exclude": [
     "**/node_modules",
     "**/Pods"
-  ],
-  "ts-node": {
-    "files": true
-  },
-  "types": [
-    "@testing-library/jest-native",
-    "jest"
   ]
 }

@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { ComponentRef, useCallback, useRef, useState } from "react";
 import { Animated, LayoutChangeEvent, PanResponder, PanResponderGestureState, useColorScheme, View } from "react-native";
 import { NEUTRAL_100, PRIMARY_COLOUR } from "../lib/colours";
 import { getBlackColour } from "../../../lib/graphics/utils";
@@ -19,6 +19,7 @@ const Slider = (props: SliderProps) => {
     const { sliderLevel, setSliderLevel, stepper, testID } = props;
 
     const SLIDE_HEIGHT = 10;
+    const containerRef = useRef<ComponentRef<typeof View>>(null);
     const sliderWidth = useRef(0);
     const sliderPageX = useRef(0);
     const textWidth = useRef(0);
@@ -69,8 +70,8 @@ const Slider = (props: SliderProps) => {
     const onLayout = (event: LayoutChangeEvent) => {
         const { width } = event.nativeEvent.layout;
         sliderWidth.current = width;
-        event.target.measure((fx, fy, w, h, px, py) => {
-            sliderPageX.current = px;
+        containerRef.current?.measure((_x, _y, _width, _height, pageX) => {
+            sliderPageX.current = pageX;
             forceUpdate({});
         });
     };
@@ -143,6 +144,7 @@ const Slider = (props: SliderProps) => {
 
     return (
         <View
+            ref={containerRef}
             testID={testID}
             {...panResponder.panHandlers}
             style={{

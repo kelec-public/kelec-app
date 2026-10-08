@@ -15,9 +15,8 @@ Le VIN suffit donc à identifier une voiture et son compte.
 ## Vérifier son travail
 
 - Tests : `npx jest`. Toute la suite doit passer.
-- Types : `npx tsc --noEmit -p tsconfig.json --ignoreDeprecations 6.0 --baseUrl .`
-  (`tsc -p .` seul échoue sur la config). 2 erreurs sont déjà présentes et connues
-  (`useCarProfile.ts`, et `kelec-settings/views/debug/DebugZoneView.tsx`, volontairement laissé tel quel) : il ne faut pas en ajouter.
+- Types : `npx tsc --noEmit`. Aucune erreur ne doit apparaître. Le `tsconfig.json` hérite de `@react-native/typescript-config` :
+  les types de React Native ne sont lus qu'avec sa résolution de modules (`exports` du package).
 - Lint : `npm run lint`. Il n'est pas lancé en CI, et le repo a déjà des erreurs ESLint.
   Au minimum, les règles de frontières entre packages (`no-restricted-imports`) doivent passer sur `src/packages`.
 

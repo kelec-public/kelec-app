@@ -5,7 +5,6 @@ import { useTheme } from "@react-navigation/native";
 import Text from "../../../../screen/Common/CustomText";
 import { getBlackColour, getWhiteColour } from "../../../../lib/graphics/utils";
 import commonStyles, { fontFamilyBold } from "../../../../lib/graphics/commonStyle";
-import BigButton from "../../../../screen/Common/BigButton";
 import MainContext from "../../../../lib/Contexts/MainContext";
 import { CarMakerClientErrors } from "../../../../lib/clients/carMakers/carMakerClient";
 import RenaultAccount from "../../../../lib/clients/accounts/renaultAccount";

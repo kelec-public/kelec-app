@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { ComponentRef, useRef, useState, useEffect } from "react";
 import { Image, Dimensions, ScrollView, StyleSheet, TouchableWithoutFeedback, useColorScheme, View, Modal, TouchableOpacity, Animated } from "react-native";
 import Text from "./CustomText";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -37,7 +37,7 @@ type CustomDropDownProps = {
 
 const CustomDropDown = ({ backgroundColor, testID, placeholder, onChange, data, value, dropDownType }: CustomDropDownProps): React.JSX.Element => {
     const [isFocus, setIsFocus] = useState(false);
-    const dropdownRef = useRef<View>(null);
+    const dropdownRef = useRef<ComponentRef<typeof View>>(null);
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const scaleAnim = useRef(new Animated.Value(0.95)).current;
 

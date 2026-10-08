@@ -7,35 +7,39 @@ import { NavigationBarStyle } from '@zoontek/react-native-navigation-bar';
 import Color from 'color';
 
 
-declare module '@react-navigation/native' {
-    export interface Theme {
-        colors: {
-            // base React Navigation
-            primary: string;
-            background: string;
-            card: string;
-            text: string;
-            border: string;
-            notification: string;
+// Champs propres à Kelec ajoutés au thème de React Navigation (useTheme()).
+// Depuis React Navigation 7, le thème se complète dans l'espace de noms global ReactNavigation.
+declare global {
+    namespace ReactNavigation {
+        interface Theme {
+            colors: {
+                // base React Navigation
+                primary: string;
+                background: string;
+                card: string;
+                text: string;
+                border: string;
+                notification: string;
 
-            //custom
-            accent: string;
-            primaryContainer: string;
-            onPrimaryContainer: string;
-            secondaryContainer: string;
-            onSecondaryContainer: string;
-            powerGreen: string;
-        };
-        sysBar: {
-            status: StatusBarStyle;
-            navigation: NavigationBarStyle;
-        };
-        buttons: {
-            primary: ButtonStyle,
-            neutral: ButtonStyle,
-            delete: ButtonStyle,
-            donate: ButtonStyle,
-        };
+                //custom
+                accent: string;
+                primaryContainer: string;
+                onPrimaryContainer: string;
+                secondaryContainer: string;
+                onSecondaryContainer: string;
+                powerGreen: string;
+            };
+            sysBar: {
+                status: StatusBarStyle;
+                navigation: NavigationBarStyle;
+            };
+            buttons: {
+                primary: ButtonStyle,
+                neutral: ButtonStyle,
+                delete: ButtonStyle,
+                donate: ButtonStyle,
+            };
+        }
     }
 }
 
