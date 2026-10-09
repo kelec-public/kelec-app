@@ -51,8 +51,9 @@ class CarStatusWidget : GlanceAppWidget() {
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val appWidgetId = GlanceAppWidgetManager(context).getAppWidgetId(id)
-        val state = withContext(Dispatchers.IO) { WidgetData.carState(context, appWidgetId) }
-        provideContent { CarStatusContent(state) }
+        val load = { WidgetData.carState(context, appWidgetId) }
+        val initial = withContext(Dispatchers.IO) { load() }
+        provideContent { CarStatusContent(WidgetRedraw.rememberWidgetData(initial, load)) }
     }
 
     companion object {
