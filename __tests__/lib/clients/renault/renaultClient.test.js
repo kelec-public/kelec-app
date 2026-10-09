@@ -455,6 +455,10 @@ describe('getKamereonVehicles', () => {
         const vehicles = await renaultClient.getVehicles();
         expect(vehicles.hasError).toBe(false);
         expect(vehicles.vehicles.length).toBe(1);
+        const [url, options] = global.fetch.mock.calls[2];
+        expect(url).toMatch(/^https:\/\/apis\.renault\.com\/myr\/api\/v1\/accounts\/[^/]*\/connected-vehicles\?country=FR$/);
+        expect(options.headers['x-gigya-id_token']).toBe("id_token");
+        expect(options.headers).toHaveProperty('apikey');
     });
 
     it('shoul\'d not connect to gigya', async () => {

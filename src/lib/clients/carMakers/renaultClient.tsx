@@ -247,6 +247,7 @@ class RenaultClient extends CarMakerClient {
     private static readonly GIGYA_API_KEY = Config.GIGYA_API_KEY ?? '';
     private static readonly KAMEREON_URL = 'https://api-wired-prod-1-euw1.wrd-aws.com';
     private static readonly KAMEREON_API_KEY = Config.KAMEREON_API_KEY ?? '';
+    private static readonly MYRENAULT_API_URL = 'https://apis.renault.com/myr/api/v1';
 
     kamereonAccountID: string;
 
@@ -458,7 +459,7 @@ class RenaultClient extends CarMakerClient {
     }
 
     private readonly getKamereonVehicles = async (kamereonAccountID: string, JWTToken: string): Promise<KamereonVehiclesFunctionResponse> => {
-        const url = `${RenaultClient.KAMEREON_URL}${RenaultEndpoints.GET_KAMEREON_ACCOUNT}/${kamereonAccountID}/vehicles?country=FR`;
+        const url = `${RenaultClient.MYRENAULT_API_URL}/accounts/${kamereonAccountID}/connected-vehicles?country=FR`;
         try {
             const response = await fetch(url, {
                 headers: {
