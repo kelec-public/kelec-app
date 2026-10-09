@@ -41,10 +41,14 @@ abstract class TempoWidgetBase(private val twoDays: Boolean) : GlanceAppWidget()
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val appWidgetId = GlanceAppWidgetManager(context).getAppWidgetId(id)
-        val (state, tempo) = withContext(Dispatchers.IO) {
+        val load = {
             WidgetData.carState(context, appWidgetId, serverError = R.string.tempo_car_server_error) to WidgetData.tempo(context)
         }
-        provideContent { TempoContent(state, tempo, twoDays) }
+        val initial = withContext(Dispatchers.IO) { load() }
+        provideContent {
+            val (state, tempo) = WidgetRedraw.rememberWidgetData(initial, load)
+            TempoContent(state, tempo, twoDays)
+        }
     }
 }
 

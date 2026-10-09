@@ -65,7 +65,8 @@ android/
     ├── shortcuts/          CarShortcuts : un raccourci par voiture, lien kelec://car/<vin> (docs/car-shortcuts.md)
     ├── widgets/            KelecWidgetReceiver (base des receivers + receivers Tempo, RefreshWidgetsAction),
     │                       CarStatusWidget (4x1, 2x2, 4x2), TempoWidget / Tempo2DaysWidget, WidgetComponents,
-    │                       WidgetData (état lu sans réseau), WidgetUpdater (réseau puis updateAll),
+    │                       WidgetData (état lu sans réseau), WidgetRedraw (redessin qui relit le cache),
+    │                       WidgetUpdater (cache, réseau, cache),
     │                       WidgetRefreshWorker (CoroutineWorker), WidgetConfigureActivity
     └── modules/autofill/   Autofill du formulaire de connexion
 wear/                       App Wear OS (Compose for Wear OS) : écrans, synchro reçue, complications
@@ -85,8 +86,11 @@ Java 17 et les dépôts Maven des nouveaux modules sont réglés par le plugin G
 
 - **Glance dessine sans réseau** (`WidgetData`) : compte, voiture du widget, `VehicleLoader.cached` (démo, pas de session,
   dernier statut enregistré), image de la voiture, cache Tempo. C'est exactement le résultat du dernier chargement.
-- **Le réseau passe par `WidgetRefreshWorker`** : `WidgetUpdater.update` charge chaque voiture une fois (et Tempo s'il y a
-  un widget Tempo), ce qui met le cache à jour, puis redessine chaque type de widget (`updateAll`).
+- **Le réseau passe par `WidgetRefreshWorker`** : `WidgetUpdater.update` redessine les widgets avec le cache, charge chaque
+  voiture une fois (et Tempo s'il y a un widget Tempo), ce qui met le cache à jour, puis les redessine.
+- **Redessiner = `WidgetRedraw.all`**, jamais `updateAll` seul : Glance garde la session d'un widget ouverte ~45 s après un
+  rendu, et `update` recompose alors sans relancer `provideGlance`. `WidgetRedraw` incrémente une version dans l'état Glance
+  du widget, et `rememberWidgetData` relit le cache quand elle change (sinon : mauvaise voiture ou erreur après la pose).
 - La mise en page du widget batterie suit `SizeMode.Responsive` (110x40, 110x110, 250x110 dp) : `LocalSize` choisit la vue.
 - Aperçus du sélecteur : `kelec_main_w_idget.xml` (widget 4x2) et `tempo_*_widget_preview.xml`, des layouts statiques
   avec la Mégane en dur (`widget_preview_megane`, comme les aperçus iOS).
@@ -105,13 +109,14 @@ Java 17 et les dépôts Maven des nouveaux modules sont réglés par le plugin G
 
 1. Un déclencheur : la tâche périodique, `APPWIDGET_UPDATE` (pose du widget, redémarrage), l'heure du widget
    (`RefreshWidgetsAction`), l'app RN (`setData` après 0,5 s ou `refreshWidgets`), le choix de la voiture.
-2. `KelecWidgetReceiver.onReceive` → `WidgetRefreshWorker.refreshNow` → tâche unique `kelec_widget_refresh_now`.
+2. `KelecWidgetReceiver.onReceive` → `WidgetRefreshWorker.refreshNow` → tâche unique `kelec_widget_refresh_now`
+   (`APPEND_OR_REPLACE` : une demande pendant un chargement passe après lui, sans l'annuler).
    Pour `APPWIDGET_UPDATE`, Glance dessine d'abord avec le cache.
 3. `WidgetRefreshWorker.doWork` → `WidgetUpdater.update` (tous les widgets, tous types) :
    - lit les préférences et le compte (`SharedStore`) ;
    - choisit la voiture de chaque widget ;
    - charge chaque voiture une seule fois avec `VehicleLoader.load`, et Tempo avec `TempoLoader.load` s'il y a un widget Tempo ;
-   - redessine les widgets (`CarStatusWidget().updateAll`, `TempoWidget().updateAll`…), qui relisent le cache.
+   - redessine les widgets (`WidgetRedraw.all`) avant et après le chargement : ils relisent le cache.
 4. `VehicleLoader.load(car)` :
    - voiture de démo → `BatteryStatus.demo()`, sans réseau ;
    - pas de cookie de session (`SecureStore.renaultCookieValue`) → `NotLoggedIn` ;

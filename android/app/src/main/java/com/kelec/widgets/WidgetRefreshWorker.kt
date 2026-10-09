@@ -37,7 +37,9 @@ class WidgetRefreshWorker(context: Context, params: WorkerParameters) : Coroutin
         }
 
         /**
-         * Recharge les widgets maintenant (sans effet s'il n'y en a aucun).
+         * Recharge les widgets maintenant (sans effet s'il n'y en a aucun). Une demande faite pendant un chargement
+         * passe après lui (APPEND) au lieu de l'annuler : à la pose, la pose, le choix de la voiture et l'app RN
+         * relancent le chargement presque en même temps, et REPLACE l'annulait à chaque fois.
          * La tâche périodique est aussi (re)programmée : tant qu'une tâche reste en attente, WorkManager ne désactive pas
          * son RescheduleReceiver, ce qui renverrait APPWIDGET_UPDATE et relancerait un rafraîchissement en boucle.
          */
@@ -45,7 +47,7 @@ class WidgetRefreshWorker(context: Context, params: WorkerParameters) : Coroutin
             if (widgetIds(context).isEmpty()) return
             schedule(context)
             WorkManager.getInstance(context).enqueueUniqueWork(
-                ONE_TIME_WORK, ExistingWorkPolicy.REPLACE, OneTimeWorkRequestBuilder<WidgetRefreshWorker>().build()
+                ONE_TIME_WORK, ExistingWorkPolicy.APPEND_OR_REPLACE, OneTimeWorkRequestBuilder<WidgetRefreshWorker>().build()
             )
         }
 
