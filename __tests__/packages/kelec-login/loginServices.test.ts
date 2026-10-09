@@ -74,22 +74,23 @@ describe('RenaultLoginSource.authenticate', () => {
 });
 
 test('démo : deux voitures de démonstration', async () => {
-    const cars = await new DemoLoginSource().listVehicles();
-    expect(cars.map(car => car.getVin())).toEqual(['VF1AA', 'VF1AA2']);
+    const vehicles = await new DemoLoginSource().listVehicles();
+    expect(vehicles.map(({ car }) => car.getVin())).toEqual(['VF1AA', 'VF1AA2']);
 });
 
 test('RenaultLoginSource.listVehicles : un véhicule sans détails ou sans modèle ne fait pas planter la liste', async () => {
     mockGetVehicles.mockResolvedValueOnce({
         hasError: false,
         vehicles: [
-            { vin: 'VIN1', vehicleDetails: { model: { label: 'ZOE' }, registrationNumber: 'AB123CD', registrationCountry: { code: 'FR' } } },
+            { vin: 'VIN1', vehicleDetails: { model: { label: 'ZOE' }, registrationNumber: 'AB123CD', registrationCountry: { code: 'FR' } }, connectedStatus: { connected: true, services: ['202'] } },
             { vin: 'VIN2' },
             { vin: 'VIN3', vehicleDetails: { registrationNumber: '' } },
         ],
     });
     const account = new RenaultAccount('email', 'password', 'kamereon');
 
-    const cars = await new RenaultLoginSource(CarMaker.RENAULT).listVehicles(account);
+    const vehicles = await new RenaultLoginSource(CarMaker.RENAULT).listVehicles(account);
+    const cars = vehicles.map(({ car }) => car);
 
     expect(cars.map(car => [car.getVin(), car.getModel(), car.getImageUrl()])).toEqual([
         ['VIN1', 'ZOE', PLACEHOLDER_CAR_IMAGE],
@@ -97,4 +98,5 @@ test('RenaultLoginSource.listVehicles : un véhicule sans détails ou sans modè
         ['VIN3', 'VIN3', PLACEHOLDER_CAR_IMAGE],
     ]);
     expect(cars[0].getRegistrationCountry()).toBe('FR');
+    expect(vehicles.map(({ connectedStatus }) => connectedStatus)).toEqual([{ connected: true, services: ['202'] }, undefined, undefined]);
 });

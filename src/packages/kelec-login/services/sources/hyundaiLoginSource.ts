@@ -1,8 +1,8 @@
 import Account, { CarMaker } from "../../../../lib/clients/accounts/account";
 import HyundaiAccount from "../../../../lib/clients/accounts/hyundaiAccount";
 import HyundaiClient from "../../../../lib/clients/carMakers/hyundaiClient";
-import CarModel from "../../../../lib/clients/cars/carModel";
 import HyundaiCar from "../../../../lib/clients/cars/hyundaiCar";
+import { ListedVehicle } from "../../models/listedVehicle";
 import { LoginResult } from "../../models/loginResult";
 import { LoginSource } from "../../types/loginSource";
 
@@ -24,13 +24,14 @@ export class HyundaiLoginSource implements LoginSource {
         return { status: 'ok', account: new HyundaiAccount(normalizedEmail, password, HYUNDAI_PIN) };
     }
 
-    async listVehicles(account: Account): Promise<CarModel[]> {
+    async listVehicles(account: Account): Promise<ListedVehicle[]> {
         const hyundaiAccount = account as HyundaiAccount;
         const client = new HyundaiClient(hyundaiAccount.getEmail(), hyundaiAccount.getPassword(), hyundaiAccount.getPinCode());
         const vehicles = await client.getVehicles();
         if (vehicles.hasError === true) throw new Error('Unable to fetch Hyundai vehicles');
 
-        return vehicles.vehicles.map(vehicle =>
-            new HyundaiCar(vehicle.vin, vehicle.name, vehicle.imageUrl, CarMaker.HYUNDAI, vehicle.registrationNumber));
+        return vehicles.vehicles.map(vehicle => ({
+            car: new HyundaiCar(vehicle.vin, vehicle.name, vehicle.imageUrl, CarMaker.HYUNDAI, vehicle.registrationNumber),
+        }));
     }
 }

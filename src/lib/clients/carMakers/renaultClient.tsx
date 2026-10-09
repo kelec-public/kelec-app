@@ -138,6 +138,27 @@ type VehicleLinkApi = {
         }
         assets?: Asset[];
     }
+    /** Absent pour certains véhicules (ex. thermiques sans connectivité). */
+    connectedStatus?: RenaultConnectedStatus;
+}
+
+/** Connectivité du véhicule, telle que renvoyée par l'API (champs principaux seulement, le reste est conservé tel quel). */
+type RenaultConnectedStatus = {
+    connected?: boolean;
+    remoteSecurityProtocol?: string;
+    connectivity?: {
+        carGateway?: string;
+        pairingMethod?: string;
+        ccsArchitecture?: string;
+        usageMode?: string;
+        canArchitecture?: string;
+    }[];
+    services?: string[];
+    applicableFeatures?: {
+        featureId: number;
+        status: string;
+    }[];
+    [key: string]: unknown;
 }
 type Asset = {
     assetType: string;
@@ -934,5 +955,5 @@ class RenaultClient extends CarMakerClient {
         return chargeSettings;
     }
 }
-export type { VehicleLinkApi, RenaultStatus, BatteryStatus, CockpitStatus, MapLocationStatus, ChargesHistory, ChargeSettingsStatus, ChargeSchedule, HVACStatus };
+export type { VehicleLinkApi, RenaultConnectedStatus, RenaultStatus, BatteryStatus, CockpitStatus, MapLocationStatus, ChargesHistory, ChargeSettingsStatus, ChargeSchedule, HVACStatus };
 export default RenaultClient;

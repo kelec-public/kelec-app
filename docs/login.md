@@ -10,6 +10,7 @@ Pattern général : voir [packages-pattern.md](./packages-pattern.md).
 ```
 kelec-login/                              (feature)
 ├── models/
+│   ├── listedVehicle.ts                  ListedVehicle : voiture proposée + données à enregistrer à l'ajout (connectedStatus)
 │   ├── loginResult.ts                    LoginResult : ok (compte) | tfa (regToken) | error (clé de traduction)
 │   └── carMakers.ts                      constructeurs proposés (noms affichés : CAR_MAKER_DISPLAY)
 ├── services/
@@ -51,6 +52,8 @@ avant le choix de la source, quel que soit le constructeur sélectionné. Selon 
 
 `useAddCarFlow().confirm()` :
 1. enregistre l'image de la voiture **choisie** (`CarImageRepository`). Elle est prise dans le cache si elle a déjà été affichée à l'étape 3 ;
+   enregistre aussi son `connectedStatus` Renault, tel que renvoyé par l'API, sous `<vin>/connectedStatus` (`ConnectedStatusRepository`, kelec-garage).
+   Il est gardé à part du compte (dont le JSON est lu par les widgets). `listVehicles` renvoie donc des `ListedVehicle` (`{ car, connectedStatus? }`) ;
 2. associe la voiture au compte et l'ajoute au garage (`GarageService.addCar`, qui enregistre le compte) ;
 3. recharge l'utilisateur (`reloadUser`).
 

@@ -2,6 +2,7 @@
 export { AccountRepository, withoutPasswords } from "./services/accountRepository";
 export { CarTypeRepository } from "./services/carTypeRepository";
 export { CarImageRepository, toImageUri } from "./services/carImageRepository";
+export { ConnectedStatusRepository } from "./services/connectedStatusRepository";
 export { useCarImage } from "./controllers/useCarImage";
 export { GarageService } from "./services/garageService";
 export { retrofitRegistrationCountry } from "./services/registrationCountryRetrofit";

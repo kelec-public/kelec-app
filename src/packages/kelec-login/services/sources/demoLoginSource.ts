@@ -1,6 +1,7 @@
 import { CarMaker } from "../../../../lib/clients/accounts/account";
 import DemoAccount from "../../../../lib/clients/accounts/demoAccount";
 import CarModel from "../../../../lib/clients/cars/carModel";
+import { ListedVehicle } from "../../models/listedVehicle";
 import { LoginResult } from "../../models/loginResult";
 import { LoginSource } from "../../types/loginSource";
 import { PLACEHOLDER_CAR_IMAGE } from "./renaultLoginSource";
@@ -14,10 +15,10 @@ export class DemoLoginSource implements LoginSource {
         return { status: 'ok', account: new DemoAccount("demo", "demo", CarMaker.DEMO) };
     }
 
-    async listVehicles(): Promise<CarModel[]> {
+    async listVehicles(): Promise<ListedVehicle[]> {
         return [
-            new CarModel('VF1AA', 'Demo car', PLACEHOLDER_CAR_IMAGE, CarMaker.DEMO, 'AA001AA', 'FR'),
-            new CarModel('VF1AA2', 'Demo car2', PLACEHOLDER_CAR_IMAGE, CarMaker.DEMO, 'BB001BB', 'FR'),
+            { car: new CarModel('VF1AA', 'Demo car', PLACEHOLDER_CAR_IMAGE, CarMaker.DEMO, 'AA001AA', 'FR') },
+            { car: new CarModel('VF1AA2', 'Demo car2', PLACEHOLDER_CAR_IMAGE, CarMaker.DEMO, 'BB001BB', 'FR') },
         ];
     }
 }

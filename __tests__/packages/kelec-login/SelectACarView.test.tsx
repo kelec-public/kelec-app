@@ -31,14 +31,14 @@ const renderStep = (currentUser: UserAccount) => render(
         <SelectACarView
             navigation={{ navigate: jest.fn(), goBack: jest.fn() } as any}
             route={{ key: 'k', name: 'SelectACarView', params: { account: new Account('e@x.fr', 'p', CarMaker.RENAULT) } } as any}
-            setSelectedCar={jest.fn()}
+            setSelectedVehicle={jest.fn()}
         />
     </MainContext.Provider>,
 );
 
 beforeEach(() => {
     mockUseTheme.mockReturnValue(themes.getLight());
-    mockListVehicles.mockResolvedValue([car('VIN1'), car('VIN2'), car('VIN3')]);
+    mockListVehicles.mockResolvedValue([{ car: car('VIN1') }, { car: car('VIN2') }, { car: car('VIN3') }]);
 });
 
 test('les voitures déjà dans le garage ne sont pas proposées', async () => {

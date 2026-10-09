@@ -11,26 +11,27 @@ import KelecCard from "../../../../kelec-model/view/Card";
 import { subTitle2, subTitle3, title2 } from "../../../../kelec-model/view/Titles";
 import { fetchVehicleImage } from "../../../services/vehicleImages";
 import { formatLicencePlate } from "../../../../kelec-licence-plate";
+import { ListedVehicle } from "../../../models/listedVehicle";
 
 type Props = {
-    selectedCar: CarModel | undefined;
-    setSelectedCar: (car: CarModel) => void;
-    cars: CarModel[];
+    selectedVehicle: ListedVehicle | undefined;
+    setSelectedVehicle: (vehicle: ListedVehicle) => void;
+    vehicles: ListedVehicle[];
 }
 
 const CarSelector = (props: Props) => {
-    const { selectedCar, setSelectedCar, cars } = props;
+    const { selectedVehicle, setSelectedVehicle, vehicles } = props;
     return (
         <View
             style={{
                 gap: spacerM
             }}
         >
-            {cars.map((car, _) => (
+            {vehicles.map(({ car }, index) => (
                 <KelecCard
-                    isSelected={selectedCar?.getVin() === car.getVin()}
+                    isSelected={selectedVehicle?.car.getVin() === car.getVin()}
                     key={car.getVin()}
-                    onPress={() => setSelectedCar(car)}
+                    onPress={() => setSelectedVehicle(vehicles[index])}
                     testID="carRowCard"
                 >
                     <CarRow

@@ -4,7 +4,7 @@ import UserAccount from "../../../src/lib/clients/accounts/userAccount";
 import CarModel from "../../../src/lib/clients/cars/carModel";
 import { RenaultCredentials } from "../../../src/lib/clients/carMakers/renaultCredentials";
 import * as sharedPlatformsData from "../../../src/lib/storage/sharedPlatformsData";
-import { AccountRepository, CarImageRepository, GarageService } from "../../../src/packages/kelec-garage";
+import { AccountRepository, CarImageRepository, ConnectedStatusRepository, GarageService } from "../../../src/packages/kelec-garage";
 
 const car = (vin: string, email: string) =>
     new Account(email, 'password', CarMaker.RENAULT, new CarModel(vin, `model ${vin}`, '', CarMaker.RENAULT));
@@ -86,5 +86,17 @@ describe('CarImageRepository', () => {
         expect(saveNativeImage).toHaveBeenCalledWith('base64', 'VIN1');
         expect(await AsyncStorage.getItem('VIN1/image')).toBe('base64');
         expect(await CarImageRepository.get('VIN1')).toBe('base64');
+    });
+});
+
+describe('ConnectedStatusRepository', () => {
+    test('enregistre le connectedStatus tel quel sous <vin>/connectedStatus', async () => {
+        const status = { connected: true, pbo: true, services: ['202'], applicableFeatures: [{ featureId: 4, status: 'ACTIVATED' }] };
+
+        expect(await ConnectedStatusRepository.get('VIN1')).toBeNull();
+        await ConnectedStatusRepository.save('VIN1', status);
+
+        expect(JSON.parse((await AsyncStorage.getItem('VIN1/connectedStatus'))!)).toEqual(status);
+        expect(await ConnectedStatusRepository.get('VIN1')).toEqual(status);
     });
 });

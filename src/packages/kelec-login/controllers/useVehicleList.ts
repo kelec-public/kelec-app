@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import Account from "../../../lib/clients/accounts/account";
-import CarModel from "../../../lib/clients/cars/carModel";
+import { ListedVehicle } from "../models/listedVehicle";
 import { createLoginSource } from "../services/createLoginSource";
 
 export type VehicleListState =
     | { status: 'loading' }
     | { status: 'error' }
     /** Voitures ajoutables (celles déjà dans le garage sont masquées). */
-    | { status: 'loaded'; cars: CarModel[] };
+    | { status: 'loaded'; vehicles: ListedVehicle[] };
 
 /**
  * Voitures du compte constructeur connecté, sans celles déjà dans le garage :
@@ -22,8 +22,8 @@ export function useVehicleList(account: Account, isAlreadyAdded: (vin: string) =
         let isCurrent = true;
         setState({ status: 'loading' });
         createLoginSource(account.getCarMaker()).listVehicles(account)
-            .then(allCars => {
-                if (isCurrent) setState({ status: 'loaded', cars: allCars.filter(car => !isAlreadyAdded(car.getVin())) });
+            .then(allVehicles => {
+                if (isCurrent) setState({ status: 'loaded', vehicles: allVehicles.filter(vehicle => !isAlreadyAdded(vehicle.car.getVin())) });
             })
             .catch(error => {
                 console.error("Error loading cars: ", error);

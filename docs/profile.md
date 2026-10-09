@@ -27,6 +27,7 @@ kelec-garage/                         (domaine partagé, importé via index.ts)
 │   ├── passwordVault.ts        Mots de passe dans le stockage chiffré natif (clé <vin>_password)
 │   ├── carTypeRepository.ts    Modèle technique de la voiture (<vin>/carType)
 │   ├── carImageRepository.ts   Image de la voiture : get / save (+ envoi aux widgets natifs), toImageUri
+│   ├── connectedStatusRepository.ts   Connectivité Renault (connectedStatus) enregistrée à l'ajout : get / save
 │   ├── garageService.ts        moveCar, renameCar, deleteCar (modifie le UserAccount + enregistre)
 │   └── session.ts              logOut : efface les identifiants du trousseau, tout le stockage local et le compte des widgets
 ├── controllers/
@@ -67,6 +68,7 @@ La suppression passe d'abord par une alerte de confirmation. Les boutons sont da
 | Clé | Contenu | Propriétaire |
 |---|---|---|
 | `<vin>/image` | Image de la voiture (base64 JPEG), aussi envoyée aux widgets natifs | `kelec-garage` (`CarImageRepository`) |
+| `<vin>/connectedStatus` | `connectedStatus` Renault de la liste des véhicules, brut, enregistré à l'ajout | `kelec-garage` (`ConnectedStatusRepository`) |
 | `account` | `UserAccount` (liste des voitures), **sans mot de passe**. L'ancien champ `selectedCar` (voiture par défaut) n'est plus écrit ni lu | `kelec-garage` (`AccountRepository`) |
 | `kelecNextGen` | Marqueur de la nouvelle interface d'ajout : sans lui, `load` ignore le compte | `kelec-garage` (`AccountRepository`) |
 | `<vin>/carType` | Modèle technique de la voiture (batterie, puissances, V2G…) | `kelec-garage` (`CarTypeRepository`) |

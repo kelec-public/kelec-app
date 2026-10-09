@@ -2,8 +2,8 @@ import Account, { CarMaker } from "../../../../lib/clients/accounts/account";
 import RenaultAccount from "../../../../lib/clients/accounts/renaultAccount";
 import { CarMakerClientErrors } from "../../../../lib/clients/carMakers/carMakerClient";
 import RenaultClient from "../../../../lib/clients/carMakers/renaultClient";
-import CarModel from "../../../../lib/clients/cars/carModel";
 import RenaultCar from "../../../../lib/clients/cars/renaultCar";
+import { ListedVehicle } from "../../models/listedVehicle";
 import { LoginResult } from "../../models/loginResult";
 import { LoginSource } from "../../types/loginSource";
 import { loginErrorMessageKey } from "../loginErrors";
@@ -43,20 +43,23 @@ export class RenaultLoginSource implements LoginSource {
         return { status: 'error', messageKey: loginErrorMessageKey(response.errorMessage) };
     }
 
-    async listVehicles(account: Account): Promise<CarModel[]> {
+    async listVehicles(account: Account): Promise<ListedVehicle[]> {
         const renaultAccount = account as RenaultAccount;
         const client = new RenaultClient(renaultAccount.getEmail(), renaultAccount.getPassword(), renaultAccount.getKamereonAccountID());
         const vehicles = await client.getVehicles();
         if (vehicles.hasError) throw new Error('Unable to fetch Renault vehicles');
 
         // certains véhicules du compte n'ont pas de détails (ou pas de modèle) : on les affiche quand même, avec le VIN
-        return vehicles.vehicles.map(vehicle => new RenaultCar(
-            vehicle.vin,
-            vehicle.vehicleDetails?.model?.label ?? vehicle.vin,
-            pickRenaultImage(vehicle.vehicleDetails?.assets),
-            account.getCarMaker(),
-            vehicle.vehicleDetails?.registrationNumber,
-            vehicle.vehicleDetails?.registrationCountry?.code,
-        ));
+        return vehicles.vehicles.map(vehicle => ({
+            car: new RenaultCar(
+                vehicle.vin,
+                vehicle.vehicleDetails?.model?.label ?? vehicle.vin,
+                pickRenaultImage(vehicle.vehicleDetails?.assets),
+                account.getCarMaker(),
+                vehicle.vehicleDetails?.registrationNumber,
+                vehicle.vehicleDetails?.registrationCountry?.code,
+            ),
+            connectedStatus: vehicle.connectedStatus,
+        }));
     }
 }

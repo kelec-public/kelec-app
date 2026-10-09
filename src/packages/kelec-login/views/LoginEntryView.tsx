@@ -80,8 +80,8 @@ const LoginEntryView = () => {
             <Stack.Screen name="SelectACarView">
               {props => (
                 <SelectACarView
-                  selectedCar={flow.selectedCar}
-                  setSelectedCar={flow.setSelectedCar}
+                  selectedVehicle={flow.selectedVehicle}
+                  setSelectedVehicle={flow.setSelectedVehicle}
                   {...props}
                 />
               )}
