@@ -25,6 +25,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     reactNativeDelegate = delegate
     reactNativeFactory = factory
+
+    // Spotlight and Quick Actions follow the account, also for the users who installed an update
+    CarShortcuts.update()
     return true
   }
 

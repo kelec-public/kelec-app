@@ -56,8 +56,10 @@ ios/
 │   ├── Models.swift                UserAccount, UserCar (+ maker: CarMaker), CarModel
 │   ├── Formatting.swift            Dates, « 2h05 », « 45 801 », icône de batterie, couleur de charge, localized(_:)
 │   ├── WidgetComponents.swift      widgetBackground(), CarWidgetStateView, WidgetStyle, carStatusIcon, extension `ApiHandler` (couleur et durée de charge)
-│   └── PreviewData.swift           Données de démo des widgets (dont les 5 états des previews)
+│   ├── PreviewData.swift           Données de démo des widgets (dont les 5 états des previews)
+│   └── CarLink.swift               Lien kelec://car/<vin> (tap sur un widget iOS), app et widgets iOS
 ├── Kelec/RNSharedWidget.swift (+ .m)  Bridge RN en Swift, méthodes en promesses
+├── Kelec/CarShortcuts.swift, OpenCarRequests.swift (+ .m)  Spotlight, Quick Actions, voiture à ouvrir (docs/car-shortcuts.md)
 ├── Intents/                        CarEntity / CarQuery, LaunchHVACIntent (Siri), GetCarStatusIntent (état de la voiture)
 ├── KeleciOSWidget/                 Widgets iOS : providers, vues (Small, Medium, Tempo, écran verrouillé), Tempo.swift,
 │                                   contrôle « confort thermique » (LaunchHVACControl, iOS 18)

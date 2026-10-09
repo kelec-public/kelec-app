@@ -81,7 +81,7 @@ private fun CarStatusContent(state: CarWidgetState) {
 @Composable
 private fun CarBarView(state: CarWidgetState.Loaded) {
     val battery = state.battery
-    Column(modifier = GlanceModifier.widgetContainer().padding(10.dp), verticalAlignment = Alignment.CenterVertically) {
+    Column(modifier = GlanceModifier.widgetContainer(state.car.vin).padding(10.dp), verticalAlignment = Alignment.CenterVertically) {
         Row(modifier = GlanceModifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             CarMakerLogo(state.car.maker, GlanceModifier.size(25.dp, 20.dp))
             Spacer(GlanceModifier.width(6.dp))
@@ -108,7 +108,7 @@ private fun CarBarView(state: CarWidgetState.Loaded) {
 
 /** 2x2 : nom, niveau et autonomie (ou temps de charge), image de la voiture, heure. Aussi la moitié gauche des widgets Tempo. */
 @Composable
-internal fun CarSquareView(state: CarWidgetState.Loaded, modifier: GlanceModifier = GlanceModifier.widgetContainer()) {
+internal fun CarSquareView(state: CarWidgetState.Loaded, modifier: GlanceModifier = GlanceModifier.widgetContainer(state.car.vin)) {
     val battery = state.battery
     val level = battery.batteryLevel ?: 0
     Column(modifier = modifier.padding(12.dp)) {
@@ -152,7 +152,7 @@ internal fun CarSquareView(state: CarWidgetState.Loaded, modifier: GlanceModifie
 @Composable
 private fun CarLargeView(state: CarWidgetState.Loaded) {
     val battery = state.battery
-    Column(modifier = GlanceModifier.widgetContainer().padding(14.dp)) {
+    Column(modifier = GlanceModifier.widgetContainer(state.car.vin).padding(14.dp)) {
         Row(modifier = GlanceModifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             CarMakerLogo(state.car.maker, GlanceModifier.size(30.dp, 22.dp))
             Spacer(GlanceModifier.width(5.dp))

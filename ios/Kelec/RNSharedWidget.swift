@@ -27,6 +27,9 @@ final class RNSharedWidget: NSObject {
     }
     userDefaults.set(value, forKey: key)
     Self.scheduleWidgetsReload()
+    if key == StorageKey.account || key.hasSuffix("/image") {
+      Self.scheduleCarShortcutsUpdate()
+    }
     resolve(nil)
   }
 
@@ -86,6 +89,20 @@ final class RNSharedWidget: NSObject {
       let reload = DispatchWorkItem { WidgetCenter.shared.reloadAllTimelines() }
       pendingReload = reload
       DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: reload)
+    }
+  }
+
+  // MARK: Spotlight and Quick Actions (CarShortcuts)
+
+  // same grouping: the account and the car images usually come one after the other
+  private static var pendingShortcutsUpdate: DispatchWorkItem?
+
+  private static func scheduleCarShortcutsUpdate() {
+    DispatchQueue.main.async {
+      pendingShortcutsUpdate?.cancel()
+      let update = DispatchWorkItem { CarShortcuts.update() }
+      pendingShortcutsUpdate = update
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: update)
     }
   }
 }

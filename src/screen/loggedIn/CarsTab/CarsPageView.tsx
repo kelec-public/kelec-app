@@ -4,7 +4,7 @@ import { useContext, useRef } from "react";
 import MainContext from "../../../lib/Contexts/MainContext";
 import CarView from "./CarView/CarView";
 import createNativeStackNavigator from '../../../lib/graphics/navigation';
-import { NavigationContainer, NavigationIndependentTree, useTheme } from "@react-navigation/native";
+import { NavigationContainer, NavigationIndependentTree, NavigationProp, ParamListBase, useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import ChargesHistoryView from "../../../packages/kelec-charge-history/views/ChargesHistoryView";
 import { ChargesHistoryProvider } from "../../../packages/kelec-charge-history/controllers/ChargesHistoryProvider";
 import { CHARGES_HISTORY_ROUTE } from "../../../packages/kelec-charge-history/routes";
@@ -14,6 +14,7 @@ import { FullScreenMapView, MAP_ROUTE, MapProvider } from "../../../packages/kel
 import { CAR_TYPE_ROUTE, CarTypeRouteParams, CarTypeScreen } from "../../../packages/kelec-car-type";
 import { TFA_ROUTE, TfaRouteParams, TfaView } from "../../../packages/kelec-tfa";
 import { CHARGES_IMPORT_ROUTE, ChargesImportView } from "../../../packages/kelec-charge-import";
+import { useOpenCarRequest } from "../../../packages/kelec-car-shortcuts";
 
 
 export type CarsViewParamList = {
@@ -34,6 +35,18 @@ function CarsPageView(): React.JSX.Element {
 
     const ref = useRef<PagerView>(null);
     const tfaInProgress = useRef(false);
+
+    // Spotlight, raccourci ou widget : onglet des voitures, sur la page de la voiture demandée
+    const tabNavigation = useNavigation<NavigationProp<ParamListBase>>();
+    const tabRoute = useRoute();
+    useOpenCarRequest(vin => {
+        const page = currentUser.getCars().findIndex(account => account.getCar()?.getVin() === vin);
+        if (page < 0) {
+            return;
+        }
+        tabNavigation.navigate(tabRoute.name);
+        ref.current?.setPage(page);
+    });
 
     return (
         <View style={styles.flex} testID="carsPageView">

@@ -13,6 +13,7 @@ Il sert de référence pour les refactors en cours et à venir. Exemples concret
 - [Modèle de la voiture](./car-type.md) (`kelec-car-type`)
 - [Ajout de voiture / connexion](./login.md) (`kelec-login`)
 - [Plaques d'immatriculation](./licence-plate.md) (`kelec-licence-plate`)
+- [Ouvrir une voiture depuis Spotlight, un raccourci ou un widget](./car-shortcuts.md) (`kelec-car-shortcuts`)
 
 ## Objectifs
 
@@ -28,7 +29,7 @@ Il sert de référence pour les refactors en cours et à venir. Exemples concret
 |---|---|---|
 | **Infrastructure** | `kelec-model` (composants UI : `Button`, `KelecCard`, `StepLayout`, `SwitchCard`, `SpacedRow`, `FloatingPill`…, couleurs, polices), `kelec-storage` (accès AsyncStorage) | Briques techniques réutilisables, sans aucune logique métier. |
 | **Domaine partagé** | `kelec-garage` (les voitures de l'utilisateur : compte, mots de passe, modèle technique, image, actions sur la liste), `kelec-preferences` (préférences de l'app), `kelec-weather` (météo à une position), `kelec-licence-plate` (écriture d'une plaque selon son pays) | Données et logique métier utilisées par plusieurs features. Exposées uniquement via `index.ts`. |
-| **Feature** | `kelec-car-page`, `kelec-login`, `kelec-charge-history`, `kelec-charge-import`, `kelec-hvac`, `kelec-profile`, `kelec-settings`, `kelec-map`, `kelec-tfa`, `kelec-car-type` | Une fonctionnalité de l'app. |
+| **Feature** | `kelec-car-page`, `kelec-login`, `kelec-charge-history`, `kelec-charge-import`, `kelec-hvac`, `kelec-profile`, `kelec-settings`, `kelec-map`, `kelec-tfa`, `kelec-car-type`, `kelec-car-shortcuts` | Une fonctionnalité de l'app. |
 
 Les composants de `kelec-model` reçoivent des **textes déjà traduits** et des callbacks (ex. `onDismiss`) : ils ne dépendent ni de `MainContext` ni de la navigation.
 

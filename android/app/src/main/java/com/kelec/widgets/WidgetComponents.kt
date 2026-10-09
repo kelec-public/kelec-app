@@ -9,10 +9,12 @@ import androidx.glance.ColorFilter
 import androidx.glance.GlanceModifier
 import androidx.glance.Image
 import androidx.glance.ImageProvider
+import androidx.glance.LocalContext
 import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.LinearProgressIndicator
 import androidx.glance.appwidget.action.actionRunCallback
+import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.background
 import androidx.glance.color.ColorProvider as DayNightColor
@@ -35,6 +37,7 @@ import com.kelec.R
 import com.kelec.carapi.BatteryStatus
 import com.kelec.shared.CarMaker
 import com.kelec.shared.Formatting
+import com.kelec.shortcuts.CarShortcuts
 
 /** Couleurs des widgets (jour / nuit), reprises du widget RemoteViews et des widgets iOS. */
 object WidgetColors {
@@ -50,12 +53,16 @@ object WidgetColors {
         if (battery.isPlugged) charging else unplugged
 }
 
-/** Fond du widget ; toucher le widget ouvre l'app. */
-fun GlanceModifier.widgetContainer(): GlanceModifier =
+/** Fond du widget ; toucher le widget ouvre l'app, sur la page de [vin] s'il affiche une voiture. */
+@Composable
+fun GlanceModifier.widgetContainer(vin: String? = null): GlanceModifier =
     fillMaxSize()
         .background(WidgetColors.background)
         .cornerRadius(16.dp)
-        .clickable(actionStartActivity<MainActivity>())
+        .clickable(
+            if (vin == null) actionStartActivity<MainActivity>()
+            else actionStartActivity(CarShortcuts.openIntent(LocalContext.current, vin))
+        )
 
 /** Message centré (pas connecté, aucune voiture, erreur serveur). */
 @Composable

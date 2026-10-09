@@ -14,17 +14,20 @@
 		0CA493BBD944CC98E256ABD8 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96768361AC72CE554B71B05 /* Keychain.swift */; };
 		108337CD00330DB1A4F1F155 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 89F9E84E2C2C927F00CF7619 /* Localizable.strings */; };
 		110CEAA297B19DF2B7A3C165 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96768361AC72CE554B71B05 /* Keychain.swift */; };
+		12DC2D4A484A00411D0B684F /* CarShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02EF309CD5034231CEEECDB6 /* CarShortcuts.swift */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		1576436AB6B5C6F002090E87 /* AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0484D79BAF8B9723903AA259 /* AppGroup.swift */; };
 		18A526551724E61250286DC7 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96768361AC72CE554B71B05 /* Keychain.swift */; };
 		1DE85FEA504A939EF4862700 /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82D3A947D978E8DABF716AA3 /* SharedStore.swift */; };
 		24BDC979B5E210E5D0DE63DE /* VehicleCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31931830D897FCA4F47DF7AE /* VehicleCache.swift */; };
 		27CFC1640B2790ECAEDB1536 /* WatchSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13EE766F9F9476F2DA5C7C93 /* WatchSync.swift */; };
+		392738F70996EA2F7539CAD1 /* CarLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4BA388A3ADA5F80A561BD5 /* CarLink.swift */; };
 		3C576DC810DCD7D41AB69474 /* VehicleLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CFF2DD73D40078FF86337F /* VehicleLoader.swift */; };
 		3FD99B40031937DDE2A3A904 /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82D3A947D978E8DABF716AA3 /* SharedStore.swift */; };
 		42919F79CF8DF2810094786B /* SharedHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B748D26B442D53310A6ECA6 /* SharedHistory.swift */; };
 		42F8A0292585AFA11DBBAE07 /* RenaultSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B53AE419075ECE912D2A1B /* RenaultSession.swift */; };
 		4304D3C858A08FB1747C19EE /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82D3A947D978E8DABF716AA3 /* SharedStore.swift */; };
+		454ADC55C4C649F67D456F61 /* CarLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4BA388A3ADA5F80A561BD5 /* CarLink.swift */; };
 		4BA0EF2DB6E0C72925CA4014 /* SharedHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B748D26B442D53310A6ECA6 /* SharedHistory.swift */; };
 		516DBEF07CAD4C67AE0CD2F3 /* NouvelRSemibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BDA16CE28C8F45C693C500CC /* NouvelRSemibold.ttf */; };
 		53D81EBD2DC7EDC53094645C /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7F486009640FB55D626BE43 /* Models.swift */; };
@@ -96,6 +99,7 @@
 		B0071A9FAF06119EC22C4F52 /* CarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2262E3A1AF04AEB72802C70E /* CarViewModel.swift */; };
 		B2F05139024538C8BD89B759 /* GetCarStatusIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B9240CF09079E67E5E90E32 /* GetCarStatusIntent.swift */; };
 		B42DD1495B684E49A2BC9410 /* NouvelRBook.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AA1E7CA07A354F8C8294F4EB /* NouvelRBook.ttf */; };
+		B63FA5DE022E0BD2A912183A /* OpenCarRequests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29C6462BEFDE6FD04D1B8C86 /* OpenCarRequests.swift */; };
 		B769AF2D3E0A4AD9BC077D4C /* NouvelRBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2AA3C74DAF974BC5AB76E7E5 /* NouvelRBold.ttf */; };
 		C3BA62CD560D7B6BF30E279F /* Tempo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E858BB876E9BCE7314FF9A4 /* Tempo.swift */; };
 		C4DD11C3E79E4071898E0D62 /* NouvelRRegular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7D8FC3E77A32465185812C68 /* NouvelRRegular.ttf */; };
@@ -103,6 +107,7 @@
 		C98B44B09CA5B859DB69F486 /* LaunchHVACControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD54E783DC690DB1642D1C07 /* LaunchHVACControl.swift */; };
 		CA2F611B9F09D94215268C17 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7F486009640FB55D626BE43 /* Models.swift */; };
 		CB2456A9E4DCAF1586A12645 /* PreviewData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 783F92D76DA3869D1D196954 /* PreviewData.swift */; };
+		CBD5D045C08505D097E18C2B /* OpenCarRequests.m in Sources */ = {isa = PBXBuildFile; fileRef = 56020A6AA3C5E6C7211D769C /* OpenCarRequests.m */; };
 		CF60F6C753C90F8AADF8D387 /* libPods-Kelec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B67617AAF409ECA0533B98A2 /* libPods-Kelec.a */; };
 		D4E42A74467E599989EF7CC3 /* RenaultSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B53AE419075ECE912D2A1B /* RenaultSession.swift */; };
 		DA194AD1E573B30C8A8802DD /* SharedHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B748D26B442D53310A6ECA6 /* SharedHistory.swift */; };
@@ -204,6 +209,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		02EF309CD5034231CEEECDB6 /* CarShortcuts.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CarShortcuts.swift; path = Kelec/CarShortcuts.swift; sourceTree = "<group>"; };
 		0484D79BAF8B9723903AA259 /* AppGroup.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppGroup.swift; sourceTree = "<group>"; };
 		0FF1701AA71F44B3276B4102 /* WatchSettingsView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WatchSettingsView.swift; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Kelec.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Kelec.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -211,10 +217,12 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Kelec/Info.plist; sourceTree = "<group>"; };
 		13EE766F9F9476F2DA5C7C93 /* WatchSync.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WatchSync.swift; sourceTree = "<group>"; };
 		2262E3A1AF04AEB72802C70E /* CarViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CarViewModel.swift; sourceTree = "<group>"; };
+		29C6462BEFDE6FD04D1B8C86 /* OpenCarRequests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = OpenCarRequests.swift; path = Kelec/OpenCarRequests.swift; sourceTree = "<group>"; };
 		2AA3C74DAF974BC5AB76E7E5 /* NouvelRBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = NouvelRBold.ttf; path = ../assets/fonts/Renault/NouvelRBold.ttf; sourceTree = "<group>"; };
 		2B748D26B442D53310A6ECA6 /* SharedHistory.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SharedHistory.swift; sourceTree = "<group>"; };
 		31931830D897FCA4F47DF7AE /* VehicleCache.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VehicleCache.swift; sourceTree = "<group>"; };
 		53B53AE419075ECE912D2A1B /* RenaultSession.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RenaultSession.swift; sourceTree = "<group>"; };
+		56020A6AA3C5E6C7211D769C /* OpenCarRequests.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = OpenCarRequests.m; path = Kelec/OpenCarRequests.m; sourceTree = "<group>"; };
 		5E858BB876E9BCE7314FF9A4 /* Tempo.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Tempo.swift; sourceTree = "<group>"; };
 		66BE55BDD7A0395D7A763C6E /* Components.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
 		783F92D76DA3869D1D196954 /* PreviewData.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PreviewData.swift; sourceTree = "<group>"; };
@@ -285,6 +293,7 @@
 		9E0E227B58D232E3A68F80A5 /* Formatting.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Formatting.swift; sourceTree = "<group>"; };
 		A6578D399A67482C95C2B086 /* NouvelRLight.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = NouvelRLight.ttf; path = ../assets/fonts/Renault/NouvelRLight.ttf; sourceTree = "<group>"; };
 		AA1E7CA07A354F8C8294F4EB /* NouvelRBook.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = NouvelRBook.ttf; path = ../assets/fonts/Renault/NouvelRBook.ttf; sourceTree = "<group>"; };
+		AA4BA388A3ADA5F80A561BD5 /* CarLink.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CarLink.swift; sourceTree = "<group>"; };
 		ABDCFF6C81D7AEB3E7F72F09 /* Pods-Kelec.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Kelec.debug.xcconfig"; path = "Target Support Files/Pods-Kelec/Pods-Kelec.debug.xcconfig"; sourceTree = "<group>"; };
 		B3CFF2DD73D40078FF86337F /* VehicleLoader.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VehicleLoader.swift; sourceTree = "<group>"; };
 		B67617AAF409ECA0533B98A2 /* libPods-Kelec.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Kelec.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -379,6 +388,9 @@
 				893FFEAA2BA850FB006D7475 /* Kelec-Bridging-Header.h */,
 				FA8D1F2F1ABA231C68E0DCBC /* PrivacyInfo.xcprivacy */,
 				846CAE31E8F3F0A8622A9220 /* RNSharedWidget.swift */,
+				02EF309CD5034231CEEECDB6 /* CarShortcuts.swift */,
+				29C6462BEFDE6FD04D1B8C86 /* OpenCarRequests.swift */,
+				56020A6AA3C5E6C7211D769C /* OpenCarRequests.m */,
 			);
 			name = Kelec;
 			sourceTree = "<group>";
@@ -603,6 +615,7 @@
 				53B53AE419075ECE912D2A1B /* RenaultSession.swift */,
 				DF671DF3293ADF6C2184565F /* ApiClients.swift */,
 				2B748D26B442D53310A6ECA6 /* SharedHistory.swift */,
+				AA4BA388A3ADA5F80A561BD5 /* CarLink.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -968,6 +981,10 @@
 				DA194AD1E573B30C8A8802DD /* SharedHistory.swift in Sources */,
 				B2F05139024538C8BD89B759 /* GetCarStatusIntent.swift in Sources */,
 				3C576DC810DCD7D41AB69474 /* VehicleLoader.swift in Sources */,
+				454ADC55C4C649F67D456F61 /* CarLink.swift in Sources */,
+				12DC2D4A484A00411D0B684F /* CarShortcuts.swift in Sources */,
+				B63FA5DE022E0BD2A912183A /* OpenCarRequests.swift in Sources */,
+				CBD5D045C08505D097E18C2B /* OpenCarRequests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1029,6 +1046,7 @@
 				5B8CFD18C4A7A20058F883A0 /* ApiClients.swift in Sources */,
 				42919F79CF8DF2810094786B /* SharedHistory.swift in Sources */,
 				C98B44B09CA5B859DB69F486 /* LaunchHVACControl.swift in Sources */,
+				392738F70996EA2F7539CAD1 /* CarLink.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
