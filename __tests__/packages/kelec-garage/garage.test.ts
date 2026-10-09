@@ -94,9 +94,11 @@ describe('ConnectedStatusRepository', () => {
         const status = { connected: true, pbo: true, services: ['202'], applicableFeatures: [{ featureId: 4, status: 'ACTIVATED' }] };
 
         expect(await ConnectedStatusRepository.get('VIN1')).toBeNull();
-        await ConnectedStatusRepository.save('VIN1', status);
+        await ConnectedStatusRepository.save('VIN1', status, 1234);
 
         expect(JSON.parse((await AsyncStorage.getItem('VIN1/connectedStatus'))!)).toEqual(status);
         expect(await ConnectedStatusRepository.get('VIN1')).toEqual(status);
+        expect(await AsyncStorage.getItem('VIN1/connectedStatusCheckedAt')).toBe('1234');
+        expect(await ConnectedStatusRepository.lastCheckedAt('VIN1')).toBe(1234);
     });
 });
