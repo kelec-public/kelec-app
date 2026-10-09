@@ -9,6 +9,8 @@ import com.facebook.react.bridge.ReactMethod
 import com.kelec.KelecMainWIdget
 import com.kelec.shared.SecureStore
 import com.kelec.shared.SharedStore
+import com.kelec.shared.StorageKey
+import com.kelec.shortcuts.CarShortcuts
 
 /**
  * Bridge RN du stockage partagé avec le widget. Même nom et mêmes méthodes que le module iOS
@@ -19,6 +21,7 @@ class RNSharedWidget(reactContext: ReactApplicationContext) : ReactContextBaseJa
     private val secureStore = SecureStore(reactContext)
     private val handler = Handler(Looper.getMainLooper())
     private val reloadWidgets = Runnable { KelecMainWIdget.requestUpdate(reactApplicationContext) }
+    private val updateShortcuts = Runnable { CarShortcuts.update(reactApplicationContext) }
 
     override fun getName() = "RNSharedWidget"
 
@@ -28,6 +31,11 @@ class RNSharedWidget(reactContext: ReactApplicationContext) : ReactContextBaseJa
         sharedStore.putString(key, value)
         handler.removeCallbacks(reloadWidgets)
         handler.postDelayed(reloadWidgets, RELOAD_DELAY_MS)
+        // raccourcis des voitures (CarShortcuts) : regroupés de la même façon
+        if (key == StorageKey.ACCOUNT) {
+            handler.removeCallbacks(updateShortcuts)
+            handler.postDelayed(updateShortcuts, RELOAD_DELAY_MS)
+        }
         promise.resolve(null)
     }
 

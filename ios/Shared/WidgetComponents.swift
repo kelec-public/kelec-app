@@ -37,7 +37,13 @@ struct CarWidgetStateView<Content: View>: View {
     if let account = account {
       if let userCar = userCar {
         if let apiHandler = apiHandler {
+#if os(iOS)
+          // tapping the widget opens the app on its car
           content(account, userCar, apiHandler)
+            .widgetURL(userCar.car.flatMap { CarLink.url(vin: $0.vin) })
+#else
+          content(account, userCar, apiHandler)
+#endif
         } else {
           Text(serverError)
         }

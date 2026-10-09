@@ -61,7 +61,8 @@ android/
 └── app/
     ├── KelecMainWIdget     Receiver du widget batterie (CarStatusWidget)
     ├── ApiKeys             Clés d'API du .env (BuildConfig) pour :carapi (Renault, RTE)
-    ├── bridge/             RNSharedWidget, NativeLanguage, WearSync (synchro de la montre), KelecPackage
+    ├── bridge/             RNSharedWidget, NativeLanguage, WearSync (synchro de la montre), OpenCarRequests, KelecPackage
+    ├── shortcuts/          CarShortcuts : un raccourci par voiture, lien kelec://car/<vin> (docs/car-shortcuts.md)
     ├── widgets/            KelecWidgetReceiver (base des receivers + receivers Tempo, RefreshWidgetsAction),
     │                       CarStatusWidget (4x1, 2x2, 4x2), TempoWidget / Tempo2DaysWidget, WidgetComponents,
     │                       WidgetData (état lu sans réseau), WidgetUpdater (réseau puis updateAll),
@@ -131,7 +132,7 @@ Java 17 et les dépôts Maven des nouveaux modules sont réglés par le plugin G
 | En charge | Durée restante (« 2h05 ») et heure de fin, sinon « --h-- » |
 
 - Autonomie : convertie en miles si `convertToMiles`, unité « mi » si `displayMiles` (deux réglages distincts, comme l'app).
-- Toucher le widget ouvre l'app ; toucher l'heure relance le chargement.
+- Toucher le widget ouvre l'app sur la page de sa voiture (`CarShortcuts.openIntent`) ; toucher l'heure relance le chargement.
 - Une voiture Hyundai est traitée comme Renault (hors périmètre) : elle affiche `not_yet_logged_in`.
 
 ## Textes et traductions
