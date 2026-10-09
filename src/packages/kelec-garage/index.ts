@@ -6,5 +6,6 @@ export { ConnectedStatusRepository } from "./services/connectedStatusRepository"
 export { useCarImage } from "./controllers/useCarImage";
 export { GarageService } from "./services/garageService";
 export { retrofitRegistrationCountry } from "./services/registrationCountryRetrofit";
+export { retrofitConnectedStatus } from "./services/connectedStatusRetrofit";
 export { logOut } from "./services/session";
 export { buildUserAccount } from "./models/userAccountFactory";

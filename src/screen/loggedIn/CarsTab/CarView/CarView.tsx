@@ -22,7 +22,7 @@ import { useFocusEffect, useTheme } from '@react-navigation/native';
 import { useCarProfile } from "../../../../packages/kelec-car-page/services/useCarProfile";
 import { useCarData } from "../../../../packages/kelec-car-page/services/useCarData";
 import CarViewHeader from "../../../../packages/kelec-car-page/views/CarViewHeader";
-import { retrofitRegistrationCountry } from "../../../../packages/kelec-garage";
+import { retrofitConnectedStatus, retrofitRegistrationCountry } from "../../../../packages/kelec-garage";
 
 
 type CarViewProps = NativeStackScreenProps<CarsViewParamList, "CarView"> & {
@@ -65,9 +65,10 @@ function CarView({ carModel, navigation, account, pagerRef, tfaInProgress }: Car
     const { sync: syncHvac } = useHvac();
     const { sync: syncLocation, isMapVisible } = useCarLocation();
     const onNetworkLoaded = useCallback(async () => {
-        // pays d'immatriculation des voitures ajoutées avant qu'on l'enregistre : en tâche de fond, sans bloquer
-        // le rafraîchissement (ne rejette jamais)
+        // pays d'immatriculation et connectedStatus des voitures ajoutées avant qu'on les enregistre :
+        // en tâche de fond, sans bloquer le rafraîchissement (ne rejettent jamais)
         retrofitRegistrationCountry(account);
+        retrofitConnectedStatus(account);
         await Promise.all([syncCharges(), syncHvac(), syncLocation()]);
     }, [syncCharges, syncHvac, syncLocation, account]);
 
