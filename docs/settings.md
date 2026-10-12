@@ -20,6 +20,7 @@ Pattern général : voir [packages-pattern.md](./packages-pattern.md).
 kelec-preferences/                    (domaine partagé, importé via index.ts)
 ├── models/preferencesChanges.ts      applyChanges (copie + dépendances), affectsWidgets
 ├── services/preferencesRepository.ts get / update (stockage + envoi aux widgets si besoin)
+├── services/colorTheme.ts            COLOR_THEMES, applyColorTheme (thème auto / clair / sombre)
 ├── controllers/usePreferences.ts     { preferences, update(patch) } : enregistre puis recharge dans toute l'app
 └── index.ts
 
@@ -38,7 +39,7 @@ kelec-settings/                       (feature)
     ├── SettingsHeader.tsx      En-tête orange (nom ou « Réglages », crédits)
     ├── SettingsSection.tsx     Une section et ses lignes
     ├── SettingRow.tsx          Une ligne (navigation ou interrupteur)
-    ├── TimezoneOffsetModal.tsx Choix du décalage horaire des charges programmées
+    ├── ChoiceModal.tsx         Choix d'une valeur dans une liste (décalage horaire des charges programmées, thème)
     └── debug/DebugZoneView.tsx Zone de debug (laissée telle quelle, exclue de Sonar)
 ```
 
@@ -54,6 +55,19 @@ Le déplacer dans un package ferait dépendre `src/lib` d'un package, c'est-à-d
 4. **Widgets natifs** : ils ne lisent que `displayMiles` et `convertToMiles` (iOS et Android). `saveNativePreferences` n'est donc appelé
    que si l'un de ces deux champs change (`affectsWidgets`).
 5. `reloadAppPreferences()` recharge les préférences dans toute l'app.
+
+## Thème (clair / sombre)
+
+`colorTheme` vaut `auto` (par défaut : l'app suit le téléphone), `light` ou `dark`. Les préférences enregistrées avant ce réglage n'ont pas
+ce champ et restent donc en `auto`.
+
+`Main` appelle `applyColorTheme` à chaque changement, qui passe par `Appearance.setColorScheme` de React Native :
+- tous les `useColorScheme()` de l'app renvoient le thème forcé, sans rien changer dans les vues ;
+- iOS : `overrideUserInterfaceStyle` sur les fenêtres de l'app ;
+- Android : `AppCompatDelegate.setDefaultNightMode`. `MainActivity` déclare `uiMode` dans `configChanges` : l'activité n'est pas recréée,
+  et `ReactActivity` transmet le changement à JS.
+
+Avant le chargement des préférences (écran de chargement), l'app suit le téléphone. Les widgets et les montres ne sont pas concernés.
 
 L'**Apple Watch** ne reçoit les préférences que via le bouton « Sync with Apple Watch » (`syncWithAppleWatch`), jamais automatiquement.
 
@@ -90,6 +104,8 @@ Ces indicateurs remplacent les anciennes comparaisons de textes traduits (`item.
 - `__tests__/packages/kelec-preferences/preferences.test.ts` :
   - valeurs par défaut, copie sans modifier l'original ;
   - widgets mis à jour seulement quand les unités changent ;
-  - dépendance miles → conversion.
+  - dépendance miles → conversion ;
+  - thème `auto` par défaut, y compris pour des préférences enregistrées sans ce champ.
 - `__tests__/packages/kelec-settings/settingsServices.test.ts` : nom affiché, décalages horaires.
-- Tests d'intégration : `__tests__/SettingsView/SettingsView.test.tsx`, avec un nouveau test sur la sélection du fuseau horaire (valeur enregistrée, fenêtre fermée, valeur affichée à la réouverture).
+- Tests d'intégration : `__tests__/SettingsView/SettingsView.test.tsx`, avec un test sur la sélection du fuseau horaire (valeur enregistrée, fenêtre fermée, valeur affichée à la réouverture)
+  et un sur le choix du thème (`auto` appliqué au démarrage, `dark` enregistré et appliqué).

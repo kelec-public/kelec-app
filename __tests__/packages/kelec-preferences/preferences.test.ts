@@ -45,3 +45,10 @@ test('désactiver les miles désactive aussi la conversion', async () => {
     expect(next.convertToMiles).toBe(false);
     expect(saveNativePreferences).toHaveBeenCalledTimes(1);
 });
+
+test('le thème suit le téléphone par défaut, y compris pour des préférences enregistrées avant le réglage', async () => {
+    expect(new AppPreferences().colorTheme).toBe('auto');
+
+    await AsyncStorage.setItem('appPreferences', JSON.stringify({ hideMap: true }));
+    expect((await PreferencesRepository.get()).colorTheme).toBe('auto');
+});

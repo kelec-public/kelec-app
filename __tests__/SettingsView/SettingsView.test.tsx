@@ -4,7 +4,7 @@ import { render, screen, userEvent, waitFor } from "@testing-library/react-nativ
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Account, { CarMaker } from '../../src/lib/clients/accounts/account';
 import App from '../../App';
-import { Alert, Linking } from "react-native";
+import { Alert, Appearance, Linking } from "react-native";
 import RenaultCar from '../../src/lib/clients/cars/renaultCar';
 import UserAccount from '../../src/lib/clients/accounts/userAccount';
 import RenaultAccount from '../../src/lib/clients/accounts/renaultAccount';
@@ -583,4 +583,29 @@ test('should select a timezone offset', async () => {
         expect(screen.getByTestId('timezoneOffsetButton2').props.style).toMatchObject({ backgroundColor: getTopDarkColour(false) });
         expect(screen.getByTestId('timezoneOffsetButton0').props.style).not.toMatchObject({ backgroundColor: getTopDarkColour(false) });
     });
+});
+
+test('should select a colour theme', async () => {
+    const setColorScheme = jest.spyOn(Appearance, 'setColorScheme');
+    const user = userEvent.setup();
+    render(<App />);
+
+    await waitFor(() => expect(screen.queryAllByTestId('bottomButtonperson').length).toBe(2));
+    // par défaut, l'app suit le thème du téléphone
+    expect(setColorScheme).toHaveBeenLastCalledWith('auto');
+    await user.press(screen.queryAllByTestId('bottomButtonsettings')[0]);
+    await waitFor(() => expect(screen.getByTestId('settingsView')).toBeDefined());
+
+    await user.press(screen.getByTestId('testSettingRowdark-mode'));
+    await waitFor(() => expect(screen.getByTestId('colorThemeButtonauto').props.style).toMatchObject({ backgroundColor: getTopDarkColour(false) }));
+
+    await user.press(screen.getByTestId('colorThemeButtondark'));
+
+    await waitFor(async () => {
+        const appPreferences = JSON.parse(await AsyncStorage.getItem('appPreferences') ?? "{}");
+        expect(appPreferences).toMatchObject({ colorTheme: 'dark' });
+        expect(screen.queryAllByTestId('colorThemeButtondark')).toHaveLength(0);
+        expect(setColorScheme).toHaveBeenLastCalledWith('dark');
+    });
+    setColorScheme.mockRestore();
 });

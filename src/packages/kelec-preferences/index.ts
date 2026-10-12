@@ -2,3 +2,4 @@
 export { PreferencesRepository } from "./services/preferencesRepository";
 export { usePreferences } from "./controllers/usePreferences";
 export type { BooleanPreference, PreferencesPatch } from "./models/preferencesChanges";
+export { COLOR_THEMES, applyColorTheme } from "./services/colorTheme";

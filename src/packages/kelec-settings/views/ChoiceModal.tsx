@@ -7,17 +7,24 @@ import MainContext from "../../../lib/Contexts/MainContext";
 import commonStyles from "../../../lib/graphics/commonStyle";
 import { getBlackColour, getGrayBackgroundColour, getTopDarkColour } from "../../../lib/graphics/utils";
 import Button from '../../kelec-model/view/Button';
-import { TIMEZONE_OFFSETS } from "../services/timezoneOffsets";
 
-type Props = {
+export type Choice<T> = {
+    readonly value: T;
+    readonly label: string;
+    readonly testID: string;
+};
+
+type Props<T> = {
     readonly visible: boolean;
-    readonly selectedOffset: number;
-    readonly onSelect: (offset: number) => void;
+    readonly title: string;
+    readonly choices: Choice<T>[];
+    readonly selected: T;
+    readonly onSelect: (value: T) => void;
     readonly onClose: () => void;
 }
 
-/** Choix du décalage horaire appliqué aux charges programmées. */
-function TimezoneOffsetModal({ visible, selectedOffset, onSelect, onClose }: Props): React.JSX.Element {
+/** Choix d'une valeur dans une liste (ex. décalage horaire des charges programmées, thème). */
+function ChoiceModal<T>({ visible, title, choices, selected, onSelect, onClose }: Props<T>): React.JSX.Element {
     const isDarkMode = useColorScheme() === 'dark';
     const { languageHandler } = useContext(MainContext);
 
@@ -26,25 +33,25 @@ function TimezoneOffsetModal({ visible, selectedOffset, onSelect, onClose }: Pro
             <SafeAreaProvider>
                 <SafeAreaView style={[styles.container, { backgroundColor: getGrayBackgroundColour(isDarkMode) }]}>
                     <View style={styles.content}>
-                        <Text style={styles.title}>{languageHandler.getTranslation("timezoneOffset")}</Text>
+                        <Text style={styles.title}>{title}</Text>
                         <ScrollView>
                             <View style={{ gap: 5 }}>
-                                {TIMEZONE_OFFSETS.map((offset, index) => (
-                                    <Fragment key={offset}>
+                                {choices.map((choice, index) => (
+                                    <Fragment key={choice.testID}>
                                         <TouchableOpacity
-                                            onPress={() => onSelect(offset)}
-                                            testID={"timezoneOffsetButton" + offset}
+                                            onPress={() => onSelect(choice.value)}
+                                            testID={choice.testID}
                                             style={{
-                                                backgroundColor: offset === selectedOffset ? getTopDarkColour(isDarkMode) : getGrayBackgroundColour(isDarkMode),
+                                                backgroundColor: choice.value === selected ? getTopDarkColour(isDarkMode) : getGrayBackgroundColour(isDarkMode),
                                                 borderRadius: 10
                                             }}
                                         >
                                             <View style={[commonStyles.rowFlex, styles.row]}>
-                                                <Text>{offset}</Text>
+                                                <Text>{choice.label}</Text>
                                                 <Icon name="chevron-right" size={20} color={getBlackColour(isDarkMode)} />
                                             </View>
                                         </TouchableOpacity>
-                                        {index !== TIMEZONE_OFFSETS.length - 1 && <View style={[commonStyles.navSeparator]}></View>}
+                                        {index !== choices.length - 1 && <View style={[commonStyles.navSeparator]}></View>}
                                     </Fragment>
                                 ))}
                             </View>
@@ -82,4 +89,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default TimezoneOffsetModal;
+export default ChoiceModal;

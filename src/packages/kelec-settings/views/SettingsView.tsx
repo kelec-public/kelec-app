@@ -1,13 +1,15 @@
 import { Modal, ScrollView, StyleSheet, View } from "react-native";
+import { useContext } from "react";
 import { useTheme } from '@react-navigation/native';
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import commonStyles from '../../../lib/graphics/commonStyle';
+import MainContext from '../../../lib/Contexts/MainContext';
 import Text from '../../../screen/Common/CustomText';
 import { useSettingsController } from "../controllers/useSettingsController";
 import DebugZoneView from "./debug/DebugZoneView";
 import SettingsHeader from "./SettingsHeader";
 import SettingsSection from "./SettingsSection";
-import TimezoneOffsetModal from "./TimezoneOffsetModal";
+import ChoiceModal from "./ChoiceModal";
 
 const pkg = require('../../../../package.json');
 
@@ -15,6 +17,7 @@ const pkg = require('../../../../package.json');
 function SettingsView(): React.JSX.Element {
     const theme = useTheme();
     const controller = useSettingsController();
+    const { languageHandler } = useContext(MainContext);
 
     return (
         <>
@@ -27,11 +30,21 @@ function SettingsView(): React.JSX.Element {
                     <DebugZoneView setShowDebugZone={controller.setIsDebugZoneOpen} />
                 </SafeAreaProvider>
             </Modal>
-            <TimezoneOffsetModal
+            <ChoiceModal
                 visible={controller.isTimezoneModalOpen}
-                selectedOffset={controller.timezoneOffset}
+                title={languageHandler.getTranslation("timezoneOffset")}
+                choices={controller.timezoneOffsetChoices}
+                selected={controller.timezoneOffset}
                 onSelect={controller.selectTimezoneOffset}
                 onClose={controller.closeTimezoneModal}
+            />
+            <ChoiceModal
+                visible={controller.isColorThemeModalOpen}
+                title={languageHandler.getTranslation("colorTheme")}
+                choices={controller.colorThemeChoices}
+                selected={controller.colorTheme}
+                onSelect={controller.selectColorTheme}
+                onClose={controller.closeColorThemeModal}
             />
             <View
                 testID='settingsView'
