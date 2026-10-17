@@ -1,20 +1,30 @@
 import { useCallback, useContext, useState } from "react";
 import { Platform } from "react-native";
 import MainContext from "../../../lib/Contexts/MainContext";
-import { BooleanPreference, usePreferences } from "../../kelec-preferences";
+import ColorTheme from "../../../lib/appPreferences/interface/colorTheme";
+import { BooleanPreference, COLOR_THEMES, usePreferences } from "../../kelec-preferences";
 import { logOut as clearSession } from "../../kelec-garage";
 import { ExternalLinks, openExternalLink } from "../services/externalLinks";
 import { syncWithAppleWatch } from "../services/appleWatchSync";
 import { exportWidgetLogs } from "../services/widgetLogsExport";
 import { OptionType, SettingSection } from "./settingsTypes";
+import { TIMEZONE_OFFSETS } from "../services/timezoneOffsets";
+import { Choice } from "../views/ChoiceModal";
 
-/** Onglet Réglages : sections affichées, actions, et modales (fuseau horaire, debug). */
+const COLOR_THEME_LABELS: Record<ColorTheme, string> = {
+    auto: "colorThemeAuto",
+    light: "colorThemeLight",
+    dark: "colorThemeDark",
+};
+
+/** Onglet Réglages : sections affichées, actions, et modales (fuseau horaire, thème, debug). */
 export function useSettingsController() {
     const { currentUser, languageHandler, reloadUser, checkOnboarding } = useContext(MainContext);
     const { preferences, update } = usePreferences();
     const t = (key: string) => languageHandler.getTranslation(key);
 
     const [isTimezoneModalOpen, setIsTimezoneModalOpen] = useState(false);
+    const [isColorThemeModalOpen, setIsColorThemeModalOpen] = useState(false);
     const [isDebugZoneOpen, setIsDebugZoneOpen] = useState(false);
 
     const logOut = useCallback(async () => {
@@ -27,6 +37,19 @@ export function useSettingsController() {
         await update({ scheduledChargeOffset: offset });
         setIsTimezoneModalOpen(false);
     }, [update]);
+
+    const selectColorTheme = useCallback(async (colorTheme: ColorTheme) => {
+        await update({ colorTheme });
+        setIsColorThemeModalOpen(false);
+    }, [update]);
+
+    const timezoneOffsetChoices: Choice<number>[] = TIMEZONE_OFFSETS.map(offset => (
+        { value: offset, label: String(offset), testID: "timezoneOffsetButton" + offset }
+    ));
+
+    const colorThemeChoices: Choice<ColorTheme>[] = COLOR_THEMES.map(theme => (
+        { value: theme, label: t(COLOR_THEME_LABELS[theme]), testID: "colorThemeButton" + theme }
+    ));
 
     const toggle = (field: BooleanPreference) =>
         () => { update({ [field]: !preferences[field] }); };
@@ -52,6 +75,11 @@ export function useSettingsController() {
             title: t("display"),
             showTitle: true,
             items: [
+                {
+                    title: t("colorTheme"), icon: "dark-mode", type: OptionType.NAVIGATE,
+                    description: t(COLOR_THEME_LABELS[preferences.colorTheme]),
+                    onPress: () => setIsColorThemeModalOpen(true),
+                },
                 {
                     title: t("timezoneOffset"), icon: "access-time", type: OptionType.NAVIGATE,
                     description: t("timezoneOffsetDescription"),
@@ -109,9 +137,15 @@ export function useSettingsController() {
     return {
         sections,
         timezoneOffset: preferences.scheduledChargeOffset,
+        timezoneOffsetChoices,
         isTimezoneModalOpen,
         closeTimezoneModal: () => setIsTimezoneModalOpen(false),
         selectTimezoneOffset,
+        colorTheme: preferences.colorTheme,
+        colorThemeChoices,
+        isColorThemeModalOpen,
+        closeColorThemeModal: () => setIsColorThemeModalOpen(false),
+        selectColorTheme,
         isDebugZoneOpen,
         setIsDebugZoneOpen,
     };

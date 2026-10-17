@@ -14,7 +14,7 @@ import KelecApiHandler from "./lib/clients/kelec-api/kelecApiHandler";
 import Text from "./screen/Common/CustomText";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
-import { PreferencesRepository } from "./packages/kelec-preferences";
+import { PreferencesRepository, applyColorTheme } from "./packages/kelec-preferences";
 import { AccountRepository } from "./packages/kelec-garage";
 
 export enum ViewsAvailable {
@@ -58,6 +58,10 @@ function Main(): React.JSX.Element {
         reloadUser();
         reloadAppPreferences();
     }, []);
+
+    useEffect(() => {
+        applyColorTheme(appPreferences.colorTheme);
+    }, [appPreferences.colorTheme]);
 
     // to check if user has already seen the onboarding
     const checkOnboarding = async (): Promise<void> => {

@@ -1,5 +1,6 @@
 import MapType from "../interface/mapType";
 import Units from "../interface/units";
+import ColorTheme from "../interface/colorTheme";
 
 class AppPreferences {
     // to display miles instead of km
@@ -18,6 +19,8 @@ class AppPreferences {
     scheduledChargeOffset: number = 0;
     // merge charges 
     mergeCharges: boolean = false;
+    // app theme: follows the phone (auto), or forced light / dark
+    colorTheme: ColorTheme = 'auto';
 
     constructor(preferences?: Partial<AppPreferences>) {
         if (preferences) {
