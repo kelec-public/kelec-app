@@ -126,7 +126,8 @@ class CarType {
         let end_date = new Date(this.leasing!.endDate!);
         const today = new Date();
         if (today <= start_date) return 0;
-        if (today >= end_date) return this.leasing!.totalMileage! + (this.leasing!.startMileage ?? 0);
+        // totalMileage is the odometer expected at the end of the contract, not a distance
+        if (today >= end_date) return this.leasing!.totalMileage!;
 
         const totalDays = (end_date.getTime() - start_date.getTime()) / (1000 * 60 * 60 * 24);
         const elapsedDays = (today.getTime() - start_date.getTime()) / (1000 * 60 * 60 * 24);
