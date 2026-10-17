@@ -16,8 +16,10 @@ type Props = {
     readonly iconSize: number;
     readonly iconTestID?: string;
     readonly iconStyle?: StyleProp<TextStyle>;
-    /** Texte affiché avant l'icône. */
     readonly text?: string;
+    readonly textStyle?: StyleProp<TextStyle>;
+    /** Icône avant ou après le texte (après par défaut). */
+    readonly iconPosition?: 'start' | 'end';
     readonly onPress: () => void;
     readonly testID?: string;
     readonly disabled?: boolean;
@@ -29,21 +31,29 @@ type Props = {
     readonly fallbackStyle?: StyleProp<ViewStyle>;
     /** Couleur de l'icône sans liquid glass ; par défaut, la couleur du texte. */
     readonly fallbackIconColour?: string;
+    /** Couleur du texte sans liquid glass ; par défaut, celle du thème. */
+    readonly fallbackTextColour?: string;
 }
 
 /** Bouton icône (avec texte éventuel) : liquid glass sur iOS 26+, `fallbackStyle` ailleurs. */
 function GlassButton(props: Props): React.JSX.Element {
-    const { icon, iconFamily = 'material', iconSize, iconTestID, iconStyle, text, onPress, testID, disabled = false, selected = false, glassStyle, fallbackStyle, fallbackIconColour } = props;
+    const { icon, iconFamily = 'material', iconSize, iconTestID, iconStyle, text, textStyle, iconPosition = 'end', onPress, testID, disabled = false, selected = false, glassStyle, fallbackStyle, fallbackIconColour, fallbackTextColour } = props;
     const isDarkMode = useColorScheme() === 'dark';
     const textColour = getBlackColour(isDarkMode);
     const IconComponent = iconFamily === 'community' ? CommunityIcon : Icon;
 
-    const renderContent = (iconColour: string) => (
-        <>
-            {text !== undefined && <Text>{text}</Text>}
-            <IconComponent name={icon} testID={iconTestID} size={iconSize} style={iconStyle} color={iconColour} />
-        </>
-    );
+    const renderContent = (iconColour: string, textColourOverride?: string) => {
+        const iconElement = <IconComponent name={icon} testID={iconTestID} size={iconSize} style={iconStyle} color={iconColour} />;
+        return (
+            <>
+                {iconPosition === 'start' && iconElement}
+                {text !== undefined && (
+                    <Text style={[textStyle, textColourOverride !== undefined && { color: textColourOverride }]}>{text}</Text>
+                )}
+                {iconPosition === 'end' && iconElement}
+            </>
+        );
+    };
 
     if (!isLiquidGlassSupported) {
         return (
@@ -53,7 +63,7 @@ function GlassButton(props: Props): React.JSX.Element {
                 onPress={onPress}
                 style={[styles.content, fallbackStyle, { opacity: disabled ? DISABLED_OPACITY : 1 }]}
             >
-                {renderContent(fallbackIconColour ?? textColour)}
+                {renderContent(fallbackIconColour ?? textColour, fallbackTextColour)}
             </TouchableOpacity>
         );
     }
@@ -74,7 +84,7 @@ function GlassButton(props: Props): React.JSX.Element {
                 colorScheme={isDarkMode ? 'dark' : 'light'}
             >
                 <View style={styles.content} pointerEvents="none">
-                    {renderContent(textColour)}
+                    {renderContent(textColour, textColour)}
                 </View>
             </LiquidGlassView>
         </TouchableOpacity>
