@@ -1,13 +1,12 @@
 import { StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle, useColorScheme } from "react-native";
 import { LiquidGlassView, isLiquidGlassSupported } from "@callstack/liquid-glass";
 import { getLightGray, getWhiteColour } from "../../../lib/graphics/utils";
+import { SELECTED_GLASS_TINT } from "./GlassButton";
 
 /** Taille d'icône à utiliser dans une pastille. */
 export const FLOATING_PILL_ICON_SIZE = 20;
 const PADDING = 10;
 const BORDER = 2;
-/** Teinte du verre sélectionné : translucide, une couleur opaque masquerait l'effet. */
-const SELECTED_GLASS_TINT = { light: 'rgba(0,0,0,0.18)', dark: 'rgba(255,255,255,0.3)' };
 /** Hauteur minimale de toute pastille (et taille d'une pastille ronde), déduite de l'icône. */
 export const FLOATING_PILL_SIZE = FLOATING_PILL_ICON_SIZE + 2 * PADDING + 2 * BORDER;
 

@@ -1,16 +1,25 @@
-import { StyleProp, TouchableOpacity, View, ViewStyle, useColorScheme } from "react-native";
+import { StyleProp, StyleSheet, TextStyle, TouchableOpacity, View, ViewStyle, useColorScheme } from "react-native";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { LiquidGlassView, isLiquidGlassSupported } from "@callstack/liquid-glass";
 import { getBlackColour } from "../../../lib/graphics/utils";
+import Text from "../../../screen/Common/CustomText";
 
 const DISABLED_OPACITY = 0.4;
+/** Teinte du verre sélectionné : translucide, une couleur opaque masquerait l'effet. */
+export const SELECTED_GLASS_TINT = { light: 'rgba(0,0,0,0.18)', dark: 'rgba(255,255,255,0.3)' };
 
 type Props = {
     readonly icon: string;
     readonly iconSize: number;
+    readonly iconTestID?: string;
+    readonly iconStyle?: StyleProp<TextStyle>;
+    /** Texte affiché avant l'icône. */
+    readonly text?: string;
     readonly onPress: () => void;
     readonly testID?: string;
     readonly disabled?: boolean;
+    /** Sur le verre : teinte SELECTED_GLASS_TINT. Sans verre, c'est à `fallbackStyle` de le montrer. */
+    readonly selected?: boolean;
     /** Forme du verre (padding, borderRadius) : iOS 26+. Pas de bordure (le verre se poserait dans le cadre intérieur). */
     readonly glassStyle?: StyleProp<ViewStyle>;
     /** Rendu sans liquid glass (Android, iOS < 26). */
@@ -19,10 +28,18 @@ type Props = {
     readonly fallbackIconColour?: string;
 }
 
-/** Bouton icône : liquid glass sur iOS 26+, `fallbackStyle` ailleurs. */
-function GlassButton({ icon, iconSize, onPress, testID, disabled = false, glassStyle, fallbackStyle, fallbackIconColour }: Props): React.JSX.Element {
+/** Bouton icône (avec texte éventuel) : liquid glass sur iOS 26+, `fallbackStyle` ailleurs. */
+function GlassButton(props: Props): React.JSX.Element {
+    const { icon, iconSize, iconTestID, iconStyle, text, onPress, testID, disabled = false, selected = false, glassStyle, fallbackStyle, fallbackIconColour } = props;
     const isDarkMode = useColorScheme() === 'dark';
     const textColour = getBlackColour(isDarkMode);
+
+    const renderContent = (iconColour: string) => (
+        <>
+            {text !== undefined && <Text>{text}</Text>}
+            <Icon name={icon} testID={iconTestID} size={iconSize} style={iconStyle} color={iconColour} />
+        </>
+    );
 
     if (!isLiquidGlassSupported) {
         return (
@@ -30,9 +47,9 @@ function GlassButton({ icon, iconSize, onPress, testID, disabled = false, glassS
                 testID={testID}
                 disabled={disabled}
                 onPress={onPress}
-                style={[fallbackStyle, { opacity: disabled ? DISABLED_OPACITY : 1 }]}
+                style={[styles.content, fallbackStyle, { opacity: disabled ? DISABLED_OPACITY : 1 }]}
             >
-                <Icon name={icon} size={iconSize} color={fallbackIconColour ?? textColour} />
+                {renderContent(fallbackIconColour ?? textColour)}
             </TouchableOpacity>
         );
     }
@@ -47,16 +64,25 @@ function GlassButton({ icon, iconSize, onPress, testID, disabled = false, glassS
             style={{ opacity: disabled ? DISABLED_OPACITY : 1 }}
         >
             <LiquidGlassView
-                style={glassStyle}
+                style={[styles.content, glassStyle]}
+                tintColor={selected ? SELECTED_GLASS_TINT[isDarkMode ? 'dark' : 'light'] : undefined}
                 interactive={!disabled}
                 colorScheme={isDarkMode ? 'dark' : 'light'}
             >
-                <View pointerEvents="none">
-                    <Icon name={icon} size={iconSize} color={textColour} />
+                <View style={styles.content} pointerEvents="none">
+                    {renderContent(textColour)}
                 </View>
             </LiquidGlassView>
         </TouchableOpacity>
     );
 }
+
+const styles = StyleSheet.create({
+    content: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+});
 
 export default GlassButton;
