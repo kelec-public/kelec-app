@@ -1,12 +1,12 @@
-import { TouchableOpacity, StyleSheet, View, useColorScheme, Image } from "react-native";
+import { StyleSheet, View, useColorScheme, Image } from "react-native";
 import Text from "../../../../Common/CustomText";
 import { formatNumberWithSpaces, getBlackColour, getGrayBackgroundColour } from "../../../../../lib/graphics/utils";
 import { useContext } from "react";
 import CarViewContext from "../../../../../lib/Contexts/CarViewContext";
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import MainContext from "../../../../../lib/Contexts/MainContext";
 import { fontFamilyBold, fontWeightBold } from "../../../../../lib/graphics/commonStyle";
+import GlassButton from "../../../../../packages/kelec-model/view/GlassButton";
 import { CAR_TYPE_ROUTE } from "../../../../../packages/kelec-car-type";
 
 type SummaryCardProps = {
@@ -22,21 +22,23 @@ function SummaryCard({ navigation }: SummaryCardProps): React.JSX.Element {
     return (
         <View style={[styles.summaryCard, { backgroundColor: getGrayBackgroundColour(isDarkMode) }]} testID="summaryCard">
             <Image style={styles.carImage} source={{ uri: `data:image/jpeg;base64,${image}` }} />
-            <TouchableOpacity onPress={() => {
-                navigation.navigate(CAR_TYPE_ROUTE, {
-                    vin: carModel.getVin(),
-                    imageUrl: carModel.getImageUrl(),
-                    titleKey: "carModel",
-                    nextButtonTextKey: "confirm",
-                    safeAreaEdges: ['top'],
-                });
-
-            }}
-                testID={'openModalButton'}
-                style={{ position: 'absolute', top: 15, right: 15, zIndex: 99, elevation: 99 }}
-            >
-                <Icon name="settings" size={20} color={getBlackColour(isDarkMode)} />
-            </TouchableOpacity>
+            <View style={styles.settingsButton}>
+                <GlassButton
+                    testID={'openModalButton'}
+                    icon="settings"
+                    iconSize={20}
+                    onPress={() => {
+                        navigation.navigate(CAR_TYPE_ROUTE, {
+                            vin: carModel.getVin(),
+                            imageUrl: carModel.getImageUrl(),
+                            titleKey: "carModel",
+                            nextButtonTextKey: "confirm",
+                            safeAreaEdges: ['top'],
+                        });
+                    }}
+                    glassStyle={styles.glassSettingsButton}
+                />
+            </View>
             <View style={[styles.spaceAround, { flexWrap: "wrap" }]}>
                 <View style={{ justifyContent: 'center' }}>
                     <View style={styles.element}>
@@ -111,6 +113,17 @@ const styles = StyleSheet.create({
         marginHorizontal: 15,
         borderRadius: 7,
         marginTop: 50
+    },
+    settingsButton: {
+        position: 'absolute',
+        top: 15,
+        right: 15,
+        zIndex: 99,
+        elevation: 99,
+    },
+    glassSettingsButton: {
+        padding: 8,
+        borderRadius: 999,
     },
     carImage: {
         width: '100%',

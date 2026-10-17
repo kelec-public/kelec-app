@@ -1,7 +1,6 @@
 import { useContext, useState } from 'react';
 import { StyleSheet, TouchableOpacity, View, useColorScheme } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import PagerView from 'react-native-pager-view';
 import CarModel from '../../../lib/clients/cars/carModel';
 import MainContext from '../../../lib/Contexts/MainContext';
@@ -9,6 +8,7 @@ import CarsViewContext from '../../../lib/Contexts/CarsViewContext';
 import commonStyles from '../../../lib/graphics/commonStyle';
 import Text from '../../../screen/Common/CustomText';
 import { getBlackColour, getDisplayDate } from '../../../lib/graphics/utils';
+import GlassButton from '../../kelec-model/view/GlassButton';
 import BottomSheet from '../../../screen/Common/bottomSheet/BottomSheet';
 import QuickSwitchView from '../../../screen/loggedIn/CarsTab/CarView/Elements/QuickSwitch/QuickSwitchView';
 
@@ -78,9 +78,14 @@ function CarViewHeader({ carModel, lastUpdateDate, pagerRef, onOpenDonation }: R
                 </View>
             </TouchableOpacity>
 
-            <TouchableOpacity testID="openCoffeeModal" onPress={onOpenDonation}>
-                <MaterialIcon name="coffee-outline" size={25} color={getBlackColour(isDarkMode)} />
-            </TouchableOpacity>
+            <GlassButton
+                testID="openCoffeeModal"
+                icon="coffee-outline"
+                iconFamily="community"
+                iconSize={25}
+                onPress={onOpenDonation}
+                glassStyle={styles.glassButton}
+            />
         </View>
     );
 }
@@ -100,6 +105,10 @@ const styles = StyleSheet.create({
     },
     chevron: {
         marginLeft: 10,
+    },
+    glassButton: {
+        padding: 8,
+        borderRadius: 999,
     },
     lastUpdateText: {
         color: 'gray',

@@ -1,5 +1,6 @@
 import { StyleProp, StyleSheet, TextStyle, TouchableOpacity, View, ViewStyle, useColorScheme } from "react-native";
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import CommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { LiquidGlassView, isLiquidGlassSupported } from "@callstack/liquid-glass";
 import { getBlackColour } from "../../../lib/graphics/utils";
 import Text from "../../../screen/Common/CustomText";
@@ -10,6 +11,8 @@ export const SELECTED_GLASS_TINT = { light: 'rgba(0,0,0,0.18)', dark: 'rgba(255,
 
 type Props = {
     readonly icon: string;
+    /** Famille de l'icône : MaterialIcons par défaut, ou MaterialCommunityIcons. */
+    readonly iconFamily?: 'material' | 'community';
     readonly iconSize: number;
     readonly iconTestID?: string;
     readonly iconStyle?: StyleProp<TextStyle>;
@@ -30,14 +33,15 @@ type Props = {
 
 /** Bouton icône (avec texte éventuel) : liquid glass sur iOS 26+, `fallbackStyle` ailleurs. */
 function GlassButton(props: Props): React.JSX.Element {
-    const { icon, iconSize, iconTestID, iconStyle, text, onPress, testID, disabled = false, selected = false, glassStyle, fallbackStyle, fallbackIconColour } = props;
+    const { icon, iconFamily = 'material', iconSize, iconTestID, iconStyle, text, onPress, testID, disabled = false, selected = false, glassStyle, fallbackStyle, fallbackIconColour } = props;
     const isDarkMode = useColorScheme() === 'dark';
     const textColour = getBlackColour(isDarkMode);
+    const IconComponent = iconFamily === 'community' ? CommunityIcon : Icon;
 
     const renderContent = (iconColour: string) => (
         <>
             {text !== undefined && <Text>{text}</Text>}
-            <Icon name={icon} testID={iconTestID} size={iconSize} style={iconStyle} color={iconColour} />
+            <IconComponent name={icon} testID={iconTestID} size={iconSize} style={iconStyle} color={iconColour} />
         </>
     );
 
