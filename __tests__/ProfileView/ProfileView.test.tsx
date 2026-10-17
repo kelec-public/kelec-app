@@ -7,6 +7,7 @@ import { buildUserAccount } from "../../src/packages/kelec-garage";
 import * as sharedPlatformsData from '../../src/lib/storage/sharedPlatformsData';
 import { getBlackColour, getWhiteColour } from "../../src/lib/graphics/utils";
 import UserAccount from "../../src/lib/clients/accounts/userAccount";
+import { hasTab, selectTab } from '../../testUtils/tabs';
 import { Alert, AlertButton } from "react-native";
 
 type AlertSpyProps = jest.SpyInstance<
@@ -85,15 +86,12 @@ test('should render the profile view', async () => {
 
     // we should have 3 cars in order
 
-    const UserEvent = userEvent.setup();
     render(<App />);
     await waitFor(async () => {
-        const bottomButtonperson = screen.queryAllByTestId('bottomButtonperson');
-        expect(bottomButtonperson.length).toBe(2);
+        expect(hasTab('account')).toBe(true);
     });
 
-    const bottomButtonperson = screen.queryAllByTestId('bottomButtonperson');
-    await UserEvent.press(bottomButtonperson[0]);
+    await selectTab('account');
     await waitFor(() => {
         expect(screen.getByTestId('profileView')).toBeDefined();
         const profileCarRowModel = screen.queryAllByTestId('profileCarRowModel');
@@ -125,13 +123,11 @@ test('should move the car up', async () => {
     const UserEvent = userEvent.setup();
     render(<App />);
     await waitFor(async () => {
-        const bottomButtonperson = screen.queryAllByTestId('bottomButtonperson');
-        expect(bottomButtonperson.length).toBe(2);
+        expect(hasTab('account')).toBe(true);
     });
 
     // open the profile tab
-    const bottomButtonperson = screen.queryAllByTestId('bottomButtonperson');
-    await UserEvent.press(bottomButtonperson[0]);
+    await selectTab('account');
     await waitFor(async () => {
         expect(screen.getByTestId('profileView')).toBeDefined();
     });
@@ -189,13 +185,11 @@ test('should move the car down', async () => {
     const UserEvent = userEvent.setup();
     render(<App />);
     await waitFor(async () => {
-        const bottomButtonperson = screen.queryAllByTestId('bottomButtonperson');
-        expect(bottomButtonperson.length).toBe(2);
+        expect(hasTab('account')).toBe(true);
     });
 
     // open the profile tab
-    const bottomButtonperson = screen.queryAllByTestId('bottomButtonperson');
-    await UserEvent.press(bottomButtonperson[0]);
+    await selectTab('account');
     await waitFor(() => {
         expect(screen.getByTestId('profileView')).toBeDefined();
     });
@@ -265,13 +259,11 @@ test('should delete cars', async () => {
     const UserEvent = userEvent.setup();
     render(<App />);
     await waitFor(async () => {
-        const bottomButtonperson = screen.queryAllByTestId('bottomButtonperson');
-        expect(bottomButtonperson.length).toBe(2);
+        expect(hasTab('account')).toBe(true);
     });
 
     // open the profile tab
-    const bottomButtonperson = screen.queryAllByTestId('bottomButtonperson');
-    await UserEvent.press(bottomButtonperson[0]);
+    await selectTab('account');
     await waitFor(() => {
         expect(screen.getByTestId('profileView')).toBeDefined();
     });
@@ -363,12 +355,10 @@ test('should add a car', async () => {
     const user = userEvent.setup();
     render(<App />);
     await waitFor(async () => {
-        const bottomButtonperson = screen.queryAllByTestId('bottomButtonperson');
-        expect(bottomButtonperson.length).toBe(2);
+        expect(hasTab('account')).toBe(true);
     });
     // open the profile tab
-    const bottomButtonperson = screen.queryAllByTestId('bottomButtonperson');
-    await user.press(bottomButtonperson[0]);
+    await selectTab('account');
     await waitFor(() => {
         expect(screen.getByTestId('profileView')).toBeDefined();
     });

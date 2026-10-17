@@ -4,6 +4,7 @@ import React from "react";
 import Account, { CarMaker } from "../../src/lib/clients/accounts/account";
 import { render, waitFor, fireEventAsync } from "@testing-library/react-native";
 import RenaultCar from "../../src/lib/clients/cars/renaultCar";
+import { selectTab } from '../../testUtils/tabs';
 import UserAccount from "../../src/lib/clients/accounts/userAccount";
 
 jest.useFakeTimers();
@@ -250,7 +251,7 @@ describe('should display next charge with scheduled offset from app preferences'
 
     test('should display next charge for scheduled charge with one schedule', async () => {
         const mockScheduledCharge = require('./mocks/mockRenaultChargeSettings/mockRenaultChargeSettingsSchedulded.json');
-        const { getByTestId, queryAllByTestId } = render(<App />);
+        const { getByTestId } = render(<App />);
         mockGetBatteryStatus.mockResolvedValueOnce({
             hasError: false,
             apiData: mockJSONBatteryStatus
@@ -281,8 +282,7 @@ describe('should display next charge with scheduled offset from app preferences'
         });
 
         // open the settings row
-        const bottomButtonperson = queryAllByTestId('bottomButtonsettings');
-        await fireEventAsync.press(bottomButtonperson[0]);
+        await selectTab('settings');
         await waitFor(() => {
             expect(getByTestId('settingsView')).toBeDefined();
         });
@@ -297,8 +297,7 @@ describe('should display next charge with scheduled offset from app preferences'
         await fireEventAsync.press(timezone);
 
         // go back to car view
-        const bottomButtoncars = queryAllByTestId('bottomButtondirections-car');
-        await fireEventAsync.press(bottomButtoncars[0]);
+        await selectTab('cars');
         await waitFor(async () => {
             expect(getByTestId('batteryCard')).toBeDefined();
             // check the battery level

@@ -5,6 +5,7 @@ import CarModel from "../../src/lib/clients/cars/carModel";
 import Account, { CarMaker } from "../../src/lib/clients/accounts/account";
 import UserAccount from "../../src/lib/clients/accounts/userAccount";
 import { render, waitFor, screen, userEvent } from "@testing-library/react-native";
+import { hasTab, selectTab } from '../../testUtils/tabs';
 import App from "../../App";
 
 
@@ -55,12 +56,10 @@ test('should rename the car', async () => {
     const userSetup = userEvent.setup();
     render(<App />);
     await waitFor(async () => {
-        const bottomButtonperson = screen.queryAllByTestId('bottomButtonperson');
-        expect(bottomButtonperson.length).toBe(2);
+        expect(hasTab('account')).toBe(true);
     });
 
-    const bottomButtonperson = screen.queryAllByTestId('bottomButtonperson');
-    await userSetup.press(bottomButtonperson[0]);
+    await selectTab('account');
     await waitFor(() => {
         expect(screen.getByTestId('profileView')).toBeDefined();
         const profileCarRowModel = screen.queryAllByTestId('profileCarRowModel');
@@ -106,12 +105,10 @@ test('should not rename the car because cancel', async () => {
     const userSetup = userEvent.setup();
     render(<App />);
     await waitFor(async () => {
-        const bottomButtonperson = screen.queryAllByTestId('bottomButtonperson');
-        expect(bottomButtonperson.length).toBe(2);
+        expect(hasTab('account')).toBe(true);
     });
 
-    const bottomButtonperson = screen.queryAllByTestId('bottomButtonperson');
-    await userSetup.press(bottomButtonperson[0]);
+    await selectTab('account');
     await waitFor(() => {
         expect(screen.getByTestId('profileView')).toBeDefined();
         const profileCarRowModel = screen.queryAllByTestId('profileCarRowModel');
