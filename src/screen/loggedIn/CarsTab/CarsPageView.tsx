@@ -8,7 +8,8 @@ import createNativeStackNavigator from '../../../lib/graphics/navigation';
 import { NavigationContainer, NavigationIndependentTree, NavigationProp, ParamListBase, useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import ChargesHistoryView from "../../../packages/kelec-charge-history/views/ChargesHistoryView";
 import { ChargesHistoryProvider } from "../../../packages/kelec-charge-history/controllers/ChargesHistoryProvider";
-import { CHARGES_HISTORY_ROUTE } from "../../../packages/kelec-charge-history/routes";
+import { CHARGE_COST_ROUTE, ChargeCostRouteParams, CHARGES_HISTORY_ROUTE } from "../../../packages/kelec-charge-history/routes";
+import ChargeCostEditView from "../../../packages/kelec-charge-history/views/ChargeCostEditView";
 import { HvacProvider } from "../../../packages/kelec-hvac/controllers/HvacProvider";
 import SendCoffeeCard from "./CarView/Elements/SendCoffee";
 import { FullScreenMapView, MAP_ROUTE, MapProvider } from "../../../packages/kelec-map";
@@ -27,6 +28,7 @@ export type CarsViewParamList = {
     [CHARGES_HISTORY_ROUTE]: undefined;
     [CHARGES_IMPORT_ROUTE]: undefined;
     [TFA_ROUTE]: TfaRouteParams;
+    [CHARGE_COST_ROUTE]: ChargeCostRouteParams;
     [TARIFF_LIST_ROUTE]: undefined;
     [TARIFF_EDITOR_ROUTE]: TariffEditorRouteParams;
 }
@@ -102,6 +104,16 @@ function CarsPageView(): React.JSX.Element {
                                         {...props}
                                         onImport={() => props.navigation.navigate(CHARGES_IMPORT_ROUTE)}
                                         onOpenTariffs={() => props.navigation.navigate(TARIFF_LIST_ROUTE)}
+                                        onEditChargeCost={chargeStartDate => props.navigation.navigate(CHARGE_COST_ROUTE, { chargeStartDate })}
+                                      />
+                                    )}
+                                  </Stack.Screen>
+                                  <Stack.Screen name={CHARGE_COST_ROUTE}>
+                                    {props => (
+                                      <ChargeCostEditView
+                                        chargeStartDate={props.route.params.chargeStartDate}
+                                        onBack={() => props.navigation.goBack()}
+                                        onDone={() => props.navigation.goBack()}
                                       />
                                     )}
                                   </Stack.Screen>

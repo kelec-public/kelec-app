@@ -13,9 +13,11 @@ import ChargeCostsContext from "../controllers/ChargeCostsContext";
 
 type ChargeCardProps = {
     readonly charge: Charge;
+    /** Avant d'ouvrir la modification du prix (ex. fermer la feuille des sous-charges). */
+    readonly onBeforeEditCost?: () => void;
 }
 
-function ChargeCard({ charge }: ChargeCardProps): React.JSX.Element {
+function ChargeCard({ charge, onBeforeEditCost }: ChargeCardProps): React.JSX.Element {
 
     const isDarkMode = useColorScheme() === 'dark';
     const theme = useTheme()
@@ -24,6 +26,13 @@ function ChargeCard({ charge }: ChargeCardProps): React.JSX.Element {
     const { handleModalAnim } = useContext(CarsViewContext);
     const costs = useContext(ChargeCostsContext);
     const cost = costs?.costOf(charge) ?? null;
+    // une charge fusionnée n'a pas de prix à elle : on modifie celui de ses sous-charges, dans leur détail
+    const editCost = costs?.edit && !charge.getIsAMergeCharge()
+        ? () => {
+            onBeforeEditCost?.();
+            costs.edit!(charge);
+        }
+        : undefined;
 
     const getBackgroundColour = () => {
         if (appPreferences.highlightDCCharges && charge.isDCCharge()) {
@@ -56,6 +65,10 @@ function ChargeCard({ charge }: ChargeCardProps): React.JSX.Element {
                         <ChargeCard
                             key={subCharge.getStartDate().toISOString()}
                             charge={subCharge}
+                            onBeforeEditCost={() => {
+                                setShouldOpenSubChargesModal(false);
+                                handleModalAnim(false);
+                            }}
                         />
                     ))}
                 </ScrollView>
@@ -190,14 +203,21 @@ function ChargeCard({ charge }: ChargeCardProps): React.JSX.Element {
                     </>
                 )}
 
-                {/* coût, avec les tarifs de la maison */}
+                {/* coût : prix saisi à la main, ou tarif de la maison ; toucher pour le modifier */}
                 {cost !== null && (
                     <>
                         <View style={{ width: 1, backgroundColor: 'gray' }}></View>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
+                        <TouchableOpacity
+                            testID={'chargeCostButton'}
+                            disabled={!editCost}
+                            onPress={editCost}
+                            style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5 }}
+                        >
                             <Icon name="payments" size={18} color={getBlackColour(isDarkMode)} />
                             <Text testID={'chargeCostText'} style={{ color: getBlackColour(isDarkMode) }}>{costs!.format(cost)}</Text>
-                        </View>
+                            {/* prix saisi à la main (pour une charge fusionnée : pour une de ses sous-charges) */}
+                            {costs!.isManual(charge) && <Icon testID={'manualCostIcon'} name="edit" size={14} color={getBlackColour(isDarkMode)} />}
+                        </TouchableOpacity>
                     </>
                 )}
             </View>

@@ -1,7 +1,7 @@
 import { ActivityIndicator, FlatList, Modal, View, useColorScheme } from "react-native";
 import commonStyles from "../../../lib/graphics/commonStyle";
 import { getWhiteColour } from "../../../lib/graphics/utils";
-import { useContext } from "react";
+import { useContext, useMemo } from "react";
 import MainContext from "../../../lib/Contexts/MainContext";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import ChargesFiltersContext from "../controllers/ChargesFiltersContext";
@@ -16,6 +16,7 @@ import { useTariffSettings } from "../../kelec-charge-cost";
 import ChargeCostsContext from "../controllers/ChargeCostsContext";
 import { useChargeCosts } from "../controllers/useChargeCosts";
 import SetTariffBanner from "./SetTariffBanner";
+import Charge from "../models/Charge";
 
 type Props = {
     readonly navigation: { goBack: () => void };
@@ -23,16 +24,22 @@ type Props = {
     readonly onImport?: () => void;
     /** Ouvre les tarifs de l'électricité (fournis par l'écran parent) ; absent : pas d'accès aux tarifs. */
     readonly onOpenTariffs?: () => void;
+    /** Ouvre la modification du prix d'une charge (début de la charge) ; absent : prix non modifiables. */
+    readonly onEditChargeCost?: (chargeStartDate: string) => void;
 }
 
-function ChargesHistoryView({ navigation, onImport, onOpenTariffs }: Props): React.JSX.Element {
+function ChargesHistoryView({ navigation, onImport, onOpenTariffs, onEditChargeCost }: Props): React.JSX.Element {
     const isDarkMode = useColorScheme() === 'dark';
     const { languageHandler } = useContext(MainContext);
-    const { history, importCharges } = useChargesHistory();
+    const { history, importCharges, costOverrides } = useChargesHistory();
 
     // relus au retour des pages des tarifs
     const [tariffSettings] = useTariffSettings();
-    const costs = useChargeCosts(tariffSettings);
+    const editCost = useMemo(
+        () => onEditChargeCost && ((charge: Charge) => onEditChargeCost(charge.getStartDate().toISOString())),
+        [onEditChargeCost],
+    );
+    const costs = useChargeCosts(tariffSettings, costOverrides, editCost);
 
     const controller = useChargesHistoryController(history, costs);
     const { months } = controller;
@@ -52,7 +59,7 @@ function ChargesHistoryView({ navigation, onImport, onOpenTariffs }: Props): Rea
         }
         : undefined;
 
-    // Aucun tarif : invitation à en définir un (pas pendant la lecture des tarifs).
+    // Aucun tarif : invitation à en définir un (pas pendant la lecture des tarifs). Les prix saisis à la main restent affichés.
     const shouldSuggestTariff = !!onOpenTariffs && tariffSettings !== null && tariffSettings.tariffs.length === 0;
 
     return (

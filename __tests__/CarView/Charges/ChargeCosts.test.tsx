@@ -102,3 +102,47 @@ test('the options sheet opens the tariffs', async () => {
     await user.press(await screen.findByTestId('tariffButton'));
     await screen.findByTestId('tariffListView');
 });
+
+test('should override the cost of a charge by hand, then go back to the tariff', async () => {
+    await AsyncStorage.setItem('electricityTariffs', JSON.stringify({
+        currency: 'EUR',
+        tariffs: [{ id: 'flat', validFrom: null, kind: 'flat', pricePerKwh: 0.2 }],
+    }));
+    const user = userEvent.setup();
+    await openHistory(user);
+    await waitFor(() => expect(screen.getAllByTestId('chargeCostText')).toHaveLength(2));
+    expect(screen.queryAllByTestId('manualCostIcon')).toHaveLength(0);
+
+    // 1re charge affichée : 23 décembre 2023, 32,25 kWh (6,45 € au tarif)
+    await user.press(screen.getAllByTestId('chargeCostButton')[0]);
+    await screen.findByTestId('chargeCostEditView');
+    expect(screen.getByTestId('tariffCostText').props.children).toContain(formatPrice(6.45, 'EUR'));
+    expect(screen.queryByTestId('resetChargeCostButton')).toBeNull();
+
+    // montant invalide : refusé
+    await user.press(screen.getByTestId('saveChargeCostButton'));
+    expect(Alert.alert).toHaveBeenCalledWith('Erreur', expect.any(String));
+
+    await user.type(screen.getByTestId('chargeCostInput'), '3,5');
+    await user.press(screen.getByTestId('saveChargeCostButton'));
+
+    await waitFor(() => expect(screen.queryByTestId('chargeCostEditView')).toBeNull());
+    const costs = screen.getAllByTestId('chargeCostText').map(text => text.props.children);
+    expect(costs).toEqual([formatPrice(3.5, 'EUR'), formatPrice(10, 'EUR')]);
+    expect(screen.getAllByTestId('manualCostIcon')).toHaveLength(1);
+    expect(screen.getAllByTestId('chargeIndexCost')[0].props.children[1]).toBe(formatPrice(13.5, 'EUR'));
+    expect(JSON.parse(await AsyncStorage.getItem('vin1/chargeCostOverrides') ?? 'null')).toEqual([
+        { chargeStartDate: '2023-12-23T14:59:12.000Z', amount: 3.5 },
+    ]);
+
+    // retour au tarif
+    await user.press(screen.getAllByTestId('chargeCostButton')[0]);
+    await screen.findByTestId('chargeCostEditView');
+    expect(screen.getByTestId('chargeCostInput').props.value).toBe('3.5');
+    await user.press(screen.getByTestId('resetChargeCostButton'));
+
+    await waitFor(() => expect(screen.queryByTestId('chargeCostEditView')).toBeNull());
+    expect(screen.getAllByTestId('chargeCostText')[0].props.children).toBe(formatPrice(6.45, 'EUR'));
+    expect(screen.queryAllByTestId('manualCostIcon')).toHaveLength(0);
+    expect(JSON.parse(await AsyncStorage.getItem('vin1/chargeCostOverrides') ?? 'null')).toEqual([]);
+});

@@ -10,7 +10,7 @@ const XLSX_MIME = 'application/vnd.openxmlformats-officedocument.spreadsheetml.s
 /**
  * Une ligne par charge, dates converties en heure locale.
  * Une charge fusionnée donne une seule ligne : le détail des sous-charges est remplacé par leur nombre.
- * Avec des tarifs, les colonnes `cost` et `currency` sont ajoutées avant les colonnes de fusion.
+ * Avec des tarifs, les colonnes `cost`, `currency` et `isManualCost` sont ajoutées avant les colonnes de fusion.
  */
 export const toRows = (charges: Charge[], costs: ChargeCosts | null = null) => charges.map(charge => {
     // Les colonnes de fusion sont retirées puis ajoutées ensemble en fin de ligne.
@@ -21,7 +21,11 @@ export const toRows = (charges: Charge[], costs: ChargeCosts | null = null) => c
         chargeStartDate: charge.getStartDate().toLocaleString(),
         chargeEndDate: charge.getEndDate().toLocaleString(),
         // coût (arrondi au centime) et devise : seulement si des tarifs sont définis
-        ...(costs && { cost: cost === null ? undefined : Math.round(cost * 100) / 100, currency: costs.currency }),
+        ...(costs && {
+            cost: cost === null ? undefined : Math.round(cost * 100) / 100,
+            currency: costs.currency,
+            isManualCost: costs.isManual(charge),
+        }),
         isAMergeCharge: isAMergeCharge ?? false,
         subChargesCount: subCharges.length,
     };

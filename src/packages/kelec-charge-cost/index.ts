@@ -6,5 +6,6 @@ export type { TariffEditorRouteParams } from "./routes";
 export { computeCost } from "./services/chargeCost";
 export { useTariffSettings } from "./controllers/useTariffSettings";
 export { TariffRepository } from "./services/tariffRepository";
-export { formatPrice } from "./services/priceFormat";
+export { formatPrice, formatPricePerKwh } from "./services/priceFormat";
+export { parsePrice } from "./models/tariffDraft";
 export type { Currency, Tariff, TariffSettings } from "./models/Tariff";
