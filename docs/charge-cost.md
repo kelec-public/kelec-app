@@ -60,7 +60,8 @@ Les paramètres de route sont sérialisables (`tariffId` seulement) : chaque pag
   qui peuvent changer quand on insère ou modifie un tarif.
 - **Une seule devise** pour tous les tarifs : EUR, GBP, NOK ou SEK (un total ne mélange donc jamais deux devises).
 - **Heures creuses** : une ou plusieurs plages « HH:MM → HH:MM », éventuellement à cheval sur minuit. Début et fin égaux : refusé.
-  Les plages qui se chevauchent ne comptent qu'une fois.
+  **Les plages ne peuvent pas se chevaucher** (refusé à l'enregistrement, ex. 22:00 → 06:00 puis 03:00 → 07:00) ; elles peuvent se toucher (06:00).
+  Le calcul ne compte de toute façon qu'une fois un temps couvert par deux plages.
 - **Calcul** : l'énergie est répartie au prorata du temps (puissance supposée constante), entre tarifs et entre heures pleines / creuses.
   Les jours sont construits en heure locale : la nuit d'un changement d'heure dure bien 7 h ou 9 h. Charge sans durée : tout au prix du début.
 - Les coûts ne sont jamais stockés : modifier un tarif met à jour tous les coûts.

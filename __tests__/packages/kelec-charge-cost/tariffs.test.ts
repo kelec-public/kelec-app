@@ -37,6 +37,23 @@ describe("tariff draft", () => {
         expect(tariffFromDraft({ ...draft, offPeakSlots: [{ start: '22:00', end: '22:00' }] })).toEqual({ ok: false, errorKey: 'invalidOffPeakSlot' });
     });
 
+    test("off-peak slots cannot overlap", () => {
+        const draft = { ...newDraft('a', [], new Date()), kind: 'peakOffPeak' as const, peakPrice: "0.27", offPeakPrice: "0.21" };
+        const withSlots = (...slots: [string, string][]) =>
+            tariffFromDraft({ ...draft, offPeakSlots: slots.map(([start, end]) => ({ start, end })) });
+        const overlap = { ok: false, errorKey: 'offPeakSlotsOverlap' };
+        // plage qui passe minuit, puis une plage dans sa partie du matin
+        expect(withSlots(['22:00', '06:00'], ['03:00', '07:00'])).toEqual(overlap);
+        // … ou dans sa partie du soir
+        expect(withSlots(['22:00', '06:00'], ['21:00', '23:00'])).toEqual(overlap);
+        expect(withSlots(['12:00', '14:00'], ['13:00', '15:00'])).toEqual(overlap);
+        expect(withSlots(['12:00', '16:00'], ['13:00', '14:00'])).toEqual(overlap);
+        expect(withSlots(['22:00', '06:00'], ['23:00', '01:00'])).toEqual(overlap);
+        // plages qui se touchent, ou séparées : acceptées
+        expect(withSlots(['22:00', '06:00'], ['06:00', '07:00']).ok).toBe(true);
+        expect(withSlots(['22:00', '06:00'], ['12:30', '14:30']).ok).toBe(true);
+        expect(withSlots(['20:00', '22:00'], ['22:00', '06:00']).ok).toBe(true);    });
+
     test("editing a tariff starts from its values", () => {
         const tariff: Tariff = { id: 'a', validFrom: '2027-02-01', kind: 'peakOffPeak', peakPrice: 0.27, offPeakPrice: 0.21, offPeakSlots: [{ start: '12:30', end: '14:30' }] };
         expect(tariffFromDraft(draftFromTariff(tariff))).toEqual({ ok: true, value: tariff });

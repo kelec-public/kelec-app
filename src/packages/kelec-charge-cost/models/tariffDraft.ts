@@ -1,4 +1,4 @@
-import { isValidTimeOfDay, OffPeakSlot, Tariff, TariffKind, toLocalDate } from "./Tariff";
+import { isValidTimeOfDay, minutesOfDay, OffPeakSlot, Tariff, TariffKind, toLocalDate } from "./Tariff";
 
 /** Tarif en cours de saisie : les prix restent du texte tant qu'ils ne sont pas validés. */
 export type TariffDraft = {
@@ -66,6 +66,24 @@ export function tariffFromDraft(draft: TariffDraft): Validated<Tariff> {
     const isSlotValid = (slot: OffPeakSlot) =>
         isValidTimeOfDay(slot.start) && isValidTimeOfDay(slot.end) && slot.start !== slot.end;
     if (!draft.offPeakSlots.every(isSlotValid)) return { ok: false, errorKey: 'invalidOffPeakSlot' };
+    if (slotsOverlap(draft.offPeakSlots)) return { ok: false, errorKey: 'offPeakSlotsOverlap' };
 
     return { ok: true, value: { ...base, kind: 'peakOffPeak', peakPrice, offPeakPrice, offPeakSlots: draft.offPeakSlots } };
+}
+
+const DAY_MINUTES = 24 * 60;
+
+/** Plage en minutes dans la journée ; une plage qui passe minuit est coupée en deux (soir, puis matin). */
+function slotMinutes(slot: OffPeakSlot): [number, number][] {
+    const start = minutesOfDay(slot.start);
+    const end = minutesOfDay(slot.end);
+    return end > start ? [[start, end]] : [[start, DAY_MINUTES], [0, end]];
+}
+
+/** Deux plages qui se chevauchent (ex. 22:00 → 06:00 et 03:00 → 07:00). Des plages qui se touchent (06:00) sont acceptées. */
+export function slotsOverlap(slots: OffPeakSlot[]): boolean {
+    const parts = slots.map(slotMinutes);
+    return parts.some((a, i) => parts.slice(i + 1).some(b =>
+        a.some(([aStart, aEnd]) => b.some(([bStart, bEnd]) => aStart < bEnd && bStart < aEnd)),
+    ));
 }
