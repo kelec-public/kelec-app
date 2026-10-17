@@ -66,7 +66,8 @@ function ChargeCard({ charge, onBeforeEditCost }: ChargeCardProps): React.JSX.El
                 title={languageHandler.getTranslation('mergeCharges')}
             >
 
-                <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
+                {/* espace entre les sous-charges : les cartes ont le même fond, elles se collaient */}
+                <ScrollView contentContainerStyle={{ paddingBottom: 20, gap: 10 }}>
                     {charge.getSubCharges().map((subCharge) => (
                         <ChargeCard
                             key={subCharge.getStartDate().toISOString()}
