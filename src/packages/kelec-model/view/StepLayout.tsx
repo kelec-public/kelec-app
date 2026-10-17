@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Edge, SafeAreaView } from "react-native-safe-area-context";
-import { KeyboardAvoidingView, LayoutChangeEvent, Platform, ScrollView, StyleSheet, TouchableOpacity, useColorScheme, View } from "react-native";
+import { KeyboardAvoidingView, LayoutChangeEvent, Platform, ScrollView, StyleSheet, useColorScheme, View } from "react-native";
 import { useTheme } from '@react-navigation/native';
-import Icon from "react-native-vector-icons/MaterialIcons";
 import Text from "../../../screen/Common/CustomText";
 import Button from "./Button";
+import GlassButton from "./GlassButton";
 import { BLACK_COLOUR } from "../lib/colours";
 import { subTitle, textBody, title1 } from "./Titles";
 import { spacerL, spacerM, spacerS, spacerXXL } from "./Spacers";
@@ -62,9 +62,14 @@ const StepLayout = ({ children, ...props }: Props) => {
                             <View style={styles.topPart}>
                                 <Text style={title1}>{title}</Text>
                                 {onDismiss && (
-                                    <TouchableOpacity testID="addBackButton" onPress={onDismiss}>
-                                        <Icon name="close" size={spacerXXL} color={BLACK_COLOUR(isDarkMode)} />
-                                    </TouchableOpacity>
+                                    <GlassButton
+                                        testID="addBackButton"
+                                        icon="close"
+                                        iconSize={spacerXXL}
+                                        onPress={onDismiss}
+                                        glassStyle={styles.glassCloseButton}
+                                        fallbackIconColour={BLACK_COLOUR(isDarkMode)}
+                                    />
                                 )}
                             </View>
                             {subtitle && (
@@ -120,6 +125,10 @@ const StepLayout = ({ children, ...props }: Props) => {
 };
 
 const styles = StyleSheet.create({
+    glassCloseButton: {
+        padding: 6,
+        borderRadius: 999,
+    },
     topPart: {
         flexDirection: 'row',
         justifyContent: 'space-between',

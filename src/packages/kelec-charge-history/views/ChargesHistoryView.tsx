@@ -1,8 +1,7 @@
-import { ActivityIndicator, FlatList, Modal, StyleSheet, TouchableOpacity, View, useColorScheme } from "react-native";
+import { ActivityIndicator, FlatList, Modal, StyleSheet, View, useColorScheme } from "react-native";
 import Text from "../../../screen/Common/CustomText";
 import commonStyles, { fontFamilyBold, fontWeightBold } from "../../../lib/graphics/commonStyle";
 import { getBlackColour, getWhiteColour } from "../../../lib/graphics/utils";
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useContext } from "react";
 import MainContext from "../../../lib/Contexts/MainContext";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
@@ -13,6 +12,7 @@ import ChargeMonthSection from "./ChargeMonthSection";
 import ChargesOptionsSheet from "./ChargesOptionsSheet";
 import ActiveFiltersRow from "./ActiveFiltersRow";
 import ChargesFiltersView from "./filters/ChargesFiltersView";
+import GlassButton from "../../kelec-model/view/GlassButton";
 
 type Props = {
     readonly navigation: { goBack: () => void };
@@ -65,18 +65,21 @@ function ChargesHistoryView({ navigation, onImport }: Props): React.JSX.Element 
                     <View style={
                         [commonStyles.rowFlex, commonStyles.spaceBetween, commonStyles.paddingHorizontal]
                     }>
-                        <TouchableOpacity
+                        <GlassButton
                             testID="backButton"
-                            onPress={() => navigation.goBack()}>
-                            <Icon name="chevron-left" size={30} color={getBlackColour(isDarkMode)} />
-                        </TouchableOpacity>
+                            icon="chevron-left"
+                            iconSize={30}
+                            onPress={() => navigation.goBack()}
+                            glassStyle={styles.glassButton}
+                        />
                         <Text style={[styles.titleText, { color: getBlackColour(isDarkMode), flexShrink: 1, flexWrap: 'wrap' }]} numberOfLines={1} adjustsFontSizeToFit>{languageHandler.getTranslation("chargeHistory")}</Text>
-                        <TouchableOpacity
+                        <GlassButton
                             testID="openModal"
+                            icon="more-horiz"
+                            iconSize={30}
                             onPress={controller.openOptions}
-                        >
-                            <Icon name="more-horiz" size={30} color={getBlackColour(isDarkMode)} />
-                        </TouchableOpacity>
+                            glassStyle={styles.glassButton}
+                        />
                     </View>
                     <ActiveFiltersRow onOpenFilters={controller.openFilters} />
                     <View style={commonStyles.navSeparator}></View>
@@ -97,6 +100,10 @@ function ChargesHistoryView({ navigation, onImport }: Props): React.JSX.Element 
 }
 
 const styles = StyleSheet.create({
+    glassButton: {
+        padding: 4,
+        borderRadius: 999,
+    },
     titleText: {
         textAlign: 'center',
         paddingHorizontal: 10,
