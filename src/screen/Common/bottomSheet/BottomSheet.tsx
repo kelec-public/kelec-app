@@ -1,9 +1,9 @@
 import { Modal, StyleSheet, useColorScheme, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import commonStyles from "../../../lib/graphics/commonStyle";
-import { getBlackColour, getGrayBackgroundColour } from "../../../lib/graphics/utils";
+import { getGrayBackgroundColour } from "../../../lib/graphics/utils";
 import Text from "../CustomText";
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import GlassButton from "../../../packages/kelec-model/view/GlassButton";
 
 type Props = {
     title: string;
@@ -41,12 +41,12 @@ const BottomSheet = (props: Props) => {
                         <View style={styles.mainViewContent}>
                             <View style={[commonStyles.rowFlex, { justifyContent: 'space-between', alignItems: 'center' }]}>
                                 <Text style={commonStyles.bottomSheetTitle}>{title}</Text>
-                                <Icon
+                                <GlassButton
                                     testID={testID + "CloseButton"}
-                                    name="close"
-                                    size={30}
+                                    icon="close"
+                                    iconSize={30}
                                     onPress={onClose}
-                                    color={getBlackColour(isDarkMode)}
+                                    glassStyle={styles.glassCloseButton}
                                 />
                             </View>
                             {children}
@@ -71,6 +71,10 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
         marginTop: 10,
+    },
+    glassCloseButton: {
+        padding: 6,
+        borderRadius: 999,
     },
     mainViewContent: {
         paddingHorizontal: 15,
