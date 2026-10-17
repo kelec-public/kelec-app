@@ -7,7 +7,13 @@ import Text from "../../../screen/Common/CustomText";
 
 const DISABLED_OPACITY = 0.4;
 /** Teinte du verre sélectionné : translucide, une couleur opaque masquerait l'effet. */
-export const SELECTED_GLASS_TINT = { light: 'rgba(0,0,0,0.18)', dark: 'rgba(255,255,255,0.3)' };
+const SELECTED_GLASS_TINT = { light: 'rgba(0,0,0,0.18)', dark: 'rgba(255,255,255,0.3)' };
+
+/** Teinte du verre : SELECTED_GLASS_TINT si sélectionné, aucune sinon. */
+export const getSelectedGlassTint = (selected: boolean, isDarkMode: boolean): string | undefined => {
+    if (!selected) return undefined;
+    return isDarkMode ? SELECTED_GLASS_TINT.dark : SELECTED_GLASS_TINT.light;
+};
 
 type Props = {
     readonly icon: string;
@@ -79,7 +85,7 @@ function GlassButton(props: Props): React.JSX.Element {
         >
             <LiquidGlassView
                 style={[styles.content, glassStyle]}
-                tintColor={selected ? SELECTED_GLASS_TINT[isDarkMode ? 'dark' : 'light'] : undefined}
+                tintColor={getSelectedGlassTint(selected, isDarkMode)}
                 interactive={!disabled}
                 colorScheme={isDarkMode ? 'dark' : 'light'}
             >

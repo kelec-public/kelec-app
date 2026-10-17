@@ -40,7 +40,7 @@ Bouton icône, avec texte éventuel. Utilisé par :
   `fallbackIconColour` / `fallbackTextColour` gardent les couleurs d'avant (ex. `onSecondaryContainer` des chips).
 - Sur le verre, texte et icône prennent la couleur du texte du thème (`getBlackColour`) : une couleur de thème sur un verre neutre se lit mal.
 - `iconFamily` : `'material'` (défaut) ou `'community'` (MaterialCommunityIcons, ex. le café). `iconPosition` : icône avant ou après le texte.
-- `selected` : teinte `SELECTED_GLASS_TINT` (crayon en mode édition ; `FloatingPill` l'utilise aussi pour plan/satellite).
+- `selected` : teinte translucide, via `getSelectedGlassTint` (crayon en mode édition ; `FloatingPill` l'utilise aussi pour plan/satellite).
 - `disabled` : opacité 0,4 dans les deux rendus (+ et − aux bornes de température).
 - Les `testID` restent sur le bouton (et `iconTestID` sur l'icône) : les tests existants n'ont pas changé.
 
@@ -50,7 +50,7 @@ Bouton icône, avec texte éventuel. Utilisé par :
   depuis le bord extérieur : avec une bordure de 2, le contenu est décalé de 2 vers la droite et le bas. `FloatingPill` met
   `borderWidth: 0` et compense par le padding pour garder la même taille.
 - **Teinte translucide uniquement.** Une couleur opaque (ex. `getLightGray` en sombre) recouvre le verre : on obtient un rond plein.
-  `SELECTED_GLASS_TINT` : noir à 18 % en clair, blanc à 30 % en sombre.
+  `getSelectedGlassTint` (`GlassButton.tsx`) : noir à 18 % en clair, blanc à 30 % en sombre.
 - **Pas d'ombre ni de fond** sur la version verre : le verre dessine les siens.
 - `colorScheme` est passé explicitement (thème de l'app), pas `system` : le thème de l'app peut différer de celui du téléphone.
 - `interactive` (le verre réagit au toucher) remplace l'assombrissement de `TouchableOpacity` (`activeOpacity={1}`).

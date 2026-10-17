@@ -1,6 +1,6 @@
 import React, { useContext, useMemo, useState } from 'react';
 import { NavigationContainer, useTheme } from '@react-navigation/native';
-import { createNativeBottomTabNavigator, NativeBottomTabIcon } from '@react-navigation/bottom-tabs/unstable';
+import { createNativeBottomTabNavigator, NativeBottomTabIcon, NativeBottomTabNavigationOptions } from '@react-navigation/bottom-tabs/unstable';
 import CarsView from './CarsTab/CarsView';
 import ProfileView from '../../packages/kelec-profile/views/ProfileView';
 import SettingsView from '../../packages/kelec-settings/views/SettingsView';
@@ -44,6 +44,13 @@ const TabScreenLayout = ({ children }: { children: React.ReactNode }): React.JSX
     );
 };
 
+/** Masquée par un écran à étapes (TabBarContext) ; fond gris sur Android, aucun sur iOS (il cacherait le verre). */
+const getTabBarStyle = (isHidden: boolean, isDarkMode: boolean): NativeBottomTabNavigationOptions['tabBarStyle'] => {
+    if (isHidden) return { display: 'none' };
+    if (Platform.OS === 'android') return { backgroundColor: getGrayBackgroundColour(isDarkMode) };
+    return undefined;
+};
+
 // hors du composant : recréé à chaque rendu, le navigateur remonterait tous les onglets
 const Tab = createNativeBottomTabNavigator();
 
@@ -61,17 +68,14 @@ function Home(): React.JSX.Element {
         <TabBarContext.Provider value={tabBarContextValue}>
             <NavigationContainer theme={useTheme()}>
                 <Tab.Navigator
-                    screenLayout={({ children }) => <TabScreenLayout>{children}</TabScreenLayout>}
+                    screenLayout={TabScreenLayout}
                     screenOptions={{
                         tabBarActiveTintColor: 'rgb(0, 122, 255)',
                         tabBarInactiveTintColor: 'gray',
                         headerShown: false,
                         // comme l'ancienne barre JS : un onglet n'est monté qu'à sa première ouverture
                         lazy: true,
-                        // masquée par un écran à étapes (TabBarContext) ; sur iOS, un fond cacherait le verre
-                        tabBarStyle: isTabBarHidden
-                            ? { display: 'none' }
-                            : Platform.OS === 'android' ? { backgroundColor: getGrayBackgroundColour(isDarkMode) } : undefined,
+                        tabBarStyle: getTabBarStyle(isTabBarHidden, isDarkMode),
                     }}
                 >
                     <Tab.Screen

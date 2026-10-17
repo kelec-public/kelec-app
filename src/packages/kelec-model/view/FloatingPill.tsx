@@ -1,7 +1,7 @@
 import { StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle, useColorScheme } from "react-native";
 import { LiquidGlassView, isLiquidGlassSupported } from "@callstack/liquid-glass";
 import { getLightGray, getWhiteColour } from "../../../lib/graphics/utils";
-import { SELECTED_GLASS_TINT } from "./GlassButton";
+import { getSelectedGlassTint } from "./GlassButton";
 
 /** Taille d'icône à utiliser dans une pastille. */
 export const FLOATING_PILL_ICON_SIZE = 20;
@@ -30,25 +30,59 @@ type Props = {
  * Les pastilles rondes gardent toujours leur taille (pas d'étirement, pour rester rondes).
  */
 function FloatingPill({ children, onPress, testID, viewTestID, round = false, selected = false, style }: Props): React.JSX.Element {
+    const pill = (
+        <PillBody viewTestID={viewTestID} round={round} selected={selected} fillTouchable={!!onPress && !round} interactive={!!onPress} style={style}>
+            {children}
+        </PillBody>
+    );
+
+    if (!onPress) return pill;
+
+    return (
+        <TouchableOpacity
+            testID={testID}
+            onPress={onPress}
+            style={round ? styles.roundTouchable : styles.textTouchable}
+        >
+            {pill}
+        </TouchableOpacity>
+    );
+}
+
+type PillBodyProps = Pick<Props, 'children' | 'viewTestID' | 'style'> & {
+    readonly round: boolean;
+    readonly selected: boolean;
+    /** Dans un bouton à texte : remplit la hauteur donnée au bouton. */
+    readonly fillTouchable: boolean;
+    /** Le verre réagit au toucher (pastille-bouton). */
+    readonly interactive: boolean;
+};
+
+/** La pastille elle-même : liquid glass sur iOS 26+, fond blanc et ombre ailleurs. */
+function PillBody({ children, viewTestID, round, selected, fillTouchable, interactive, style }: PillBodyProps): React.JSX.Element {
     const isDarkMode = useColorScheme() === 'dark';
     const commonStyle = [
         styles.pill,
         round ? styles.round : styles.withText,
-        onPress && !round && styles.fillTouchable,
+        fillTouchable && styles.fillTouchable,
     ];
 
-    const pill = isLiquidGlassSupported ? (
+    if (isLiquidGlassSupported) {
         // le verre dessine son propre fond et son ombre ; la sélection passe par la teinte
-        <LiquidGlassView
-            testID={viewTestID}
-            style={[commonStyle, styles.glass, !round && styles.glassWithText, style]}
-            tintColor={selected ? SELECTED_GLASS_TINT[isDarkMode ? 'dark' : 'light'] : undefined}
-            colorScheme={isDarkMode ? 'dark' : 'light'}
-            interactive={onPress !== undefined}
-        >
-            {children}
-        </LiquidGlassView>
-    ) : (
+        return (
+            <LiquidGlassView
+                testID={viewTestID}
+                style={[commonStyle, styles.glass, !round && styles.glassWithText, style]}
+                tintColor={getSelectedGlassTint(selected, isDarkMode)}
+                colorScheme={isDarkMode ? 'dark' : 'light'}
+                interactive={interactive}
+            >
+                {children}
+            </LiquidGlassView>
+        );
+    }
+
+    return (
         <View
             testID={viewTestID}
             style={[
@@ -63,18 +97,6 @@ function FloatingPill({ children, onPress, testID, viewTestID, round = false, se
         >
             {children}
         </View>
-    );
-
-    if (!onPress) return pill;
-
-    return (
-        <TouchableOpacity
-            testID={testID}
-            onPress={onPress}
-            style={round ? styles.roundTouchable : styles.textTouchable}
-        >
-            {pill}
-        </TouchableOpacity>
     );
 }
 

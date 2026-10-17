@@ -66,7 +66,7 @@ Tous les éléments blancs posés sur les cartes (météo, retour, plein écran,
   les fait grossir sans limite. C'était le cas lors d'un premier essai : boutons énormes, et « Marcher vers… » poussé hors de l'écran.
 - **Liquid glass sur iOS 26+** (sinon fond blanc et ombre) : voir [liquid-glass.md](liquid-glass.md). Pas de bordure sur le verre
   (le contenu serait décalé), compensée par le padding pour garder `FLOATING_PILL_SIZE`.
-- `selected` : fond gris et bordure (plan/satellite) ; sur le verre, teinte translucide `SELECTED_GLASS_TINT`.
+- `selected` : fond gris et bordure (plan/satellite) ; sur le verre, teinte translucide (`getSelectedGlassTint`).
 - La carte plein écran s'ouvre en modale : il n'y a pas de marge de sécurité en haut (la ligne du haut a donc une marge de 15),
   mais il y en a une en bas (barre d'accueil) : le bloc du bas est dans un `SafeAreaView edges={modalSafeAreaEdges(['bottom'])}`, plus une marge de 15.
   Sur Android, native-stack ne gère pas les modales : la carte s'ouvre comme une page classique au-dessus de la barre d'onglets,
