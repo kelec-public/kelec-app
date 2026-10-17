@@ -26,8 +26,8 @@ function ChargesImportView({ onClose }: Props): React.JSX.Element {
     return (
         <StepLayout
             testID="ChargesImportView"
-            // la barre d'onglets gère déjà le bas de l'écran
-            safeAreaEdges={['top']}
+            // le bas comprend la barre d'onglets (fournisseur de marges propre à l'onglet, voir Home)
+            safeAreaEdges={['top', 'bottom']}
             title={t("importCharges")}
             subtitle={t("importChargesDescription")}
             onDismiss={onClose}

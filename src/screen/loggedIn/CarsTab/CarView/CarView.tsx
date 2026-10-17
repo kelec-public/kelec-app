@@ -93,6 +93,8 @@ function CarView({ carModel, navigation, account, pagerRef, tfaInProgress }: Car
                 edges={['top']}>
                 <ScrollView
                     style={[styles.mainScrollView]}
+                    // iOS : le contenu défile sous la barre d'onglets flottante, sans que le bas soit caché
+                    contentInsetAdjustmentBehavior="automatic"
                     refreshControl={
                         <RefreshControl
                             refreshing={isRefreshing}

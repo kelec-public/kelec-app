@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useMemo, useState } from 'react';
 import { NavigationContainer, useTheme } from '@react-navigation/native';
 import { createNativeBottomTabNavigator, NativeBottomTabIcon } from '@react-navigation/bottom-tabs/unstable';
 import CarsView from './CarsTab/CarsView';
@@ -6,8 +6,10 @@ import ProfileView from '../../packages/kelec-profile/views/ProfileView';
 import SettingsView from '../../packages/kelec-settings/views/SettingsView';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MainContext from '../../lib/Contexts/MainContext';
+import TabBarContext from '../../lib/Contexts/TabBarContext';
 import { getGrayBackgroundColour } from '../../lib/graphics/utils';
 import { Platform, useColorScheme } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 type SFSymbolName = Extract<NativeBottomTabIcon, { type: 'sfSymbol' }>['name'];
 /** Icône d'un onglet : SF Symbol sur iOS, icône MaterialIcons en image sur Android. */
@@ -24,6 +26,9 @@ const getTabBarIcon = (icon: TabIcon): NativeBottomTabIcon =>
         ? { type: 'sfSymbol', name: icon.sfSymbol }
         : { type: 'image', source: Icon.getImageSourceSync(icon.material, TAB_ICON_SIZE) };
 
+// hors du composant : recréé à chaque rendu, le navigateur remonterait tous les onglets
+const Tab = createNativeBottomTabNavigator();
+
 /**
  * Onglets natifs (react-native-screens) : liquid glass sur iOS 26+, barre iOS classique avant,
  * barre Material sur Android.
@@ -31,39 +36,46 @@ const getTabBarIcon = (icon: TabIcon): NativeBottomTabIcon =>
 function Home(): React.JSX.Element {
     const { languageHandler } = useContext(MainContext);
     const isDarkMode = useColorScheme() === 'dark';
-
-    const Tab = createNativeBottomTabNavigator();
+    const [isTabBarHidden, setTabBarHidden] = useState(false);
+    const tabBarContextValue = useMemo(() => ({ setTabBarHidden }), []);
 
     return (
-        <NavigationContainer theme={useTheme()}>
-            <Tab.Navigator
-                screenOptions={{
-                    tabBarActiveTintColor: 'rgb(0, 122, 255)',
-                    tabBarInactiveTintColor: 'gray',
-                    headerShown: false,
-                    // comme l'ancienne barre JS : un onglet n'est monté qu'à sa première ouverture
-                    lazy: true,
-                    // sur iOS, un fond masquerait le verre (ou le flou système)
-                    tabBarStyle: Platform.OS === 'android' ? { backgroundColor: getGrayBackgroundColour(isDarkMode) } : undefined,
-                }}
-            >
-                <Tab.Screen
-                    name={languageHandler.getTranslation('cars')}
-                    component={CarsView}
-                    options={{ tabBarIcon: getTabBarIcon(CARS_ICON) }}
-                />
-                <Tab.Screen
-                    name={languageHandler.getTranslation('account')}
-                    component={ProfileView}
-                    options={{ tabBarIcon: getTabBarIcon(ACCOUNT_ICON) }}
-                />
-                <Tab.Screen
-                    name={languageHandler.getTranslation('settings')}
-                    component={SettingsView}
-                    options={{ tabBarIcon: getTabBarIcon(SETTINGS_ICON) }}
-                />
-            </Tab.Navigator>
-        </NavigationContainer>
+        <TabBarContext.Provider value={tabBarContextValue}>
+            <NavigationContainer theme={useTheme()}>
+                <Tab.Navigator
+                    // un fournisseur de marges par onglet : sa vue est dans l'écran natif de l'onglet, ses marges
+                    // du bas comprennent donc la barre d'onglets (iOS : barre flottante par-dessus le contenu)
+                    screenLayout={({ children }) => <SafeAreaProvider>{children}</SafeAreaProvider>}
+                    screenOptions={{
+                        tabBarActiveTintColor: 'rgb(0, 122, 255)',
+                        tabBarInactiveTintColor: 'gray',
+                        headerShown: false,
+                        // comme l'ancienne barre JS : un onglet n'est monté qu'à sa première ouverture
+                        lazy: true,
+                        // masquée par un écran à étapes (TabBarContext) ; sur iOS, un fond cacherait le verre
+                        tabBarStyle: isTabBarHidden
+                            ? { display: 'none' }
+                            : Platform.OS === 'android' ? { backgroundColor: getGrayBackgroundColour(isDarkMode) } : undefined,
+                    }}
+                >
+                    <Tab.Screen
+                        name={languageHandler.getTranslation('cars')}
+                        component={CarsView}
+                        options={{ tabBarIcon: getTabBarIcon(CARS_ICON) }}
+                    />
+                    <Tab.Screen
+                        name={languageHandler.getTranslation('account')}
+                        component={ProfileView}
+                        options={{ tabBarIcon: getTabBarIcon(ACCOUNT_ICON) }}
+                    />
+                    <Tab.Screen
+                        name={languageHandler.getTranslation('settings')}
+                        component={SettingsView}
+                        options={{ tabBarIcon: getTabBarIcon(SETTINGS_ICON) }}
+                    />
+                </Tab.Navigator>
+            </NavigationContainer>
+        </TabBarContext.Provider>
     );
 }
 

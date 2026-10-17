@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Dimensions, Platform, StyleSheet, TouchableOpacity, View } from "react-native";
 import Text from "../../../screen/Common/CustomText";
 import commonStyles from "../../../lib/graphics/commonStyle";
 import MainContext from "../../../lib/Contexts/MainContext";
@@ -8,6 +8,9 @@ import { getAccentOrange } from "../../../lib/graphics/utils";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getUserDisplayName } from "../services/userDisplayName";
 import { ExternalLinks, openExternalLink } from "../services/externalLinks";
+
+/** Hauteur du fond orange au-dessus de l'en-tête : barre d'état et rebond du défilement. */
+const TOP_FILL_HEIGHT = 1000;
 
 /** En-tête orange : nom de l'utilisateur (ou « Réglages ») et crédits. */
 function SettingsHeader(): React.JSX.Element {
@@ -24,7 +27,10 @@ function SettingsHeader(): React.JSX.Element {
 
     return (
         <View style={{ backgroundColor: getAccentOrange(), paddingHorizontal: 15, paddingTop: 10, position: 'relative' }}>
-            <SafeAreaView edges={['top']}>
+            {/* iOS : la ScrollView décale déjà le contenu sous la barre d'état (contentInsetAdjustmentBehavior) ;
+                ce fond orange remplit cette zone, au-dessus de l'en-tête */}
+            <View style={styles.topFill} />
+            <SafeAreaView edges={Platform.OS === 'ios' ? [] : ['top']}>
                 <Text style={[commonStyles.navTitle]}>{getTitle()}</Text>
                 <View style={[commonStyles.rowFlex, commonStyles.centerFlex, commonStyles.gap5, styles.marginVertical, { flexWrap: "wrap" }]}>
                     <Text style={{ color: 'white' }}>{languageHandler.getTranslation('developedWith')} </Text>
@@ -43,6 +49,14 @@ function SettingsHeader(): React.JSX.Element {
 };
 
 const styles = StyleSheet.create({
+    topFill: {
+        position: 'absolute',
+        top: -TOP_FILL_HEIGHT,
+        left: 0,
+        right: 0,
+        height: TOP_FILL_HEIGHT,
+        backgroundColor: getAccentOrange(),
+    },
     marginVertical: {
         marginVertical: 10
     }

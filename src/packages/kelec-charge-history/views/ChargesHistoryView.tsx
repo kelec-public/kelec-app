@@ -86,6 +86,8 @@ function ChargesHistoryView({ navigation, onImport }: Props): React.JSX.Element 
                 </View>
                 <FlatList
                     data={months}
+                    // iOS : le contenu défile sous la barre d'onglets flottante, sans que le bas soit caché
+                    contentInsetAdjustmentBehavior="automatic"
                     keyExtractor={(item) => item.monthYear}
                     renderItem={({ item: month }) => (
                         <ChargeMonthSection month={month} isFirst={month.monthYear === months[0].monthYear} />

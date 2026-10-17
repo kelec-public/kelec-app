@@ -21,6 +21,12 @@ const findTabScreen = (translationKey: string): ReactTestInstance | undefined =>
     )[0];
 };
 
+/** Vrai si la barre d'onglets est masquée (`tabBarStyle: { display: 'none' }`). */
+export const isTabBarHidden = (): boolean =>
+    screen.UNSAFE_root.findAll(
+        node => typeof node.type === 'string' && node.props.navStateRequest !== undefined,
+    )[0].props.tabBarHidden === true;
+
 /** Vrai si la barre d'onglets est affichée avec cet onglet (ex. 'account'). */
 export const hasTab = (translationKey: string): boolean => findTabScreen(translationKey) !== undefined;
 

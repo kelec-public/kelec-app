@@ -33,7 +33,7 @@ function SummaryCard({ navigation }: SummaryCardProps): React.JSX.Element {
                             imageUrl: carModel.getImageUrl(),
                             titleKey: "carModel",
                             nextButtonTextKey: "confirm",
-                            safeAreaEdges: ['top'],
+                            safeAreaEdges: ['top', 'bottom'],
                         });
                     }}
                     glassStyle={styles.glassSettingsButton}

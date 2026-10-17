@@ -8,6 +8,7 @@ import { render, waitFor, screen, userEvent, fireEvent } from "@testing-library/
 import CarType, { CarTypeInterface } from "../../src/lib/clients/cars/carTypes/carType";
 import { CarTypeRepository } from "../../src/packages/kelec-garage";
 import { Linking } from "react-native";
+import { isTabBarHidden } from "../../testUtils/tabs";
 
 beforeEach(async () => {
     jest.useFakeTimers();
@@ -305,6 +306,27 @@ test('charging limit slider should not be displayed with hyundai cars', async ()
         expect(() => screen.getByTestId('chargingLimitButtonPlus')).toThrow();
     });
 
+});
+
+test('should hide the tab bar while the car model choice screen is open', async () => {
+
+    mockGetCarStatus.mockResolvedValueOnce({
+        hasError: false,
+        apiData: mockApiData
+    });
+
+    const user = userEvent.setup();
+    render(<App />);
+
+    await screen.findByTestId('summaryCard');
+    expect(isTabBarHidden()).toBe(false);
+
+    await user.press(screen.getByTestId('openModalButton'));
+    await screen.findByTestId('carModelChoiceStep');
+    await waitFor(() => expect(isTabBarHidden()).toBe(true));
+
+    await user.press(await screen.findByTestId('previousButton'));
+    await waitFor(() => expect(isTabBarHidden()).toBe(false));
 });
 
 test('should open the menu and go back', async () => {
