@@ -65,22 +65,22 @@ function ChoiceModalContent<T>({ title, choices, selected, onSelect, onClose }: 
                                     <View style={[commonStyles.rowFlex, styles.row]}>
                                         <Text>{choice.label}</Text>
                                         <Icon name="chevron-right" size={20} color={getBlackColour(isDarkMode)} />
-                                            </View>
-                                        </TouchableOpacity>
-                                        {index !== choices.length - 1 && <View style={[commonStyles.navSeparator]}></View>}
-                                    </Fragment>
-                                ))}
-                            </View>
-                        </ScrollView>
+                                    </View>
+                                </TouchableOpacity>
+                                {index !== choices.length - 1 && <View style={[commonStyles.navSeparator]}></View>}
+                            </Fragment>
+                        ))}
                     </View>
-                    <View style={{ paddingHorizontal: 15, paddingBottom: Math.max(bottom, 20) }}>
-                        <Button
-                            testID='addBackButton'
-                            text={languageHandler.getTranslation("back")}
-                            onPress={onClose}
-                        />
-                    </View>
-                </SafeAreaView>
+                </ScrollView>
+            </View>
+            <View style={{ paddingHorizontal: 15, paddingBottom: Math.max(bottom, 20) }}>
+                <Button
+                    testID='addBackButton'
+                    text={languageHandler.getTranslation("back")}
+                    onPress={onClose}
+                />
+            </View>
+        </SafeAreaView>
     );
 }
 

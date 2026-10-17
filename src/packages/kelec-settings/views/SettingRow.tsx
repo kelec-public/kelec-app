@@ -40,7 +40,8 @@ function SettingRow({ testID, icon, title, description, onPress, type, switchVal
             onPress={onPress}
             style={[commonStyles.spaceBetween, commonStyles.rowFlex, commonStyles.gap10, styles.wrapper]}
         >
-            <View style={[commonStyles.rowFlex, commonStyles.gap15, commonStyles.centerFlex, { maxWidth: '80%' }]}>
+            {/* largeur donnée par la ligne (jusqu'au chevron / interrupteur) : les textes sont mesurés et dessinés à la même largeur */}
+            <View style={[commonStyles.rowFlex, commonStyles.gap15, styles.leftPart]}>
                 {shouldUseMaterialIcon ?
                     <MaterialIcon name={icon} color={getBlackColour(isDarkMode)} size={20} />
                     :
@@ -66,8 +67,10 @@ const styles = StyleSheet.create({
     description: {
         fontSize: 15,
         color: 'gray',
-        flexWrap: 'wrap',
-        maxWidth: '80%'
+    },
+    leftPart: {
+        flex: 1,
+        alignItems: 'center',
     },
     wrapper: {
         padding: 25,
