@@ -8,6 +8,8 @@ import { fontFamilyBold, fontWeightBold } from "../../../lib/graphics/commonStyl
 import MainContext from "../../../lib/Contexts/MainContext";
 import { ChargeMonth, ChargeMonthDay } from "../models/ChargeMonth";
 import { getMonthDays } from "../services/chargeMonths";
+import { sumCosts } from "../services/chargeCost";
+import ChargeCostsContext from "../controllers/ChargeCostsContext";
 
 /** Clés de traduction des mois, indexées par numéro de mois (0-11). */
 const MONTH_KEYS = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août",
@@ -31,7 +33,12 @@ function ChargeMonthHeader({ month, expanded, onToggle }: Props): React.JSX.Elem
     const theme = useTheme();
     const { languageHandler, appPreferences } = useContext(MainContext);
 
+    const costs = useContext(ChargeCostsContext);
     const days = useMemo(() => getMonthDays(month), [month]);
+    const totalCost = useMemo(
+        () => costs && sumCosts(month.charges.map(costs.costOf)),
+        [costs, month],
+    );
     const textColour = getBlackColour(isDarkMode);
 
     return (
@@ -49,6 +56,12 @@ function ChargeMonthHeader({ month, expanded, onToggle }: Props): React.JSX.Elem
                             <Text style={{ color: 'gray' }}> kWh</Text>
                         </Text>
                     </View>
+                    {costs && totalCost !== null && (
+                        <View style={styles.total}>
+                            <Icon size={15} name="payments" color={textColour} />
+                            <Text style={{ color: textColour, fontSize: 15 }} testID="chargeIndexCost">{' '}{costs.format(totalCost)}</Text>
+                        </View>
+                    )}
                     <View style={styles.total}>
                         <Icon size={15} name="hourglass-empty" color={textColour} />
                         <Text style={{ color: textColour, fontSize: 15 }}

@@ -44,6 +44,7 @@ colonnes suit celui des propriétés au moment de l'export. **Les colonnes sont 
 | juillet 2025 (#197) | locale | + `mileageAtStart`, `inaccurateMileage` |
 | oct. 2025 (#216, V2G) | locale | + `V2GEnergyDischarged`, `isV2G` |
 | oct. 2026 (#81) | locale | sans `subCharges` ; `isAMergeCharge` et `subChargesCount` en dernier |
+| oct. 2026 (coût) | locale | + `cost`, `currency` (avant les colonnes de fusion, seulement si des tarifs sont définis) : ignorés à l'import |
 
 ## Règles
 

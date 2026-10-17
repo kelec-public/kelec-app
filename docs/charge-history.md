@@ -1,7 +1,7 @@
 # Package `kelec-charge-history`
 
 Historique des charges d'une voiture : carte résumé sur la page voiture, écran d'historique par mois,
-filtres, tri, fusion des charges et export Excel. L'import d'un export est dans un package à part,
+filtres, tri, fusion des charges, coût des charges et export Excel. L'import d'un export est dans un package à part,
 [`kelec-charge-import`](./charge-import.md), qui passe par l'`index.ts` de ce package.
 
 Pattern général : voir [packages-pattern.md](./packages-pattern.md).
@@ -14,6 +14,7 @@ kelec-charge-history/
 │   ├── Charge.ts              Une charge (ou une session V2G), construction depuis le JSON / l'API V2G
 │   ├── ChargesHistory.ts      Toutes les charges d'une voiture + totaux (énergie, durée)
 │   ├── ChargeMonth.ts         Charges regroupées par mois (+ jours du mini-graphique)
+│   ├── ChargeCosts.ts         Coût d'une charge et format du montant (devise des tarifs)
 │   └── Filter.ts              Types de filtres et liste des filtres disponibles
 ├── services/
 │   ├── chargesFilters.ts      Application, édition et libellés des filtres (pur)
@@ -22,6 +23,7 @@ kelec-charge-history/
 │   ├── chargesRepository.ts   Persistance locale (BatchedList de kelec-storage)
 │   ├── knownChargeStarts.ts   Débuts de charge déjà vus, pour les doublons (à 5 s près)
 │   ├── chargesExport.ts       Génération xlsx + feuille de partage
+│   ├── chargeCost.ts          Coût d'une charge (V2G : aucun ; fusionnée : somme des sous-charges) (pur)
 │   ├── createChargesSource.ts Choix de la source selon le constructeur
 │   └── sources/
 │       ├── renaultChargesSource.ts   Renault / Dacia / Alpine : API historique + sessions V2G
@@ -30,11 +32,13 @@ kelec-charge-history/
 │   ├── ChargesHistoryProvider.tsx      Historique partagé d'une voiture : useChargesHistory() → { history, sync, importCharges }
 │   ├── useChargesHistoryController.ts  État de l'écran : filtres, tri, pagination, modales, export
 │   ├── ChargesFiltersContext.ts        Filtres actifs, pour les vues de filtres
+│   ├── ChargeCostsContext.ts, useChargeCosts.ts   Coût des charges pour les vues (null sans tarif)
 │   └── useNumericalFilterController.ts Champs min / max d'un filtre numérique
 ├── views/
 │   ├── ChargesSummaryCard.tsx   Carte de la page voiture (totaux)
 │   ├── ChargesHistoryView.tsx   Écran d'historique
-│   ├── ChargesOptionsSheet.tsx  Feuille « … » : tri, import (si proposé) et export
+│   ├── ChargesOptionsSheet.tsx  Feuille « … » : tri, tarifs, import (si proposé) et export
+│   ├── SetTariffBanner.tsx      Invitation à définir un tarif (tant qu'il n'y en a pas)
 │   ├── ActiveFiltersRow.tsx     Bouton Filtres + pastilles des filtres actifs
 │   ├── ChargeMonthSection.tsx   Un mois (dépliable)
 │   ├── ChargeMonthHeader.tsx    En-tête du mois : totaux + mini-graphique par jour
@@ -71,6 +75,17 @@ kelec-charge-history/
 - Import : une source qui stocke les charges implémente `importCharges` (Renault). Le provider expose alors `importCharges`, sinon `null` (démo) et le bouton d'import n'est pas affiché.
   `ChargesHistoryView` reçoit `onImport` de `CarsPageView`, qui seul connaît la route d'import : `kelec-charge-history` ne dépend pas de `kelec-charge-import`.
 
+## Coût des charges
+
+Les tarifs sont ceux de [`kelec-charge-cost`](./charge-cost.md) (globaux), lus via son `index.ts` et relus quand l'écran reprend le focus
+(au retour des pages des tarifs).
+
+- `ChargeCard` : coût de la charge (`chargeCostText`). En-tête du mois : total des charges affichées (`chargeIndexCost`).
+- Rien n'est affiché sans tarif ; une bannière (`setTariffBanner`) ouvre alors les tarifs. La feuille « … » a aussi un bouton « Tarif d'électricité ».
+- `ChargesHistoryView` reçoit `onOpenTariffs` de `CarsPageView`, qui enregistre les pages des tarifs (`TARIFF_LIST_ROUTE`, `TARIFF_EDITOR_ROUTE`).
+- Session V2G : pas de coût. Charge fusionnée : somme du coût des sous-charges, chacune à ses horaires (HP / HC).
+- Le coût est calculé à l'affichage, jamais stocké : changer un tarif met à jour tout l'historique.
+
 ## Règles métier
 
 - **Seuil DC** : une charge est DC si sa puissance moyenne est **≥ 26 kW** (`Charge.DC_THRESHOLD_KW`, `charge.isDCCharge()`).
@@ -84,6 +99,7 @@ kelec-charge-history/
   dans une charge du mois précédent n'est pas compté (sinon « charger plus » ajouterait un mois vide).
 - **Export** : les charges affichées (filtrées, fusionnées si l'option est active), dans l'ordre du tri, avec les dates en heure locale.
   Une ligne fusionnée a `isAMergeCharge = true` et le nombre de sous-charges dans `subChargesCount` (dernières colonnes).
+  Avec des tarifs, `cost` (arrondi au centime, vide pour une session V2G) et `currency` sont ajoutés juste avant ces deux colonnes.
 
 ## Historique du refactor
 

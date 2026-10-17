@@ -7,15 +7,16 @@ import { removeFilter as withoutFilter, upsertFilter } from "../services/charges
 import { buildChargeMonths, countMonths, selectCharges } from "../services/chargeMonths";
 import { exportCharges } from "../services/chargesExport";
 import { ChargesFiltersController } from "./ChargesFiltersContext";
+import { ChargeCosts } from "../models/ChargeCosts";
 
 /** Nombre de mois affichés à l'ouverture et après un changement de tri. */
 const INITIAL_MONTHS = 2;
 
 /**
  * État et actions de l'écran d'historique : filtres, tri, pagination par mois,
- * feuilles modales et export.
+ * feuilles modales et export (avec le coût des charges s'il y a des tarifs).
  */
-export function useChargesHistoryController(history: ChargesHistory) {
+export function useChargesHistoryController(history: ChargesHistory, costs: ChargeCosts | null) {
     const { appPreferences } = useContext(MainContext);
     const { handleModalAnim } = useContext(CarsViewContext);
 
@@ -72,8 +73,8 @@ export function useChargesHistoryController(history: ChargesHistory) {
             merge: appPreferences.mergeCharges,
             sortDesc,
         });
-        await exportCharges(toExport);
-    }, [history, filters, sortDesc, appPreferences.mergeCharges]);
+        await exportCharges(toExport, costs);
+    }, [history, filters, sortDesc, appPreferences.mergeCharges, costs]);
 
     /* --------------------------------- MODALES -------------------------------- */
 

@@ -1,7 +1,7 @@
 # Package `kelec-charge-cost`
 
-Tarifs de l'électricité à la maison et coût d'une charge. Les tarifs se règlent dans l'onglet Réglages (section « Électricité »).
-Le coût n'est pas encore affiché dans l'historique de charge : ce sera la PR suivante, qui lira ce package via son `index.ts`.
+Tarifs de l'électricité à la maison et coût d'une charge. Les tarifs se règlent dans l'onglet Réglages (section « Électricité »)
+ou depuis l'historique de charge, qui affiche le coût des charges (voir [charge-history.md](./charge-history.md#coût-des-charges)).
 
 Pattern général : voir [packages-pattern.md](./packages-pattern.md).
 
@@ -18,6 +18,7 @@ kelec-charge-cost/
 │   ├── tariffRepository.ts    Lecture / écriture (AppStorage, clé globale)
 │   └── priceFormat.ts         Montants dans la devise, dates locales
 ├── controllers/
+│   ├── useTariffSettings.ts   Tarifs relus quand l'écran reprend le focus (aussi utilisé par l'historique)
 │   ├── useTariffList.ts       Tarifs relus à chaque affichage de la page, devise
 │   └── useTariffEditor.ts     Tarif saisi (existant ou nouveau), enregistrement, suppression, alertes
 ├── views/
@@ -29,7 +30,7 @@ kelec-charge-cost/
 │   ├── ChoicePills.tsx, TimePickerField.tsx
 │   └── tariffLabels.ts           Libellés (période, prix, plages)
 ├── routes.ts                  TARIFF_LIST_ROUTE, TARIFF_EDITOR_ROUTE, TariffEditorRouteParams
-└── index.ts                   les deux pages et leurs routes, computeCost, TariffRepository, formatPrice
+└── index.ts                   les deux pages et leurs routes, computeCost, useTariffSettings, TariffRepository, formatPrice
 ```
 
 `computeCost` reçoit des valeurs simples (dates, kWh) et pas une `Charge` : `kelec-charge-history` pourra importer ce package
@@ -37,7 +38,7 @@ sans que ce package dépende de l'historique.
 
 ## Ouverture
 
-Deux **pages poussées** (pas de modale) : Réglages → Tarifs → Saisie d'un tarif. Le navigateur qui les ouvre (aujourd'hui `SettingsNavigator`)
+Deux **pages poussées** (pas de modale) : Réglages → Tarifs → Saisie d'un tarif. Le navigateur qui les ouvre (`SettingsNavigator`, et `CarsPageView` depuis l'historique)
 enregistre `TARIFF_LIST_ROUTE` et `TARIFF_EDITOR_ROUTE` et fournit la navigation (`onBack`, `onOpenTariff`, `onDone`).
 Les paramètres de route sont sérialisables (`tariffId` seulement) : chaque page relit les tarifs.
 

@@ -9,6 +9,7 @@ import { fontFamilyBold, fontWeightBold } from "../../../lib/graphics/commonStyl
 import CarsViewContext from "../../../lib/Contexts/CarsViewContext";
 import { useTheme } from '@react-navigation/native';
 import BottomSheet from "../../../screen/Common/bottomSheet/BottomSheet";
+import ChargeCostsContext from "../controllers/ChargeCostsContext";
 
 type ChargeCardProps = {
     readonly charge: Charge;
@@ -21,6 +22,8 @@ function ChargeCard({ charge }: ChargeCardProps): React.JSX.Element {
 
     const { appPreferences, languageHandler } = useContext(MainContext);
     const { handleModalAnim } = useContext(CarsViewContext);
+    const costs = useContext(ChargeCostsContext);
+    const cost = costs?.costOf(charge) ?? null;
 
     const getBackgroundColour = () => {
         if (appPreferences.highlightDCCharges && charge.isDCCharge()) {
@@ -183,6 +186,17 @@ function ChargeCard({ charge }: ChargeCardProps): React.JSX.Element {
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
                             <Text style={{ color: getBlackColour(isDarkMode) }}>Ø</Text>
                             <Text testID={'averagePowerText'} style={{ color: getBlackColour(isDarkMode) }} >{charge.getAverageChargeSpeed().toFixed(2)} kW</Text>
+                        </View>
+                    </>
+                )}
+
+                {/* coût, avec les tarifs de la maison */}
+                {cost !== null && (
+                    <>
+                        <View style={{ width: 1, backgroundColor: 'gray' }}></View>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
+                            <Icon name="payments" size={18} color={getBlackColour(isDarkMode)} />
+                            <Text testID={'chargeCostText'} style={{ color: getBlackColour(isDarkMode) }}>{costs!.format(cost)}</Text>
                         </View>
                     </>
                 )}
