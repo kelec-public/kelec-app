@@ -89,3 +89,8 @@ jest.spyOn(sharedPlatformsData, 'refreshWidget').mockImplementation(jest.fn());
 
 
 jest.setTimeout(15000); 
+// liquid glass : module natif iOS 26, absent des tests -> pastilles classiques
+jest.mock('@callstack/liquid-glass', () => {
+    const { View } = require('react-native');
+    return { LiquidGlassView: View, LiquidGlassContainerView: View, isLiquidGlassSupported: false };
+});
