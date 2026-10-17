@@ -1,5 +1,6 @@
 import { useCallback, useContext, useState } from "react";
 import { Platform } from "react-native";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
 import MainContext from "../../../lib/Contexts/MainContext";
 import ColorTheme from "../../../lib/appPreferences/interface/colorTheme";
 import { BooleanPreference, COLOR_THEMES, usePreferences } from "../../kelec-preferences";
@@ -10,6 +11,8 @@ import { exportWidgetLogs } from "../services/widgetLogsExport";
 import { OptionType, SettingSection } from "./settingsTypes";
 import { TIMEZONE_OFFSETS } from "../services/timezoneOffsets";
 import { Choice } from "../views/ChoiceModal";
+import { TARIFF_LIST_ROUTE } from "../../kelec-charge-cost";
+import { SettingsParamList } from "../routes";
 
 const COLOR_THEME_LABELS: Record<ColorTheme, string> = {
     auto: "colorThemeAuto",
@@ -21,6 +24,7 @@ const COLOR_THEME_LABELS: Record<ColorTheme, string> = {
 export function useSettingsController() {
     const { currentUser, languageHandler, reloadUser, checkOnboarding } = useContext(MainContext);
     const { preferences, update } = usePreferences();
+    const navigation = useNavigation<NavigationProp<SettingsParamList>>();
     const t = (key: string) => languageHandler.getTranslation(key);
 
     const [isTimezoneModalOpen, setIsTimezoneModalOpen] = useState(false);
@@ -121,6 +125,16 @@ export function useSettingsController() {
                     title: t("mergeCharges"), icon: "merge", type: OptionType.SWITCH,
                     switchValue: preferences.mergeCharges, description: t("mergeChargesDescription"),
                     onPress: toggle('mergeCharges'),
+                },
+            ],
+        },
+        {
+            title: t("electricity"),
+            showTitle: true,
+            items: [
+                {
+                    title: t("electricityTariff"), icon: "electrical-services", type: OptionType.NAVIGATE,
+                    onPress: () => navigation.navigate(TARIFF_LIST_ROUTE),
                 },
             ],
         },

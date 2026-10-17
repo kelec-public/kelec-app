@@ -1,0 +1,80 @@
+# Package `kelec-charge-cost`
+
+Tarifs de l'électricité à la maison et coût d'une charge. Les tarifs se règlent dans l'onglet Réglages (section « Électricité »).
+Le coût n'est pas encore affiché dans l'historique de charge : ce sera la PR suivante, qui lira ce package via son `index.ts`.
+
+Pattern général : voir [packages-pattern.md](./packages-pattern.md).
+
+## Structure
+
+```
+kelec-charge-cost/
+├── models/
+│   ├── Tariff.ts              Tariff (prix fixe | heures pleines / creuses), TariffSettings (devise + tarifs), dates et heures locales
+│   └── tariffDraft.ts         Tarif en cours de saisie (prix en texte) → Tariff, ou clé de l'erreur
+├── services/
+│   ├── chargeCost.ts          computeCost(début, fin, kWh, tarifs) (pur)
+│   ├── tariffList.ts          Ajout / modification par id, suppression, fin d'un tarif (pur)
+│   ├── tariffRepository.ts    Lecture / écriture (AppStorage, clé globale)
+│   └── priceFormat.ts         Montants dans la devise, dates locales
+├── controllers/
+│   ├── useTariffList.ts       Tarifs relus à chaque affichage de la page, devise
+│   └── useTariffEditor.ts     Tarif saisi (existant ou nouveau), enregistrement, suppression, alertes
+├── views/
+│   ├── TariffListScreen.tsx      Page des tarifs (TARIFF_LIST_ROUTE)
+│   ├── TariffEditorScreen.tsx    Page de saisie d'un tarif (TARIFF_EDITOR_ROUTE, param tariffId)
+│   ├── TariffPageLayout.tsx      En-tête PageHeader + contenu défilant
+│   ├── TariffListView.tsx        Devise + une ligne par période
+│   ├── TariffEditorView.tsx      Date de début, type, prix, plages d'heures creuses
+│   ├── ChoicePills.tsx, TimePickerField.tsx
+│   └── tariffLabels.ts           Libellés (période, prix, plages)
+├── routes.ts                  TARIFF_LIST_ROUTE, TARIFF_EDITOR_ROUTE, TariffEditorRouteParams
+└── index.ts                   les deux pages et leurs routes, computeCost, TariffRepository, formatPrice
+```
+
+`computeCost` reçoit des valeurs simples (dates, kWh) et pas une `Charge` : `kelec-charge-history` pourra importer ce package
+sans que ce package dépende de l'historique.
+
+## Ouverture
+
+Deux **pages poussées** (pas de modale) : Réglages → Tarifs → Saisie d'un tarif. Le navigateur qui les ouvre (aujourd'hui `SettingsNavigator`)
+enregistre `TARIFF_LIST_ROUTE` et `TARIFF_EDITOR_ROUTE` et fournit la navigation (`onBack`, `onOpenTariff`, `onDone`).
+Les paramètres de route sont sérialisables (`tariffId` seulement) : chaque page relit les tarifs.
+
+- **En-tête `PageHeader`** (kelec-model, le même que l'historique de charge) : retour à gauche, action à droite
+  (« + » sur la liste, ✓ sur la saisie). Pas de boutons en bas, donc **la barre d'onglets reste affichée**.
+- Liste vide : un bouton « Ajouter un tarif » dans le contenu, plus explicite que le « + » pour le premier tarif.
+- « Supprimer » reste en bas du contenu de la saisie, loin de ✓.
+- Un tarif se modifie sur sa page, puis on revient à la liste, qui se relit à chaque affichage.
+- Pas de `Modal` de React Native : avec une pile native à l'intérieur, la modale ne recevait plus aucun appui sur iOS.
+
+## Règles
+
+- **Tarifs globaux**, communs à toutes les voitures (le compteur de la maison).
+- **Une période par tarif** : un tarif commence à sa date (`validFrom`, 00:00 heure du téléphone) et s'arrête quand le suivant commence.
+  Il n'y a pas de date de fin stockée (ni trou, ni chevauchement possible).
+- **Le premier tarif est « depuis le début »** (`validFrom: null`) : il s'applique à toutes les charges plus anciennes. C'est le seul sans date,
+  il ne peut pas en recevoir, et il ne se supprime que s'il est seul. Supprimer un autre tarif rend sa période au tarif précédent.
+- **Deux tarifs ne commencent pas le même jour.**
+- **Identifiant** : chaque tarif a un UUID (`react-native-uuid`). On le retrouve par cet id, pas par sa position ni par sa date,
+  qui peuvent changer quand on insère ou modifie un tarif.
+- **Une seule devise** pour tous les tarifs : EUR, GBP, NOK ou SEK (un total ne mélange donc jamais deux devises).
+- **Heures creuses** : une ou plusieurs plages « HH:MM → HH:MM », éventuellement à cheval sur minuit. Début et fin égaux : refusé.
+  Les plages qui se chevauchent ne comptent qu'une fois.
+- **Calcul** : l'énergie est répartie au prorata du temps (puissance supposée constante), entre tarifs et entre heures pleines / creuses.
+  Les jours sont construits en heure locale : la nuit d'un changement d'heure dure bien 7 h ou 9 h. Charge sans durée : tout au prix du début.
+- Les coûts ne sont jamais stockés : modifier un tarif met à jour tous les coûts.
+
+## Stockage
+
+| Clé | Contenu | Propriétaire |
+|---|---|---|
+| `electricityTariffs` (AppStorage) | `{ currency, tariffs: Tariff[] }`, trié par date de début | `kelec-charge-cost` (`TariffRepository`) |
+
+## Tests
+
+- `__tests__/packages/kelec-charge-cost/chargeCost.test.ts` : prix fixe, plage sur minuit, prorata HP / HC, plusieurs plages,
+  plages qui se chevauchent, charge sur plusieurs jours, changement d'heure, changement de tarif (avant, après, à cheval), charge sans durée.
+- `__tests__/packages/kelec-charge-cost/tariffs.test.ts` : saisie (prix, plages), ajout / modification par id, dates en double,
+  tarif « depuis le début », suppression, fin d'un tarif, stockage, format des prix.
+- `__tests__/SettingsView/SettingsView.test.tsx` (« should set the electricity tariff ») : devise, premier tarif, passage en HP / HC, prix manquant refusé.

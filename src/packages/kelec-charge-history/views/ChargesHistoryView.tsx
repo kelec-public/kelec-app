@@ -1,7 +1,6 @@
-import { ActivityIndicator, FlatList, Modal, StyleSheet, View, useColorScheme } from "react-native";
-import Text from "../../../screen/Common/CustomText";
-import commonStyles, { fontFamilyBold, fontWeightBold } from "../../../lib/graphics/commonStyle";
-import { getBlackColour, getWhiteColour } from "../../../lib/graphics/utils";
+import { ActivityIndicator, FlatList, Modal, View, useColorScheme } from "react-native";
+import commonStyles from "../../../lib/graphics/commonStyle";
+import { getWhiteColour } from "../../../lib/graphics/utils";
 import { useContext } from "react";
 import MainContext from "../../../lib/Contexts/MainContext";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
@@ -12,7 +11,7 @@ import ChargeMonthSection from "./ChargeMonthSection";
 import ChargesOptionsSheet from "./ChargesOptionsSheet";
 import ActiveFiltersRow from "./ActiveFiltersRow";
 import ChargesFiltersView from "./filters/ChargesFiltersView";
-import GlassButton from "../../kelec-model/view/GlassButton";
+import PageHeader from "../../kelec-model/view/PageHeader";
 
 type Props = {
     readonly navigation: { goBack: () => void };
@@ -62,25 +61,11 @@ function ChargesHistoryView({ navigation, onImport }: Props): React.JSX.Element 
                     </SafeAreaProvider>
                 </Modal>
                 <View>
-                    <View style={
-                        [commonStyles.rowFlex, commonStyles.spaceBetween, commonStyles.paddingHorizontal]
-                    }>
-                        <GlassButton
-                            testID="backButton"
-                            icon="chevron-left"
-                            iconSize={30}
-                            onPress={() => navigation.goBack()}
-                            glassStyle={styles.glassButton}
-                        />
-                        <Text style={[styles.titleText, { color: getBlackColour(isDarkMode), flexShrink: 1, flexWrap: 'wrap' }]} numberOfLines={1} adjustsFontSizeToFit>{languageHandler.getTranslation("chargeHistory")}</Text>
-                        <GlassButton
-                            testID="openModal"
-                            icon="more-horiz"
-                            iconSize={30}
-                            onPress={controller.openOptions}
-                            glassStyle={styles.glassButton}
-                        />
-                    </View>
+                    <PageHeader
+                        title={languageHandler.getTranslation("chargeHistory")}
+                        onBack={() => navigation.goBack()}
+                        action={{ icon: "more-horiz", onPress: controller.openOptions, testID: "openModal" }}
+                    />
                     <ActiveFiltersRow onOpenFilters={controller.openFilters} />
                     <View style={commonStyles.navSeparator}></View>
                 </View>
@@ -100,19 +85,5 @@ function ChargesHistoryView({ navigation, onImport }: Props): React.JSX.Element 
         </SafeAreaView>
     )
 }
-
-const styles = StyleSheet.create({
-    glassButton: {
-        padding: 4,
-        borderRadius: 999,
-    },
-    titleText: {
-        textAlign: 'center',
-        paddingHorizontal: 10,
-        fontWeight: fontWeightBold,
-        fontFamily: fontFamilyBold,
-        fontSize: 25,
-    },
-});
 
 export default ChargesHistoryView;

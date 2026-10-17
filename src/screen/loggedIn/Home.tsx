@@ -3,7 +3,7 @@ import { NavigationContainer, useTheme } from '@react-navigation/native';
 import { createNativeBottomTabNavigator, NativeBottomTabIcon, NativeBottomTabNavigationOptions } from '@react-navigation/bottom-tabs/unstable';
 import CarsView from './CarsTab/CarsView';
 import ProfileView from '../../packages/kelec-profile/views/ProfileView';
-import SettingsView from '../../packages/kelec-settings/views/SettingsView';
+import SettingsNavigator from '../../packages/kelec-settings/views/SettingsNavigator';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MainContext from '../../lib/Contexts/MainContext';
 import TabBarContext from '../../lib/Contexts/TabBarContext';
@@ -90,7 +90,7 @@ function Home(): React.JSX.Element {
                     />
                     <Tab.Screen
                         name={languageHandler.getTranslation('settings')}
-                        component={SettingsView}
+                        component={SettingsNavigator}
                         options={{ tabBarIcon: getTabBarIcon(SETTINGS_ICON) }}
                     />
                 </Tab.Navigator>

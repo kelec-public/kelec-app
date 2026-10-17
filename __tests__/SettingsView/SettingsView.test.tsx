@@ -7,7 +7,7 @@ import App from '../../App';
 import { Alert, Appearance, Linking } from "react-native";
 import RenaultCar from '../../src/lib/clients/cars/renaultCar';
 import UserAccount from '../../src/lib/clients/accounts/userAccount';
-import { hasTab, selectTab } from '../../testUtils/tabs';
+import { hasTab, isTabBarHidden, selectTab } from '../../testUtils/tabs';
 import RenaultAccount from '../../src/lib/clients/accounts/renaultAccount';
 
 const mockSaveNativeAccount = jest.fn();
@@ -582,4 +582,62 @@ test('should select a colour theme', async () => {
         expect(setColorScheme).toHaveBeenLastCalledWith('dark');
     });
     setColorScheme.mockRestore();
+});
+
+test('should set the electricity tariff', async () => {
+    const alert = jest.spyOn(Alert, 'alert').mockImplementation(() => { });
+    const user = userEvent.setup();
+    render(<App />);
+
+    await waitFor(() => expect(hasTab('account')).toBe(true));
+    await selectTab('settings');
+    await waitFor(() => expect(screen.getByTestId('settingsView')).toBeDefined());
+
+    await user.press(screen.getByTestId('testSettingRowelectrical-services'));
+    await waitFor(() => expect(screen.getByTestId('noTariff')).toBeDefined());
+    await user.press(screen.getByTestId('currencyButtonSEK'));
+
+    // premier tarif : prix fixe, depuis le début (bouton de la liste vide)
+    await user.press(screen.getByTestId('addFirstTariffButton'));
+    await waitFor(() => expect(screen.getByTestId('tariffEditorView')).toBeDefined());
+    await user.type(screen.getByTestId('priceInputpricePerKwh'), '1,5');
+    await user.press(screen.getByTestId('saveTariffButton'));
+
+    await waitFor(() => expect(screen.getByTestId('tariffRow0')).toBeDefined());
+    const stored = JSON.parse(await AsyncStorage.getItem('electricityTariffs') ?? 'null');
+    expect(stored).toMatchObject({
+        currency: 'SEK',
+        tariffs: [{ validFrom: null, kind: 'flat', pricePerKwh: 1.5 }],
+    });
+    expect(stored.tariffs[0].id).toEqual(expect.any(String));
+
+    // passage en heures pleines / creuses
+    await user.press(screen.getByTestId('tariffRow0'));
+    await user.press(screen.getByTestId('tariffKindpeakOffPeak'));
+    await user.type(screen.getByTestId('priceInputpeakPrice'), '2');
+    await user.press(screen.getByTestId('saveTariffButton'));
+    // prix HC manquant : le tarif n'est pas enregistré
+    expect(alert).toHaveBeenCalledWith('Erreur', expect.any(String));
+    await user.type(screen.getByTestId('priceInputoffPeakPrice'), '1');
+    await user.press(screen.getByTestId('saveTariffButton'));
+
+    await waitFor(async () => {
+        const updated = JSON.parse(await AsyncStorage.getItem('electricityTariffs') ?? 'null');
+        expect(updated.tariffs).toEqual([{
+            id: stored.tariffs[0].id, validFrom: null, kind: 'peakOffPeak',
+            peakPrice: 2, offPeakPrice: 1, offPeakSlots: [{ start: '22:00', end: '06:00' }],
+        }]);
+    });
+
+    // retour à la liste après l'enregistrement, puis aux réglages ; la barre d'onglets reste affichée
+    await waitFor(() => expect(screen.getByTestId('tariffListView')).toBeDefined());
+    expect(isTabBarHidden()).toBe(false);
+    // les tarifs suivants s'ajoutent avec le « + » de l'en-tête
+    await user.press(screen.getByTestId('addTariffButton'));
+    await waitFor(() => expect(screen.getByTestId('tariffEditorView')).toBeDefined());
+    await user.press(screen.getByTestId('tariffEditorBackButton'));
+    await waitFor(() => expect(screen.queryByTestId('tariffEditorView')).toBeNull());
+    await user.press(screen.getByTestId('tariffListBackButton'));
+    await waitFor(() => expect(screen.queryByTestId('tariffListView')).toBeNull());
+    expect(screen.getByTestId('settingsView')).toBeDefined();
 });
