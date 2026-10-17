@@ -93,7 +93,7 @@ Les tarifs sont ceux de [`kelec-charge-cost`](./charge-cost.md) (globaux), lus v
 
 ### Prix saisis à la main
 
-Pour une charge payée ailleurs qu'à la maison : toucher le coût d'une charge ouvre la page « Prix de la charge » (`CHARGE_COST_ROUTE`).
+Pour une charge payée ailleurs qu'à la maison : toucher la carte d'une charge (n'importe où, hors de ses boutons) ouvre la page « Prix de la charge » (`CHARGE_COST_ROUTE`).
 - On y saisit le **montant payé** (dans la devise des tarifs), avec son équivalent au kWh et, pour comparer, le coût au tarif.
   « Revenir au tarif par défaut » retire le prix saisi.
 - **Le prix saisi l'emporte** sur le tarif (y compris pour une session V2G). Il est signalé par une icône ✎ à côté du coût.

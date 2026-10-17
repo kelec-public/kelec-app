@@ -47,9 +47,15 @@ function ChargeCard({ charge, onBeforeEditCost }: ChargeCardProps): React.JSX.El
     }
 
     const [shouldOpenSubChargesModal, setShouldOpenSubChargesModal] = useState(false);
+    const CardContainer = editCost ? TouchableOpacity : View;
 
     return (
-        <View testID={'ChargeCard'} style={{ padding: 15, backgroundColor: getBackgroundColour(), marginHorizontal: 10, marginTop: 0, borderRadius: 7 }}>
+        // toute la carte ouvre la modification du prix (les boutons qu'elle contient gardent leur action)
+        <CardContainer
+            testID={'ChargeCard'}
+            onPress={editCost}
+            style={{ padding: 15, backgroundColor: getBackgroundColour(), marginHorizontal: 10, marginTop: 0, borderRadius: 7 }}
+        >
             <BottomSheet
                 testID="mergeViewBottomSheet"
                 onClose={() => {
@@ -203,25 +209,20 @@ function ChargeCard({ charge, onBeforeEditCost }: ChargeCardProps): React.JSX.El
                     </>
                 )}
 
-                {/* coût : prix saisi à la main, ou tarif de la maison ; toucher pour le modifier */}
+                {/* coût : prix saisi à la main, ou tarif de la maison */}
                 {cost !== null && (
                     <>
                         <View style={{ width: 1, backgroundColor: 'gray' }}></View>
-                        <TouchableOpacity
-                            testID={'chargeCostButton'}
-                            disabled={!editCost}
-                            onPress={editCost}
-                            style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5 }}
-                        >
+                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
                             <Icon name="payments" size={18} color={getBlackColour(isDarkMode)} />
                             <Text testID={'chargeCostText'} style={{ color: getBlackColour(isDarkMode) }}>{costs!.format(cost)}</Text>
                             {/* prix saisi à la main (pour une charge fusionnée : pour une de ses sous-charges) */}
                             {costs!.isManual(charge) && <Icon testID={'manualCostIcon'} name="edit" size={14} color={getBlackColour(isDarkMode)} />}
-                        </TouchableOpacity>
+                        </View>
                     </>
                 )}
             </View>
-        </View >
+        </CardContainer>
     );
 }
 

@@ -113,8 +113,8 @@ test('should override the cost of a charge by hand, then go back to the tariff',
     await waitFor(() => expect(screen.getAllByTestId('chargeCostText')).toHaveLength(2));
     expect(screen.queryAllByTestId('manualCostIcon')).toHaveLength(0);
 
-    // 1re charge affichée : 23 décembre 2023, 32,25 kWh (6,45 € au tarif)
-    await user.press(screen.getAllByTestId('chargeCostButton')[0]);
+    // 1re charge affichée : 23 décembre 2023, 32,25 kWh (6,45 € au tarif) ; toute la carte ouvre le prix
+    await user.press(screen.getAllByTestId('ChargeCard')[0]);
     await screen.findByTestId('chargeCostEditView');
     expect(screen.getByTestId('tariffCostText').props.children).toContain(formatPrice(6.45, 'EUR'));
     expect(screen.queryByTestId('resetChargeCostButton')).toBeNull();
@@ -136,7 +136,7 @@ test('should override the cost of a charge by hand, then go back to the tariff',
     ]);
 
     // retour au tarif
-    await user.press(screen.getAllByTestId('chargeCostButton')[0]);
+    await user.press(screen.getAllByTestId('ChargeCard')[0]);
     await screen.findByTestId('chargeCostEditView');
     expect(screen.getByTestId('chargeCostInput').props.value).toBe('3.5');
     await user.press(screen.getByTestId('resetChargeCostButton'));
