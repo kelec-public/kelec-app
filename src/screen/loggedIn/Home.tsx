@@ -8,8 +8,9 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import MainContext from '../../lib/Contexts/MainContext';
 import TabBarContext from '../../lib/Contexts/TabBarContext';
 import { getGrayBackgroundColour } from '../../lib/graphics/utils';
-import { Platform, useColorScheme } from 'react-native';
+import { Platform, StyleSheet, useColorScheme } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaView as TabsSafeAreaView } from 'react-native-screens/experimental';
 
 type SFSymbolName = Extract<NativeBottomTabIcon, { type: 'sfSymbol' }>['name'];
 /** Icône d'un onglet : SF Symbol sur iOS, icône MaterialIcons en image sur Android. */
@@ -25,6 +26,23 @@ const getTabBarIcon = (icon: TabIcon): NativeBottomTabIcon =>
     Platform.OS === 'ios'
         ? { type: 'sfSymbol', name: icon.sfSymbol }
         : { type: 'image', source: Icon.getImageSourceSync(icon.material, TAB_ICON_SIZE) };
+
+/**
+ * Contenu d'un onglet.
+ * - Un fournisseur de marges par onglet : sa vue est dans l'écran natif de l'onglet. Sur iOS, ses marges
+ *   du bas comprennent donc la barre d'onglets, flottante par-dessus le contenu.
+ * - Android : la barre Material est aussi posée par-dessus le contenu, mais n'entre pas dans les marges ;
+ *   la SafeAreaView de react-native-screens (`interface`) réserve sa hauteur (0 quand elle est masquée).
+ */
+const TabScreenLayout = ({ children }: { children: React.ReactNode }): React.JSX.Element => {
+    const content = <SafeAreaProvider>{children}</SafeAreaProvider>;
+    if (Platform.OS !== 'android') return content;
+    return (
+        <TabsSafeAreaView edges={{ bottom: true }} insetType="interface" style={styles.flex}>
+            {content}
+        </TabsSafeAreaView>
+    );
+};
 
 // hors du composant : recréé à chaque rendu, le navigateur remonterait tous les onglets
 const Tab = createNativeBottomTabNavigator();
@@ -43,9 +61,7 @@ function Home(): React.JSX.Element {
         <TabBarContext.Provider value={tabBarContextValue}>
             <NavigationContainer theme={useTheme()}>
                 <Tab.Navigator
-                    // un fournisseur de marges par onglet : sa vue est dans l'écran natif de l'onglet, ses marges
-                    // du bas comprennent donc la barre d'onglets (iOS : barre flottante par-dessus le contenu)
-                    screenLayout={({ children }) => <SafeAreaProvider>{children}</SafeAreaProvider>}
+                    screenLayout={({ children }) => <TabScreenLayout>{children}</TabScreenLayout>}
                     screenOptions={{
                         tabBarActiveTintColor: 'rgb(0, 122, 255)',
                         tabBarInactiveTintColor: 'gray',
@@ -78,5 +94,11 @@ function Home(): React.JSX.Element {
         </TabBarContext.Provider>
     );
 }
+
+const styles = StyleSheet.create({
+    flex: {
+        flex: 1,
+    },
+});
 
 export default Home;
