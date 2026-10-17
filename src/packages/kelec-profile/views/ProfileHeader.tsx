@@ -1,10 +1,10 @@
 import { useContext } from "react";
-import { StyleSheet, TouchableOpacity, View, useColorScheme } from "react-native";
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import { StyleSheet, View, useColorScheme } from "react-native";
 import Text from "../../../screen/Common/CustomText";
 import MainContext from "../../../lib/Contexts/MainContext";
 import commonStyles from "../../../lib/graphics/commonStyle";
 import { getBlackColour, getGrayBackgroundColour, getWhiteColour } from "../../../lib/graphics/utils";
+import GlassButton from "../../kelec-model/view/GlassButton";
 
 type Props = {
     readonly hasMultipleCars: boolean;
@@ -21,7 +21,7 @@ function ProfileHeader({ hasMultipleCars, editMode, onToggleEditMode, onAddCar }
     const isDarkMode = useColorScheme() === 'dark';
     const { languageHandler } = useContext(MainContext);
 
-    const buttonStyle = [styles.button, commonStyles.rowFlex, commonStyles.centerFlex];
+    const fallbackStyle = [styles.button, { backgroundColor: getGrayBackgroundColour(isDarkMode) }];
     const iconStyle = { transform: [{ translateY: 1 }] };
 
     return (
@@ -29,24 +29,39 @@ function ProfileHeader({ hasMultipleCars, editMode, onToggleEditMode, onAddCar }
             <Text style={[commonStyles.navTitle]}>{languageHandler.getTranslation("account")}</Text>
             {hasMultipleCars ? (
                 <View style={[commonStyles.rowFlex, commonStyles.gap10]}>
-                    <TouchableOpacity testID='profileViewEditCarsButton' onPress={onToggleEditMode}>
-                        <View style={[buttonStyle, { backgroundColor: editMode ? getBlackColour(isDarkMode) : getGrayBackgroundColour(isDarkMode) }]}>
-                            <Icon name="edit" testID="profileViewEditIcon" size={20} style={iconStyle} color={editMode ? getWhiteColour(isDarkMode) : getBlackColour(isDarkMode)} />
-                        </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity testID='profileViewAddCarButton' onPress={onAddCar}>
-                        <View style={[buttonStyle, { backgroundColor: getGrayBackgroundColour(isDarkMode) }]}>
-                            <Icon name="add" size={20} style={iconStyle} color={getBlackColour(isDarkMode)} />
-                        </View>
-                    </TouchableOpacity>
+                    <GlassButton
+                        testID='profileViewEditCarsButton'
+                        icon="edit"
+                        iconTestID="profileViewEditIcon"
+                        iconSize={20}
+                        iconStyle={iconStyle}
+                        onPress={onToggleEditMode}
+                        selected={editMode}
+                        glassStyle={styles.glassButton}
+                        fallbackStyle={[styles.button, { backgroundColor: editMode ? getBlackColour(isDarkMode) : getGrayBackgroundColour(isDarkMode) }]}
+                        fallbackIconColour={editMode ? getWhiteColour(isDarkMode) : getBlackColour(isDarkMode)}
+                    />
+                    <GlassButton
+                        testID='profileViewAddCarButton'
+                        icon="add"
+                        iconSize={20}
+                        iconStyle={iconStyle}
+                        onPress={onAddCar}
+                        glassStyle={styles.glassButton}
+                        fallbackStyle={fallbackStyle}
+                    />
                 </View>
             ) : (
-                <TouchableOpacity testID='profileViewAddCarButton' onPress={onAddCar}>
-                    <View style={[buttonStyle, { backgroundColor: getGrayBackgroundColour(isDarkMode) }]}>
-                        <Text>{languageHandler.getTranslation("addACar")}</Text>
-                        <Icon name="add" size={20} style={iconStyle} color={getBlackColour(isDarkMode)} />
-                    </View>
-                </TouchableOpacity>
+                <GlassButton
+                    testID='profileViewAddCarButton'
+                    icon="add"
+                    text={languageHandler.getTranslation("addACar")}
+                    iconSize={20}
+                    iconStyle={iconStyle}
+                    onPress={onAddCar}
+                    glassStyle={styles.glassButton}
+                    fallbackStyle={fallbackStyle}
+                />
             )}
         </View>
     );
@@ -60,6 +75,12 @@ const styles = StyleSheet.create({
     },
     button: {
         height: 40,
+        borderRadius: 99,
+        paddingHorizontal: 10,
+    },
+    glassButton: {
+        height: 40,
+        minWidth: 40,
         borderRadius: 99,
         paddingHorizontal: 10,
     },

@@ -1,11 +1,10 @@
-import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { useContext } from "react";
 import { useTheme } from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import Text from "../../../screen/Common/CustomText";
 import MainContext from "../../../lib/Contexts/MainContext";
 import { useChargesFilters } from "../controllers/ChargesFiltersContext";
 import { formatFilterLabel } from "../services/chargesFilters";
+import GlassButton from "../../kelec-model/view/GlassButton";
 
 type Props = {
     readonly onOpenFilters: () => void;
@@ -18,7 +17,6 @@ function ActiveFiltersRow({ onOpenFilters }: Props): React.JSX.Element {
     const { filters, removeFilter } = useChargesFilters();
 
     const chipStyle = [styles.chip, { backgroundColor: theme.colors.secondaryContainer }];
-    const chipTextStyle = [styles.chipText, { color: theme.colors.onSecondaryContainer }];
 
     return (
         <ScrollView
@@ -26,27 +24,34 @@ function ActiveFiltersRow({ onOpenFilters }: Props): React.JSX.Element {
             showsHorizontalScrollIndicator={false}
         >
             <View style={styles.row}>
-                <TouchableOpacity
+                <GlassButton
                     testID="showFiltersButton"
+                    icon="filter-list"
+                    iconSize={15}
+                    iconPosition="start"
+                    text={languageHandler.getTranslation("filters")}
+                    textStyle={styles.chipText}
                     onPress={onOpenFilters}
-                    style={[chipStyle, { minWidth: 100 }]}
-                >
-                    <Icon name="filter-list" size={15} color={theme.colors.onSecondaryContainer} />
-                    <Text numberOfLines={1} style={chipTextStyle}>
-                        {languageHandler.getTranslation("filters")}
-                    </Text>
-                </TouchableOpacity>
+                    glassStyle={[styles.chip, styles.filtersChip]}
+                    fallbackStyle={[chipStyle, styles.filtersChip]}
+                    fallbackIconColour={theme.colors.onSecondaryContainer}
+                    fallbackTextColour={theme.colors.onSecondaryContainer}
+                />
                 {filters.map(filter => (
-                    <TouchableOpacity
-                        onPress={() => removeFilter(filter.filterName)}
-                        testID="filterListButton"
-                        style={[chipStyle, { gap: 7 }]}
+                    <GlassButton
                         key={filter.filterName}
-                    >
-                        <Text style={chipTextStyle}>{formatFilterLabel(filter, key => languageHandler.getTranslation(key))}
-                        </Text>
-                        <Icon name="close" size={15} color={theme.colors.onSecondaryContainer} style={{ marginTop: 2 }} />
-                    </TouchableOpacity>
+                        testID="filterListButton"
+                        icon="close"
+                        iconSize={15}
+                        iconStyle={styles.removeIcon}
+                        text={formatFilterLabel(filter, key => languageHandler.getTranslation(key))}
+                        textStyle={styles.chipText}
+                        onPress={() => removeFilter(filter.filterName)}
+                        glassStyle={styles.chip}
+                        fallbackStyle={chipStyle}
+                        fallbackIconColour={theme.colors.onSecondaryContainer}
+                        fallbackTextColour={theme.colors.onSecondaryContainer}
+                    />
                 ))}
             </View>
         </ScrollView>
@@ -66,9 +71,16 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 15,
     },
+    filtersChip: {
+        minWidth: 100,
+    },
     chipText: {
         fontSize: 15,
         marginLeft: 10,
+    },
+    removeIcon: {
+        marginTop: 2,
+        marginLeft: 7,
     },
 });
 

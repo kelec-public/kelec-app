@@ -1,8 +1,8 @@
-import { StyleSheet, TouchableOpacity, View, useColorScheme } from "react-native";
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import { StyleSheet, View, useColorScheme } from "react-native";
 import Text from "../../../screen/Common/CustomText";
 import commonStyles, { fontFamilyBold, fontWeightBold } from "../../../lib/graphics/commonStyle";
 import { getBlackColour } from "../../../lib/graphics/utils";
+import GlassButton from "../../kelec-model/view/GlassButton";
 import { getTemperatureLabel } from "../models/Temperature";
 import { getTemperatureColour, showsDegreeUnit } from "./temperatureStyle";
 
@@ -20,14 +20,16 @@ function TemperaturePicker({ temperature, canDecrease, canIncrease, onDecrease, 
     return (
         <View style={[commonStyles.rowFlex, commonStyles.spaceBetween, styles.marginVertical]}>
             <View style={[commonStyles.centerFlex]}>
-                <TouchableOpacity
+                <GlassButton
                     testID="HVACCardLowButton"
+                    icon="remove"
+                    iconSize={25}
                     disabled={!canDecrease}
                     onPress={onDecrease}
-                    style={[styles.temperatureButton, { opacity: canDecrease ? 1 : 0.4 }]}
-                >
-                    <Icon name="remove" size={25} color='black' />
-                </TouchableOpacity>
+                    glassStyle={styles.glassTemperatureButton}
+                    fallbackStyle={styles.temperatureButton}
+                    fallbackIconColour="black"
+                />
             </View>
             <View style={commonStyles.rowFlex}>
                 <Text
@@ -41,14 +43,16 @@ function TemperaturePicker({ temperature, canDecrease, canIncrease, onDecrease, 
                 )}
             </View>
             <View style={[commonStyles.centerFlex]}>
-                <TouchableOpacity
+                <GlassButton
                     testID="HVACCardHighButton"
+                    icon="add"
+                    iconSize={25}
                     disabled={!canIncrease}
                     onPress={onIncrease}
-                    style={[styles.temperatureButton, { opacity: canIncrease ? 1 : 0.4 }]}
-                >
-                    <Icon name="add" size={25} color='black' />
-                </TouchableOpacity>
+                    glassStyle={styles.glassTemperatureButton}
+                    fallbackStyle={styles.temperatureButton}
+                    fallbackIconColour="black"
+                />
             </View>
         </View>
     );
@@ -59,6 +63,10 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgb(220,220,220)',
         padding: 10,
         borderRadius: 10
+    },
+    glassTemperatureButton: {
+        padding: 12,
+        borderRadius: 999,
     },
     temperatureText: {
         fontFamily: fontFamilyBold,

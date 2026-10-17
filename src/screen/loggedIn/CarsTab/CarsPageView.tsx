@@ -2,6 +2,7 @@ import PagerView from "react-native-pager-view";
 import { StyleSheet, View } from "react-native";
 import { useContext, useRef } from "react";
 import MainContext from "../../../lib/Contexts/MainContext";
+import TabBarContext from "../../../lib/Contexts/TabBarContext";
 import CarView from "./CarView/CarView";
 import createNativeStackNavigator from '../../../lib/graphics/navigation';
 import { NavigationContainer, NavigationIndependentTree, NavigationProp, ParamListBase, useNavigation, useRoute, useTheme } from "@react-navigation/native";
@@ -27,8 +28,12 @@ export type CarsViewParamList = {
     [TFA_ROUTE]: TfaRouteParams;
 }
 
+/** Écrans à étapes, avec leurs propres boutons en bas : la barre d'onglets est masquée pendant qu'ils sont affichés. */
+const ROUTES_WITHOUT_TAB_BAR: string[] = [CAR_TYPE_ROUTE, CHARGES_IMPORT_ROUTE, TFA_ROUTE];
+
 function CarsPageView(): React.JSX.Element {
     const { currentUser } = useContext(MainContext);
+    const { setTabBarHidden } = useContext(TabBarContext);
     const theme = useTheme()
 
     const Stack = createNativeStackNavigator<CarsViewParamList>();
@@ -58,7 +63,12 @@ function CarsPageView(): React.JSX.Element {
                         <ChargesHistoryProvider carModel={carModel} account={account}>
                           <HvacProvider carModel={carModel} account={account}>
                             <MapProvider carModel={carModel} account={account}>
-                              <NavigationContainer theme={theme}>
+                              <NavigationContainer
+                                theme={theme}
+                                onStateChange={state => setTabBarHidden(
+                                  state !== undefined && ROUTES_WITHOUT_TAB_BAR.includes(state.routes[state.index].name),
+                                )}
+                              >
                                 <Stack.Navigator
                                   screenOptions={{
                                     headerShown: false,

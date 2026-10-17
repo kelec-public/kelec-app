@@ -89,3 +89,15 @@ jest.spyOn(sharedPlatformsData, 'refreshWidget').mockImplementation(jest.fn());
 
 
 jest.setTimeout(15000); 
+// liquid glass : module natif iOS 26, absent des tests -> pastilles classiques
+jest.mock('@callstack/liquid-glass', () => {
+    const { View } = require('react-native');
+    return { LiquidGlassView: View, LiquidGlassContainerView: View, isLiquidGlassSupported: false };
+});
+
+// icônes des onglets natifs sur Android : vector-icons les dessine en image via son module natif
+jest.mock('react-native-vector-icons/MaterialIcons', () => {
+    const Icon = jest.requireActual('react-native-vector-icons/MaterialIcons').default;
+    Icon.getImageSourceSync = (name) => ({ uri: `materialicons-${name}` });
+    return { __esModule: true, default: Icon };
+});

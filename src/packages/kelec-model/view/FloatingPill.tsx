@@ -1,5 +1,7 @@
 import { StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle, useColorScheme } from "react-native";
+import { LiquidGlassView, isLiquidGlassSupported } from "@callstack/liquid-glass";
 import { getLightGray, getWhiteColour } from "../../../lib/graphics/utils";
+import { getSelectedGlassTint } from "./GlassButton";
 
 /** Taille d'icône à utiliser dans une pastille. */
 export const FLOATING_PILL_ICON_SIZE = 20;
@@ -21,30 +23,17 @@ type Props = {
 }
 
 /**
- * Pastille flottante (fond blanc, ombre), posée par-dessus une carte ou une image.
+ * Pastille flottante, posée par-dessus une carte ou une image : liquid glass sur iOS 26+,
+ * fond blanc et ombre ailleurs.
  * Toutes les pastilles ont au moins la même hauteur (FLOATING_PILL_SIZE) ; dans une ligne en
  * `alignItems: 'stretch'`, une pastille avec du texte plus haut entraîne les autres pastilles à texte.
  * Les pastilles rondes gardent toujours leur taille (pas d'étirement, pour rester rondes).
  */
 function FloatingPill({ children, onPress, testID, viewTestID, round = false, selected = false, style }: Props): React.JSX.Element {
-    const isDarkMode = useColorScheme() === 'dark';
-
     const pill = (
-        <View
-            testID={viewTestID}
-            style={[
-                styles.pill,
-                round ? styles.round : styles.withText,
-                onPress && !round && styles.fillTouchable,
-                {
-                    borderColor: selected ? 'gray' : 'transparent',
-                    backgroundColor: selected ? getLightGray(isDarkMode) : getWhiteColour(isDarkMode),
-                },
-                style,
-            ]}
-        >
+        <PillBody viewTestID={viewTestID} round={round} selected={selected} fillTouchable={!!onPress && !round} interactive={!!onPress} style={style}>
             {children}
-        </View>
+        </PillBody>
     );
 
     if (!onPress) return pill;
@@ -60,6 +49,57 @@ function FloatingPill({ children, onPress, testID, viewTestID, round = false, se
     );
 }
 
+type PillBodyProps = Pick<Props, 'children' | 'viewTestID' | 'style'> & {
+    readonly round: boolean;
+    readonly selected: boolean;
+    /** Dans un bouton à texte : remplit la hauteur donnée au bouton. */
+    readonly fillTouchable: boolean;
+    /** Le verre réagit au toucher (pastille-bouton). */
+    readonly interactive: boolean;
+};
+
+/** La pastille elle-même : liquid glass sur iOS 26+, fond blanc et ombre ailleurs. */
+function PillBody({ children, viewTestID, round, selected, fillTouchable, interactive, style }: PillBodyProps): React.JSX.Element {
+    const isDarkMode = useColorScheme() === 'dark';
+    const commonStyle = [
+        styles.pill,
+        round ? styles.round : styles.withText,
+        fillTouchable && styles.fillTouchable,
+    ];
+
+    if (isLiquidGlassSupported) {
+        // le verre dessine son propre fond et son ombre ; la sélection passe par la teinte
+        return (
+            <LiquidGlassView
+                testID={viewTestID}
+                style={[commonStyle, styles.glass, !round && styles.glassWithText, style]}
+                tintColor={getSelectedGlassTint(selected, isDarkMode)}
+                colorScheme={isDarkMode ? 'dark' : 'light'}
+                interactive={interactive}
+            >
+                {children}
+            </LiquidGlassView>
+        );
+    }
+
+    return (
+        <View
+            testID={viewTestID}
+            style={[
+                commonStyle,
+                styles.opaque,
+                {
+                    borderColor: selected ? 'gray' : 'transparent',
+                    backgroundColor: selected ? getLightGray(isDarkMode) : getWhiteColour(isDarkMode),
+                },
+                style,
+            ]}
+        >
+            {children}
+        </View>
+    );
+}
+
 const styles = StyleSheet.create({
     pill: {
         flexDirection: 'row',
@@ -68,6 +108,20 @@ const styles = StyleSheet.create({
         gap: 5,
         borderRadius: 999,
         borderWidth: BORDER,
+    },
+    /**
+     * Pas de bordure sur le verre : la lib le pose dans le cadre intérieur à la bordure,
+     * alors que les enfants sont placés depuis le bord extérieur (contenu décalé de BORDER).
+     * Le padding compense pour garder la même taille.
+     */
+    glass: {
+        borderWidth: 0,
+    },
+    glassWithText: {
+        paddingHorizontal: 15 + BORDER,
+        paddingVertical: PADDING + BORDER,
+    },
+    opaque: {
         shadowColor: "#000",
         shadowOffset: {
             width: 0,

@@ -9,6 +9,9 @@ avant de toucher à `ios/`. Les clés de stockage partagé et leurs formats y so
 Natif Android (widgets, bridge RN, modules `:carapi` / `:shared`, app Wear OS `:wear`) : lire
 [docs/native-android.md](docs/native-android.md) avant de toucher à `android/`. Ne jamais renommer `KelecMainWIdget` ni les clés de stockage.
 
+Liquid glass (`GlassButton`, `FloatingPill`) et barre d'onglets native (bas des écrans, écrans sans barre, tests) :
+lire [docs/liquid-glass.md](docs/liquid-glass.md) et [docs/tab-bar.md](docs/tab-bar.md).
+
 **Invariant métier** : un VIN est unique dans toute l'app, et chaque VIN a exactement un compte (`Account`).
 Le VIN suffit donc à identifier une voiture et son compte.
 

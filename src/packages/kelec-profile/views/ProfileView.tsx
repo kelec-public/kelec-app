@@ -26,7 +26,11 @@ function ProfileView(): React.JSX.Element {
                 />
                 <View style={commonStyles.navSeparator}></View>
                 <View style={[commonStyles.flex, styles.mainWrapper, { backgroundColor: theme.colors.background }]}>
-                    <ScrollView style={commonStyles.flex}>
+                    <ScrollView
+                        style={commonStyles.flex}
+                        // iOS : le contenu défile sous la barre d'onglets flottante, sans que le bas soit caché
+                        contentInsetAdjustmentBehavior="automatic"
+                    >
                         {cars.map((car, index) => {
                             const vin = car.carModel.getVin();
                             return (

@@ -49,7 +49,11 @@ function SettingsView(): React.JSX.Element {
             <View
                 testID='settingsView'
                 style={[commonStyles.flex, { backgroundColor: theme.colors.background }]}>
-                <ScrollView style={[commonStyles.flex, { backgroundColor: theme.colors.background }]}>
+                <ScrollView
+                    style={[commonStyles.flex, { backgroundColor: theme.colors.background }]}
+                    // iOS : le haut (barre d'état) et le bas (barre d'onglets flottante) sont gérés par la ScrollView
+                    contentInsetAdjustmentBehavior="automatic"
+                >
                     <SettingsHeader />
                     <View style={styles.sections}>
                         {controller.sections.map(section => (

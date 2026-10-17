@@ -7,6 +7,7 @@ import App from '../../App';
 import { Alert, Appearance, Linking } from "react-native";
 import RenaultCar from '../../src/lib/clients/cars/renaultCar';
 import UserAccount from '../../src/lib/clients/accounts/userAccount';
+import { hasTab, selectTab } from '../../testUtils/tabs';
 import RenaultAccount from '../../src/lib/clients/accounts/renaultAccount';
 
 const mockSaveNativeAccount = jest.fn();
@@ -68,16 +69,13 @@ beforeEach(async () => {
 });
 
 test('should render the settings view', async () => {
-    const user = userEvent.setup();
     render(<App />);
 
     await waitFor(() => {
-        const bottomButtonperson = screen.queryAllByTestId('bottomButtonperson');
-        expect(bottomButtonperson.length).toBe(2);
+        expect(hasTab('account')).toBe(true);
     });
 
-    const bottomButtonperson = screen.queryAllByTestId('bottomButtonsettings');
-    await user.press(bottomButtonperson[0]);
+    await selectTab('settings');
 
     await waitFor(() => {
         expect(screen.getByTestId('settingsView')).toBeDefined();
@@ -89,12 +87,10 @@ test('should open my linkedin page', async () => {
     render(<App />);
 
     await waitFor(() => {
-        const bottomButtonperson = screen.queryAllByTestId('bottomButtonperson');
-        expect(bottomButtonperson.length).toBe(2);
+        expect(hasTab('account')).toBe(true);
     });
 
-    const bottomButtonperson = screen.queryAllByTestId('bottomButtonsettings');
-    await user.press(bottomButtonperson[0]);
+    await selectTab('settings');
     await waitFor(() => expect(screen.getByTestId('settingsView')).toBeDefined());
 
     const linkedinButton = screen.getByTestId('linkedinButton');
@@ -109,11 +105,10 @@ test('should send a feedback', async () => {
     render(<App />);
 
     await waitFor(() => {
-        expect(screen.queryAllByTestId('bottomButtonperson').length).toBe(2);
+        expect(hasTab('account')).toBe(true);
     });
 
-    const bottomButtonperson = screen.queryAllByTestId('bottomButtonsettings');
-    await user.press(bottomButtonperson[0]);
+    await selectTab('settings');
     await waitFor(() => expect(screen.getByTestId('settingsView')).toBeDefined());
 
     const feedbackButton = screen.getByTestId('testSettingRowfeedback');
@@ -127,10 +122,9 @@ test('should help translate the app', async () => {
     const user = userEvent.setup();
     render(<App />);
 
-    await waitFor(() => expect(screen.queryAllByTestId('bottomButtonperson').length).toBe(2));
+    await waitFor(() => expect(hasTab('account')).toBe(true));
 
-    const bottomButtonperson = screen.queryAllByTestId('bottomButtonsettings');
-    await user.press(bottomButtonperson[0]);
+    await selectTab('settings');
     await waitFor(() => expect(screen.getByTestId('settingsView')).toBeDefined());
 
     const actionButton = screen.getByTestId('testSettingRowlanguage');
@@ -144,10 +138,9 @@ test('should help join discord server', async () => {
     const user = userEvent.setup();
     render(<App />);
 
-    await waitFor(() => expect(screen.queryAllByTestId('bottomButtonperson').length).toBe(2));
+    await waitFor(() => expect(hasTab('account')).toBe(true));
 
-    const bottomButtonperson = screen.queryAllByTestId('bottomButtonsettings');
-    await user.press(bottomButtonperson[0]);
+    await selectTab('settings');
     await waitFor(() => expect(screen.getByTestId('settingsView')).toBeDefined());
 
     const actionButton = screen.getByTestId('testSettingRowgroup');
@@ -161,10 +154,9 @@ test('should log out', async () => {
     const user = userEvent.setup();
     render(<App />);
 
-    await waitFor(() => expect(screen.queryAllByTestId('bottomButtonperson').length).toBe(2));
+    await waitFor(() => expect(hasTab('account')).toBe(true));
 
-    const bottomButtonperson = screen.queryAllByTestId('bottomButtonsettings');
-    await user.press(bottomButtonperson[0]);
+    await selectTab('settings');
     await waitFor(() => expect(screen.getByTestId('settingsView')).toBeDefined());
 
     const actionButton = screen.getByTestId('testSettingRowlogout');
@@ -191,10 +183,9 @@ test('should update the app preferences for miles', async () => {
         expect(summaryCardOdometer.props.children[1].props.children).toBe(' km');
     });
 
-    await waitFor(() => expect(screen.queryAllByTestId('bottomButtonperson').length).toBe(2));
+    await waitFor(() => expect(hasTab('account')).toBe(true));
 
-    const bottomButtonperson = screen.queryAllByTestId('bottomButtonsettings');
-    await user.press(bottomButtonperson[0]);
+    await selectTab('settings');
     await waitFor(() => expect(screen.getByTestId('settingsView')).toBeDefined());
 
     let actionButton = screen.getByTestId('testSettingRowdirections-car');
@@ -205,8 +196,7 @@ test('should update the app preferences for miles', async () => {
         expect(JSON.parse(appPreferences ?? "")).toMatchObject({ displayMiles: true });
     });
 
-    const bottomButtoncars = screen.queryAllByTestId('bottomButtondirections-car');
-    await user.press(bottomButtoncars[0]);
+    await selectTab('cars');
     await waitFor(() => {
         const summaryCardRange = screen.getByTestId('summaryCardRange');
         expect(summaryCardRange.props.children[0]).toBe(202);
@@ -219,7 +209,7 @@ test('should update the app preferences for miles', async () => {
         expect(mocksaveNativePreferences).toHaveBeenCalledTimes(1);
     });
 
-    await user.press(screen.queryAllByTestId('bottomButtonsettings')[0]);
+    await selectTab('settings');
     await waitFor(() => expect(screen.getByTestId('settingsView')).toBeDefined());
 
     const signpost = screen.getByTestId('testSettingRowsignpost');
@@ -229,7 +219,7 @@ test('should update the app preferences for miles', async () => {
         expect(JSON.parse(appPreferences ?? "")).toMatchObject({ displayMiles: true, convertToMiles: true });
     });
 
-    await user.press(screen.queryAllByTestId('bottomButtondirections-car')[0]);
+    await selectTab('cars');
     await waitFor(() => {
         const summaryCardRange = screen.getByTestId('summaryCardRange');
         expect(summaryCardRange.props.children[0]).toBe(126);
@@ -240,7 +230,7 @@ test('should update the app preferences for miles', async () => {
         expect(summaryCardOdometer.props.children[1].props.children).toBe(' mi');
     });
 
-    await user.press(screen.queryAllByTestId('bottomButtonsettings')[0]);
+    await selectTab('settings');
     await waitFor(() => expect(screen.getByTestId('settingsView')).toBeDefined());
 
     actionButton = screen.getByTestId('testSettingRowdirections-car');
@@ -250,7 +240,7 @@ test('should update the app preferences for miles', async () => {
         expect(JSON.parse(appPreferences ?? "")).toMatchObject({ displayMiles: false, convertToMiles: false });
     });
 
-    await user.press(screen.queryAllByTestId('bottomButtondirections-car')[0]);
+    await selectTab('cars');
     await waitFor(() => {
         const summaryCardRange = screen.getByTestId('summaryCardRange');
         expect(summaryCardRange.props.children[0]).toBe(202);
@@ -264,8 +254,8 @@ test('should update the app preferences highlightDCCharges', async () => {
     const user = userEvent.setup();
     render(<App />);
 
-    await waitFor(() => expect(screen.queryAllByTestId('bottomButtonperson').length).toBe(2));
-    await user.press(screen.queryAllByTestId('bottomButtonsettings')[0]);
+    await waitFor(() => expect(hasTab('account')).toBe(true));
+    await selectTab('settings');
     await waitFor(() => expect(screen.getByTestId('settingsView')).toBeDefined());
 
     let actionButton = screen.getByTestId('testSettingRowev-plug-ccs2');
@@ -287,8 +277,8 @@ test('should update the app preferences show charging power', async () => {
     const user = userEvent.setup();
     render(<App />);
 
-    await waitFor(() => expect(screen.queryAllByTestId('bottomButtonperson').length).toBe(2));
-    await user.press(screen.queryAllByTestId('bottomButtonsettings')[0]);
+    await waitFor(() => expect(hasTab('account')).toBe(true));
+    await selectTab('settings');
     await waitFor(() => expect(screen.getByTestId('settingsView')).toBeDefined());
 
     let actionButton = screen.getByTestId('testSettingRowbolt');
@@ -298,10 +288,10 @@ test('should update the app preferences show charging power', async () => {
         expect(JSON.parse(appPreferences ?? "")).toMatchObject({ displayChargingPower: true });
     });
 
-    await user.press(screen.queryAllByTestId('bottomButtondirections-car')[0]);
+    await selectTab('cars');
     await waitFor(() => expect(screen.getByTestId('chargingPowerText')).toBeDefined());
 
-    await user.press(screen.queryAllByTestId('bottomButtonsettings')[0]);
+    await selectTab('settings');
     await waitFor(() => expect(screen.getByTestId('settingsView')).toBeDefined());
 
     actionButton = screen.getByTestId('testSettingRowbolt');
@@ -311,7 +301,7 @@ test('should update the app preferences show charging power', async () => {
         expect(JSON.parse(appPreferences ?? "")).toMatchObject({ displayChargingPower: false });
     });
 
-    await user.press(screen.queryAllByTestId('bottomButtondirections-car')[0]);
+    await selectTab('cars');
     await waitFor(() => {
         expect(() => screen.getByTestId('chargingPowerText')).toThrow();
     });
@@ -321,8 +311,8 @@ test('should send the account to the apple watch', async () => {
     const user = userEvent.setup();
     render(<App />);
 
-    await waitFor(() => expect(screen.queryAllByTestId('bottomButtonperson').length).toBe(2));
-    await user.press(screen.queryAllByTestId('bottomButtonsettings')[0]);
+    await waitFor(() => expect(hasTab('account')).toBe(true));
+    await selectTab('settings');
     await waitFor(() => expect(screen.getByTestId('settingsView')).toBeDefined());
 
     const actionButton = screen.getByTestId('testSettingRowwatch');
@@ -340,8 +330,8 @@ describe('export widgets logs', () => {
         const user = userEvent.setup();
         render(<App />);
 
-        await waitFor(() => expect(screen.queryAllByTestId('bottomButtonperson').length).toBe(2));
-        await user.press(screen.queryAllByTestId('bottomButtonsettings')[0]);
+        await waitFor(() => expect(hasTab('account')).toBe(true));
+        await selectTab('settings');
         await waitFor(() => expect(screen.getByTestId('settingsView')).toBeDefined());
 
         const actionButton = screen.getByTestId('testSettingRownewspaper');
@@ -357,8 +347,8 @@ describe('export widgets logs', () => {
         jest.spyOn(Alert, 'alert').mockImplementation(alertMock);
         mockGetWidgetsLogs.mockImplementation(() => Promise.resolve(null));
 
-        await waitFor(() => expect(screen.queryAllByTestId('bottomButtonperson').length).toBe(2));
-        await user.press(screen.queryAllByTestId('bottomButtonsettings')[0]);
+        await waitFor(() => expect(hasTab('account')).toBe(true));
+        await selectTab('settings');
         await waitFor(() => expect(screen.getByTestId('settingsView')).toBeDefined());
 
         const actionButton = screen.getByTestId('testSettingRownewspaper');
@@ -381,12 +371,10 @@ describe("hide map", () => {
         })
 
         await waitFor(async () => {
-            const bottomButtonperson = screen.queryAllByTestId('bottomButtonperson');
-            expect(bottomButtonperson.length).toBe(2);
+            expect(hasTab('account')).toBe(true);
         });
 
-        let bottomButtonperson = screen.queryAllByTestId('bottomButtonsettings');
-        await user.press(bottomButtonperson[0]);
+        await selectTab('settings');
         await waitFor(async () => {
             expect(screen.getByTestId('settingsView')).toBeDefined();
         });
@@ -409,8 +397,7 @@ describe("hide map", () => {
         });
 
         // go back to carview to check if the map is here
-        const bottomButtonCarView = screen.queryAllByTestId('bottomButtondirections-car');
-        await user.press(bottomButtonCarView[0]);
+        await selectTab('cars');
         await waitFor(() => {
             // make sure the mapView is not here
             const mapCard = screen.queryAllByTestId('mapCard');
@@ -418,8 +405,7 @@ describe("hide map", () => {
         })
 
         // now go back to settings to show back map
-        bottomButtonperson = screen.queryAllByTestId('bottomButtonsettings');
-        await user.press(bottomButtonperson[0]);
+        await selectTab('settings');
         await waitFor(() => {
             expect(screen.getByTestId('settingsView')).toBeDefined();
         });
@@ -444,8 +430,7 @@ describe("hide map", () => {
         });
 
         // now go back to the main CarView
-        const bottomButtoncarView = screen.queryAllByTestId('bottomButtondirections-car');
-        await user.press(bottomButtoncarView[0]);
+        await selectTab('cars');
         await waitFor(() => {
             // map card should be here
             expect(screen.getByTestId('mapCard')).toBeDefined();
@@ -454,16 +439,13 @@ describe("hide map", () => {
 });
 
 test('should display app version', async () => {
-    const user = userEvent.setup();
     render(<App />);
 
     await waitFor(() => {
-        const bottomButtonperson = screen.queryAllByTestId('bottomButtonperson');
-        expect(bottomButtonperson.length).toBe(2);
+        expect(hasTab('account')).toBe(true);
     });
 
-    const bottomButtonperson = screen.queryAllByTestId('bottomButtonsettings');
-    await user.press(bottomButtonperson[0]);
+    await selectTab('settings');
 
     await waitFor(() => {
         expect(screen.getByTestId('settingsView')).toBeDefined();
@@ -476,16 +458,13 @@ test('should display app version', async () => {
 
 describe('should display the names on top of settingsview', () => {
     it('should not display the names on top of settingsview', async () => {
-        const user = userEvent.setup();
         render(<App />);
 
         await waitFor(() => {
-            const bottomButtonperson = screen.queryAllByTestId('bottomButtonperson');
-            expect(bottomButtonperson.length).toBe(2);
+            expect(hasTab('account')).toBe(true);
         });
 
-        const bottomButtonperson = screen.queryAllByTestId('bottomButtonsettings');
-        await user.press(bottomButtonperson[0]);
+        await selectTab('settings');
 
         await waitFor(() => {
             expect(screen.getByTestId('settingsView')).toBeDefined();
@@ -503,16 +482,13 @@ describe('should display the names on top of settingsview', () => {
         await AsyncStorage.setItem('account', JSON.stringify(userAccount));
         await AsyncStorage.setItem('kelecNextGen', 'true');
 
-        const user = userEvent.setup();
         render(<App />);
 
         await waitFor(() => {
-            const bottomButtonperson = screen.queryAllByTestId('bottomButtonperson');
-            expect(bottomButtonperson.length).toBe(2);
+            expect(hasTab('account')).toBe(true);
         });
 
-        const bottomButtonperson = screen.queryAllByTestId('bottomButtonsettings');
-        await user.press(bottomButtonperson[0]);
+        await selectTab('settings');
 
         await waitFor(() => {
             expect(screen.getByTestId('settingsView')).toBeDefined();
@@ -529,12 +505,10 @@ test('should update the app preferences merge charges', async () => {
     render(<App />);
 
     await waitFor(() => {
-        const bottomButtonperson = screen.queryAllByTestId('bottomButtonperson');
-        expect(bottomButtonperson.length).toBe(2);
+        expect(hasTab('account')).toBe(true);
     });
 
-    const bottomButtonperson = screen.queryAllByTestId('bottomButtonsettings');
-    await user.press(bottomButtonperson[0]);
+    await selectTab('settings');
 
     await waitFor(() => {
         expect(screen.getByTestId('settingsView')).toBeDefined();
@@ -562,8 +536,8 @@ test('should select a timezone offset', async () => {
     const user = userEvent.setup();
     render(<App />);
 
-    await waitFor(() => expect(screen.queryAllByTestId('bottomButtonperson').length).toBe(2));
-    await user.press(screen.queryAllByTestId('bottomButtonsettings')[0]);
+    await waitFor(() => expect(hasTab('account')).toBe(true));
+    await selectTab('settings');
     await waitFor(() => expect(screen.getByTestId('settingsView')).toBeDefined());
 
     await user.press(screen.getByTestId('testSettingRowaccess-time'));
@@ -590,10 +564,10 @@ test('should select a colour theme', async () => {
     const user = userEvent.setup();
     render(<App />);
 
-    await waitFor(() => expect(screen.queryAllByTestId('bottomButtonperson').length).toBe(2));
+    await waitFor(() => expect(hasTab('account')).toBe(true));
     // par défaut, l'app suit le thème du téléphone
     expect(setColorScheme).toHaveBeenLastCalledWith('auto');
-    await user.press(screen.queryAllByTestId('bottomButtonsettings')[0]);
+    await selectTab('settings');
     await waitFor(() => expect(screen.getByTestId('settingsView')).toBeDefined());
 
     await user.press(screen.getByTestId('testSettingRowdark-mode'));
