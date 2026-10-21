@@ -16,7 +16,7 @@ type Props<T> = {
     readonly onSelect: (value: T) => void;
 };
 
-/** Choix d'une valeur parmi quelques-unes, sur une ligne qui défile si elle déborde (grande police). */
+/** Choix d'une valeur parmi quelques-unes (devise, type de tarif), sur une ligne qui défile si elle déborde (grande police). */
 function ChoicePills<T>({ choices, selected, onSelect }: Props<T>): React.JSX.Element {
     const isDarkMode = useColorScheme() === 'dark';
     return (

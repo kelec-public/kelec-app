@@ -19,3 +19,17 @@ export function formatPricePerKwh(price: number, currency: Currency): string {
 export function formatLocalDate(value: string): string {
     return parseLocalDate(value).toLocaleDateString();
 }
+
+/** Symbole court de la devise (« € », « £ », « kr ») : en français, le symbole normal de la livre est « £GB ». */
+export function currencySymbol(currency: Currency): string {
+    // Hermes n'a pas `formatToParts` : on formate 0 et on retire le chiffre et les espaces
+    const symbol = (currencyDisplay: 'narrowSymbol' | 'symbol') => new Intl.NumberFormat(undefined, {
+        style: 'currency', currency, currencyDisplay, minimumFractionDigits: 0, maximumFractionDigits: 0,
+    }).format(0).replace(/[0\s]/g, '') || currency;
+    try {
+        return symbol('narrowSymbol');
+    } catch {
+        // moteur sans `narrowSymbol`
+        return symbol('symbol');
+    }
+}

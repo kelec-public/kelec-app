@@ -3,7 +3,8 @@ import { FlatTariff, Tariff } from "../../../src/packages/kelec-charge-cost/mode
 import { draftFromTariff, newDraft, parsePrice, tariffFromDraft } from "../../../src/packages/kelec-charge-cost/models/tariffDraft";
 import { canDeleteTariff, deleteTariff, tariffEnd, upsertTariff, withPeriod } from "../../../src/packages/kelec-charge-cost/services/tariffList";
 import { TariffRepository } from "../../../src/packages/kelec-charge-cost/services/tariffRepository";
-import { formatPrice, formatPricePerKwh } from "../../../src/packages/kelec-charge-cost/services/priceFormat";
+import { currencySymbol, formatPrice, formatPricePerKwh } from "../../../src/packages/kelec-charge-cost/services/priceFormat";
+import { formatDuration, offPeakMinutesPerDay, offPeakRanges, offPeakSaving } from "../../../src/packages/kelec-charge-cost/services/offPeakSummary";
 
 const flat = (id: string, validFrom: string | null, pricePerKwh = 0.2): FlatTariff =>
     ({ id, validFrom, kind: 'flat', pricePerKwh });
@@ -130,5 +131,36 @@ describe("price format", () => {
         expect(formatPrice(3.42, 'GBP')).toMatch(/3[,.]42/);
         expect(formatPrice(3.42, 'GBP')).toContain('£');
         expect(formatPricePerKwh(0.2516, 'EUR')).toMatch(/0[,.]2516\s?€\/kWh/);
+    });
+
+    test("currency symbol", () => {
+        expect(currencySymbol('EUR')).toBe('€');
+        expect(currencySymbol('GBP')).toBe('£');
+    });
+});
+
+describe("off-peak summary", () => {
+    test("a slot over midnight is split for the timeline", () => {
+        expect(offPeakRanges([{ start: '22:00', end: '06:00' }, { start: '12:30', end: '14:00' }]))
+            .toEqual([[1320, 1440], [0, 360], [750, 840]]);
+    });
+
+    test("total per day, overlapping time counted once", () => {
+        expect(offPeakMinutesPerDay([{ start: '22:00', end: '06:00' }])).toBe(8 * 60);
+        expect(offPeakMinutesPerDay([{ start: '22:00', end: '06:00' }, { start: '03:00', end: '07:00' }])).toBe(9 * 60);
+        expect(offPeakMinutesPerDay([])).toBe(0);
+    });
+
+    test("duration", () => {
+        expect(formatDuration(480)).toBe('8 h');
+        expect(formatDuration(450)).toBe('7 h 30');
+        expect(formatDuration(65)).toBe('1 h 05');
+    });
+
+    test("saving only when off-peak is cheaper", () => {
+        expect(offPeakSaving(0.2516, 0.1798)).toBe(29);
+        expect(offPeakSaving(0.2, 0.2)).toBeNull();
+        expect(offPeakSaving(0.2, null)).toBeNull();
+        expect(offPeakSaving(0, 0)).toBeNull();
     });
 });

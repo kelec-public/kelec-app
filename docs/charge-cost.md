@@ -16,7 +16,8 @@ kelec-charge-cost/
 │   ├── chargeCost.ts          computeCost(début, fin, kWh, tarifs) (pur)
 │   ├── tariffList.ts          Ajout / modification par id, suppression, fin d'un tarif (pur)
 │   ├── tariffRepository.ts    Lecture / écriture (AppStorage, clé globale)
-│   └── priceFormat.ts         Montants dans la devise, dates locales
+│   ├── offPeakSummary.ts      Plages sur la journée (frise), total d'heures creuses par jour, économie en %
+│   └── priceFormat.ts         Montants dans la devise, symbole de la devise, dates locales
 ├── controllers/
 │   ├── useTariffSettings.ts   Tarifs relus quand l'écran reprend le focus (aussi utilisé par l'historique)
 │   ├── useTariffList.ts       Tarifs relus à chaque affichage de la page, devise
@@ -24,10 +25,11 @@ kelec-charge-cost/
 ├── views/
 │   ├── TariffListScreen.tsx      Page des tarifs (TARIFF_LIST_ROUTE)
 │   ├── TariffEditorScreen.tsx    Page de saisie d'un tarif (TARIFF_EDITOR_ROUTE, param tariffId)
-│   ├── TariffPageLayout.tsx      En-tête PageHeader + contenu défilant
+│   ├── TariffPageLayout.tsx      En-tête PageHeader + contenu défilant + bouton fixé en bas (optionnel)
 │   ├── TariffListView.tsx        Devise + une ligne par période
-│   ├── TariffEditorView.tsx      Date de début, type, prix, plages d'heures creuses
-│   ├── ChoicePills.tsx, TimePickerField.tsx
+│   ├── TariffEditorView.tsx      Période, type, carte des prix, carte des plages d'heures creuses
+│   ├── PriceRow.tsx, OffPeakTimeline.tsx, PickerButton.tsx (date ou heure)
+│   ├── ChoicePills.tsx           Choix sur une ligne qui défile (devise, type de tarif)
 │   └── tariffLabels.ts           Libellés (période, prix, plages)
 ├── routes.ts                  TARIFF_LIST_ROUTE, TARIFF_EDITOR_ROUTE, TariffEditorRouteParams
 └── index.ts                   les deux pages et leurs routes, computeCost, useTariffSettings, TariffRepository, formatPrice
@@ -45,8 +47,13 @@ Les paramètres de route sont sérialisables (`tariffId` seulement) : chaque pag
 - **En-tête `PageHeader`** (kelec-model, le même que l'historique de charge) : retour à gauche, action à droite
   (« + » sur la liste, ✓ sur la saisie). Pas de boutons en bas, donc **la barre d'onglets reste affichée**.
 - Liste vide : un bouton « Ajouter un tarif » dans le contenu, plus explicite que le « + » pour le premier tarif.
-- « Supprimer » reste en bas du contenu de la saisie, loin de ✓.
+- « Supprimer le tarif » est fixé en bas de la saisie, juste au-dessus de la barre d'onglets, loin de ✓ (`footer` de `TariffPageLayout`).
+  Sur iOS, la barre flotte par-dessus l'écran : le bouton prend la marge du bas de l'onglet, qui comprend la barre ; sur Android, l'écran s'arrête déjà au-dessus.
 - Un tarif se modifie sur sa page, puis on revient à la liste, qui se relit à chaque affichage.
+- **Page de saisie** : « Période d'application » (« Depuis le début », ou la date de début à droite, puis la fin si un tarif suit),
+  type de tarif, carte « Prix par kWh » (badge « -28 % » quand les heures creuses coûtent moins cher),
+  et pour les heures pleines / creuses une carte des plages : total par jour, frise de 00h à 24h, une ligne par plage, ajout en pointillés.
+- **Grande police** : les titres de carte passent à la ligne ; les lignes de choix (devise, type de tarif) défilent horizontalement.
 - Pas de `Modal` de React Native : avec une pile native à l'intérieur, la modale ne recevait plus aucun appui sur iOS.
 
 ## Règles
@@ -78,5 +85,5 @@ Les paramètres de route sont sérialisables (`tariffId` seulement) : chaque pag
 - `__tests__/packages/kelec-charge-cost/chargeCost.test.ts` : prix fixe, plage sur minuit, prorata HP / HC, plusieurs plages,
   plages qui se chevauchent, charge sur plusieurs jours, changement d'heure, changement de tarif (avant, après, à cheval), charge sans durée.
 - `__tests__/packages/kelec-charge-cost/tariffs.test.ts` : saisie (prix, plages), ajout / modification par id, dates en double,
-  tarif « depuis le début », suppression, fin d'un tarif, stockage, format des prix.
+  tarif « depuis le début », suppression, fin d'un tarif, stockage, format des prix, total d'heures creuses et économie.
 - `__tests__/SettingsView/SettingsView.test.tsx` (« should set the electricity tariff ») : devise, premier tarif, passage en HP / HC, prix manquant refusé.

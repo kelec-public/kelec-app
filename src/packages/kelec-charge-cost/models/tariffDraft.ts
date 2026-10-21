@@ -74,7 +74,7 @@ export function tariffFromDraft(draft: TariffDraft): Validated<Tariff> {
 const DAY_MINUTES = 24 * 60;
 
 /** Plage en minutes dans la journée ; une plage qui passe minuit est coupée en deux (soir, puis matin). */
-function slotMinutes(slot: OffPeakSlot): [number, number][] {
+export function slotMinutes(slot: OffPeakSlot): [number, number][] {
     const start = minutesOfDay(slot.start);
     const end = minutesOfDay(slot.end);
     return end > start ? [[start, end]] : [[start, DAY_MINUTES], [0, end]];
