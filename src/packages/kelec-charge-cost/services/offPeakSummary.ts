@@ -1,4 +1,4 @@
-import { OffPeakSlot } from "../models/Tariff";
+import { OffPeakSlot, TimeOfDay } from "../models/Tariff";
 import { slotMinutes } from "../models/tariffDraft";
 
 const DAY_MINUTES = 24 * 60;
@@ -8,11 +8,41 @@ export function offPeakRanges(slots: OffPeakSlot[]): [number, number][] {
     return slots.flatMap(slotMinutes);
 }
 
-/** Minutes d'heures creuses par jour ; un temps couvert par deux plages ne compte qu'une fois. */
-export function offPeakMinutesPerDay(slots: OffPeakSlot[]): number {
+/** Pour chaque minute de la journée : en heures creuses ou non. */
+function offPeakMinutes(slots: OffPeakSlot[]): boolean[] {
     const covered = new Array<boolean>(DAY_MINUTES).fill(false);
     offPeakRanges(slots).forEach(([start, end]) => covered.fill(true, start, end));
-    return covered.filter(Boolean).length;
+    return covered;
+}
+
+/** Minutes d'heures creuses par jour ; un temps couvert par deux plages ne compte qu'une fois. */
+export function offPeakMinutesPerDay(slots: OffPeakSlot[]): number {
+    return offPeakMinutes(slots).filter(Boolean).length;
+}
+
+function timeOfDay(minutes: number): TimeOfDay {
+    return `${String(Math.floor(minutes / 60) % 24).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`;
+}
+
+/**
+ * Heures pleines : le reste de la journée, dans l'ordre de la journée (ex. 06:00 → 22:00 pour des heures creuses 22:00 → 06:00).
+ * Une plage qui passe minuit n'est pas coupée. Vide si les heures creuses couvrent toute la journée.
+ */
+export function peakSlots(offPeak: OffPeakSlot[]): OffPeakSlot[] {
+    const covered = offPeakMinutes(offPeak);
+    const ranges: [number, number][] = [];
+    covered.forEach((isOffPeak, minute) => {
+        if (isOffPeak) return;
+        const last = ranges[ranges.length - 1];
+        if (last && last[1] === minute) last[1] = minute + 1;
+        else ranges.push([minute, minute + 1]);
+    });
+    // une plage qui finit à minuit continue avec celle qui commence à minuit
+    if (ranges.length > 1 && ranges[0][0] === 0 && ranges[ranges.length - 1][1] === DAY_MINUTES) {
+        const [, morningEnd] = ranges.shift()!;
+        ranges[ranges.length - 1][1] = morningEnd;
+    }
+    return ranges.map(([start, end]) => ({ start: timeOfDay(start), end: timeOfDay(end) }));
 }
 
 /** « 8 h », « 7 h 30 ». */

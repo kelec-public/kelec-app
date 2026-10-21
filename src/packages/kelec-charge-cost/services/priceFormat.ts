@@ -33,3 +33,8 @@ export function currencySymbol(currency: Currency): string {
         return symbol('symbol');
     }
 }
+
+/** Prix au kWh sans la devise, de 2 à 4 décimales (« 0,14 », « 0,2516 ») : la devise est affichée à part. */
+export function formatKwhPrice(price: number): string {
+    return new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 }).format(price);
+}

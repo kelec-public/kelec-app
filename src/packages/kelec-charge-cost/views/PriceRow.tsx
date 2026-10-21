@@ -1,10 +1,10 @@
 import { StyleSheet, View } from "react-native";
-import Icon from "react-native-vector-icons/MaterialIcons";
 import Text from "../../../screen/Common/CustomText";
 import TextInput from "../../../screen/Common/TextInput";
 import { NEUTRAL_200 } from "../../kelec-model/lib/colours";
-import { spacerM, spacerS, spacerXL } from "../../kelec-model/view/Spacers";
+import { spacerM } from "../../kelec-model/view/Spacers";
 import { subTitle2, textBody } from "../../kelec-model/view/Titles";
+import IconBox from "./IconBox";
 
 type Props = {
     readonly icon: string;
@@ -23,9 +23,7 @@ type Props = {
 function PriceRow({ icon, iconColour, label, value, onChangeText, unit, testID }: Props): React.JSX.Element {
     return (
         <View style={styles.row}>
-            <View style={[styles.iconBox, { backgroundColor: iconColour + '26' }]}>
-                <Icon name={icon} size={spacerXL} color={iconColour} />
-            </View>
+            <IconBox icon={icon} colour={iconColour} />
             <Text style={[textBody, styles.label]}>{label}</Text>
             <TextInput
                 testID={testID}
@@ -40,20 +38,11 @@ function PriceRow({ icon, iconColour, label, value, onChangeText, unit, testID }
     );
 }
 
-const ICON_BOX = 36;
-
 const styles = StyleSheet.create({
     row: {
         flexDirection: 'row',
         alignItems: 'center',
         gap: spacerM,
-    },
-    iconBox: {
-        width: ICON_BOX,
-        height: ICON_BOX,
-        borderRadius: spacerS * 2,
-        alignItems: 'center',
-        justifyContent: 'center',
     },
     label: {
         flex: 1,

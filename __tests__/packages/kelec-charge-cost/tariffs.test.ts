@@ -1,10 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FlatTariff, Tariff } from "../../../src/packages/kelec-charge-cost/models/Tariff";
 import { draftFromTariff, newDraft, parsePrice, tariffFromDraft } from "../../../src/packages/kelec-charge-cost/models/tariffDraft";
-import { canDeleteTariff, deleteTariff, tariffEnd, upsertTariff, withPeriod } from "../../../src/packages/kelec-charge-cost/services/tariffList";
+import { canDeleteTariff, deleteTariff, tariffEnd, tariffStatus, upsertTariff, withPeriod } from "../../../src/packages/kelec-charge-cost/services/tariffList";
 import { TariffRepository } from "../../../src/packages/kelec-charge-cost/services/tariffRepository";
-import { currencySymbol, formatPrice, formatPricePerKwh } from "../../../src/packages/kelec-charge-cost/services/priceFormat";
-import { formatDuration, offPeakMinutesPerDay, offPeakRanges, offPeakSaving } from "../../../src/packages/kelec-charge-cost/services/offPeakSummary";
+import { currencySymbol, formatKwhPrice, formatPrice, formatPricePerKwh } from "../../../src/packages/kelec-charge-cost/services/priceFormat";
+import { formatDuration, offPeakMinutesPerDay, offPeakRanges, offPeakSaving, peakSlots } from "../../../src/packages/kelec-charge-cost/services/offPeakSummary";
 
 const flat = (id: string, validFrom: string | null, pricePerKwh = 0.2): FlatTariff =>
     ({ id, validFrom, kind: 'flat', pricePerKwh });
@@ -133,6 +133,11 @@ describe("price format", () => {
         expect(formatPricePerKwh(0.2516, 'EUR')).toMatch(/0[,.]2516\s?€\/kWh/);
     });
 
+    test("price per kWh without the currency", () => {
+        expect(formatKwhPrice(0.14)).toMatch(/^0[,.]14$/);
+        expect(formatKwhPrice(0.2516)).toMatch(/^0[,.]2516$/);
+    });
+
     test("currency symbol", () => {
         expect(currencySymbol('EUR')).toBe('€');
         expect(currencySymbol('GBP')).toBe('£');
@@ -162,5 +167,38 @@ describe("off-peak summary", () => {
         expect(offPeakSaving(0.2, 0.2)).toBeNull();
         expect(offPeakSaving(0.2, null)).toBeNull();
         expect(offPeakSaving(0, 0)).toBeNull();
+    });
+});
+
+describe("tariff status", () => {
+    const tariffs = [flat('first', null), flat('second', '2027-02-01'), flat('third', '2027-06-01')];
+
+    test("past, current and upcoming", () => {
+        expect(tariffStatus(tariffs, 'first', '2027-03-15')).toBe('past');
+        expect(tariffStatus(tariffs, 'second', '2027-03-15')).toBe('current');
+        expect(tariffStatus(tariffs, 'third', '2027-03-15')).toBe('upcoming');
+    });
+
+    test("a tariff is current on its first and last day", () => {
+        expect(tariffStatus(tariffs, 'second', '2027-02-01')).toBe('current');
+        expect(tariffStatus(tariffs, 'second', '2027-05-31')).toBe('current');
+        expect(tariffStatus(tariffs, 'first', '2027-01-31')).toBe('current');
+    });
+});
+
+describe("peak hours", () => {
+    test("the rest of the day", () => {
+        expect(peakSlots([{ start: '22:00', end: '06:00' }])).toEqual([{ start: '06:00', end: '22:00' }]);
+        expect(peakSlots([{ start: '22:00', end: '06:00' }, { start: '12:30', end: '14:00' }]))
+            .toEqual([{ start: '06:00', end: '12:30' }, { start: '14:00', end: '22:00' }]);
+    });
+
+    test("a peak period over midnight is not split", () => {
+        expect(peakSlots([{ start: '01:00', end: '05:00' }])).toEqual([{ start: '05:00', end: '01:00' }]);
+        expect(peakSlots([{ start: '00:00', end: '06:00' }])).toEqual([{ start: '06:00', end: '00:00' }]);
+    });
+
+    test("none when off-peak covers the whole day", () => {
+        expect(peakSlots([{ start: '00:00', end: '12:00' }, { start: '12:00', end: '00:00' }])).toEqual([]);
     });
 });

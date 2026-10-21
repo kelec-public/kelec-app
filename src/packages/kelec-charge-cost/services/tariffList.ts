@@ -43,3 +43,13 @@ export function tariffEnd(tariffs: TariffPeriod[], id: string): string | null {
     const nextStart = parseLocalDate(next.validFrom);
     return toLocalDate(new Date(nextStart.getFullYear(), nextStart.getMonth(), nextStart.getDate() - 1));
 }
+
+export type TariffStatus = 'past' | 'current' | 'upcoming';
+
+/** Tarif terminé, en cours ou à venir, à la date locale `today` (« AAAA-MM-JJ »). */
+export function tariffStatus(tariffs: TariffPeriod[], id: string, today: string): TariffStatus {
+    const tariff = tariffs.find(other => other.id === id);
+    if (tariff?.validFrom && tariff.validFrom > today) return 'upcoming';
+    const end = tariffEnd(tariffs, id);
+    return end !== null && end < today ? 'past' : 'current';
+}

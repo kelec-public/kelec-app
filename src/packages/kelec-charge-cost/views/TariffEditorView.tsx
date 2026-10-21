@@ -7,12 +7,13 @@ import Text from "../../../screen/Common/CustomText";
 import TariffPageLayout from "./TariffPageLayout";
 import Button from "../../kelec-model/view/Button";
 import KelecCard from "../../kelec-model/view/Card";
-import { BLACK_COLOUR, NEUTRAL_200, NEUTRAL_300, ORANGE_ONE, PRIMARY_COLOUR, SECONDARY_COLOUR } from "../../kelec-model/lib/colours";
+import { BLACK_COLOUR, NEUTRAL_200, NEUTRAL_300, ORANGE_ONE, PRIMARY_COLOUR } from "../../kelec-model/lib/colours";
 import { spacerL, spacerM, spacerS, spacerXL } from "../../kelec-model/view/Spacers";
-import { subTitle2, subTitle3, textBody } from "../../kelec-model/view/Titles";
+import { subTitle2, textBody } from "../../kelec-model/view/Titles";
 import { Currency, minutesOfDay, OffPeakSlot, parseLocalDate, Tariff, TariffKind, TimeOfDay, timeOfDayFromDate, toLocalDate } from "../models/Tariff";
 import { DEFAULT_OFF_PEAK_SLOT, parsePrice, TariffDraft } from "../models/tariffDraft";
 import ChoicePills from "./ChoicePills";
+import Badge from "./Badge";
 import PickerButton from "./PickerButton";
 import PriceRow from "./PriceRow";
 import OffPeakTimeline from "./OffPeakTimeline";
@@ -60,12 +61,6 @@ function TariffEditorView({ draft, tariffs, currency, canDelete, onChange, onSav
     const kindChoices = (['flat', 'peakOffPeak'] as TariffKind[]).map(kind => (
         { value: kind, label: t(kind === 'flat' ? "flatRate" : "peakOffPeak"), testID: 'tariffKind' + kind }
     ));
-
-    const badge = (text: string, testID: string) => (
-        <View testID={testID} style={styles.badge}>
-            <Text style={[subTitle3, styles.badgeText]}>{text}</Text>
-        </View>
-    );
 
     const cardHeader = (title: string, caption?: string, badgeElement?: React.ReactNode) => (
         <View style={styles.cardHeader}>
@@ -121,7 +116,7 @@ function TariffEditorView({ draft, tariffs, currency, canDelete, onChange, onSav
                 <KelecCard>
                     <View style={styles.card}>
                         {cardHeader(t("pricePerKwh"), undefined, draft.kind === 'peakOffPeak' && saving !== null
-                            ? badge(t("offPeakSaving").replace('{percent}', String(saving)), 'offPeakSavingBadge')
+                            ? <Badge testID="offPeakSavingBadge" text={t("offPeakSaving").replace('{percent}', String(saving))} />
                             : undefined)}
                         {draft.kind === 'flat' ? (
                             <PriceRow
@@ -239,15 +234,6 @@ const styles = StyleSheet.create({
     cardTitle: {
         flexShrink: 1,
         gap: 2,
-    },
-    badge: {
-        backgroundColor: PRIMARY_COLOUR + '26',
-        borderRadius: 999,
-        paddingVertical: spacerS,
-        paddingHorizontal: spacerM,
-    },
-    badgeText: {
-        color: SECONDARY_COLOUR,
     },
     separator: {
         height: StyleSheet.hairlineWidth,
