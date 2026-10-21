@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react-native";
+import { render, within } from "@testing-library/react-native";
 import ChargeCard from "../../../../src/packages/kelec-charge-history/views/ChargeCard";
 import Charge from "../../../../src/packages/kelec-charge-history/models/Charge";
 import LanguageHandler from "../../../../src/lib/model/localization/languageHandler";
@@ -69,4 +69,7 @@ test('should render v2g card', async () => {
 
     const V2GEnergyRecoveredText = getByTestId('V2GEnergyRecoveredText');
     expect(V2GEnergyRecoveredText.children[1]).toBe('16.04');
+
+    // charge lente : AC (prise Type 2), en bas à droite
+    expect(within(getByTestId('chargeCurrentType')).getByText('AC')).toBeDefined();
 });

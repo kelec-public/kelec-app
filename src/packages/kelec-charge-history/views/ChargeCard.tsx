@@ -5,6 +5,7 @@ import { useContext, useState } from "react";
 import MainContext from "../../../lib/Contexts/MainContext";
 import { convertDateForChargeHistory, convertHoursForChargeHistory, formatNumberWithSpaces, getBlackColour, getDistance, getWhiteColour } from "../../../lib/graphics/utils";
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import CommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { fontFamilyBold, fontWeightBold } from "../../../lib/graphics/commonStyle";
 import CarsViewContext from "../../../lib/Contexts/CarsViewContext";
 import { useTheme } from '@react-navigation/native';
@@ -209,19 +210,23 @@ function ChargeCard({ charge, onBeforeEditCost }: ChargeCardProps): React.JSX.El
                         </View>
                     </>
                 )}
-
+            </View>
+            {/* en bas : le coût à gauche (s'il est connu), le type de charge à droite */}
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 7, gap: 7 }}>
                 {/* coût : prix saisi à la main, ou tarif de la maison */}
-                {cost !== null && (
-                    <>
-                        <View style={{ width: 1, backgroundColor: 'gray' }}></View>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
-                            <Icon name="payments" size={18} color={getBlackColour(isDarkMode)} />
-                            <Text testID={'chargeCostText'} style={{ color: getBlackColour(isDarkMode) }}>{costs!.format(cost)}</Text>
-                            {/* prix saisi à la main (pour une charge fusionnée : pour une de ses sous-charges) */}
-                            {costs!.isManual(charge) && <Icon testID={'manualCostIcon'} name="edit" size={14} color={getBlackColour(isDarkMode)} />}
-                        </View>
-                    </>
-                )}
+                {cost !== null ? (
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, flexShrink: 1 }}>
+                        <Icon name="payments" size={18} color={getBlackColour(isDarkMode)} />
+                        <Text testID={'chargeCostText'} style={{ color: getBlackColour(isDarkMode) }}>{costs!.format(cost)}</Text>
+                        {/* prix saisi à la main (pour une charge fusionnée : pour une de ses sous-charges) */}
+                        {costs!.isManual(charge) && <Icon testID={'manualCostIcon'} name="edit" size={14} color={getBlackColour(isDarkMode)} />}
+                    </View>
+                ) : <View />}
+                {/* prise Type 2 en AC, CCS2 en DC */}
+                <View testID={'chargeCurrentType'} style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+                    <CommunityIcon name={charge.isDCCharge() ? 'ev-plug-ccs2' : 'ev-plug-type2'} size={18} color={getBlackColour(isDarkMode)} />
+                    <Text style={{ color: getBlackColour(isDarkMode) }}>{charge.isDCCharge() ? 'DC' : 'AC'}</Text>
+                </View>
             </View>
         </CardContainer>
     );
