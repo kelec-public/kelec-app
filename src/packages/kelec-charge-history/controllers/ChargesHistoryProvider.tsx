@@ -18,6 +18,14 @@ type ChargesHistoryController = {
     costOverrides: ChargeCostOverrides;
     /** Enregistre le prix saisi pour une charge, ou le retire (`null` : retour au tarif). */
     setCostOverride: (charge: Charge, amount: number | null) => Promise<void>;
+    /** Ajoute des prix saisis (import) ; une charge qui a déjà un prix saisi garde le sien. */
+    importCostOverrides: (costs: ManualCost[]) => Promise<void>;
+};
+
+/** Prix saisi à la main pour une charge (import). */
+export type ManualCost = {
+    charge: Charge;
+    amount: number;
 };
 
 const ChargesHistoryContext = createContext<ChargesHistoryController>({
@@ -26,6 +34,7 @@ const ChargesHistoryContext = createContext<ChargesHistoryController>({
     importCharges: null,
     costOverrides: new ChargeCostOverrides(),
     setCostOverride: async () => { },
+    importCostOverrides: async () => { },
 });
 
 export const useChargesHistory = (): ChargesHistoryController => useContext(ChargesHistoryContext);
@@ -105,9 +114,18 @@ export function ChargesHistoryProvider({ carModel, account, children }: Props): 
         if (isMounted.current) setCostOverrides(next);
     }, [vin]);
 
+    const importCostOverrides = useCallback(async (costs: ManualCost[]) => {
+        let next = await ChargeCostOverridesRepository.get(vin);
+        for (const { charge, amount } of costs) {
+            if (next.get(charge) === null) next = next.with(charge, amount);
+        }
+        await ChargeCostOverridesRepository.save(vin, next);
+        if (isMounted.current) setCostOverrides(next);
+    }, [vin]);
+
     const value = useMemo(
-        () => ({ history, sync, importCharges, costOverrides, setCostOverride }),
-        [history, sync, importCharges, costOverrides, setCostOverride],
+        () => ({ history, sync, importCharges, costOverrides, setCostOverride, importCostOverrides }),
+        [history, sync, importCharges, costOverrides, setCostOverride, importCostOverrides],
     );
 
     return (

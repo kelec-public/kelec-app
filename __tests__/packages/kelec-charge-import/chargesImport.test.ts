@@ -174,3 +174,41 @@ test("readSpreadsheetRows refuse un fichier vide ou qui n'est pas un tableur", (
     expect(() => readSpreadsheetRows(Buffer.from('%PDF-1.4').toString('base64'))).toThrow();
     expect(() => readSpreadsheetRows(toXlsxBase64([]))).toThrow();
 });
+
+describe('prix saisis à la main', () => {
+    const home = new Charge('2024-01-01T10:00:00Z', '2024-01-01T11:00:00Z', 60, 20, 40, 10, 'ok');
+    const away = new Charge('2024-01-02T10:00:00Z', '2024-01-02T10:30:00Z', 30, 20, 60, 30, 'ok');
+    const costs = {
+        currency: 'EUR' as const,
+        costOf: (charge: Charge) => charge === away ? 12.5 : 2,
+        isManual: (charge: Charge) => charge === away,
+        format: String,
+    };
+
+    test("export puis import : seuls les prix saisis sont repris, avec leur charge", () => {
+        const { newCharges, manualCosts } = previewOf(toRows([home, away], costs));
+        expect(newCharges).toHaveLength(2);
+        expect(manualCosts).toHaveLength(1);
+        expect(manualCosts[0].amount).toBe(12.5);
+        expect(manualCosts[0].charge.getStartDate().getTime()).toBe(away.getStartDate().getTime());
+    });
+
+    test("repris aussi pour une charge déjà dans l'historique (réinstallation), sauf si elle a déjà un prix saisi", () => {
+        const rows = toRows([home, away], costs);
+        expect(previewOf(rows, [home, away]).manualCosts).toHaveLength(1);
+        expect(previewOf(rows, [home, away]).newCharges).toHaveLength(0);
+
+        const alreadySet = (charge: Charge) => charge.getStartDate().getTime() === away.getStartDate().getTime();
+        const preview = buildImportPreview(readSpreadsheetRows(toXlsxBase64(rows)), [home, away], 'DMY', alreadySet);
+        expect(preview.manualCosts).toEqual([]);
+    });
+
+    test("ligne fusionnée, prix non saisi, ou coût illisible : rien n'est repris", () => {
+        const { manualCosts } = previewOf([
+            { ...toRows([away], costs)[0], isAMergeCharge: true },
+            { ...toRows([home], costs)[0], isManualCost: false },
+            { ...toRows([away], costs)[0], chargeStartDate: "2024-01-03T10:00:00Z", cost: "abc" },
+        ]);
+        expect(manualCosts).toEqual([]);
+    });
+});
