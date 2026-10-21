@@ -1,4 +1,4 @@
-import { StyleSheet, TouchableOpacity, useColorScheme, View } from "react-native";
+import { ScrollView, StyleSheet, TouchableOpacity, useColorScheme } from "react-native";
 import Text from "../../../screen/Common/CustomText";
 import { BLACK_COLOUR, NEUTRAL_200, PRIMARY_COLOUR } from "../../kelec-model/lib/colours";
 import { spacerL, spacerM, spacerS } from "../../kelec-model/view/Spacers";
@@ -16,11 +16,11 @@ type Props<T> = {
     readonly onSelect: (value: T) => void;
 };
 
-/** Choix d'une valeur parmi quelques-unes, sur une ligne (devise, type de tarif). */
+/** Choix d'une valeur parmi quelques-unes, sur une ligne qui défile si elle déborde (grande police). */
 function ChoicePills<T>({ choices, selected, onSelect }: Props<T>): React.JSX.Element {
     const isDarkMode = useColorScheme() === 'dark';
     return (
-        <View style={styles.row}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.row}>
             {choices.map(choice => {
                 const isSelected = choice.value === selected;
                 return (
@@ -38,14 +38,12 @@ function ChoicePills<T>({ choices, selected, onSelect }: Props<T>): React.JSX.El
                     </TouchableOpacity>
                 );
             })}
-        </View>
+        </ScrollView>
     );
 }
 
 const styles = StyleSheet.create({
     row: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
         gap: spacerS,
     },
     pill: {
