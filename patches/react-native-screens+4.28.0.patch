@@ -1,0 +1,17 @@
+diff --git a/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/gamma/tabs/appearance/TabsAppearanceApplicator.kt b/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/gamma/tabs/appearance/TabsAppearanceApplicator.kt
+index 10cd91b..e83baa8 100644
+--- a/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/gamma/tabs/appearance/TabsAppearanceApplicator.kt
++++ b/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/gamma/tabs/appearance/TabsAppearanceApplicator.kt
+@@ -36,6 +36,12 @@ internal class TabsAppearanceApplicator(
+         isTabBarHidden: Boolean,
+     ) {
+         bottomNavigationView.isVisible = !isTabBarHidden
++        if (isTabBarHidden) {
++            // Kelec (patch-package) : une vue GONE garde ses dernières limites, et TouchTargetHelper de React Native
++            // ne regarde pas la visibilité : les appuis JS sur la zone de l'ancienne barre partaient vers ses items.
++            // La barre masquée n'est plus mise en page : on ramène ses limites à zéro. Réafficher la relance une mise en page.
++            bottomNavigationView.layout(0, 0, 0, 0)
++        }
+         bottomNavigationView.setBackgroundColor(
+             tabBarAppearance?.tabBarBackgroundColor
+                 ?: resolveColorAttr(context, R.attr.colorSurfaceContainer),
