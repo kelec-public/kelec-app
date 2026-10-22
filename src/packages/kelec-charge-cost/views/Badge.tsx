@@ -18,7 +18,8 @@ type Props = {
 function Badge({ text, variant = 'success', withDot = false, testID }: Props): React.JSX.Element {
     const isDarkMode = useColorScheme() === 'dark';
     const isSuccess = variant === 'success';
-    const backgroundColor = isSuccess ? PRIMARY_COLOUR + '26' : (isDarkMode ? NEUTRAL_450 : NEUTRAL_100);
+    const neutralBackground = isDarkMode ? NEUTRAL_450 : NEUTRAL_100;
+    const backgroundColor = isSuccess ? PRIMARY_COLOUR + '26' : neutralBackground;
     const color = isSuccess ? SECONDARY_COLOUR : NEUTRAL_300;
     return (
         <View testID={testID} style={[styles.badge, { backgroundColor }]}>

@@ -122,19 +122,22 @@ class CarType {
     }
 
     getMaximumLeasingMileage(): number {
-        let start_date = new Date(this.leasing!.startDate!);
-        let end_date = new Date(this.leasing!.endDate!);
+        const { startDate, endDate, totalMileage, startMileage = 0 } = this.leasing ?? {};
+        // incomplete contract: no limit to compare with
+        if (!startDate || !endDate || totalMileage === undefined) return 0;
+
+        const start_date = new Date(startDate);
+        const end_date = new Date(endDate);
         const today = new Date();
         if (today <= start_date) return 0;
         // totalMileage is the odometer expected at the end of the contract, not a distance
-        if (today >= end_date) return this.leasing!.totalMileage!;
+        if (today >= end_date) return totalMileage;
 
         const totalDays = (end_date.getTime() - start_date.getTime()) / (1000 * 60 * 60 * 24);
         const elapsedDays = (today.getTime() - start_date.getTime()) / (1000 * 60 * 60 * 24);
 
-        const mileagePerDay = (this.leasing!.totalMileage! - (this.leasing!.startMileage ?? 0)) / totalDays;
-        return Math.round(mileagePerDay * elapsedDays + (this.leasing!.startMileage ?? 0));
-
+        const mileagePerDay = (totalMileage - startMileage) / totalDays;
+        return Math.round(mileagePerDay * elapsedDays + startMileage);
     }
 
     clone(): CarType {

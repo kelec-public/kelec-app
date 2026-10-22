@@ -5,13 +5,13 @@
 export const CURRENCIES = ['EUR', 'GBP', 'CHF', 'NOK', 'SEK', 'DKK', 'ISK', 'PLN', 'CZK', 'HUF', 'RON'] as const;
 export type Currency = typeof CURRENCIES[number];
 
-/** Heure locale « HH:MM » (heure du téléphone). */
-export type TimeOfDay = string;
-
-/** Plage d'heures creuses. Si `end` est avant `start`, la plage passe minuit (ex. 22:00 → 06:00). */
+/**
+ * Plage d'heures creuses, en heures locales « HH:MM » (heure du téléphone).
+ * Si `end` est avant `start`, la plage passe minuit (ex. 22:00 → 06:00).
+ */
 export type OffPeakSlot = {
-    start: TimeOfDay;
-    end: TimeOfDay;
+    start: string;
+    end: string;
 };
 
 type TariffBase = {
@@ -53,20 +53,22 @@ export function isValidTimeOfDay(value: string): boolean {
     return TIME_OF_DAY.test(value);
 }
 
-/** Minutes depuis minuit. */
-export function minutesOfDay(time: TimeOfDay): number {
-    const [, hours, minutes] = TIME_OF_DAY.exec(time)!;
-    return Number(hours) * 60 + Number(minutes);
+/** Minutes depuis minuit d'une heure « HH:MM ». */
+export function minutesOfDay(time: string): number {
+    const match = TIME_OF_DAY.exec(time);
+    if (!match) throw new Error(`Invalid time of day: ${time}`);
+    return Number(match[1]) * 60 + Number(match[2]);
 }
 
-export function timeOfDayFromDate(date: Date): TimeOfDay {
+export function timeOfDayFromDate(date: Date): string {
     return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
 }
 
 /** « AAAA-MM-JJ » → minuit, heure locale. */
 export function parseLocalDate(value: string): Date {
-    const [, year, month, day] = LOCAL_DATE.exec(value)!;
-    return new Date(Number(year), Number(month) - 1, Number(day));
+    const match = LOCAL_DATE.exec(value);
+    if (!match) throw new Error(`Invalid local date: ${value}`);
+    return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
 }
 
 export function toLocalDate(date: Date): string {

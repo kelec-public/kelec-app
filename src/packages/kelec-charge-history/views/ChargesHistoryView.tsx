@@ -60,7 +60,7 @@ function ChargesHistoryView({ navigation, onImport, onOpenTariffs, onEditChargeC
         : undefined;
 
     // Aucun tarif : invitation à en définir un (pas pendant la lecture des tarifs). Les prix saisis à la main restent affichés.
-    const shouldSuggestTariff = !!onOpenTariffs && tariffSettings !== null && tariffSettings.tariffs.length === 0;
+    const shouldSuggestTariff = !!openTariffs && tariffSettings !== null && tariffSettings.tariffs.length === 0;
 
     return (
         <SafeAreaView
@@ -103,7 +103,7 @@ function ChargesHistoryView({ navigation, onImport, onOpenTariffs, onEditChargeC
                         // iOS : le contenu défile sous la barre d'onglets flottante, sans que le bas soit caché
                         contentInsetAdjustmentBehavior="automatic"
                         keyExtractor={(item) => item.monthYear}
-                        ListHeaderComponent={shouldSuggestTariff ? <SetTariffBanner onPress={onOpenTariffs!} /> : undefined}
+                        ListHeaderComponent={shouldSuggestTariff ? <SetTariffBanner onPress={openTariffs} /> : undefined}
                         renderItem={({ item: month }) => (
                             <ChargeMonthSection month={month} isFirst={month.monthYear === months[0].monthYear} />
                         )}

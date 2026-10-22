@@ -18,6 +18,33 @@ type ChargeCardProps = {
     readonly onBeforeEditCost?: () => void;
 }
 
+/** Bas de la carte : le coût à gauche (s'il est connu), le type de charge à droite. */
+function ChargeCardFooter({ charge }: { readonly charge: Charge }): React.JSX.Element {
+    const isDarkMode = useColorScheme() === 'dark';
+    const costs = useContext(ChargeCostsContext);
+    const cost = costs?.costOf(charge) ?? null;
+    const isDC = charge.isDCCharge();
+
+    return (
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 7, gap: 7 }}>
+            {/* coût : prix saisi à la main, ou tarif de la maison */}
+            {costs && cost !== null ? (
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, flexShrink: 1 }}>
+                    <Icon name="payments" size={18} color={getBlackColour(isDarkMode)} />
+                    <Text testID={'chargeCostText'} style={{ color: getBlackColour(isDarkMode) }}>{costs.format(cost)}</Text>
+                    {/* prix saisi à la main (pour une charge fusionnée : pour une de ses sous-charges) */}
+                    {costs.isManual(charge) && <Icon testID={'manualCostIcon'} name="edit" size={14} color={getBlackColour(isDarkMode)} />}
+                </View>
+            ) : <View />}
+            {/* prise Type 2 en AC, CCS2 en DC */}
+            <View testID={'chargeCurrentType'} style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+                <CommunityIcon name={isDC ? 'ev-plug-ccs2' : 'ev-plug-type2'} size={18} color={getBlackColour(isDarkMode)} />
+                <Text style={{ color: getBlackColour(isDarkMode) }}>{isDC ? 'DC' : 'AC'}</Text>
+            </View>
+        </View>
+    );
+}
+
 function ChargeCard({ charge, onBeforeEditCost }: ChargeCardProps): React.JSX.Element {
 
     const isDarkMode = useColorScheme() === 'dark';
@@ -26,7 +53,6 @@ function ChargeCard({ charge, onBeforeEditCost }: ChargeCardProps): React.JSX.El
     const { appPreferences, languageHandler } = useContext(MainContext);
     const { handleModalAnim } = useContext(CarsViewContext);
     const costs = useContext(ChargeCostsContext);
-    const cost = costs?.costOf(charge) ?? null;
     // une charge fusionnée n'a pas de prix à elle : on modifie celui de ses sous-charges, dans leur détail
     const editCost = costs?.edit && !charge.getIsAMergeCharge()
         ? () => {
@@ -211,23 +237,7 @@ function ChargeCard({ charge, onBeforeEditCost }: ChargeCardProps): React.JSX.El
                     </>
                 )}
             </View>
-            {/* en bas : le coût à gauche (s'il est connu), le type de charge à droite */}
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 7, gap: 7 }}>
-                {/* coût : prix saisi à la main, ou tarif de la maison */}
-                {cost !== null ? (
-                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, flexShrink: 1 }}>
-                        <Icon name="payments" size={18} color={getBlackColour(isDarkMode)} />
-                        <Text testID={'chargeCostText'} style={{ color: getBlackColour(isDarkMode) }}>{costs!.format(cost)}</Text>
-                        {/* prix saisi à la main (pour une charge fusionnée : pour une de ses sous-charges) */}
-                        {costs!.isManual(charge) && <Icon testID={'manualCostIcon'} name="edit" size={14} color={getBlackColour(isDarkMode)} />}
-                    </View>
-                ) : <View />}
-                {/* prise Type 2 en AC, CCS2 en DC */}
-                <View testID={'chargeCurrentType'} style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
-                    <CommunityIcon name={charge.isDCCharge() ? 'ev-plug-ccs2' : 'ev-plug-type2'} size={18} color={getBlackColour(isDarkMode)} />
-                    <Text style={{ color: getBlackColour(isDarkMode) }}>{charge.isDCCharge() ? 'DC' : 'AC'}</Text>
-                </View>
-            </View>
+            <ChargeCardFooter charge={charge} />
         </CardContainer>
     );
 }

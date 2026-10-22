@@ -82,8 +82,9 @@ export function slotMinutes(slot: OffPeakSlot): [number, number][] {
 
 /** Deux plages qui se chevauchent (ex. 22:00 → 06:00 et 03:00 → 07:00). Des plages qui se touchent (06:00) sont acceptées. */
 export function slotsOverlap(slots: OffPeakSlot[]): boolean {
-    const parts = slots.map(slotMinutes);
+    // chaque plage passe minuit au plus une fois : on compare les morceaux de toutes les plages deux à deux
+    const parts = slots.flatMap((slot, slotIndex) => slotMinutes(slot).map(([start, end]) => ({ slotIndex, start, end })));
     return parts.some((a, i) => parts.slice(i + 1).some(b =>
-        a.some(([aStart, aEnd]) => b.some(([bStart, bEnd]) => aStart < bEnd && bStart < aEnd)),
+        a.slotIndex !== b.slotIndex && a.start < b.end && b.start < a.end,
     ));
 }

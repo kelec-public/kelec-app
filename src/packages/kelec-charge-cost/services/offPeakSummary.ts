@@ -1,4 +1,4 @@
-import { OffPeakSlot, TimeOfDay } from "../models/Tariff";
+import { OffPeakSlot } from "../models/Tariff";
 import { slotMinutes } from "../models/tariffDraft";
 
 const DAY_MINUTES = 24 * 60;
@@ -20,7 +20,8 @@ export function offPeakMinutesPerDay(slots: OffPeakSlot[]): number {
     return offPeakMinutes(slots).filter(Boolean).length;
 }
 
-function timeOfDay(minutes: number): TimeOfDay {
+/** Minutes depuis minuit → « HH:MM » (1440 → « 00:00 »). */
+function timeOfDay(minutes: number): string {
     return `${String(Math.floor(minutes / 60) % 24).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`;
 }
 
@@ -33,14 +34,16 @@ export function peakSlots(offPeak: OffPeakSlot[]): OffPeakSlot[] {
     const ranges: [number, number][] = [];
     covered.forEach((isOffPeak, minute) => {
         if (isOffPeak) return;
-        const last = ranges[ranges.length - 1];
-        if (last && last[1] === minute) last[1] = minute + 1;
+        const last = ranges.at(-1);
+        if (last?.[1] === minute) last[1] = minute + 1;
         else ranges.push([minute, minute + 1]);
     });
     // une plage qui finit à minuit continue avec celle qui commence à minuit
-    if (ranges.length > 1 && ranges[0][0] === 0 && ranges[ranges.length - 1][1] === DAY_MINUTES) {
-        const [, morningEnd] = ranges.shift()!;
-        ranges[ranges.length - 1][1] = morningEnd;
+    const [morning, ...rest] = ranges;
+    const evening = rest.at(-1);
+    if (morning?.[0] === 0 && evening?.[1] === DAY_MINUTES) {
+        evening[1] = morning[1];
+        return rest.map(([start, end]) => ({ start: timeOfDay(start), end: timeOfDay(end) }));
     }
     return ranges.map(([start, end]) => ({ start: timeOfDay(start), end: timeOfDay(end) }));
 }

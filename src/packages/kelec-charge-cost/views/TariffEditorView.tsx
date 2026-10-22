@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useRef } from "react";
 import { StyleSheet, TouchableOpacity, useColorScheme, View } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { useTheme } from '@react-navigation/native';
@@ -10,7 +10,7 @@ import KelecCard from "../../kelec-model/view/Card";
 import { BLACK_COLOUR, NEUTRAL_200, NEUTRAL_300, ORANGE_ONE, PRIMARY_COLOUR } from "../../kelec-model/lib/colours";
 import { spacerL, spacerM, spacerS, spacerXL } from "../../kelec-model/view/Spacers";
 import { subTitle2, textBody } from "../../kelec-model/view/Titles";
-import { Currency, minutesOfDay, OffPeakSlot, parseLocalDate, Tariff, TariffKind, TimeOfDay, timeOfDayFromDate, toLocalDate } from "../models/Tariff";
+import { Currency, minutesOfDay, OffPeakSlot, parseLocalDate, Tariff, TariffKind, timeOfDayFromDate, toLocalDate } from "../models/Tariff";
 import { DEFAULT_OFF_PEAK_SLOT, parsePrice, TariffDraft } from "../models/tariffDraft";
 import ChoicePills from "./ChoicePills";
 import Badge from "./Badge";
@@ -33,7 +33,7 @@ type Props = {
 };
 
 /** « 22:00 » → aujourd'hui à 22:00, pour le sélecteur d'heure. */
-function timeAsDate(time: TimeOfDay): Date {
+function timeAsDate(time: string): Date {
     const minutes = minutesOfDay(time);
     const date = new Date();
     date.setHours(Math.floor(minutes / 60), minutes % 60, 0, 0);
@@ -54,6 +54,15 @@ function TariffEditorView({ draft, tariffs, currency, canDelete, onChange, onSav
     const periodEnd = tariffEnd(withPeriod(tariffs, draft), draft.id);
     const saving = offPeakSaving(parsePrice(draft.peakPrice), parsePrice(draft.offPeakPrice));
 
+    // Clés stables des lignes de plages (les plages n'ont pas d'identifiant) : une par plage, retirée avec elle.
+    const slotKeys = useRef<number[]>([]);
+    const nextSlotKey = useRef(0);
+    while (slotKeys.current.length < draft.offPeakSlots.length) slotKeys.current.push(nextSlotKey.current++);
+    const removeSlot = (index: number) => {
+        slotKeys.current.splice(index, 1);
+        onChange({ offPeakSlots: draft.offPeakSlots.filter((_, i) => i !== index) });
+    };
+
     const updateSlot = (index: number, patch: Partial<OffPeakSlot>) => {
         onChange({ offPeakSlots: draft.offPeakSlots.map((slot, i) => i === index ? { ...slot, ...patch } : slot) });
     };
@@ -66,13 +75,13 @@ function TariffEditorView({ draft, tariffs, currency, canDelete, onChange, onSav
         <View style={styles.cardHeader}>
             <View style={styles.cardTitle}>
                 <Text style={textBody}>{title}</Text>
-                {caption && <Text style={[subTitle2, { color: NEUTRAL_300 }]}>{caption}</Text>}
+                {!!caption && <Text style={[subTitle2, { color: NEUTRAL_300 }]}>{caption}</Text>}
             </View>
             {badgeElement}
         </View>
     );
 
-    const timeButton = (testID: string, value: TimeOfDay, onTimeChange: (time: TimeOfDay) => void) => (
+    const timeButton = (testID: string, value: string, onTimeChange: (time: string) => void) => (
         <PickerButton mode="time" testID={testID} value={timeAsDate(value)} label={value} onChange={date => onTimeChange(timeOfDayFromDate(date))} />
     );
 
@@ -108,7 +117,7 @@ function TariffEditorView({ draft, tariffs, currency, canDelete, onChange, onSav
                             />
                         )}
                     </View>
-                    {periodEnd && <Text style={[subTitle2, styles.periodEnd]}>{`${t("untilDate")} ${formatLocalDate(periodEnd)}`}</Text>}
+                    {periodEnd !== null && <Text style={[subTitle2, styles.periodEnd]}>{`${t("untilDate")} ${formatLocalDate(periodEnd)}`}</Text>}
                 </View>
 
                 <ChoicePills choices={kindChoices} selected={draft.kind} onSelect={kind => onChange({ kind })} />
@@ -163,8 +172,7 @@ function TariffEditorView({ draft, tariffs, currency, canDelete, onChange, onSav
                             )}
                             <OffPeakTimeline slots={draft.offPeakSlots} />
                             {draft.offPeakSlots.map((slot, index) => (
-                                // les plages n'ont pas d'identifiant
-                                <View key={index} style={[styles.slotRow, { backgroundColor: theme.colors.background }]}>
+                                <View key={slotKeys.current[index]} style={[styles.slotRow, { backgroundColor: theme.colors.background }]}>
                                     {timeButton('slotStart' + index, slot.start, start => updateSlot(index, { start }))}
                                     <Icon name="arrow-forward" size={spacerL} color={NEUTRAL_300} />
                                     {timeButton('slotEnd' + index, slot.end, end => updateSlot(index, { end }))}
@@ -172,7 +180,7 @@ function TariffEditorView({ draft, tariffs, currency, canDelete, onChange, onSav
                                     <TouchableOpacity
                                         testID={'removeSlot' + index}
                                         accessibilityRole="button"
-                                        onPress={() => onChange({ offPeakSlots: draft.offPeakSlots.filter((_, i) => i !== index) })}
+                                        onPress={() => removeSlot(index)}
                                     >
                                         <Icon name="delete-outline" size={spacerXL} color={BLACK_COLOUR(isDarkMode)} />
                                     </TouchableOpacity>

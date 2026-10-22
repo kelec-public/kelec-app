@@ -45,4 +45,10 @@ describe("getMaximumLeasingMileage", () => {
         const atEnd = carTypeWith(leasing).getMaximumLeasingMileage();
         expect(atEnd - justBefore).toBeLessThanOrEqual(1);
     });
+
+    test("is 0 for an incomplete contract", () => {
+        jest.useFakeTimers().setSystemTime(new Date("2025-01-01T00:00:00Z"));
+        expect(carTypeWith({ ...leasing, endDate: undefined }).getMaximumLeasingMileage()).toBe(0);
+        expect(carTypeWith({ ...leasing, totalMileage: undefined }).getMaximumLeasingMileage()).toBe(0);
+    });
 });

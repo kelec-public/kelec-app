@@ -73,9 +73,9 @@ function ImportPreviewSection({ summary, labels }: Props): React.JSX.Element {
                 <PreviewRow testID="importPreviewEnergy" icon="bolt" label={labels.energy} values={summary.energyKwh} unit="kWh" />
                 <PreviewRow testID="importPreviewTime" icon="hourglass-empty" label={labels.time} values={summary.minutes} format={formatMinutes} />
             </View>
-            {labels.alreadyKnown && <Text style={styles.note} testID="importPreviewAlreadyKnown">{labels.alreadyKnown}</Text>}
-            {labels.rejected && <Text style={styles.note} testID="importPreviewRejected">{labels.rejected}</Text>}
-            {labels.manualCosts && <Text style={styles.note} testID="importPreviewManualCosts">{labels.manualCosts}</Text>}
+            {!!labels.alreadyKnown && <Text style={styles.note} testID="importPreviewAlreadyKnown">{labels.alreadyKnown}</Text>}
+            {!!labels.rejected && <Text style={styles.note} testID="importPreviewRejected">{labels.rejected}</Text>}
+            {!!labels.manualCosts && <Text style={styles.note} testID="importPreviewManualCosts">{labels.manualCosts}</Text>}
         </View>
     );
 }
