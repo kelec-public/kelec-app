@@ -13,8 +13,8 @@ android {
 
     defaultConfig {
         applicationId 'com.myrenaultplus'
-        minSdk 30
         targetSdk 34
+        minSdk 26
         // doit être différent de celui de l'app du téléphone (même fiche Play Store)
         versionCode 2000300
         versionName '2.7.0'
@@ -63,6 +63,16 @@ dependencies {
 
     // complications (pendant des widgets de l'Apple Watch)
     implementation 'androidx.wear.watchface:watchface-complications-data-source-ktx:1.2.1'
+    // protolayout-proto 1.0.0 (transitif des complications) embarque un protobuf vulnérable (CVE-2024-7254) :
+    // on force la 1.2.1, compilée avec protobuf 4.28.2 (alerte Play Console).
+    constraints {
+        implementation('androidx.wear.protolayout:protolayout-proto:1.2.1') {
+            because 'CVE-2024-7254'
+        }
+        implementation('androidx.wear.protolayout:protolayout-external-protobuf:1.2.1') {
+            because 'CVE-2024-7254'
+        }
+    }
 
     // carte de la position de la voiture
     implementation 'com.google.android.gms:play-services-maps:19.0.0'
