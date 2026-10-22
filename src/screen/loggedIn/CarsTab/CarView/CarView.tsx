@@ -23,6 +23,8 @@ import { useCarProfile } from "../../../../packages/kelec-car-page/services/useC
 import { useCarData } from "../../../../packages/kelec-car-page/services/useCarData";
 import CarViewHeader from "../../../../packages/kelec-car-page/views/CarViewHeader";
 import { retrofitRegistrationCountry } from "../../../../packages/kelec-garage";
+import { usePreferences } from "../../../../packages/kelec-preferences";
+import { syncWithAppleWatch } from "../../../../packages/kelec-settings/services/appleWatchSync";
 
 
 type CarViewProps = NativeStackScreenProps<CarsViewParamList, "CarView"> & {
@@ -33,7 +35,8 @@ type CarViewProps = NativeStackScreenProps<CarsViewParamList, "CarView"> & {
 }
 
 function CarView({ carModel, navigation, account, pagerRef, tfaInProgress }: CarViewProps): React.JSX.Element {
-    const { languageHandler } = useContext(MainContext);
+    const { languageHandler, currentUser } = useContext(MainContext);
+    const { preferences } = usePreferences();
 
     const { image, carType, reload: reloadProfile } = useCarProfile(carModel);
     // au retour d'un autre écran (ex. modèle de la voiture modifié), on relit l'image et le modèle enregistrés
@@ -79,6 +82,16 @@ function CarView({ carModel, navigation, account, pagerRef, tfaInProgress }: Car
         onNetworkLoaded,
     });
 
+    // Rafraîchissement manuel (bouton ou tirer-pour-rafraîchir) : on renvoie aussi les données à la montre,
+    // une fois le chargement fini pour qu'elle reçoive les cookies de session à jour.
+    const refreshAndSyncWatch = useCallback(async () => {
+        try {
+            await refresh();
+        } finally {
+            syncWithAppleWatch(currentUser, preferences);
+        }
+    }, [refresh, currentUser, preferences]);
+
     const carViewContextValues = useMemo(
         () => ({ carModel, image, apiHandler, carType, account }),
         [carModel, image, apiHandler, revision, carType, account],
@@ -98,7 +111,7 @@ function CarView({ carModel, navigation, account, pagerRef, tfaInProgress }: Car
                     refreshControl={
                         <RefreshControl
                             refreshing={isRefreshing}
-                            onRefresh={refresh}
+                            onRefresh={refreshAndSyncWatch}
                         />
                     }
                 >
@@ -118,7 +131,7 @@ function CarView({ carModel, navigation, account, pagerRef, tfaInProgress }: Car
                     }
                     {status == 'loaded' && (
                         <View style={{ display: 'flex', gap: 15, paddingBottom: 50 }}>
-                            <SummaryCard navigation={navigation} />
+                            <SummaryCard navigation={navigation} onRefresh={refreshAndSyncWatch} isRefreshing={isRefreshing} />
                             <BatteryCard />
                             <HvacCard />
                             {chargesHistory.shouldDisplayChargesCard() && (
