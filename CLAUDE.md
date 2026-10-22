@@ -31,6 +31,9 @@ Le VIN suffit donc à identifier une voiture et son compte.
   et le découpage des `<Text>` quand on déplace une vue, même si le rendu à l'écran ne change pas.
 - **Les tests d'intégration mockent `renaultClient` / `hyundaiClient` fichier par fichier.**
   Un nouvel appel client doit être ajouté dans les mocks concernés.
+- **Langue des tests** : le fuseau est forcé (`Europe/Paris`, `jest.config.js`), pas la langue. En local Node tourne en `fr-FR`,
+  en CI en `en-US` : un test qui dépend du format local (`toLocaleString`, `Intl` : « 3,42 € » / « €3.42 », jour/mois)
+  doit marcher dans les deux (ex. `deviceDateOrder()` pour relire un export). Vérifier avec `LC_ALL=en_US.UTF-8 npx jest`.
 - **`Alert.alert` n'est pas réinitialisé entre les tests** d'un même fichier : les compteurs
   (`toHaveBeenCalledTimes`) s'additionnent.
 - **Des données sont déjà stockées sur les téléphones des utilisateurs** : ne pas renommer une clé AsyncStorage

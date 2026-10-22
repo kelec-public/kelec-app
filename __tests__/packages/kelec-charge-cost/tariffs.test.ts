@@ -137,10 +137,13 @@ describe("TariffRepository", () => {
 
 describe("price format", () => {
     test("formats each currency", () => {
-        expect(formatPrice(3.42, 'EUR')).toMatch(/3[,.]42\s?€/);
+        // format de la machine (« 3,42 € » en fr, « €3.42 » en en-US) : on ne vérifie pas la place du symbole
+        expect(formatPrice(3.42, 'EUR')).toMatch(/3[,.]42/);
+        expect(formatPrice(3.42, 'EUR')).toContain('€');
         expect(formatPrice(3.42, 'GBP')).toMatch(/3[,.]42/);
         expect(formatPrice(3.42, 'GBP')).toContain('£');
-        expect(formatPricePerKwh(0.2516, 'EUR')).toMatch(/0[,.]2516\s?€\/kWh/);
+        expect(formatPricePerKwh(0.2516, 'EUR')).toMatch(/0[,.]2516/);
+        expect(formatPricePerKwh(0.2516, 'EUR')).toMatch(/€.*\/kWh$/);
         // devise sans centimes : on garde quand même les décimales d'un prix au kWh
         expect(formatPricePerKwh(25.5, 'ISK')).toMatch(/25[,.]50/);
         expect(formatPrice(3.42, 'CHF')).toMatch(/3[,.]42/);

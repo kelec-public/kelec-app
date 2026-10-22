@@ -186,7 +186,8 @@ describe('prix saisis à la main', () => {
     };
 
     test("export puis import : seuls les prix saisis sont repris, avec leur charge", () => {
-        const { newCharges, manualCosts } = previewOf(toRows([home, away], costs));
+        // l'export écrit les dates au format de la machine : on les relit dans le même ordre
+        const { newCharges, manualCosts } = previewOf(toRows([home, away], costs), [], deviceDateOrder());
         expect(newCharges).toHaveLength(2);
         expect(manualCosts).toHaveLength(1);
         expect(manualCosts[0].amount).toBe(12.5);
@@ -195,11 +196,11 @@ describe('prix saisis à la main', () => {
 
     test("repris aussi pour une charge déjà dans l'historique (réinstallation), sauf si elle a déjà un prix saisi", () => {
         const rows = toRows([home, away], costs);
-        expect(previewOf(rows, [home, away]).manualCosts).toHaveLength(1);
-        expect(previewOf(rows, [home, away]).newCharges).toHaveLength(0);
+        expect(previewOf(rows, [home, away], deviceDateOrder()).manualCosts).toHaveLength(1);
+        expect(previewOf(rows, [home, away], deviceDateOrder()).newCharges).toHaveLength(0);
 
         const alreadySet = (charge: Charge) => charge.getStartDate().getTime() === away.getStartDate().getTime();
-        const preview = buildImportPreview(readSpreadsheetRows(toXlsxBase64(rows)), [home, away], 'DMY', alreadySet);
+        const preview = buildImportPreview(readSpreadsheetRows(toXlsxBase64(rows)), [home, away], deviceDateOrder(), alreadySet);
         expect(preview.manualCosts).toEqual([]);
     });
 
