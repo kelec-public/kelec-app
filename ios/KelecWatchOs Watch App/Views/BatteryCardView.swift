@@ -251,11 +251,6 @@ private struct HVACConfirmView: View {
         Text(LocalizedStringKey("launchPreHeat"))
           .font(.headline)
           .multilineTextAlignment(.center)
-        Text(LocalizedStringKey("areYouSureYouWantToLaunchPreheating"))
-          .font(.footnote)
-          .foregroundColor(.gray)
-          .multilineTextAlignment(.center)
-
         Stepper(value: $temperature, in: HvacTemperature.min...HvacTemperature.max) {
           Text(HvacTemperature.label(temperature))
             .font(.title2)
@@ -273,6 +268,10 @@ private struct HVACConfirmView: View {
           isContinuous: false,
           isHapticFeedbackEnabled: true
         )
+        Text(LocalizedStringKey("areYouSureYouWantToLaunchPreheating"))
+          .font(.footnote)
+          .foregroundColor(.gray)
+          .multilineTextAlignment(.center)
 
         Button(LocalizedStringKey("confirm"), action: onConfirm)
           .buttonStyle(.borderedProminent)
