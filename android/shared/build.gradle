@@ -7,10 +7,10 @@ apply plugin: "org.jetbrains.kotlin.android"
 android {
     namespace "com.kelec.shared"
     compileSdk rootProject.ext.compileSdkVersion
-
     defaultConfig {
-        minSdk rootProject.ext.minSdkVersion
+        minSdk 26
     }
+
 }
 
 dependencies {

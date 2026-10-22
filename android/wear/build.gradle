@@ -13,8 +13,8 @@ android {
 
     defaultConfig {
         applicationId 'com.myrenaultplus'
-        minSdk 30
         targetSdk 34
+        minSdk 26
         // doit être différent de celui de l'app du téléphone (même fiche Play Store)
         versionCode 2000300
         versionName '2.7.0'
