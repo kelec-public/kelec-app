@@ -26,6 +26,8 @@ type Props = {
     readonly textStyle?: StyleProp<TextStyle>;
     /** Icône avant ou après le texte (après par défaut). */
     readonly iconPosition?: 'start' | 'end';
+    /** Seconde icône, tout à la fin (ex. flèche pour replier), même famille et même taille. */
+    readonly trailingIcon?: string;
     readonly onPress: () => void;
     readonly testID?: string;
     readonly disabled?: boolean;
@@ -43,7 +45,7 @@ type Props = {
 
 /** Bouton icône (avec texte éventuel) : liquid glass sur iOS 26+, `fallbackStyle` ailleurs. */
 function GlassButton(props: Props): React.JSX.Element {
-    const { icon, iconFamily = 'material', iconSize, iconTestID, iconStyle, text, textStyle, iconPosition = 'end', onPress, testID, disabled = false, selected = false, glassStyle, fallbackStyle, fallbackIconColour, fallbackTextColour } = props;
+    const { icon, iconFamily = 'material', iconSize, iconTestID, iconStyle, text, textStyle, iconPosition = 'end', trailingIcon, onPress, testID, disabled = false, selected = false, glassStyle, fallbackStyle, fallbackIconColour, fallbackTextColour } = props;
     const isDarkMode = useColorScheme() === 'dark';
     const textColour = getBlackColour(isDarkMode);
     const IconComponent = iconFamily === 'community' ? CommunityIcon : Icon;
@@ -57,6 +59,7 @@ function GlassButton(props: Props): React.JSX.Element {
                     <Text style={[textStyle, textColourOverride !== undefined && { color: textColourOverride }]}>{text}</Text>
                 )}
                 {iconPosition === 'end' && iconElement}
+                {trailingIcon !== undefined && <IconComponent name={trailingIcon} size={iconSize} color={iconColour} />}
             </>
         );
     };

@@ -34,12 +34,13 @@ Bouton icône, avec texte éventuel. Utilisé par :
 | `ProfileHeader` (kelec-profile) | crayon, +, « Ajouter un véhicule » |
 | `CarViewHeader` (kelec-car-page) | café |
 | `SummaryCard` | roue crantée (modèle du véhicule) |
-| `ChargesHistoryView`, `ActiveFiltersRow` (kelec-charge-history) | retour, « … », chips de filtres |
+| `ChargesHistoryView`, `ActiveFiltersRow`, `ChargeMonthHeader` (kelec-charge-history) | retour, « … », chips de filtres, nombre de charges du mois (replie le mois) |
 
 - `glassStyle` : forme du verre (padding, `borderRadius`), sur iOS 26+ ; `fallbackStyle` : rendu d'avant, ailleurs.
   `fallbackIconColour` / `fallbackTextColour` gardent les couleurs d'avant (ex. `onSecondaryContainer` des chips).
 - Sur le verre, texte et icône prennent la couleur du texte du thème (`getBlackColour`) : une couleur de thème sur un verre neutre se lit mal.
 - `iconFamily` : `'material'` (défaut) ou `'community'` (MaterialCommunityIcons, ex. le café). `iconPosition` : icône avant ou après le texte.
+  `trailingIcon` : seconde icône tout à la fin (ex. la flèche qui replie un mois).
 - `selected` : teinte translucide, via `getSelectedGlassTint` (crayon en mode édition ; `FloatingPill` l'utilise aussi pour plan/satellite).
 - `disabled` : opacité 0,4 dans les deux rendus (+ et − aux bornes de température).
 - Les `testID` restent sur le bouton (et `iconTestID` sur l'icône) : les tests existants n'ont pas changé.

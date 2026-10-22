@@ -45,7 +45,8 @@ kelec-charge-history/
 │   ├── ChargeCostEditView.tsx   Page du prix d'une charge (CHARGE_COST_ROUTE, param chargeStartDate)
 │   ├── ActiveFiltersRow.tsx     Bouton Filtres + pastilles des filtres actifs
 │   ├── ChargeMonthSection.tsx   Un mois (dépliable)
-│   ├── ChargeMonthHeader.tsx    En-tête du mois : totaux + mini-graphique par jour
+│   ├── ChargeMonthHeader.tsx    En-tête du mois : mois + nombre de charges (bouton verre qui replie le mois),
+│   │                            tuiles kWh / temps / coût, mini-graphique par jour sur toute la largeur
 │   ├── ChargeCard.tsx           Une charge (+ détail des sous-charges si fusionnée)
 │   └── filters/                 Modale des filtres (date, numériques, DC uniquement)
 ├── types/chargesSource.ts       Interface ChargesSource
