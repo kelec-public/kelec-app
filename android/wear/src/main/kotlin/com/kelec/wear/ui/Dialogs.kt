@@ -90,12 +90,14 @@ fun HvacConfirmDialog(
             verticalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterVertically),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(text = stringResource(R.string.launch_pre_heat), fontWeight = FontWeight.Bold, textAlign = TextAlign.Center, fontSize = 14.sp)
+            // marge plus grande que la colonne : en haut de l'écran rond, la largeur visible est plus petite
             Text(
-                text = stringResource(R.string.are_you_sure_launch_pre_heating),
-                color = WearColors.secondary,
+                text = stringResource(R.string.launch_pre_heat),
+                fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
-                fontSize = 11.sp,
+                fontSize = 13.sp,
+                maxLines = 2,
+                modifier = Modifier.padding(horizontal = 18.dp),
             )
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 CompactButton(onClick = { step(-1) }, colors = ButtonDefaults.secondaryButtonColors()) {
@@ -111,6 +113,12 @@ fun HvacConfirmDialog(
                     Icon(painter = painterResource(R.drawable.ic_add), contentDescription = null, modifier = Modifier.size(18.dp))
                 }
             }
+            Text(
+                text = stringResource(R.string.are_you_sure_launch_pre_heating),
+                color = WearColors.secondary,
+                textAlign = TextAlign.Center,
+                fontSize = 11.sp,
+            )
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 Button(onClick = onDismiss, colors = ButtonDefaults.secondaryButtonColors()) {
                     Icon(painter = painterResource(R.drawable.ic_close), contentDescription = stringResource(R.string.cancel))
