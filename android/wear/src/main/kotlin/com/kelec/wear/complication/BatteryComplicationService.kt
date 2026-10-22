@@ -5,6 +5,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.Icon
+import android.util.Log
 import androidx.wear.watchface.complications.data.ComplicationData
 import androidx.wear.watchface.complications.data.ComplicationText
 import androidx.wear.watchface.complications.data.ComplicationType
@@ -26,6 +27,7 @@ import com.kelec.wear.MainActivity
 import com.kelec.wear.R
 import com.kelec.wear.vehicleLoader
 import com.kelec.wear.watchCar
+import kotlin.coroutines.cancellation.CancellationException
 
 /**
  * Complications du cadran (pendant des widgets de l'Apple Watch) : niveau de batterie de la voiture choisie
@@ -38,13 +40,25 @@ import com.kelec.wear.watchCar
 class BatteryComplicationService : SuspendingComplicationDataSourceService() {
 
     override suspend fun onComplicationRequest(request: ComplicationRequest): ComplicationData {
-        val store = SharedStore(this)
         val type = request.complicationType
+        return try {
+            load(type)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            // une erreur (stockage chiffré illisible…) ne doit pas laisser une complication vide, sans toucher
+            Log.e(TAG, "Unable to build the complication", e)
+            unavailable(type)
+        }
+    }
+
+    private suspend fun load(type: ComplicationType): ComplicationData {
+        val store = SharedStore(this)
         // pas de compte, pas de voiture ou pas de statut : « -- », et le toucher ouvre l'app (pour synchroniser)
         val account = store.loadAccount() ?: return unavailable(type)
         val car = watchCar(account, store) ?: return unavailable(type)
         val battery = (vehicleLoader(this).load(car) as? VehicleStatus.Loaded)?.battery ?: return unavailable(type)
-        return build(type, car.model, battery, store.loadPreferences() ?: AppPreferences()) ?: NoDataComplicationData()
+        return build(type, car.model, battery, store.loadPreferences() ?: AppPreferences()) ?: unavailable(type)
     }
 
     private fun unavailable(type: ComplicationType): ComplicationData {
@@ -111,6 +125,8 @@ class BatteryComplicationService : SuspendingComplicationDataSourceService() {
     private fun text(value: String): ComplicationText = PlainComplicationText.Builder(value).build()
 
     companion object {
+        private const val TAG = "BatteryComplication"
+
         /** Recharge toutes les complications (synchro, choix de la voiture, rafraîchissement dans l'app). */
         fun requestUpdate(context: Context) {
             ComplicationDataSourceUpdateRequester
