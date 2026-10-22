@@ -141,6 +141,9 @@ describe("price format", () => {
         expect(formatPrice(3.42, 'GBP')).toMatch(/3[,.]42/);
         expect(formatPrice(3.42, 'GBP')).toContain('£');
         expect(formatPricePerKwh(0.2516, 'EUR')).toMatch(/0[,.]2516\s?€\/kWh/);
+        // devise sans centimes : on garde quand même les décimales d'un prix au kWh
+        expect(formatPricePerKwh(25.5, 'ISK')).toMatch(/25[,.]50/);
+        expect(formatPrice(3.42, 'CHF')).toMatch(/3[,.]42/);
     });
 
     test("price per kWh without the currency", () => {

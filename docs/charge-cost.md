@@ -70,7 +70,8 @@ Les paramètres de route sont sérialisables (`tariffId` seulement) : chaque pag
 - **Deux tarifs ne commencent pas le même jour.**
 - **Identifiant** : chaque tarif a un UUID (`react-native-uuid`). On le retrouve par cet id, pas par sa position ni par sa date,
   qui peuvent changer quand on insère ou modifie un tarif.
-- **Une seule devise** pour tous les tarifs : EUR, GBP, NOK ou SEK (un total ne mélange donc jamais deux devises).
+- **Une seule devise** pour tous les tarifs (un total ne mélange donc jamais deux devises) : l'euro et les autres devises de l'UE,
+  de l'EEE, du Royaume-Uni et de la Suisse (EUR, GBP, CHF, NOK, SEK, DKK, ISK, PLN, CZK, HUF, RON ; `CURRENCIES`).
 - **Heures creuses** : une ou plusieurs plages « HH:MM → HH:MM », éventuellement à cheval sur minuit. Début et fin égaux : refusé.
   **Les plages ne peuvent pas se chevaucher** (refusé à l'enregistrement, ex. 22:00 → 06:00 puis 03:00 → 07:00) ; elles peuvent se toucher (06:00).
   Le calcul ne compte de toute façon qu'une fois un temps couvert par deux plages.

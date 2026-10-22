@@ -1,5 +1,8 @@
-/** Devises proposées pour les prix de l'électricité. */
-export const CURRENCIES = ['EUR', 'GBP', 'NOK', 'SEK'] as const;
+/**
+ * Devises proposées pour les prix de l'électricité : l'euro, puis les autres devises de l'Union européenne,
+ * de l'Espace économique européen, du Royaume-Uni et de la Suisse.
+ */
+export const CURRENCIES = ['EUR', 'GBP', 'CHF', 'NOK', 'SEK', 'DKK', 'ISK', 'PLN', 'CZK', 'HUF', 'RON'] as const;
 export type Currency = typeof CURRENCIES[number];
 
 /** Heure locale « HH:MM » (heure du téléphone). */
