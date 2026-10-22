@@ -8,7 +8,7 @@ type TextInputProps = {
     readonly onChangeText?: (text: string) => void;
     readonly secureTextEntry?: boolean;
     readonly testID?: string;
-    readonly keyboardType?: 'default' | 'numeric' | 'email-address' | 'phone-pad';
+    readonly keyboardType?: 'default' | 'numeric' | 'decimal-pad' | 'email-address' | 'phone-pad';
 };
 
 function TextInput({ style, ...otherProps }: TextInputProps): React.JSX.Element {

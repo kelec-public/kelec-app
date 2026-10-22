@@ -5,22 +5,61 @@ import { useContext, useState } from "react";
 import MainContext from "../../../lib/Contexts/MainContext";
 import { convertDateForChargeHistory, convertHoursForChargeHistory, formatNumberWithSpaces, getBlackColour, getDistance, getWhiteColour } from "../../../lib/graphics/utils";
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import CommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { fontFamilyBold, fontWeightBold } from "../../../lib/graphics/commonStyle";
 import CarsViewContext from "../../../lib/Contexts/CarsViewContext";
 import { useTheme } from '@react-navigation/native';
 import BottomSheet from "../../../screen/Common/bottomSheet/BottomSheet";
+import ChargeCostsContext from "../controllers/ChargeCostsContext";
 
 type ChargeCardProps = {
     readonly charge: Charge;
+    /** Avant d'ouvrir la modification du prix (ex. fermer la feuille des sous-charges). */
+    readonly onBeforeEditCost?: () => void;
 }
 
-function ChargeCard({ charge }: ChargeCardProps): React.JSX.Element {
+/** Bas de la carte : le coût à gauche (s'il est connu), le type de charge à droite. */
+function ChargeCardFooter({ charge }: { readonly charge: Charge }): React.JSX.Element {
+    const isDarkMode = useColorScheme() === 'dark';
+    const costs = useContext(ChargeCostsContext);
+    const cost = costs?.costOf(charge) ?? null;
+    const isDC = charge.isDCCharge();
+
+    return (
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 7, gap: 7 }}>
+            {/* coût : prix saisi à la main, ou tarif de la maison */}
+            {costs && cost !== null ? (
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, flexShrink: 1 }}>
+                    <Icon name="payments" size={18} color={getBlackColour(isDarkMode)} />
+                    <Text testID={'chargeCostText'} style={{ color: getBlackColour(isDarkMode) }}>{costs.format(cost)}</Text>
+                    {/* prix saisi à la main (pour une charge fusionnée : pour une de ses sous-charges) */}
+                    {costs.isManual(charge) && <Icon testID={'manualCostIcon'} name="edit" size={14} color={getBlackColour(isDarkMode)} />}
+                </View>
+            ) : <View />}
+            {/* prise Type 2 en AC, CCS2 en DC */}
+            <View testID={'chargeCurrentType'} style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+                <CommunityIcon name={isDC ? 'ev-plug-ccs2' : 'ev-plug-type2'} size={18} color={getBlackColour(isDarkMode)} />
+                <Text style={{ color: getBlackColour(isDarkMode) }}>{isDC ? 'DC' : 'AC'}</Text>
+            </View>
+        </View>
+    );
+}
+
+function ChargeCard({ charge, onBeforeEditCost }: ChargeCardProps): React.JSX.Element {
 
     const isDarkMode = useColorScheme() === 'dark';
     const theme = useTheme()
 
     const { appPreferences, languageHandler } = useContext(MainContext);
     const { handleModalAnim } = useContext(CarsViewContext);
+    const costs = useContext(ChargeCostsContext);
+    // une charge fusionnée n'a pas de prix à elle : on modifie celui de ses sous-charges, dans leur détail
+    const editCost = costs?.edit && !charge.getIsAMergeCharge()
+        ? () => {
+            onBeforeEditCost?.();
+            costs.edit!(charge);
+        }
+        : undefined;
 
     const getBackgroundColour = () => {
         if (appPreferences.highlightDCCharges && charge.isDCCharge()) {
@@ -35,9 +74,15 @@ function ChargeCard({ charge }: ChargeCardProps): React.JSX.Element {
     }
 
     const [shouldOpenSubChargesModal, setShouldOpenSubChargesModal] = useState(false);
+    const CardContainer = editCost ? TouchableOpacity : View;
 
     return (
-        <View testID={'ChargeCard'} style={{ padding: 15, backgroundColor: getBackgroundColour(), marginHorizontal: 10, marginTop: 0, borderRadius: 7 }}>
+        // toute la carte ouvre la modification du prix (les boutons qu'elle contient gardent leur action)
+        <CardContainer
+            testID={'ChargeCard'}
+            onPress={editCost}
+            style={{ padding: 15, backgroundColor: getBackgroundColour(), marginHorizontal: 10, marginTop: 0, borderRadius: 7 }}
+        >
             <BottomSheet
                 testID="mergeViewBottomSheet"
                 onClose={() => {
@@ -48,11 +93,16 @@ function ChargeCard({ charge }: ChargeCardProps): React.JSX.Element {
                 title={languageHandler.getTranslation('mergeCharges')}
             >
 
-                <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
+                {/* espace entre les sous-charges : les cartes ont le même fond, elles se collaient */}
+                <ScrollView contentContainerStyle={{ paddingBottom: 20, gap: 10 }}>
                     {charge.getSubCharges().map((subCharge) => (
                         <ChargeCard
                             key={subCharge.getStartDate().toISOString()}
                             charge={subCharge}
+                            onBeforeEditCost={() => {
+                                setShouldOpenSubChargesModal(false);
+                                handleModalAnim(false);
+                            }}
                         />
                     ))}
                 </ScrollView>
@@ -187,7 +237,8 @@ function ChargeCard({ charge }: ChargeCardProps): React.JSX.Element {
                     </>
                 )}
             </View>
-        </View >
+            <ChargeCardFooter charge={charge} />
+        </CardContainer>
     );
 }
 

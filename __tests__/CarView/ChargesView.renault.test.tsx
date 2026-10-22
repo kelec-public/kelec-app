@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import App from "../../App";
 import RenaultCar from "../../src/lib/clients/cars/renaultCar";
 import Account, { CarMaker } from "../../src/lib/clients/accounts/account";
-import { render, waitFor, screen, userEvent } from "@testing-library/react-native";
+import { render, waitFor, screen, userEvent, within } from "@testing-library/react-native";
 import React from "react";
 import UserAccount from "../../src/lib/clients/accounts/userAccount";
 import { Alert } from "react-native";
@@ -63,6 +63,8 @@ test('should render the charges view', async () => {
     await screen.findByTestId('ChargesView');
 
     const chargeIndexArrow = screen.getAllByTestId('chargeIndexArrow');
+    // nombre de charges du mois, dans le bouton qui replie le mois
+    expect(within(chargeIndexArrow[0]).getByText('2')).toBeDefined();
     await user.press(chargeIndexArrow[1]);
 
     await screen.findAllByTestId('chargeIndexTitle');

@@ -1,7 +1,7 @@
 import { useCallback, useContext, useMemo, useState } from "react";
 import { Alert } from "react-native";
 import MainContext from "../../../lib/Contexts/MainContext";
-import { useChargesHistory } from "../../kelec-charge-history";
+import { Charge, useChargesHistory } from "../../kelec-charge-history";
 import { ImportPreview, ImportSummary } from "../models/ImportPreview";
 import { buildImportPreview, summarizeImport } from "../services/importPreview";
 import { pickSpreadsheet } from "../services/pickSpreadsheet";
@@ -19,7 +19,7 @@ type PendingImport = {
  */
 export function useChargesImportController(onImported: () => void) {
     const { languageHandler } = useContext(MainContext);
-    const { history, importCharges } = useChargesHistory();
+    const { history, importCharges, costOverrides, importCostOverrides } = useChargesHistory();
 
     const [pending, setPending] = useState<PendingImport | null>(null);
     const [isReading, setIsReading] = useState(false);
@@ -34,7 +34,8 @@ export function useChargesImportController(onImported: () => void) {
             if (file === null) return; // annulé : on garde le fichier précédent
 
             const rows = readSpreadsheetRows(file.base64);
-            setPending({ fileName: file.name, preview: buildImportPreview(rows, history.getCharges()) });
+            const hasManualCost = (charge: Charge) => costOverrides.get(charge) !== null;
+            setPending({ fileName: file.name, preview: buildImportPreview(rows, history.getCharges(), undefined, hasManualCost) });
         } catch (error) {
             console.log('Import de charges : lecture du fichier impossible', error);
             setPending(null);
@@ -42,7 +43,7 @@ export function useChargesImportController(onImported: () => void) {
         } finally {
             setIsReading(false);
         }
-    }, [history, t]);
+    }, [history, costOverrides, t]);
 
     const summary = useMemo<ImportSummary | null>(
         () => pending && summarizeImport(history.getCharges(), pending.preview),
@@ -50,13 +51,17 @@ export function useChargesImportController(onImported: () => void) {
     );
 
     const newChargesCount = pending?.preview.newCharges.length ?? 0;
-    const canImport = importCharges !== null && newChargesCount > 0 && !isSaving;
+    const manualCostsCount = pending?.preview.manualCosts.length ?? 0;
+    // des prix saisis suffisent : ils peuvent concerner des charges déjà dans l'historique
+    const canImport = importCharges !== null && (newChargesCount > 0 || manualCostsCount > 0) && !isSaving;
 
     const confirmImport = useCallback(async () => {
         if (!pending || importCharges === null) return;
         setIsSaving(true);
         try {
-            await importCharges(pending.preview.newCharges);
+            // les charges d'abord : les prix saisis peuvent porter sur elles
+            if (pending.preview.newCharges.length > 0) await importCharges(pending.preview.newCharges);
+            if (pending.preview.manualCosts.length > 0) await importCostOverrides(pending.preview.manualCosts);
             Alert.alert(t("success"), t("importSuccess"));
             onImported();
         } catch (error) {
@@ -65,7 +70,7 @@ export function useChargesImportController(onImported: () => void) {
         } finally {
             setIsSaving(false);
         }
-    }, [pending, importCharges, onImported, t]);
+    }, [pending, importCharges, importCostOverrides, onImported, t]);
 
     return {
         fileName: pending?.fileName ?? null,

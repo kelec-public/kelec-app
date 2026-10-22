@@ -8,7 +8,8 @@ import createNativeStackNavigator from '../../../lib/graphics/navigation';
 import { NavigationContainer, NavigationIndependentTree, NavigationProp, ParamListBase, useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import ChargesHistoryView from "../../../packages/kelec-charge-history/views/ChargesHistoryView";
 import { ChargesHistoryProvider } from "../../../packages/kelec-charge-history/controllers/ChargesHistoryProvider";
-import { CHARGES_HISTORY_ROUTE } from "../../../packages/kelec-charge-history/routes";
+import { CHARGE_COST_ROUTE, ChargeCostRouteParams, CHARGES_HISTORY_ROUTE } from "../../../packages/kelec-charge-history/routes";
+import ChargeCostEditView from "../../../packages/kelec-charge-history/views/ChargeCostEditView";
 import { HvacProvider } from "../../../packages/kelec-hvac/controllers/HvacProvider";
 import SendCoffeeCard from "./CarView/Elements/SendCoffee";
 import { FullScreenMapView, MAP_ROUTE, MapProvider } from "../../../packages/kelec-map";
@@ -16,6 +17,7 @@ import { CAR_TYPE_ROUTE, CarTypeRouteParams, CarTypeScreen } from "../../../pack
 import { TFA_ROUTE, TfaRouteParams, TfaView } from "../../../packages/kelec-tfa";
 import { CHARGES_IMPORT_ROUTE, ChargesImportView } from "../../../packages/kelec-charge-import";
 import { useOpenCarRequest } from "../../../packages/kelec-car-shortcuts";
+import { TARIFF_EDITOR_ROUTE, TARIFF_LIST_ROUTE, TariffEditorRouteParams, TariffEditorScreen, TariffListScreen } from "../../../packages/kelec-charge-cost";
 
 
 export type CarsViewParamList = {
@@ -26,6 +28,9 @@ export type CarsViewParamList = {
     [CHARGES_HISTORY_ROUTE]: undefined;
     [CHARGES_IMPORT_ROUTE]: undefined;
     [TFA_ROUTE]: TfaRouteParams;
+    [CHARGE_COST_ROUTE]: ChargeCostRouteParams;
+    [TARIFF_LIST_ROUTE]: undefined;
+    [TARIFF_EDITOR_ROUTE]: TariffEditorRouteParams;
 }
 
 /** Écrans à étapes, avec leurs propres boutons en bas : la barre d'onglets est masquée pendant qu'ils sont affichés. */
@@ -98,6 +103,35 @@ function CarsPageView(): React.JSX.Element {
                                       <ChargesHistoryView
                                         {...props}
                                         onImport={() => props.navigation.navigate(CHARGES_IMPORT_ROUTE)}
+                                        onOpenTariffs={() => props.navigation.navigate(TARIFF_LIST_ROUTE)}
+                                        onEditChargeCost={chargeStartDate => props.navigation.navigate(CHARGE_COST_ROUTE, { chargeStartDate })}
+                                      />
+                                    )}
+                                  </Stack.Screen>
+                                  <Stack.Screen name={CHARGE_COST_ROUTE}>
+                                    {props => (
+                                      <ChargeCostEditView
+                                        chargeStartDate={props.route.params.chargeStartDate}
+                                        onBack={() => props.navigation.goBack()}
+                                        onDone={() => props.navigation.goBack()}
+                                      />
+                                    )}
+                                  </Stack.Screen>
+                                  {/* tarifs de l'électricité (globaux) : les mêmes pages que dans Réglages */}
+                                  <Stack.Screen name={TARIFF_LIST_ROUTE}>
+                                    {props => (
+                                      <TariffListScreen
+                                        onBack={() => props.navigation.goBack()}
+                                        onOpenTariff={tariffId => props.navigation.navigate(TARIFF_EDITOR_ROUTE, { tariffId })}
+                                      />
+                                    )}
+                                  </Stack.Screen>
+                                  <Stack.Screen name={TARIFF_EDITOR_ROUTE}>
+                                    {props => (
+                                      <TariffEditorScreen
+                                        tariffId={props.route.params?.tariffId}
+                                        onBack={() => props.navigation.goBack()}
+                                        onDone={() => props.navigation.goBack()}
                                       />
                                     )}
                                   </Stack.Screen>

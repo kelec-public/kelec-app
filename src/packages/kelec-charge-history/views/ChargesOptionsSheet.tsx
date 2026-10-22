@@ -13,10 +13,12 @@ type Props = {
     readonly onExport: () => void;
     /** Absent : pas de bouton d'import. */
     readonly onImport?: () => void;
+    /** Absent : pas de bouton des tarifs. */
+    readonly onOpenTariffs?: () => void;
 }
 
-/** Feuille "…" de l'historique : tri, import et export. */
-function ChargesOptionsSheet({ visible, onClose, sortDesc, onToggleSort, onExport, onImport }: Props): React.JSX.Element {
+/** Feuille "…" de l'historique : tri, tarifs de l'électricité, import et export. */
+function ChargesOptionsSheet({ visible, onClose, sortDesc, onToggleSort, onExport, onImport, onOpenTariffs }: Props): React.JSX.Element {
     const theme = useTheme();
     const { languageHandler } = useContext(MainContext);
 
@@ -36,6 +38,15 @@ function ChargesOptionsSheet({ visible, onClose, sortDesc, onToggleSort, onExpor
                         : languageHandler.getTranslation("sortOlderToNewer")}
                     buttonStyle={theme.buttons.neutral}
                 />
+                {onOpenTariffs && (
+                    <Button
+                        testID={'tariffButton'}
+                        onPress={onOpenTariffs}
+                        icon={"electrical-services"}
+                        text={languageHandler.getTranslation("electricityTariff")}
+                        buttonStyle={theme.buttons.neutral}
+                    />
+                )}
                 {onImport && (
                     <Button
                         testID={'importButton'}

@@ -44,6 +44,7 @@ colonnes suit celui des propriétés au moment de l'export. **Les colonnes sont 
 | juillet 2025 (#197) | locale | + `mileageAtStart`, `inaccurateMileage` |
 | oct. 2025 (#216, V2G) | locale | + `V2GEnergyDischarged`, `isV2G` |
 | oct. 2026 (#81) | locale | sans `subCharges` ; `isAMergeCharge` et `subChargesCount` en dernier |
+| oct. 2026 (coût) | locale | + `cost`, `currency`, `isManualCost` (avant les colonnes de fusion, seulement si des tarifs sont définis) : seul le prix saisi est repris (voir plus bas) |
 
 ## Règles
 
@@ -60,6 +61,12 @@ colonnes suit celui des propriétés au moment de l'export. **Les colonnes sont 
 - **Lignes fusionnées** : importées comme une charge simple (`isAMergeCharge = false`), le détail des sous-charges n'étant pas dans le fichier.
 - **Fichier illisible** : xlsx lit n'importe quel fichier comme une feuille vide ; un fichier sans aucune ligne est donc traité comme une erreur.
 - **Kilométrage** : repris du fichier s'il y est, sinon calculé à l'enregistrement comme pour les charges de l'API.
+- **Prix saisis à la main** : une ligne avec `isManualCost` vrai et un `cost` lisible redonne son prix saisi à la charge
+  (`useChargesHistory().importCostOverrides`, stocké dans `<vin>/chargeCostOverrides`).
+  - Repris **aussi pour une charge déjà dans l'historique** (cas de la réinstallation : l'API renvoie les charges, pas les prix saisis).
+    L'import est donc possible avec des prix à reprendre, même sans nouvelle charge.
+  - Une charge qui a déjà un prix saisi garde le sien. Les lignes fusionnées sont ignorées (leur coût est la somme des sous-charges).
+  - Le coût calculé avec le tarif (`isManualCost` faux) n'est pas repris : il se recalcule. Le montant est repris sans conversion de devise.
 
 ## Tests
 

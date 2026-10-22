@@ -5,7 +5,7 @@ import { DateParser } from "./dateFormat";
 /**
  * Colonnes lues dans le fichier : les noms des champs de `Charge`, écrits tels quels par l'export.
  * Les colonnes inconnues sont ignorées, notamment `isAMergeCharge`, `subCharges` (anciens exports,
- * cellule inutilisable) et `subChargesCount`.
+ * cellule inutilisable), `subChargesCount` et `currency`. `cost` n'est lu que pour un prix saisi à la main (`isManualCost`).
  */
 export const DATE_COLUMNS = ['chargeStartDate', 'chargeEndDate'] as const;
 
@@ -66,4 +66,15 @@ export const parseChargeRow = ({ cells }: SpreadsheetRow, parseDate: DateParser)
         readNumber(cells.V2GEnergyDischarged),
         readBoolean(cells.isV2G) ?? false,
     );
+};
+
+/**
+ * Prix saisi à la main de la ligne (`cost` quand `isManualCost` est vrai), ou null.
+ * Une ligne fusionnée est ignorée : son coût est la somme de ses sous-charges, qu'on ne peut pas répartir.
+ * Le montant est repris tel quel, sans conversion : il est dans la devise des tarifs, qui est un simple réglage d'affichage.
+ */
+export const parseManualCost = ({ cells }: SpreadsheetRow): number | null => {
+    if (readBoolean(cells.isManualCost) !== true || readBoolean(cells.isAMergeCharge) === true) return null;
+    const cost = readNumber(cells.cost);
+    return cost !== undefined && cost >= 0 ? cost : null;
 };

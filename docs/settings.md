@@ -5,6 +5,7 @@ L'onglet « Réglages » contient :
 - la synchro Apple Watch ;
 - la déconnexion ;
 - les préférences d'affichage et de la voiture ;
+- les tarifs de l'électricité ([`kelec-charge-cost`](./charge-cost.md), pages poussées par-dessus les réglages) ;
 - une section Debug.
 
 Deux packages le composent :
@@ -34,7 +35,9 @@ kelec-settings/                       (feature)
 ├── controllers/
 │   ├── settingsTypes.ts        OptionType, SettingItem, SettingSection
 │   └── useSettingsController.ts Sections (déclaratives) + actions + état des modales
+├── routes.ts                   SETTINGS_ROUTE, SettingsParamList
 └── views/
+    ├── SettingsNavigator.tsx   Pile native de l'onglet : réglages, puis pages des tarifs
     ├── SettingsView.tsx        Écran
     ├── SettingsHeader.tsx      En-tête orange (nom ou « Réglages », crédits)
     ├── SettingsSection.tsx     Une section et ses lignes

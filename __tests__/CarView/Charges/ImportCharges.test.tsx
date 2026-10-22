@@ -127,3 +127,31 @@ test("un fichier illisible affiche une erreur", async () => {
     expect(screen.queryByTestId('importPreview')).toBeNull();
     expect(screen.getByTestId('confirmImportButton')).toBeDisabled();
 });
+
+test("reprend les prix saisis à la main, même pour des charges déjà dans l'historique", async () => {
+    // réinstallation : l'API renvoie la charge, mais son prix saisi n'est plus là
+    const rows = [
+        { chargeStartDate: '2023-11-21T20:39:16Z', chargeEndDate: '2023-11-22T03:06:48Z', chargeDuration: 388, chargeStartBatteryLevel: 39, chargeEndBatteryLevel: 81, chargeEnergyRecovered: 23.2, cost: 7.9, currency: 'EUR', isManualCost: true },
+        { chargeStartDate: '2023-12-22T17:50:43Z', chargeEndDate: '2023-12-22T18:45:30Z', chargeDuration: 55, chargeStartBatteryLevel: 73, chargeEndBatteryLevel: 79, chargeEnergyRecovered: 50, cost: 10, currency: 'EUR', isManualCost: false },
+    ];
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(rows), "Charges");
+    jest.mocked(pick).mockResolvedValueOnce([{ uri: 'content://export.xlsx', name: 'export.xlsx' }] as any);
+    jest.mocked(keepLocalCopy).mockResolvedValueOnce([{ status: 'success', sourceUri: 'content://export.xlsx', localUri: 'file:///cache/export.xlsx' }]);
+    jest.mocked(readFile).mockResolvedValueOnce(XLSX.write(workbook, { type: 'base64', bookType: 'xlsx' }));
+
+    const user = await openImportView();
+    await user.press(screen.getByTestId('filePickerCard'));
+    await screen.findByTestId('importPreview');
+
+    // aucune nouvelle charge, mais un prix à reprendre : l'import reste possible
+    expect(screen.getByTestId('noNewCharges')).toBeTruthy();
+    expect(screen.getByTestId('importPreviewManualCosts')).toBeTruthy();
+    expect(screen.getByTestId('confirmImportButton')).not.toBeDisabled();
+
+    await user.press(screen.getByTestId('confirmImportButton'));
+    await screen.findByTestId('ChargesView');
+    expect(JSON.parse(await AsyncStorage.getItem('vin1/chargeCostOverrides') ?? 'null')).toEqual([
+        { chargeStartDate: '2023-11-21T20:39:16.000Z', amount: 7.9 },
+    ]);
+});

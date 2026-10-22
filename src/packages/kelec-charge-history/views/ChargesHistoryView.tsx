@@ -1,8 +1,7 @@
-import { ActivityIndicator, FlatList, Modal, StyleSheet, View, useColorScheme } from "react-native";
-import Text from "../../../screen/Common/CustomText";
-import commonStyles, { fontFamilyBold, fontWeightBold } from "../../../lib/graphics/commonStyle";
-import { getBlackColour, getWhiteColour } from "../../../lib/graphics/utils";
-import { useContext } from "react";
+import { ActivityIndicator, FlatList, Modal, View, useColorScheme } from "react-native";
+import commonStyles from "../../../lib/graphics/commonStyle";
+import { getWhiteColour } from "../../../lib/graphics/utils";
+import { useContext, useMemo } from "react";
 import MainContext from "../../../lib/Contexts/MainContext";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import ChargesFiltersContext from "../controllers/ChargesFiltersContext";
@@ -12,20 +11,37 @@ import ChargeMonthSection from "./ChargeMonthSection";
 import ChargesOptionsSheet from "./ChargesOptionsSheet";
 import ActiveFiltersRow from "./ActiveFiltersRow";
 import ChargesFiltersView from "./filters/ChargesFiltersView";
-import GlassButton from "../../kelec-model/view/GlassButton";
+import PageHeader from "../../kelec-model/view/PageHeader";
+import { useTariffSettings } from "../../kelec-charge-cost";
+import ChargeCostsContext from "../controllers/ChargeCostsContext";
+import { useChargeCosts } from "../controllers/useChargeCosts";
+import SetTariffBanner from "./SetTariffBanner";
+import Charge from "../models/Charge";
 
 type Props = {
     readonly navigation: { goBack: () => void };
     /** Ouvre l'écran d'import (fourni par l'écran parent) ; absent : pas d'import. */
     readonly onImport?: () => void;
+    /** Ouvre les tarifs de l'électricité (fournis par l'écran parent) ; absent : pas d'accès aux tarifs. */
+    readonly onOpenTariffs?: () => void;
+    /** Ouvre la modification du prix d'une charge (début de la charge) ; absent : prix non modifiables. */
+    readonly onEditChargeCost?: (chargeStartDate: string) => void;
 }
 
-function ChargesHistoryView({ navigation, onImport }: Props): React.JSX.Element {
+function ChargesHistoryView({ navigation, onImport, onOpenTariffs, onEditChargeCost }: Props): React.JSX.Element {
     const isDarkMode = useColorScheme() === 'dark';
     const { languageHandler } = useContext(MainContext);
-    const { history, importCharges } = useChargesHistory();
+    const { history, importCharges, costOverrides } = useChargesHistory();
 
-    const controller = useChargesHistoryController(history);
+    // relus au retour des pages des tarifs
+    const [tariffSettings] = useTariffSettings();
+    const editCost = useMemo(
+        () => onEditChargeCost && ((charge: Charge) => onEditChargeCost(charge.getStartDate().toISOString())),
+        [onEditChargeCost],
+    );
+    const costs = useChargeCosts(tariffSettings, costOverrides, editCost);
+
+    const controller = useChargesHistoryController(history, costs);
     const { months } = controller;
 
     // L'import n'est proposé que si l'écran parent sait l'ouvrir et que la source sait enregistrer.
@@ -36,6 +52,16 @@ function ChargesHistoryView({ navigation, onImport }: Props): React.JSX.Element 
         }
         : undefined;
 
+    const openTariffs = onOpenTariffs
+        ? () => {
+            controller.closeOptions();
+            onOpenTariffs();
+        }
+        : undefined;
+
+    // Aucun tarif : invitation à en définir un (pas pendant la lecture des tarifs). Les prix saisis à la main restent affichés.
+    const shouldSuggestTariff = !!openTariffs && tariffSettings !== null && tariffSettings.tariffs.length === 0;
+
     return (
         <SafeAreaView
             style={[commonStyles.flex, { backgroundColor: getWhiteColour(isDarkMode), position: 'relative' }]}
@@ -43,76 +69,52 @@ function ChargesHistoryView({ navigation, onImport }: Props): React.JSX.Element 
             edges={['top']}
         >
             <ChargesFiltersContext.Provider value={controller.filtersController}>
-                <ChargesOptionsSheet
-                    visible={controller.isOptionsOpen}
-                    onClose={controller.closeOptions}
-                    sortDesc={controller.sortDesc}
-                    onToggleSort={controller.toggleSort}
-                    onExport={controller.exportFilteredCharges}
-                    onImport={openImport}
-                />
-                <Modal
-                    animationType="slide"
-                    transparent={true}
-                    visible={controller.isFiltersOpen}
-                    onRequestClose={controller.closeFilters}
-                >
-                    <SafeAreaProvider>
-                        <ChargesFiltersView onConfirm={controller.closeFilters} />
-                    </SafeAreaProvider>
-                </Modal>
-                <View>
-                    <View style={
-                        [commonStyles.rowFlex, commonStyles.spaceBetween, commonStyles.paddingHorizontal]
-                    }>
-                        <GlassButton
-                            testID="backButton"
-                            icon="chevron-left"
-                            iconSize={30}
-                            onPress={() => navigation.goBack()}
-                            glassStyle={styles.glassButton}
+                <ChargeCostsContext.Provider value={costs}>
+                    <ChargesOptionsSheet
+                        visible={controller.isOptionsOpen}
+                        onClose={controller.closeOptions}
+                        sortDesc={controller.sortDesc}
+                        onToggleSort={controller.toggleSort}
+                        onExport={controller.exportFilteredCharges}
+                        onImport={openImport}
+                        onOpenTariffs={openTariffs}
+                    />
+                    <Modal
+                        animationType="slide"
+                        transparent={true}
+                        visible={controller.isFiltersOpen}
+                        onRequestClose={controller.closeFilters}
+                    >
+                        <SafeAreaProvider>
+                            <ChargesFiltersView onConfirm={controller.closeFilters} />
+                        </SafeAreaProvider>
+                    </Modal>
+                    <View>
+                        <PageHeader
+                            title={languageHandler.getTranslation("chargeHistory")}
+                            onBack={() => navigation.goBack()}
+                            action={{ icon: "more-horiz", onPress: controller.openOptions, testID: "openModal" }}
                         />
-                        <Text style={[styles.titleText, { color: getBlackColour(isDarkMode), flexShrink: 1, flexWrap: 'wrap' }]} numberOfLines={1} adjustsFontSizeToFit>{languageHandler.getTranslation("chargeHistory")}</Text>
-                        <GlassButton
-                            testID="openModal"
-                            icon="more-horiz"
-                            iconSize={30}
-                            onPress={controller.openOptions}
-                            glassStyle={styles.glassButton}
-                        />
+                        <ActiveFiltersRow onOpenFilters={controller.openFilters} />
+                        <View style={commonStyles.navSeparator}></View>
                     </View>
-                    <ActiveFiltersRow onOpenFilters={controller.openFilters} />
-                    <View style={commonStyles.navSeparator}></View>
-                </View>
-                <FlatList
-                    data={months}
-                    // iOS : le contenu défile sous la barre d'onglets flottante, sans que le bas soit caché
-                    contentInsetAdjustmentBehavior="automatic"
-                    keyExtractor={(item) => item.monthYear}
-                    renderItem={({ item: month }) => (
-                        <ChargeMonthSection month={month} isFirst={month.monthYear === months[0].monthYear} />
-                    )}
-                    onEndReached={controller.loadMoreMonths}
-                    onEndReachedThreshold={0.5}
-                    ListFooterComponent={controller.hasMoreMonths ? <ActivityIndicator size="large" color="#0000ff" /> : undefined}
-                />
+                    <FlatList
+                        data={months}
+                        // iOS : le contenu défile sous la barre d'onglets flottante, sans que le bas soit caché
+                        contentInsetAdjustmentBehavior="automatic"
+                        keyExtractor={(item) => item.monthYear}
+                        ListHeaderComponent={shouldSuggestTariff ? <SetTariffBanner onPress={openTariffs} /> : undefined}
+                        renderItem={({ item: month }) => (
+                            <ChargeMonthSection month={month} isFirst={month.monthYear === months[0].monthYear} />
+                        )}
+                        onEndReached={controller.loadMoreMonths}
+                        onEndReachedThreshold={0.5}
+                        ListFooterComponent={controller.hasMoreMonths ? <ActivityIndicator size="large" color="#0000ff" /> : undefined}
+                    />
+                </ChargeCostsContext.Provider>
             </ChargesFiltersContext.Provider>
         </SafeAreaView>
     )
 }
-
-const styles = StyleSheet.create({
-    glassButton: {
-        padding: 4,
-        borderRadius: 999,
-    },
-    titleText: {
-        textAlign: 'center',
-        paddingHorizontal: 10,
-        fontWeight: fontWeightBold,
-        fontFamily: fontFamilyBold,
-        fontSize: 25,
-    },
-});
 
 export default ChargesHistoryView;

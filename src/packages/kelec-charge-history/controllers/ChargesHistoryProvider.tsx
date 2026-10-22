@@ -4,6 +4,8 @@ import CarModel from "../../../lib/clients/cars/carModel";
 import Charge from "../models/Charge";
 import ChargesHistory from "../models/ChargesHistory";
 import { createChargesSource } from "../services/createChargesSource";
+import ChargeCostOverrides from "../models/ChargeCostOverrides";
+import { ChargeCostOverridesRepository } from "../services/chargeCostOverridesRepository";
 
 type ChargesHistoryController = {
     /** Indisponible (`hasError`) tant que rien n'a été chargé, ou si le constructeur n'est pas supporté. */
@@ -12,12 +14,27 @@ type ChargesHistoryController = {
     sync: () => Promise<void>;
     /** Ajoute des charges importées à l'historique ; null si la source ne permet pas d'importer. */
     importCharges: ((charges: Charge[]) => Promise<void>) | null;
+    /** Prix saisis à la main (stockés localement, quel que soit le constructeur). */
+    costOverrides: ChargeCostOverrides;
+    /** Enregistre le prix saisi pour une charge, ou le retire (`null` : retour au tarif). */
+    setCostOverride: (charge: Charge, amount: number | null) => Promise<void>;
+    /** Ajoute des prix saisis (import) ; une charge qui a déjà un prix saisi garde le sien. */
+    importCostOverrides: (costs: ManualCost[]) => Promise<void>;
+};
+
+/** Prix saisi à la main pour une charge (import). */
+export type ManualCost = {
+    charge: Charge;
+    amount: number;
 };
 
 const ChargesHistoryContext = createContext<ChargesHistoryController>({
     history: ChargesHistory.unavailable(),
     sync: async () => { },
     importCharges: null,
+    costOverrides: new ChargeCostOverrides(),
+    setCostOverride: async () => { },
+    importCostOverrides: async () => { },
 });
 
 export const useChargesHistory = (): ChargesHistoryController => useContext(ChargesHistoryContext);
@@ -31,6 +48,7 @@ type Props = {
 /**
  * Historique de charge d'une voiture, partagé par la page voiture et l'écran d'historique.
  * Charge le cache au montage ; le réseau est déclenché de l'extérieur via `sync`.
+ * Porte aussi les prix saisis à la main, partagés par l'historique et la page de modification du prix.
  */
 export function ChargesHistoryProvider({ carModel, account, children }: Props): React.JSX.Element {
     const source = useMemo(
@@ -79,7 +97,36 @@ export function ChargesHistoryProvider({ carModel, account, children }: Props): 
         };
     }, [source, commit]);
 
-    const value = useMemo(() => ({ history, sync, importCharges }), [history, sync, importCharges]);
+    const vin = carModel.getVin();
+    const [costOverrides, setCostOverrides] = useState(() => new ChargeCostOverrides());
+
+    useEffect(() => {
+        ChargeCostOverridesRepository.get(vin).then(loaded => {
+            if (isMounted.current) setCostOverrides(loaded);
+        });
+    }, [vin]);
+
+    const setCostOverride = useCallback(async (charge: Charge, amount: number | null) => {
+        // relu avant l'écriture : le stockage fait foi
+        const stored = await ChargeCostOverridesRepository.get(vin);
+        const next = amount === null ? stored.without(charge) : stored.with(charge, amount);
+        await ChargeCostOverridesRepository.save(vin, next);
+        if (isMounted.current) setCostOverrides(next);
+    }, [vin]);
+
+    const importCostOverrides = useCallback(async (costs: ManualCost[]) => {
+        let next = await ChargeCostOverridesRepository.get(vin);
+        for (const { charge, amount } of costs) {
+            if (next.get(charge) === null) next = next.with(charge, amount);
+        }
+        await ChargeCostOverridesRepository.save(vin, next);
+        if (isMounted.current) setCostOverrides(next);
+    }, [vin]);
+
+    const value = useMemo(
+        () => ({ history, sync, importCharges, costOverrides, setCostOverride, importCostOverrides }),
+        [history, sync, importCharges, costOverrides, setCostOverride, importCostOverrides],
+    );
 
     return (
         <ChargesHistoryContext.Provider value={value}>

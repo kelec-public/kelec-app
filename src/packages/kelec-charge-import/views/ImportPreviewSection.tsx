@@ -15,6 +15,7 @@ type Labels = {
     /** Textes déjà traduits et remplis, absents s'il n'y a rien à signaler. */
     alreadyKnown?: string;
     rejected?: string;
+    manualCosts?: string;
 };
 
 type Props = {
@@ -62,7 +63,7 @@ function PreviewRow({ testID, icon, label, values, format = String, unit }: RowP
     );
 }
 
-/** Aperçu de l'import : totaux de l'historique avant / après, lignes déjà présentes ou ignorées. */
+/** Aperçu de l'import : totaux de l'historique avant / après, lignes déjà présentes ou ignorées, prix saisis repris. */
 function ImportPreviewSection({ summary, labels }: Props): React.JSX.Element {
     return (
         <View style={styles.container} testID="importPreview">
@@ -72,8 +73,9 @@ function ImportPreviewSection({ summary, labels }: Props): React.JSX.Element {
                 <PreviewRow testID="importPreviewEnergy" icon="bolt" label={labels.energy} values={summary.energyKwh} unit="kWh" />
                 <PreviewRow testID="importPreviewTime" icon="hourglass-empty" label={labels.time} values={summary.minutes} format={formatMinutes} />
             </View>
-            {labels.alreadyKnown && <Text style={styles.note} testID="importPreviewAlreadyKnown">{labels.alreadyKnown}</Text>}
-            {labels.rejected && <Text style={styles.note} testID="importPreviewRejected">{labels.rejected}</Text>}
+            {!!labels.alreadyKnown && <Text style={styles.note} testID="importPreviewAlreadyKnown">{labels.alreadyKnown}</Text>}
+            {!!labels.rejected && <Text style={styles.note} testID="importPreviewRejected">{labels.rejected}</Text>}
+            {!!labels.manualCosts && <Text style={styles.note} testID="importPreviewManualCosts">{labels.manualCosts}</Text>}
         </View>
     );
 }

@@ -1,7 +1,7 @@
 # Package `kelec-charge-history`
 
 Historique des charges d'une voiture : carte résumé sur la page voiture, écran d'historique par mois,
-filtres, tri, fusion des charges et export Excel. L'import d'un export est dans un package à part,
+filtres, tri, fusion des charges, coût des charges et export Excel. L'import d'un export est dans un package à part,
 [`kelec-charge-import`](./charge-import.md), qui passe par l'`index.ts` de ce package.
 
 Pattern général : voir [packages-pattern.md](./packages-pattern.md).
@@ -14,6 +14,8 @@ kelec-charge-history/
 │   ├── Charge.ts              Une charge (ou une session V2G), construction depuis le JSON / l'API V2G
 │   ├── ChargesHistory.ts      Toutes les charges d'une voiture + totaux (énergie, durée)
 │   ├── ChargeMonth.ts         Charges regroupées par mois (+ jours du mini-graphique)
+│   ├── ChargeCosts.ts         Coût d'une charge et format du montant (devise des tarifs)
+│   ├── ChargeCostOverrides.ts Prix saisis à la main, retrouvés par le début de la charge (à 5 s près)
 │   └── Filter.ts              Types de filtres et liste des filtres disponibles
 ├── services/
 │   ├── chargesFilters.ts      Application, édition et libellés des filtres (pur)
@@ -22,6 +24,8 @@ kelec-charge-history/
 │   ├── chargesRepository.ts   Persistance locale (BatchedList de kelec-storage)
 │   ├── knownChargeStarts.ts   Débuts de charge déjà vus, pour les doublons (à 5 s près)
 │   ├── chargesExport.ts       Génération xlsx + feuille de partage
+│   ├── chargeCost.ts          Coût d'une charge : prix saisi, sinon tarif (V2G : aucun ; fusionnée : somme des sous-charges) (pur)
+│   ├── chargeCostOverridesRepository.ts   Prix saisis à la main (<vin>/chargeCostOverrides)
 │   ├── createChargesSource.ts Choix de la source selon le constructeur
 │   └── sources/
 │       ├── renaultChargesSource.ts   Renault / Dacia / Alpine : API historique + sessions V2G
@@ -30,18 +34,23 @@ kelec-charge-history/
 │   ├── ChargesHistoryProvider.tsx      Historique partagé d'une voiture : useChargesHistory() → { history, sync, importCharges }
 │   ├── useChargesHistoryController.ts  État de l'écran : filtres, tri, pagination, modales, export
 │   ├── ChargesFiltersContext.ts        Filtres actifs, pour les vues de filtres
+│   ├── ChargeCostsContext.ts, useChargeCosts.ts   Coût des charges pour les vues (null sans tarif ni prix saisi)
+│   ├── useChargeCostEditor.ts          Page du prix d'une charge : montant saisi, retour au tarif
 │   └── useNumericalFilterController.ts Champs min / max d'un filtre numérique
 ├── views/
 │   ├── ChargesSummaryCard.tsx   Carte de la page voiture (totaux)
 │   ├── ChargesHistoryView.tsx   Écran d'historique
-│   ├── ChargesOptionsSheet.tsx  Feuille « … » : tri, import (si proposé) et export
+│   ├── ChargesOptionsSheet.tsx  Feuille « … » : tri, tarifs, import (si proposé) et export
+│   ├── SetTariffBanner.tsx      Invitation à définir un tarif (tant qu'il n'y en a pas)
+│   ├── ChargeCostEditView.tsx   Page du prix d'une charge (CHARGE_COST_ROUTE, param chargeStartDate)
 │   ├── ActiveFiltersRow.tsx     Bouton Filtres + pastilles des filtres actifs
 │   ├── ChargeMonthSection.tsx   Un mois (dépliable)
-│   ├── ChargeMonthHeader.tsx    En-tête du mois : totaux + mini-graphique par jour
+│   ├── ChargeMonthHeader.tsx    En-tête du mois : mois + nombre de charges (bouton verre qui replie le mois),
+│   │                            tuiles kWh / temps / coût, mini-graphique par jour sur toute la largeur
 │   ├── ChargeCard.tsx           Une charge (+ détail des sous-charges si fusionnée)
 │   └── filters/                 Modale des filtres (date, numériques, DC uniquement)
 ├── types/chargesSource.ts       Interface ChargesSource
-├── routes.ts                    CHARGES_HISTORY_ROUTE
+├── routes.ts                    CHARGES_HISTORY_ROUTE, CHARGE_COST_ROUTE
 └── index.ts                     API publique : Charge, useChargesHistory, KnownChargeStarts (utilisés par kelec-charge-import)
 ```
 
@@ -63,6 +72,7 @@ kelec-charge-history/
 | `<vin>/chargesHistoryAmount` | Nombre de charges |
 | `<vin>/chargesHistoryIndex<i>` | Lots de 50 charges (JSON) |
 | `<vin>/chargesHistorySaved` | Ancien format (toutes les charges dans une seule entrée) : relu si présent, supprimé à la première écriture |
+| `<vin>/chargeCostOverrides` | Prix saisis à la main : `[{ chargeStartDate, amount }]` |
 
 - Les noms des champs sérialisés de `Charge` (`chargeStartDate`, `V2GEnergyDischarged`…) **ne doivent pas changer** : ils servent au stockage et à l'export.
 - Lors d'un enregistrement, l'app dédoublonne sur l'**instant** de début, **à 5 secondes près** (`KnownChargeStarts`) : une date peut avoir ou non des millisecondes, et l'API Renault a déjà renvoyé une même charge avec une seconde d'écart d'un jour à l'autre. Elle trie ensuite par date croissante et calcule le kilométrage de départ quand l'historique kilométrique natif le permet.
@@ -70,6 +80,33 @@ kelec-charge-history/
   - `addMissingCharges` (import) : en cas de doublon, la charge déjà stockée l'emporte.
 - Import : une source qui stocke les charges implémente `importCharges` (Renault). Le provider expose alors `importCharges`, sinon `null` (démo) et le bouton d'import n'est pas affiché.
   `ChargesHistoryView` reçoit `onImport` de `CarsPageView`, qui seul connaît la route d'import : `kelec-charge-history` ne dépend pas de `kelec-charge-import`.
+
+## Coût des charges
+
+Les tarifs sont ceux de [`kelec-charge-cost`](./charge-cost.md) (globaux), lus via son `index.ts` et mis à jour à chaque enregistrement
+(au retour des pages des tarifs, ou depuis l'onglet Réglages).
+
+- `ChargeCard` : coût de la charge (`chargeCostText`), toujours sur sa propre ligne en bas à gauche ; à droite, le type de charge
+  (`chargeCurrentType`) : « AC » avec la prise Type 2, « DC » avec la prise CCS2 (`isDCCharge`, vitesse moyenne ≥ 26 kW). En-tête du mois : total des charges affichées (`chargeIndexCost`).
+- Rien n'est affiché sans tarif ; une bannière (`setTariffBanner`) ouvre alors les tarifs. La feuille « … » a aussi un bouton « Tarif d'électricité ».
+- `ChargesHistoryView` reçoit `onOpenTariffs` de `CarsPageView`, qui enregistre les pages des tarifs (`TARIFF_LIST_ROUTE`, `TARIFF_EDITOR_ROUTE`).
+- Session V2G : pas de coût. Charge fusionnée : somme du coût des sous-charges, chacune à ses horaires (HP / HC).
+- Le coût est calculé à l'affichage, jamais stocké : changer un tarif met à jour tout l'historique.
+
+### Prix saisis à la main
+
+Pour une charge payée ailleurs qu'à la maison : toucher la carte d'une charge (n'importe où, hors de ses boutons) ouvre la page « Prix de la charge » (`CHARGE_COST_ROUTE`).
+- On y saisit le **montant payé** (dans la devise des tarifs), avec son équivalent au kWh et, pour comparer, le coût au tarif.
+  « Revenir au tarif par défaut » retire le prix saisi.
+- **Le prix saisi l'emporte** sur le tarif (y compris pour une session V2G). Il est signalé par une icône ✎ à côté du coût.
+- **Charge fusionnée** : pas de prix à elle (elle commence comme sa première sous-charge, on ne cherche donc pas de prix pour elle) ;
+  on modifie le prix d'une sous-charge depuis le détail de la fusion, qui se ferme avant l'ouverture de la page.
+  Son coût est la somme des sous-charges, chacune avec son prix saisi ou au tarif ; ✎ si l'une d'elles a un prix saisi.
+- **Stockage** : `<vin>/chargeCostOverrides`, liste de `{ chargeStartDate, amount }`, **à part des charges** : une synchro remplace la charge
+  stockée par celle de l'API (`saveNewCharges`) et effacerait un champ ajouté à `Charge`. La charge est retrouvée par son début à 5 s près,
+  comme les doublons. L'état est porté par `ChargesHistoryProvider` (partagé par l'historique et la page du prix).
+- Sans aucun tarif, le coût n'est pas affiché, donc pas modifiable ; les prix déjà saisis restent affichés.
+- Supprimer une voiture garde ses données locales, prix saisis compris (comme l'historique).
 
 ## Règles métier
 
@@ -84,6 +121,7 @@ kelec-charge-history/
   dans une charge du mois précédent n'est pas compté (sinon « charger plus » ajouterait un mois vide).
 - **Export** : les charges affichées (filtrées, fusionnées si l'option est active), dans l'ordre du tri, avec les dates en heure locale.
   Une ligne fusionnée a `isAMergeCharge = true` et le nombre de sous-charges dans `subChargesCount` (dernières colonnes).
+  Avec des tarifs, `cost` (arrondi au centime, vide pour une session V2G), `currency` et `isManualCost` sont ajoutés juste avant ces deux colonnes.
 
 ## Historique du refactor
 

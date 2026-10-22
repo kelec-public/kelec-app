@@ -66,6 +66,8 @@ function ChargesImportView({ onClose }: Props): React.JSX.Element {
                                     ? fill("importAlreadyKnownCharges", preview.alreadyKnownCount) : undefined,
                                 rejected: preview.rejectedLines.length > 0
                                     ? fill("importRejectedLines", preview.rejectedLines.length) : undefined,
+                                manualCosts: preview.manualCosts.length > 0
+                                    ? fill("importManualCosts", preview.manualCosts.length) : undefined,
                             }}
                         />
                     </>
