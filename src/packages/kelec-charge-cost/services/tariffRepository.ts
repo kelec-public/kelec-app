@@ -3,6 +3,9 @@ import { DEFAULT_CURRENCY, sortTariffs, TariffSettings } from "../models/Tariff"
 
 const KEY = 'electricityTariffs';
 
+type Listener = (settings: TariffSettings) => void;
+const listeners = new Set<Listener>();
+
 /** Tarifs de l'électricité (globaux, pas par voiture). */
 export const TariffRepository = {
     async get(): Promise<TariffSettings> {
@@ -14,6 +17,18 @@ export const TariffRepository = {
     },
 
     async save(settings: TariffSettings): Promise<void> {
-        await AppStorage.setJSON(KEY, { ...settings, tariffs: sortTariffs(settings.tariffs) });
+        const sorted = { ...settings, tariffs: sortTariffs(settings.tariffs) };
+        await AppStorage.setJSON(KEY, sorted);
+        listeners.forEach(listener => listener(sorted));
+    },
+
+    /**
+     * Appelé après chaque enregistrement. Les écrans déjà ouverts ailleurs (ex. l'historique, dans l'onglet Voitures)
+     * ne reprennent pas le focus quand on change d'onglet : chaque voiture a son propre `NavigationContainer`.
+     * Renvoie la fonction de désabonnement.
+     */
+    subscribe(listener: Listener): () => void {
+        listeners.add(listener);
+        return () => { listeners.delete(listener); };
     },
 };

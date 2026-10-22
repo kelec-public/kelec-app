@@ -82,8 +82,8 @@ kelec-charge-history/
 
 ## Coût des charges
 
-Les tarifs sont ceux de [`kelec-charge-cost`](./charge-cost.md) (globaux), lus via son `index.ts` et relus quand l'écran reprend le focus
-(au retour des pages des tarifs).
+Les tarifs sont ceux de [`kelec-charge-cost`](./charge-cost.md) (globaux), lus via son `index.ts` et mis à jour à chaque enregistrement
+(au retour des pages des tarifs, ou depuis l'onglet Réglages).
 
 - `ChargeCard` : coût de la charge (`chargeCostText`), toujours sur sa propre ligne en bas à gauche ; à droite, le type de charge
   (`chargeCurrentType`) : « AC » avec la prise Type 2, « DC » avec la prise CCS2 (`isDCCharge`, vitesse moyenne ≥ 26 kW). En-tête du mois : total des charges affichées (`chargeIndexCost`).

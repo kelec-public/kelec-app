@@ -15,11 +15,11 @@ kelec-charge-cost/
 ├── services/
 │   ├── chargeCost.ts          computeCost(début, fin, kWh, tarifs) (pur)
 │   ├── tariffList.ts          Ajout / modification par id, suppression, fin et état (terminé, en cours, à venir) d'un tarif (pur)
-│   ├── tariffRepository.ts    Lecture / écriture (AppStorage, clé globale)
+│   ├── tariffRepository.ts    Lecture / écriture (AppStorage, clé globale), abonnement aux enregistrements
 │   ├── offPeakSummary.ts      Plages sur la journée (frise), heures pleines (le reste de la journée), total par jour, économie en %
 │   └── priceFormat.ts         Montants dans la devise, symbole de la devise, dates locales
 ├── controllers/
-│   ├── useTariffSettings.ts   Tarifs relus quand l'écran reprend le focus (aussi utilisé par l'historique)
+│   ├── useTariffSettings.ts   Tarifs lus au montage, puis mis à jour à chaque enregistrement (aussi utilisé par l'historique)
 │   ├── useTariffList.ts       Tarifs relus à chaque affichage de la page, devise
 │   └── useTariffEditor.ts     Tarif saisi (existant ou nouveau), enregistrement, suppression, alertes
 ├── views/
@@ -50,7 +50,7 @@ Les paramètres de route sont sérialisables (`tariffId` seulement) : chaque pag
 - Liste vide : un bouton « Ajouter un tarif » dans le contenu, plus explicite que le « + » pour le premier tarif.
 - « Supprimer le tarif » est fixé en bas de la saisie, juste au-dessus de la barre d'onglets, loin de ✓ (`footer` de `TariffPageLayout`).
   Sur iOS, la barre flotte par-dessus l'écran : le bouton prend la marge du bas de l'onglet, qui comprend la barre ; sur Android, l'écran s'arrête déjà au-dessus.
-- Un tarif se modifie sur sa page, puis on revient à la liste, qui se relit à chaque affichage.
+- Un tarif se modifie sur sa page, puis on revient à la liste, mise à jour par l'enregistrement.
 - **Page des tarifs** : devise (sans carte), puis « Historique d'application » (nombre de périodes) et une carte par tarif, la plus récente en haut
   (`tariffRow<index>` garde l'index chronologique). Chaque carte : état (« Actif en ce moment » en vert, « Archivé », « À venir »), type,
   période, puis les prix : heures pleines avec leurs plages (le reste de la journée), heures creuses avec leurs plages, leur durée et l'économie en %.
@@ -77,6 +77,9 @@ Les paramètres de route sont sérialisables (`tariffId` seulement) : chaque pag
 - **Calcul** : l'énergie est répartie au prorata du temps (puissance supposée constante), entre tarifs et entre heures pleines / creuses.
   Les jours sont construits en heure locale : la nuit d'un changement d'heure dure bien 7 h ou 9 h. Charge sans durée : tout au prix du début.
 - Les coûts ne sont jamais stockés : modifier un tarif met à jour tous les coûts.
+- **Mise à jour des écrans ouverts** : `TariffRepository.save` prévient les abonnés (`subscribe`), et `useTariffSettings` s'abonne
+  (pas de relecture au focus : toutes les écritures passent par `save`). Le focus ne suffirait pas : chaque voiture a son propre `NavigationContainer`, donc l'historique resté ouvert dans l'onglet Voitures
+  ne reprend pas le focus quand on revient des Réglages.
 
 ## Stockage
 

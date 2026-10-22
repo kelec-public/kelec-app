@@ -2,11 +2,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import App from "../../../App";
 import RenaultCar from "../../../src/lib/clients/cars/renaultCar";
 import Account, { CarMaker } from "../../../src/lib/clients/accounts/account";
-import { render, waitFor, screen, userEvent } from "@testing-library/react-native";
+import { act, render, waitFor, screen, userEvent } from "@testing-library/react-native";
 import React from "react";
 import UserAccount from "../../../src/lib/clients/accounts/userAccount";
 import { Alert } from "react-native";
-import { formatPrice } from "../../../src/packages/kelec-charge-cost";
+import { formatPrice, TariffRepository } from "../../../src/packages/kelec-charge-cost";
 import { isTabBarHidden } from "../../../testUtils/tabs";
 
 jest.useFakeTimers();
@@ -69,6 +69,11 @@ test('should display the cost of the charges with the home tariff', async () => 
     const monthCosts = screen.getAllByTestId('chargeIndexCost').map(text => text.props.children[1]);
     expect(monthCosts).toEqual([formatPrice(16.45, 'EUR'), formatPrice(4.64, 'EUR')]);
     expect(screen.queryByTestId('setTariffBanner')).toBeNull();
+
+    // tarifs supprimés depuis l'onglet Réglages : l'historique, resté ouvert dans l'onglet Voitures, ne reprend pas le focus
+    await act(() => TariffRepository.save({ currency: 'EUR', tariffs: [] }));
+    await waitFor(() => expect(screen.queryAllByTestId('chargeCostText')).toHaveLength(0));
+    expect(screen.getByTestId('setTariffBanner')).toBeDefined();
 });
 
 test('without tariff: no cost, and an invitation to set one', async () => {

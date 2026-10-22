@@ -117,6 +117,16 @@ describe("TariffRepository", () => {
         expect(await TariffRepository.get()).toEqual({ currency: 'EUR', tariffs: [] });
     });
 
+    test("listeners get each saved version until they unsubscribe", async () => {
+        const listener = jest.fn();
+        const unsubscribe = TariffRepository.subscribe(listener);
+        await TariffRepository.save({ currency: 'EUR', tariffs: [flat('second', '2027-02-01'), flat('first', null)] });
+        expect(listener).toHaveBeenCalledWith({ currency: 'EUR', tariffs: [flat('first', null), flat('second', '2027-02-01')] });
+        unsubscribe();
+        await TariffRepository.save({ currency: 'EUR', tariffs: [] });
+        expect(listener).toHaveBeenCalledTimes(1);
+    });
+
     test("saves under the global key, sorted", async () => {
         await TariffRepository.save({ currency: 'NOK', tariffs: [flat('second', '2027-02-01'), flat('first', null)] });
         const stored = JSON.parse(await AsyncStorage.getItem('electricityTariffs') ?? 'null');
