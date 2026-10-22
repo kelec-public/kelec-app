@@ -13,6 +13,9 @@ on:
       - main
       - KAN-**
 
+permissions:
+  contents: read
+
 jobs:
   code-validation:
     runs-on: ubuntu-latest
@@ -35,11 +38,17 @@ jobs:
 
       - name: Save PR metadata
         if: github.event_name == 'pull_request'
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_LOGIN: ${{ github.event.pull_request.user.login }}
+          PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          PR_BASE: ${{ github.event.pull_request.base.ref }}
+          PR_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
-          echo "PR_NUMBER=${{ github.event.pull_request.number }}" >> pr-meta.env
-          echo "PR_BRANCH=${{ github.event.pull_request.user.login }}:${{ github.event.pull_request.head.ref }}" >> pr-meta.env
-          echo "PR_BASE=${{ github.event.pull_request.base.ref }}" >> pr-meta.env
-          echo "PR_SHA=${{ github.event.pull_request.head.sha }}" >> pr-meta.env
+          echo "PR_NUMBER=$PR_NUMBER" >> pr-meta.env
+          echo "PR_BRANCH=$PR_LOGIN:$PR_HEAD_REF" >> pr-meta.env
+          echo "PR_BASE=$PR_BASE" >> pr-meta.env
+          echo "PR_SHA=$PR_SHA" >> pr-meta.env
       - name: Upload test artifacts
         uses: actions/upload-artifact@v7
         with:

@@ -6,6 +6,10 @@ on:
         types:
             - completed
 
+permissions:
+    contents: read
+    actions: read
+
 jobs:
     sonar-scan:
         runs-on: ubuntu-latest
@@ -30,10 +34,25 @@ jobs:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Load PR metadata
+              env:
+                  HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
               run: |
-                  if [ -f pr-meta.env ]; then
-                    cat pr-meta.env >> $GITHUB_ENV
-                  fi
+                  [ -f pr-meta.env ] || { echo "missing PR metadata"; exit 1; }
+                  value() { grep -m1 "^$1=" pr-meta.env | cut -d= -f2-; }
+                  num=$(value PR_NUMBER)
+                  sha=$(value PR_SHA)
+                  branch=$(value PR_BRANCH)
+                  base=$(value PR_BASE)
+                  [[ "$num" =~ ^[0-9]+$ ]] || { echo "invalid PR_NUMBER"; exit 1; }
+                  [[ "$sha" == "$HEAD_SHA" ]] || { echo "PR_SHA does not match the triggering run"; exit 1; }
+                  [[ "$branch" =~ ^[A-Za-z0-9._/:+@-]+$ ]] || { echo "invalid PR_BRANCH"; exit 1; }
+                  [[ "$base" =~ ^[A-Za-z0-9._/+@-]+$ ]] || { echo "invalid PR_BASE"; exit 1; }
+                  {
+                    echo "PR_NUMBER=$num"
+                    echo "PR_SHA=$sha"
+                    echo "PR_BRANCH=$branch"
+                    echo "PR_BASE=$base"
+                  } >> "$GITHUB_ENV"
 
             - name: Wake up SonarQube
               uses: kelyanselme/kelyan_workflows_and_actions/.github/actions/wakeup-sonar@v1
