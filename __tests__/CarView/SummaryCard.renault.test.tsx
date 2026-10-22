@@ -2,16 +2,21 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import App from "../../App";
 import React from "react";
 import Account, { CarMaker } from "../../src/lib/clients/accounts/account";
-import { render, waitFor, screen } from "@testing-library/react-native";
+import { render, waitFor, screen, fireEvent } from "@testing-library/react-native";
 import { CarTypeInterface } from "../../src/lib/clients/cars/carTypes/carType";
 import RenaultCar from "../../src/lib/clients/cars/renaultCar";
 import UserAccount from "../../src/lib/clients/accounts/userAccount";
 import { CarMakerClientErrors } from "../../src/lib/clients/carMakers/carMakerClient";
+import * as sharedPlatformsData from '../../src/lib/storage/sharedPlatformsData';
+
+const mockSendDataToAppleWatch = jest.fn();
+jest.spyOn(sharedPlatformsData, 'sendDataToAppleWatch').mockImplementation(mockSendDataToAppleWatch);
 jest.useFakeTimers();
 beforeEach(async () => {
     jest.useFakeTimers();
     mockGetBatteryStatus.mockReset();
     mockGetCockpitStatus.mockReset();
+    mockSendDataToAppleWatch.mockReset();
     await AsyncStorage.clear();
     const car1 = new RenaultCar('vin1', 'model1', 'image1', CarMaker.RENAULT, 'AA0001AA');
     const account: Account = new Account('email', 'passwod', CarMaker.RENAULT, car1);
@@ -135,6 +140,32 @@ test('should render an error', async () => {
 
     await waitFor(() => {
         expect(screen.getByTestId('errorView')).toBeDefined();
+    });
+});
+
+test('should refresh the car data with the refresh button', async () => {
+    mockGetBatteryStatus.mockResolvedValueOnce({ hasError: false, apiData: mockJSONBatteryStatus });
+    mockGetCockpitStatus.mockResolvedValueOnce({ hasError: false, apiData: mockJSONCockpit });
+
+    render(<App />);
+
+    await waitFor(() => {
+        expect(screen.getByTestId('summaryCardRange').props.children[0]).toBe(202);
+    });
+    // le premier chargement ne synchronise pas la montre
+    expect(mockSendDataToAppleWatch).not.toHaveBeenCalled();
+
+    const mockBatteryStatus = JSON.parse(JSON.stringify(mockJSONBatteryStatus));
+    mockBatteryStatus.batteryAutonomy = 250;
+    mockGetBatteryStatus.mockResolvedValueOnce({ hasError: false, apiData: mockBatteryStatus });
+    mockGetCockpitStatus.mockResolvedValueOnce({ hasError: false, apiData: mockJSONCockpit });
+
+    fireEvent.press(screen.getByTestId('refreshButton'));
+
+    await waitFor(() => {
+        expect(mockGetBatteryStatus).toHaveBeenCalledTimes(2);
+        expect(screen.getByTestId('summaryCardRange').props.children[0]).toBe(250);
+        expect(mockSendDataToAppleWatch).toHaveBeenCalledTimes(1);
     });
 });
 

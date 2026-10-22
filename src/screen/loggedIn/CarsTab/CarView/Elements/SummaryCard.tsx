@@ -11,9 +11,11 @@ import { CAR_TYPE_ROUTE } from "../../../../../packages/kelec-car-type";
 
 type SummaryCardProps = {
     readonly navigation: any;
+    readonly onRefresh: () => void;
+    readonly isRefreshing: boolean;
 }
 
-function SummaryCard({ navigation }: SummaryCardProps): React.JSX.Element {
+function SummaryCard({ navigation, onRefresh, isRefreshing }: SummaryCardProps): React.JSX.Element {
     const isDarkMode = useColorScheme() === 'dark';
 
     const { image, apiHandler, carType, carModel } = useContext(CarViewContext);
@@ -22,6 +24,16 @@ function SummaryCard({ navigation }: SummaryCardProps): React.JSX.Element {
     return (
         <View style={[styles.summaryCard, { backgroundColor: getGrayBackgroundColour(isDarkMode) }]} testID="summaryCard">
             <Image style={styles.carImage} source={{ uri: `data:image/jpeg;base64,${image}` }} />
+            <View style={styles.refreshButton}>
+                <GlassButton
+                    testID={'refreshButton'}
+                    icon="refresh"
+                    iconSize={20}
+                    onPress={onRefresh}
+                    disabled={isRefreshing}
+                    glassStyle={styles.glassSettingsButton}
+                />
+            </View>
             <View style={styles.settingsButton}>
                 <GlassButton
                     testID={'openModalButton'}
@@ -118,6 +130,13 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 15,
         right: 15,
+        zIndex: 99,
+        elevation: 99,
+    },
+    refreshButton: {
+        position: 'absolute',
+        top: 15,
+        left: 15,
         zIndex: 99,
         elevation: 99,
     },
