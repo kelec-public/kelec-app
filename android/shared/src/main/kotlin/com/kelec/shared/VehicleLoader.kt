@@ -2,6 +2,7 @@ package com.kelec.shared
 
 import android.content.Context
 import com.kelec.carapi.BatteryStatus
+import com.kelec.carapi.DemoCar
 import com.kelec.carapi.RenaultApiClient
 import com.kelec.carapi.RenaultApiKeys
 import kotlin.coroutines.cancellation.CancellationException
@@ -27,7 +28,7 @@ class VehicleLoader(context: Context, private val keys: RenaultApiKeys) {
      * le réseau n'étant appelé que par la tâche de rafraîchissement.
      */
     fun cached(car: UserCar): VehicleStatus {
-        if (car.maker == CarMaker.DEMO) return VehicleStatus.Loaded(BatteryStatus.demo(), fromCache = false)
+        if (car.maker == CarMaker.DEMO) return VehicleStatus.Loaded(BatteryStatus.demo(car.vin), fromCache = false)
         if (secureStore.renaultCookieValue(car.email) == null) return VehicleStatus.NotLoggedIn
         return history.loadBatteryStatus(car.vin)
             ?.let { VehicleStatus.Loaded(it, fromCache = true) }
@@ -35,7 +36,10 @@ class VehicleLoader(context: Context, private val keys: RenaultApiKeys) {
     }
 
     suspend fun load(car: UserCar): VehicleStatus {
-        if (car.maker == CarMaker.DEMO) return VehicleStatus.Loaded(BatteryStatus.demo(), fromCache = false)
+        if (car.maker == CarMaker.DEMO) {
+            history.saveMileage(car.vin, DemoCar.forVin(car.vin).totalMileage)
+            return VehicleStatus.Loaded(BatteryStatus.demo(car.vin), fromCache = false)
+        }
 
         val cookieValue = secureStore.renaultCookieValue(car.email)
         if (cookieValue == null) {

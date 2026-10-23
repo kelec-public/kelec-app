@@ -57,7 +57,7 @@ enum VehicleCache {
       guard let saved = load([HyundaiSaved].self, key: StorageKey.hyundaiCarsCache)?.first(where: { $0.vin == vin }) else { return nil }
       return HyundaiApiHandler(apiData: saved.hyundaiStatus)
     case .DEMO:
-      return DemoApiHandler()
+      return DemoApiHandler(vin: vin)
     }
   }
 

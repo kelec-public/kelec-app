@@ -11,6 +11,8 @@ Natif Android (widgets, bridge RN, modules `:carapi` / `:shared`, app Wear OS `:
 
 Liquid glass (`GlassButton`, `FloatingPill`) et barre d'onglets native (bas des écrans, écrans sans barre, tests) :
 lire [docs/liquid-glass.md](docs/liquid-glass.md) et [docs/tab-bar.md](docs/tab-bar.md).
+Compte démo (3 voitures, utilisé pour la review Apple) : lire [docs/demo-mode.md](docs/demo-mode.md).
+Ses données sont copiées dans l'app RN, iOS et Android : les garder identiques.
 
 **Invariant métier** : un VIN est unique dans toute l'app, et chaque VIN a exactement un compte (`Account`).
 Le VIN suffit donc à identifier une voiture et son compte.

@@ -21,8 +21,8 @@ data class BatteryStatus(
     companion object {
         private const val PLUG_STATUS_PLUGGED = 1
 
-        /** Voiture de démo : en charge, 62 %, fin dans 2 h. */
-        fun demo(now: Instant = Instant.now()): BatteryStatus =
-            BatteryStatus(now.toString(), 62, 175, 1, 1.0, 120)
+        /** Statut de la voiture de démo [vin] (voir [DemoCar]). */
+        fun demo(vin: String = DemoCar.CLASSIC.vin, now: Instant = Instant.now()): BatteryStatus =
+            DemoCar.forVin(vin).batteryStatus(now)
     }
 }

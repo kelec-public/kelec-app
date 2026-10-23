@@ -238,6 +238,8 @@ Bouton du Centre de contrôle, de l'écran verrouillé et du bouton Action, dans
 - Clients d'API uniquement : il n'écrit plus dans le stockage et n'importe plus SwiftUI.
 - `RenaultApiClient(…, logger:)` : l'app y branche `writeWidgetLog`.
 - `ApiHandler.getVehicleData()` renvoie `VehicleData` (`.renault` / `.hyundai` / `.demo`) au lieu de `Any`.
+- Démo : `DemoApiHandler(vin:)` lit `DemoCar`, les 3 voitures de démo de l'app RN (`mockDemoData.json`) :
+  `VF1AA` en charge, `VF1AA2` en V2G, `VF1AA3` hybride avec charge programmée. Mêmes valeurs que `DemoCar.kt` (Android).
 - `ApiHandler.getOdometerInKm()` sert à l'historique de kilométrage.
 - Plus de `!` sur les URL : `ApiClientError.invalidURL`.
 

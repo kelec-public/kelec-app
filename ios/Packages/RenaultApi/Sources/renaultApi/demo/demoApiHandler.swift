@@ -9,6 +9,14 @@ import Foundation
 
 public struct DemoApiHandler: ApiHandler{
     
+    public var carMaker: CarMaker
+    public var demoCar: DemoCar
+    
+    public init(vin: String){
+        self.carMaker = CarMaker.DEMO
+        self.demoCar = DemoCar(vin: vin)
+    }
+    
     public func getVehicleData() -> VehicleData {
         return .demo
     }
@@ -21,57 +29,53 @@ public struct DemoApiHandler: ApiHandler{
     }
     
     public func getBatteryLevel() -> Int {
-        return 52
+        return demoCar.batteryLevel
     }
     
     public func getBatteryRange(appPreferences: AppPreferences?) -> Int {
-        let range = 156
-        return getRange(range: range, appPreferences: appPreferences)
+        return getRange(range: demoCar.range, appPreferences: appPreferences)
     }
     
     public func getIsCarCharging() -> Bool {
-        return true
+        return demoCar.chargeStatus == .charging
     }
     
     public func getChargingRemainingTime() -> Int {
-        return 120
+        return demoCar.chargingRemainingTime
     }
     
     public func getIsCarLocked() -> Bool {
-        return true
+        return demoCar.isLocked
     }
     
     public func getChargeLimit() -> Int {
-        return 80
+        return demoCar.chargeLimit
     }
     
     public func getChargeInstantaneousPowerInWatts() -> Double {
-        return 7200
+        return demoCar.chargeInstantaneousPowerInWatts
     }
 
     public func getChargeStatus() -> ChargeStatus {
-        return .charging
-    }
-
-    public var carMaker: CarMaker
-    
-    public init(){
-        self.carMaker = CarMaker.DEMO
+        return demoCar.chargeStatus
     }
     
     public func getMapLatitude() -> Latitude {
-        return 48.854700
+        return demoCar.latitude
     }
     
     public func getMapLongitude() -> Longitude {
-        return 2.347749
+        return demoCar.longitude
     }
     
     public func getMilage(appPreferences: AppPreferences?) -> Double {
-        return 134234.2
+        if appPreferences?.displayMiles == true {
+            return demoCar.mileage * 0.621371
+        }
+        return demoCar.mileage
     }
     
     public func getOdometerInKm() -> Double? {
-        return nil
+        return demoCar.mileage
     }
 }

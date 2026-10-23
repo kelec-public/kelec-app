@@ -46,7 +46,8 @@ android/
 │   ├── RenaultServices     Retrofit Gigya / Kamereon, RenaultApiKeys (clés passées par l'app)
 │   ├── RteApiClient        Calendrier Tempo de RTE (jeton OAuth puis tempo_like_calendars)
 │   ├── Tempo               Deux derniers jours connus, couleurs et prix HP / HC (mêmes valeurs que iOS)
-│   ├── BatteryStatus       Statut batterie (format JSON relu par l'app RN), BatteryStatus.demo()
+│   ├── BatteryStatus       Statut batterie (format JSON relu par l'app RN), BatteryStatus.demo(vin)
+│   ├── DemoCar             Les 3 voitures de démo (mêmes VIN et valeurs que l'app RN et iOS)
 │   └── ChargingState       État de charge à partir du chargingStatus brut
 ├── shared/                 Bibliothèque Android (com.kelec.shared), pour l'app et la future montre
 │   ├── StorageKey          Fichier DATA et toutes les clés (jamais renommées)
@@ -118,7 +119,7 @@ Java 17 et les dépôts Maven des nouveaux modules sont réglés par le plugin G
    - charge chaque voiture une seule fois avec `VehicleLoader.load`, et Tempo avec `TempoLoader.load` s'il y a un widget Tempo ;
    - redessine les widgets (`WidgetRedraw.all`) avant et après le chargement : ils relisent le cache.
 4. `VehicleLoader.load(car)` :
-   - voiture de démo → `BatteryStatus.demo()`, sans réseau ;
+   - voiture de démo → `BatteryStatus.demo(vin)` (voir `DemoCar`) et son kilométrage, sans réseau ;
    - pas de cookie de session (`SecureStore.renaultCookieValue`) → `NotLoggedIn` ;
    - sinon `RenaultApiClient.fetchStatus` → enregistre `<vin>_batteryStatus` et le kilométrage → `Loaded` ;
    - en cas d'échec → dernier statut enregistré (`Loaded(fromCache = true)`), sinon `Unavailable`.

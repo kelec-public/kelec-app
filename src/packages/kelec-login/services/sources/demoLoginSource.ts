@@ -1,5 +1,6 @@
 import { CarMaker } from "../../../../lib/clients/accounts/account";
 import DemoAccount from "../../../../lib/clients/accounts/demoAccount";
+import { DEMO_VINS } from "../../../../lib/clients/accounts/demoCars";
 import CarModel from "../../../../lib/clients/cars/carModel";
 import { LoginResult } from "../../models/loginResult";
 import { LoginSource } from "../../types/loginSource";
@@ -16,8 +17,9 @@ export class DemoLoginSource implements LoginSource {
 
     async listVehicles(): Promise<CarModel[]> {
         return [
-            new CarModel('VF1AA', 'Demo car', PLACEHOLDER_CAR_IMAGE, CarMaker.DEMO, 'AA001AA', 'FR'),
-            new CarModel('VF1AA2', 'Demo car2', PLACEHOLDER_CAR_IMAGE, CarMaker.DEMO, 'BB001BB', 'FR'),
+            new CarModel(DEMO_VINS.classic, 'Demo car', PLACEHOLDER_CAR_IMAGE, CarMaker.DEMO, 'AA001AA', 'FR'),
+            new CarModel(DEMO_VINS.v2g, 'Demo V2G', PLACEHOLDER_CAR_IMAGE, CarMaker.DEMO, 'BB001BB', 'FR'),
+            new CarModel(DEMO_VINS.hybrid, 'Demo PHEV', PLACEHOLDER_CAR_IMAGE, CarMaker.DEMO, 'CC001CC', 'FR'),
         ];
     }
 }
