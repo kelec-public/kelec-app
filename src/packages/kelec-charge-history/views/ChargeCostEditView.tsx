@@ -41,7 +41,8 @@ function ChargeCostEditView({ chargeStartDate, onBack, onDone }: Props): React.J
     return (
         <SafeAreaView
             testID="chargeCostEditView"
-            edges={['top']}
+            // gauche / droite : en paysage, l'encoche ou la caméra sont sur un côté
+            edges={['top', 'left', 'right']}
             style={[commonStyles.flex, { backgroundColor: getWhiteColour(isDarkMode) }]}
         >
             <PageHeader

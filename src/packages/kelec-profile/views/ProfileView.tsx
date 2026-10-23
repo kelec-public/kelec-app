@@ -17,7 +17,8 @@ function ProfileView(): React.JSX.Element {
             testID='profileView'
             style={[commonStyles.flex, { backgroundColor: theme.colors.background }]}
         >
-            <SafeAreaView style={[commonStyles.flex]} edges={['top']}>
+            {/* gauche / droite : en paysage, l'encoche ou la caméra sont sur un côté */}
+            <SafeAreaView style={[commonStyles.flex]} edges={['top', 'left', 'right']}>
                 <ProfileHeader
                     hasMultipleCars={controller.hasMultipleCars}
                     editMode={controller.editMode}

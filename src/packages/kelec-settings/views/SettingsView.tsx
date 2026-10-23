@@ -1,7 +1,7 @@
 import { Modal, ScrollView, StyleSheet, View } from "react-native";
 import { useContext } from "react";
 import { useTheme } from '@react-navigation/native';
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import commonStyles from '../../../lib/graphics/commonStyle';
 import MainContext from '../../../lib/Contexts/MainContext';
 import Text from '../../../screen/Common/CustomText';
@@ -55,12 +55,13 @@ function SettingsView(): React.JSX.Element {
                     contentInsetAdjustmentBehavior="automatic"
                 >
                     <SettingsHeader />
-                    <View style={styles.sections}>
+                    {/* gauche / droite : en paysage, l'encoche ou la caméra sont sur un côté */}
+                    <SafeAreaView edges={['left', 'right']} style={styles.sections}>
                         {controller.sections.map(section => (
                             <SettingsSection key={section.title} section={section} />
                         ))}
                         <Text testID="appVersion" style={styles.versionText}>Kelec {pkg.version}</Text>
-                    </View>
+                    </SafeAreaView>
                 </ScrollView>
             </View>
         </>

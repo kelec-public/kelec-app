@@ -45,7 +45,7 @@ function SummaryCard({ navigation, onRefresh, isRefreshing }: SummaryCardProps):
                             imageUrl: carModel.getImageUrl(),
                             titleKey: "carModel",
                             nextButtonTextKey: "confirm",
-                            safeAreaEdges: ['top', 'bottom'],
+                            safeAreaEdges: ['top', 'bottom', 'left', 'right'],
                         });
                     }}
                     glassStyle={styles.glassSettingsButton}

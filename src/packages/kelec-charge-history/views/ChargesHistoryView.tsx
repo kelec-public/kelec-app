@@ -66,7 +66,8 @@ function ChargesHistoryView({ navigation, onImport, onOpenTariffs, onEditChargeC
         <SafeAreaView
             style={[commonStyles.flex, { backgroundColor: getWhiteColour(isDarkMode), position: 'relative' }]}
             testID="ChargesView"
-            edges={['top']}
+            // gauche / droite : en paysage, l'encoche ou la caméra sont sur un côté
+            edges={['top', 'left', 'right']}
         >
             <ChargesFiltersContext.Provider value={controller.filtersController}>
                 <ChargeCostsContext.Provider value={costs}>
