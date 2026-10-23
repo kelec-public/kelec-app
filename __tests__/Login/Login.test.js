@@ -10,9 +10,6 @@ import { it, expect, beforeEach } from '@jest/globals';
 import renderer, { act } from 'react-test-renderer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-jest.mock("@react-native-async-storage/async-storage", () =>
-    require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
-);
 jest.spyOn(Alert, 'alert').mockImplementation(() => { });
 
 

@@ -14,10 +14,6 @@ jest.spyOn(sharedPlatformsData, 'saveNativeImage').mockImplementation(mockSaveNa
 
 jest.spyOn(Alert, 'alert').mockImplementation(() => { });
 
-jest.mock("@react-native-async-storage/async-storage", () =>
-    require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
-);
-
 
 const mockBrands = jest.fn().mockResolvedValue([
     {

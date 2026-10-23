@@ -3,10 +3,6 @@ import App from "../../App";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 jest.useFakeTimers();
-jest.mock("@react-native-async-storage/async-storage", () =>
-    require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
-);
-
 // TO FIX. Onboarding was hidden bc of apple guidelines
 /*
 test('should show onboarding screen while opening the app', async () => {

@@ -790,7 +790,7 @@
 			);
 			mainGroup = 83CBB9F61A601CBA00E9B192;
 			packageReferences = (
-				0021A91824910D9CE23B595B /* XCLocalSwiftPackageReference "Packages/RenaultApi" */,
+				0021A91824910D9CE23B595B /* XCLocalSwiftPackageReference "RenaultApi" */,
 			);
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
@@ -901,13 +901,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Kelec/Pods-Kelec-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Kelec/Pods-Kelec-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -944,13 +940,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Kelec/Pods-Kelec-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Kelec/Pods-Kelec-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1272,7 +1264,10 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DRCT_REMOVE_LEGACY_ARCH=1",
 				);
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				PODFILE_DIR = "$(SRCROOT)";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
@@ -1353,7 +1348,10 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DRCT_REMOVE_LEGACY_ARCH=1",
 				);
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				PODFILE_DIR = "$(SRCROOT)";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
@@ -1686,7 +1684,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		0021A91824910D9CE23B595B /* XCLocalSwiftPackageReference "Packages/RenaultApi" */ = {
+		0021A91824910D9CE23B595B /* XCLocalSwiftPackageReference "RenaultApi" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/RenaultApi;
 		};
@@ -1695,22 +1693,22 @@
 /* Begin XCSwiftPackageProductDependency section */
 		EB16FA832F9A391F00624723 /* renaultApi */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 0021A91824910D9CE23B595B /* XCLocalSwiftPackageReference "Packages/RenaultApi" */;
+			package = 0021A91824910D9CE23B595B /* XCLocalSwiftPackageReference "RenaultApi" */;
 			productName = renaultApi;
 		};
 		EB16FA852F9A395700624723 /* renaultApi */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 0021A91824910D9CE23B595B /* XCLocalSwiftPackageReference "Packages/RenaultApi" */;
+			package = 0021A91824910D9CE23B595B /* XCLocalSwiftPackageReference "RenaultApi" */;
 			productName = renaultApi;
 		};
 		EB16FA872F9A395D00624723 /* renaultApi */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 0021A91824910D9CE23B595B /* XCLocalSwiftPackageReference "Packages/RenaultApi" */;
+			package = 0021A91824910D9CE23B595B /* XCLocalSwiftPackageReference "RenaultApi" */;
 			productName = renaultApi;
 		};
 		EB16FA892F9A396600624723 /* renaultApi */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 0021A91824910D9CE23B595B /* XCLocalSwiftPackageReference "Packages/RenaultApi" */;
+			package = 0021A91824910D9CE23B595B /* XCLocalSwiftPackageReference "RenaultApi" */;
 			productName = renaultApi;
 		};
 /* End XCSwiftPackageProductDependency section */

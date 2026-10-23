@@ -6,10 +6,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as sharedPlatformsData from '../../src/lib/storage/sharedPlatformsData';
 import { Alert } from "react-native";
 
-jest.mock("@react-native-async-storage/async-storage", () =>
-    require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
-);
-
 jest.useFakeTimers();
 
 beforeEach(async () => {
