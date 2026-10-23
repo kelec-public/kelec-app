@@ -6,9 +6,6 @@ import { Alert } from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-jest.mock("@react-native-async-storage/async-storage", () =>
-    require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
-);
 import * as sharedPlatformsData from '../../src/lib/storage/sharedPlatformsData';
 import { render, userEvent, waitFor, screen } from '@testing-library/react-native';
 jest.spyOn(Alert, 'alert').mockImplementation(() => { });

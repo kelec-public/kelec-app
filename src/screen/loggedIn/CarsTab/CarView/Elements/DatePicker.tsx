@@ -68,10 +68,8 @@ function DatePickerField({ updateDate, dateValue, placeholder }: Props): React.J
                     DateTimePickerAndroid.open({
                         value: getDate() ?? new Date(),
                         mode: 'date',
-                        onChange: (event, selectedDate) => {
-                            if (selectedDate) {
-                                updateDate(selectedDate);
-                            }
+                        onValueChange: (_, selectedDate) => {
+                            updateDate(selectedDate);
                         },
                     })
                 }
@@ -86,12 +84,11 @@ function DatePickerField({ updateDate, dateValue, placeholder }: Props): React.J
                     value={getDate() ?? new Date()}
                     mode={"date"}
                     display="default"
-                    onChange={(_, selectedDate) => {
-                        if (selectedDate) {
-                            updateDate(selectedDate);
-                        }
+                    onValueChange={(_, selectedDate) => {
+                        updateDate(selectedDate);
                         closeModal();
                     }}
+                    onDismiss={closeModal}
                 />
             )}
         </View>

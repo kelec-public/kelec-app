@@ -8,10 +8,6 @@ import UserAccount from "../../src/lib/clients/accounts/userAccount";
 
 
 jest.useFakeTimers();
-jest.mock("@react-native-async-storage/async-storage", () =>
-    require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
-);
-
 beforeAll(async () => {
     await AsyncStorage.clear();
     const car1 = new HyundaiCar('vin1', 'model1', 'image1', CarMaker.HYUNDAI, 'AA0001AA');

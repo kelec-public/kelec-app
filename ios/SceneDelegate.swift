@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import React
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -25,7 +26,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     appDelegate.reactNativeFactory?.startReactNative(
       withModuleName: "Kelec",
       in: window,
-      launchOptions: nil
+      connectionOptions: connectionOptions
     )
 
     // app launched from Spotlight, a Quick Action or a widget: the car is shown once the RN app is loaded
@@ -40,11 +41,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
   // widget
   func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+    RCTLinkingManager.scene(scene, openURLContexts: URLContexts)
     URLContexts.forEach { CarShortcuts.open($0.url) }
   }
 
   // Spotlight
   func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
+    RCTLinkingManager.scene(scene, continue: userActivity)
     CarShortcuts.open(userActivity)
   }
 
