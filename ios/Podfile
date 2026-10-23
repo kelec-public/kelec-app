@@ -31,7 +31,9 @@ target 'Kelec' do
     react_native_post_install(
       installer,
       config[:reactNativePath],
-      :mac_catalyst_enabled => false
+      :mac_catalyst_enabled => false,
+      # Set by the iOS CI workflow only: compiles the C/C++/Objective-C pods through ccache.
+      :ccache_enabled => ENV['USE_CCACHE'] == '1'
     )
 
     installer.pods_project.targets.each do |target|

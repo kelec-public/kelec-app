@@ -1,0 +1,290 @@
+name: iOS - Build & upload to TestFlight
+
+on:
+  workflow_dispatch:
+  # TEMPORARY: lets the workflow run before it exists on main. Remove before merging.
+  push:
+    branches:
+      - chore/ios-build
+
+permissions:
+  contents: read
+
+# Only one iOS deploy at a time: they'd otherwise fight over the same build number range.
+concurrency:
+  group: ios-testflight
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    # Apple requires the iOS 26 SDK (Xcode 26+) since 2026: macos-26 ships it.
+    runs-on: macos-26
+    # React Native core is built from source (RCT_USE_PREBUILT_RNCORE=0 in the Podfile).
+    timeout-minutes: 90
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Use Node.JS
+        uses: actions/setup-node@v7
+        with:
+          node-version: "24.16.0"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Use Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+
+      # Must be installed before `pod install`: React Native only wires ccache into the Pods
+      # build settings when it finds the executable.
+      - name: Install ccache
+        run: brew install ccache
+
+      - name: Cache ccache
+        uses: actions/cache@v6
+        with:
+          path: ~/Library/Caches/ccache
+          # A cache entry can't be overwritten: a new one is saved on every run, and the next run
+          # restores the most recent one for the same Podfile.lock (or any, as a fallback).
+          key: ccache-${{ runner.os }}-${{ hashFiles('ios/Podfile.lock') }}-${{ github.run_id }}
+          restore-keys: |
+            ccache-${{ runner.os }}-${{ hashFiles('ios/Podfile.lock') }}-
+            ccache-${{ runner.os }}-
+
+      - name: Cache Pods
+        uses: actions/cache@v6
+        with:
+          path: ios/Pods
+          key: pods-${{ runner.os }}-${{ hashFiles('ios/Podfile.lock') }}
+
+      - name: Install Pods
+        working-directory: ios
+        env:
+          # Read by react_native_post_install in the Podfile.
+          USE_CCACHE: "1"
+        run: bundle exec pod install
+
+      - name: Compute build number
+        id: build
+        env:
+          IOS_BUILD_OFFSET: ${{ vars.IOS_BUILD_OFFSET }}
+        run: |
+          set -euo pipefail
+          # The offset starts above the last build number already sent to App Store Connect by
+          # hand. Raise it (Settings > Variables) if a higher build is ever uploaded from Xcode.
+          if [ -z "$IOS_BUILD_OFFSET" ]; then
+            echo "::error::Repository variable IOS_BUILD_OFFSET is not set"
+            exit 1
+          fi
+          number=$((IOS_BUILD_OFFSET + ${{ github.run_number }}))
+          echo "Building build number $number"
+          echo "number=$number" >> "$GITHUB_OUTPUT"
+
+      - name: Write .env
+        # Read by react-native-config's scheme pre-action (ios/tmp.xcconfig) and by the JS bundle.
+        env:
+          GIGYA_API_KEY: ${{ secrets.GIGYA_API_KEY }}
+          KAMEREON_API_KEY: ${{ secrets.KAMEREON_API_KEY }}
+          MAPS_API_KEY: ${{ secrets.MAPS_API_KEY }}
+          RTE_BASIC_AUTH: ${{ secrets.RTE_BASIC_AUTH }}
+          WEATHER_API_KEY: ${{ secrets.WEATHER_API_KEY }}
+        run: |
+          set -euo pipefail
+          for key in GIGYA_API_KEY KAMEREON_API_KEY MAPS_API_KEY RTE_BASIC_AUTH WEATHER_API_KEY; do
+            if [ -z "${!key}" ]; then
+              echo "::error::Secret $key is not set"
+              exit 1
+            fi
+            printf '%s=%s\n' "$key" "${!key}" >> .env
+          done
+
+      - name: Install signing certificates and App Store Connect key
+        env:
+          DEV_P12_BASE64: ${{ secrets.IOS_DEV_P12_BASE64 }}
+          DEV_P12_PASSWORD: ${{ secrets.IOS_DEV_P12_PASSWORD }}
+          DIST_P12_BASE64: ${{ secrets.IOS_DIST_P12_BASE64 }}
+          DIST_P12_PASSWORD: ${{ secrets.IOS_DIST_P12_PASSWORD }}
+          ASC_API_KEY_P8: ${{ secrets.ASC_API_KEY_P8 }}
+        run: |
+          set -euo pipefail
+
+          KEYCHAIN_PATH="$RUNNER_TEMP/ios-signing.keychain-db"
+          KEYCHAIN_PASSWORD=$(openssl rand -base64 24)
+
+          echo -n "$DEV_P12_BASE64" | base64 --decode -o "$RUNNER_TEMP/development.p12"
+          echo -n "$DIST_P12_BASE64" | base64 --decode -o "$RUNNER_TEMP/distribution.p12"
+
+          # Apple's intermediate certificate that issued both certificates. Without it in the
+          # keychain, codesign can't build a trust chain up to Apple's root.
+          curl -sSL -o "$RUNNER_TEMP/AppleWWDRCAG3.cer" \
+            https://www.apple.com/certificateauthority/AppleWWDRCAG3.cer
+
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security import "$RUNNER_TEMP/AppleWWDRCAG3.cer" -k "$KEYCHAIN_PATH" \
+            -T /usr/bin/codesign -T /usr/bin/security
+          # Automatic signing archives with the development identity, then the export re-signs
+          # with the distribution one: both must be in the keychain.
+          security import "$RUNNER_TEMP/development.p12" -k "$KEYCHAIN_PATH" -P "$DEV_P12_PASSWORD" \
+            -T /usr/bin/codesign -T /usr/bin/security
+          security import "$RUNNER_TEMP/distribution.p12" -k "$KEYCHAIN_PATH" -P "$DIST_P12_PASSWORD" \
+            -T /usr/bin/codesign -T /usr/bin/security
+          security set-key-partition-list -S apple-tool:,apple:,codesign: \
+            -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+
+          # Make the new keychain visible to codesign alongside the default ones.
+          EXISTING_KEYCHAINS=$(security list-keychains -d user | sed 's/[" ]//g')
+          security list-keychains -d user -s "$KEYCHAIN_PATH" $EXISTING_KEYCHAINS
+          security default-keychain -d user -s "$KEYCHAIN_PATH"
+
+          # xcodebuild reads the App Store Connect key from a file to fetch the provisioning
+          # profiles of the 4 targets (-allowProvisioningUpdates).
+          echo -n "$ASC_API_KEY_P8" > "$RUNNER_TEMP/AuthKey.p8"
+
+      - name: Archive
+        working-directory: ios
+        env:
+          # Keeps the saved cache well under the repository's 10 GB Actions cache quota.
+          CCACHE_MAXSIZE: 2G
+        run: |
+          set -euo pipefail
+          # Reset the counters so the stats step below only reports this build.
+          ccache --zero-stats
+          # CURRENT_PROJECT_VERSION on the command line applies to every target: the widgets and
+          # the watch app must carry the same build number as the app that embeds them.
+          # The raw output (tens of thousands of lines) goes to a file kept as an artifact;
+          # xcbeautify only prints compiled files, warnings and errors.
+          #
+          # With ccache, React Native sets the compilers of every target to
+          # $(REACT_NATIVE_PATH)/scripts/xcode/ccache-clang.sh, but the project defines
+          # REACT_NATIVE_PATH from PODS_ROOT, which is empty in the targets without Pods (widgets,
+          # watch app): an absolute path works in all of them. Xcode can't use explicit modules
+          # with a compiler wrapper anyway; turning them off silences one note per file.
+          xcodebuild archive \
+            -workspace Kelec.xcworkspace \
+            -scheme Kelec \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath "$RUNNER_TEMP/Kelec.xcarchive" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$RUNNER_TEMP/AuthKey.p8" \
+            -authenticationKeyID "${{ secrets.ASC_KEY_ID }}" \
+            -authenticationKeyIssuerID "${{ secrets.ASC_ISSUER_ID }}" \
+            CURRENT_PROJECT_VERSION=${{ steps.build.outputs.number }} \
+            REACT_NATIVE_PATH="$GITHUB_WORKSPACE/node_modules/react-native" \
+            CLANG_ENABLE_EXPLICIT_MODULES=NO \
+            2>&1 | tee "$RUNNER_TEMP/xcodebuild-archive.log" | xcbeautify --renderer github-actions
+
+      - name: ccache stats
+        if: always()
+        # A hit rate near 0% on a second run with the same Podfile.lock means ccache isn't used.
+        run: ccache --show-stats
+
+      - name: Upload xcodebuild log
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: xcodebuild-archive-log-${{ github.run_number }}
+          path: ${{ runner.temp }}/xcodebuild-archive.log
+          if-no-files-found: ignore
+
+      # The export is signed manually: automatic signing would go through Apple's cloud signing,
+      # which requires an Admin API key. These App Store profiles were created by hand on
+      # developer.apple.com (they expire after a year) and are named in ExportOptions.plist.
+      - name: Download App Store profile (app)
+        uses: apple-actions/download-provisioning-profiles@v7
+        with:
+          bundle-id: com.kelyanselme.MyRenault
+          profile-type: IOS_APP_STORE
+          issuer-id: ${{ secrets.ASC_ISSUER_ID }}
+          api-key-id: ${{ secrets.ASC_KEY_ID }}
+          api-private-key: ${{ secrets.ASC_API_KEY_P8 }}
+
+      - name: Download App Store profile (iOS widget)
+        uses: apple-actions/download-provisioning-profiles@v7
+        with:
+          bundle-id: com.kelyanselme.MyRenault.iosWidget
+          profile-type: IOS_APP_STORE
+          issuer-id: ${{ secrets.ASC_ISSUER_ID }}
+          api-key-id: ${{ secrets.ASC_KEY_ID }}
+          api-private-key: ${{ secrets.ASC_API_KEY_P8 }}
+
+      - name: Download App Store profile (watch app)
+        uses: apple-actions/download-provisioning-profiles@v7
+        with:
+          bundle-id: com.kelyanselme.MyRenault.watchkitapp
+          profile-type: IOS_APP_STORE
+          issuer-id: ${{ secrets.ASC_ISSUER_ID }}
+          api-key-id: ${{ secrets.ASC_KEY_ID }}
+          api-private-key: ${{ secrets.ASC_API_KEY_P8 }}
+
+      - name: Download App Store profile (watch widgets)
+        uses: apple-actions/download-provisioning-profiles@v7
+        with:
+          bundle-id: com.kelyanselme.MyRenault.watchkitapp.KelecWatchOSWidgets
+          profile-type: IOS_APP_STORE
+          issuer-id: ${{ secrets.ASC_ISSUER_ID }}
+          api-key-id: ${{ secrets.ASC_KEY_ID }}
+          api-private-key: ${{ secrets.ASC_API_KEY_P8 }}
+
+      - name: Export IPA
+        working-directory: ios
+        run: |
+          set -euo pipefail
+          xcodebuild -exportArchive \
+            -archivePath "$RUNNER_TEMP/Kelec.xcarchive" \
+            -exportOptionsPlist ExportOptions.plist \
+            -exportPath "$RUNNER_TEMP/ipa"
+
+      - name: Locate built IPA
+        id: ipa
+        run: |
+          # The upload action does not glob-expand `app-path` itself, so resolve the exact
+          # file here and hand over an absolute, unambiguous path.
+          echo "path=$(realpath "$RUNNER_TEMP"/ipa/*.ipa)" >> "$GITHUB_OUTPUT"
+
+      - name: Check IPA contents
+        run: |
+          set -euo pipefail
+          # The app must embed the iOS widgets and the watch app, which embeds the watch widgets
+          # (complications), all with the same build number.
+          unzip -q "${{ steps.ipa.outputs.path }}" -d "$RUNNER_TEMP/ipa-contents"
+          APP="$RUNNER_TEMP/ipa-contents/Payload/Kelec.app"
+          status=0
+          for bundle in \
+            "$APP" \
+            "$APP/PlugIns/KeleciOSWidgetExtension.appex" \
+            "$APP/Watch/Kelec.app" \
+            "$APP/Watch/Kelec.app/PlugIns/KelecWatchOSWidgetsExtension.appex"; do
+            name="${bundle#"$RUNNER_TEMP/ipa-contents/"}"
+            if [ ! -f "$bundle/Info.plist" ]; then
+              echo "::error::Missing from the IPA: $name"
+              status=1
+              continue
+            fi
+            version=$(plutil -extract CFBundleVersion raw "$bundle/Info.plist")
+            if [ "$version" != "${{ steps.build.outputs.number }}" ]; then
+              echo "::error::$name has build number $version, expected ${{ steps.build.outputs.number }}"
+              status=1
+            else
+              echo "OK $name ($version)"
+            fi
+          done
+          exit $status
+
+      - name: Upload to TestFlight
+        uses: apple-actions/upload-testflight-build@v5
+        with:
+          app-path: ${{ steps.ipa.outputs.path }}
+          issuer-id: ${{ secrets.ASC_ISSUER_ID }}
+          api-key-id: ${{ secrets.ASC_KEY_ID }}
+          api-private-key: ${{ secrets.ASC_API_KEY_P8 }}
+          backend: altool
+          wait-for-processing: 'false'
