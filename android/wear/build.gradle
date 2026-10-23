@@ -15,8 +15,8 @@ android {
         applicationId 'com.myrenaultplus'
         targetSdk 34
         minSdk 26
-        // doit être différent de celui de l'app du téléphone (même fiche Play Store)
-        versionCode 2000300
+        // doit être différent de celui de l'app du téléphone (même fiche Play Store) : 2 000 000 + le sien
+        versionCode 2000000 + rootProject.ext.kelecVersionCode
         versionName '2.7.1'
     }
 
@@ -33,6 +33,15 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        // même clé d'upload que l'app (voir app/build.gradle)
+        if (System.getenv("ANDROID_KEYSTORE_PATH")) {
+            release {
+                storeFile file(System.getenv("ANDROID_KEYSTORE_PATH"))
+                storePassword System.getenv("ANDROID_KEYSTORE_PASSWORD")
+                keyAlias System.getenv("ANDROID_KEY_ALIAS")
+                keyPassword System.getenv("ANDROID_KEY_PASSWORD")
+            }
+        }
     }
 
     buildTypes {
@@ -41,7 +50,7 @@ android {
         }
         release {
             // même réglage que l'app (voir app/build.gradle)
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.findByName("release") ?: signingConfigs.debug
             minifyEnabled false
         }
     }

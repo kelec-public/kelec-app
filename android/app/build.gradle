@@ -85,7 +85,7 @@ android {
         applicationId 'com.myrenaultplus'
         minSdk 29
         targetSdk 37
-        versionCode 300
+        versionCode rootProject.ext.kelecVersionCode
         versionName '2.7.1'
         resValue "string", "build_config_package", "com.kelec"
     }
@@ -101,19 +101,14 @@ android {
             keyPassword 'android'
         }
 
-        release {
-            def tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
-            def allFilesFromDir = new File(tmpFilePath).listFiles()
-
-            if (allFilesFromDir != null) {
-                def keystoreFile = allFilesFromDir.first()
-                keystoreFile.renameTo("keystore/kelec_keystore.jks")
+        // clé d'upload Play : fournie par la CI uniquement (.github/workflows/android-play.yaml)
+        if (System.getenv("ANDROID_KEYSTORE_PATH")) {
+            release {
+                storeFile file(System.getenv("ANDROID_KEYSTORE_PATH"))
+                storePassword System.getenv("ANDROID_KEYSTORE_PASSWORD")
+                keyAlias System.getenv("ANDROID_KEY_ALIAS")
+                keyPassword System.getenv("ANDROID_KEY_PASSWORD")
             }
-
-            storeFile = file("keystore/kelec_keystore.jks")
-            storePassword System.getenv("SIGNING_STORE_PASSWORD")
-            keyAlias System.getenv("SIGNING_KEY_ALIAS")
-            keyPassword System.getenv("SIGNING_KEY_PASSWORD")
         }
     }
     buildTypes {
@@ -121,9 +116,8 @@ android {
             signingConfig signingConfigs.debug
         }
         release {
-            // Caution! In production, you need to generate your own keystore file.
-            // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            // en local, sans la clé d'upload, le build release reste signé avec la clé debug
+            signingConfig signingConfigs.findByName("release") ?: signingConfigs.debug
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
