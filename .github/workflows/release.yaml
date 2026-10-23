@@ -2,10 +2,6 @@ name: Release - iOS (TestFlight) & Android (Google Play internal)
 
 on:
   workflow_dispatch:
-  # TEMPORARY: lets the workflow run before it exists on main. Remove before merging.
-  push:
-    branches:
-      - chore/ios-build
 
 permissions:
   contents: read
