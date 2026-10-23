@@ -6,6 +6,8 @@ buildscript {
         targetSdkVersion = 36
         ndkVersion = "27.1.12297006"
         kotlinVersion = "2.2.0"
+        // versionCode de l'app du téléphone : donné par la CI (-PkelecVersionCode), la montre en dérive le sien
+        kelecVersionCode = (findProperty("kelecVersionCode") ?: "300").toInteger()
     }
     repositories {
         google()

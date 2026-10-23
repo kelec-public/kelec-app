@@ -192,7 +192,7 @@ Pendant de l'app Apple Watch (8 octobre 2026). Module `:wear` (Compose for Wear 
 - **Constructeurs** : Renault group et démo, comme le widget Android (`VehicleCommands` pour le confort thermique et la position).
   Hyundai est hors périmètre : la page affiche l'erreur serveur.
 - **Même `applicationId`** que l'app du téléphone (`com.myrenaultplus`, obligatoire pour la Data Layer) et même signature.
-  `versionCode` différent (`2000294`) : à monter avec celui de l'app à chaque version.
+  `versionCode` différent : 2 000 000 + celui de l'app (`kelecVersionCode` dans `android/build.gradle`, donné par la CI).
 - `com.google.android.wearable.standalone = false` : l'app a besoin du téléphone pour le compte et les sessions.
 
 ### Synchro téléphone → montre
