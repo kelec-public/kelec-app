@@ -1,4 +1,4 @@
-name: iOS - Build & upload to TestFlight
+name: Release - iOS (TestFlight) & Android (Google Play internal)
 
 on:
   workflow_dispatch:
@@ -10,13 +10,15 @@ on:
 permissions:
   contents: read
 
-# Only one iOS deploy at a time: they'd otherwise fight over the same build number range.
+# Only one release at a time: they'd otherwise fight over the same build number ranges.
+# The iOS and Android jobs run in parallel and share github.run_number, each with its own offset.
 concurrency:
-  group: ios-testflight
+  group: release
   cancel-in-progress: false
 
 jobs:
-  build-and-deploy:
+  ios:
+    name: iOS - TestFlight
     # Apple requires the iOS 26 SDK (Xcode 26+) since 2026: macos-26 ships it.
     runs-on: macos-26
     # React Native core is built from source (RCT_USE_PREBUILT_RNCORE=0 in the Podfile).
@@ -288,3 +290,134 @@ jobs:
           api-private-key: ${{ secrets.ASC_API_KEY_P8 }}
           backend: altool
           wait-for-processing: 'false'
+
+  android:
+    name: Android - Google Play (internal)
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Use Node.JS
+        uses: actions/setup-node@v7
+        with:
+          node-version: "24.16.0"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Use Java
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      # Caches the Gradle distribution, dependencies and build cache between runs.
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Compute version codes
+        id: version
+        env:
+          ANDROID_BUILD_OFFSET: ${{ vars.ANDROID_BUILD_OFFSET }}
+        run: |
+          set -euo pipefail
+          # The offset starts above the last version code already sent to Google Play by hand.
+          # Raise it (Settings > Variables) if a higher build is ever uploaded from Android Studio.
+          if [ -z "$ANDROID_BUILD_OFFSET" ]; then
+            echo "::error::Repository variable ANDROID_BUILD_OFFSET is not set"
+            exit 1
+          fi
+          phone=$((ANDROID_BUILD_OFFSET + ${{ github.run_number }}))
+          # Same rule as android/wear/build.gradle: the watch shares the phone's Play listing, so its
+          # version code must never collide with the phone's.
+          wear=$((2000000 + phone))
+          echo "Building phone version code $phone, watch version code $wear"
+          echo "phone=$phone" >> "$GITHUB_OUTPUT"
+          echo "wear=$wear" >> "$GITHUB_OUTPUT"
+
+      - name: Write .env
+        # Read by react-native-config (dotenv.gradle) in the app and watch modules, and by the JS bundle.
+        env:
+          GIGYA_API_KEY: ${{ secrets.GIGYA_API_KEY }}
+          KAMEREON_API_KEY: ${{ secrets.KAMEREON_API_KEY }}
+          MAPS_API_KEY: ${{ secrets.MAPS_API_KEY }}
+          RTE_BASIC_AUTH: ${{ secrets.RTE_BASIC_AUTH }}
+          WEATHER_API_KEY: ${{ secrets.WEATHER_API_KEY }}
+        run: |
+          set -euo pipefail
+          for key in GIGYA_API_KEY KAMEREON_API_KEY MAPS_API_KEY RTE_BASIC_AUTH WEATHER_API_KEY; do
+            if [ -z "${!key}" ]; then
+              echo "::error::Secret $key is not set"
+              exit 1
+            fi
+            printf '%s=%s\n' "$key" "${!key}" >> .env
+          done
+
+      - name: Install upload keystore
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          set -euo pipefail
+          echo -n "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/upload.keystore"
+
+      - name: Build app bundles
+        working-directory: android
+        env:
+          # Read by the release signing configs of android/app and android/wear.
+          ANDROID_KEYSTORE_PATH: ${{ runner.temp }}/upload.keystore
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          # The release JS bundle and Hermes compilation of 4 ABIs need more than the 2 GB of
+          # gradle.properties.
+          ./gradlew :app:bundleRelease :wear:bundleRelease \
+            -PkelecVersionCode=${{ steps.version.outputs.phone }} \
+            -Dorg.gradle.jvmargs="-Xmx4g -XX:MaxMetaspaceSize=1g"
+
+      - name: Check bundles
+        run: |
+          set -euo pipefail
+          # Fails if a bundle is missing or signed with the debug key (no release signing config).
+          status=0
+          for aab in \
+            android/app/build/outputs/bundle/release/app-release.aab \
+            android/wear/build/outputs/bundle/release/wear-release.aab; do
+            if [ ! -f "$aab" ]; then
+              echo "::error::Missing bundle: $aab"
+              status=1
+              continue
+            fi
+            signer=$(keytool -printcert -jarfile "$aab" | grep -m1 'Owner:' || true)
+            if [ -z "$signer" ] || echo "$signer" | grep -q 'CN=Android Debug'; then
+              echo "::error::$aab is not signed with the upload key ($signer)"
+              status=1
+            else
+              echo "OK $aab ($signer)"
+            fi
+          done
+          exit $status
+
+      - name: Upload phone app to Google Play (internal)
+        uses: r0adkll/upload-google-play@v1.1.5
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: com.myrenaultplus
+          releaseFiles: android/app/build/outputs/bundle/release/app-release.aab
+          tracks: internal
+          status: completed
+
+      # Wear OS has its own form factor tracks on the same listing, prefixed with "wear:".
+      - name: Upload watch app to Google Play (Wear OS internal)
+        uses: r0adkll/upload-google-play@v1.1.5
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: com.myrenaultplus
+          releaseFiles: android/wear/build/outputs/bundle/release/wear-release.aab
+          tracks: wear:internal
+          status: completed

@@ -101,7 +101,7 @@ android {
             keyPassword 'android'
         }
 
-        // clé d'upload Play : fournie par la CI uniquement (.github/workflows/android-play.yaml)
+        // clé d'upload Play : fournie par la CI uniquement (.github/workflows/release.yaml)
         if (System.getenv("ANDROID_KEYSTORE_PATH")) {
             release {
                 storeFile file(System.getenv("ANDROID_KEYSTORE_PATH"))

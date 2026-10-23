@@ -13,7 +13,8 @@ android {
 
     defaultConfig {
         applicationId 'com.myrenaultplus'
-        targetSdk 34
+        // minimum exigé par Google Play pour Wear OS depuis le 31 août 2026
+        targetSdk 35
         minSdk 26
         // doit être différent de celui de l'app du téléphone (même fiche Play Store) : 2 000 000 + le sien
         versionCode 2000000 + rootProject.ext.kelecVersionCode
