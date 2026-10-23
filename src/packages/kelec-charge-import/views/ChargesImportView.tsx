@@ -26,8 +26,9 @@ function ChargesImportView({ onClose }: Props): React.JSX.Element {
     return (
         <StepLayout
             testID="ChargesImportView"
-            // le bas comprend la barre d'onglets (fournisseur de marges propre à l'onglet, voir Home)
-            safeAreaEdges={['top', 'bottom']}
+            // le bas comprend la barre d'onglets (fournisseur de marges propre à l'onglet, voir Home) ;
+            // gauche / droite : en paysage, l'encoche ou la caméra sont sur un côté
+            safeAreaEdges={['top', 'bottom', 'left', 'right']}
             title={t("importCharges")}
             subtitle={t("importChargesDescription")}
             onDismiss={onClose}

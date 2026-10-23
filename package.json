@@ -30,7 +30,7 @@
     "react-native-maps": "^1.29.8",
     "react-native-pager-view": "^8.0.2",
     "react-native-safe-area-context": "^5.5.2",
-    "react-native-screens": "^4.25.2",
+    "react-native-screens": "^4.30.0",
     "react-native-share": "^11.0.3",
     "react-native-uuid": "^2.0.3",
     "react-native-vector-icons": "^10.3.0",

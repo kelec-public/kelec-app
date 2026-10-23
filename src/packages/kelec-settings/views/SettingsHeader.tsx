@@ -28,9 +28,10 @@ function SettingsHeader(): React.JSX.Element {
     return (
         <View style={{ backgroundColor: getAccentOrange(), paddingHorizontal: 15, paddingTop: 10, position: 'relative' }}>
             {/* iOS : la ScrollView décale déjà le contenu sous la barre d'état (contentInsetAdjustmentBehavior) ;
-                ce fond orange remplit cette zone, au-dessus de l'en-tête */}
+                ce fond orange remplit cette zone, au-dessus de l'en-tête.
+                Gauche / droite : en paysage, l'encoche ou la caméra sont sur un côté (le fond orange va jusqu'au bord) */}
             <View style={styles.topFill} />
-            <SafeAreaView edges={Platform.OS === 'ios' ? [] : ['top']}>
+            <SafeAreaView edges={Platform.OS === 'ios' ? ['left', 'right'] : ['top', 'left', 'right']}>
                 <Text style={[commonStyles.navTitle]}>{getTitle()}</Text>
                 <View style={[commonStyles.rowFlex, commonStyles.centerFlex, commonStyles.gap5, styles.marginVertical, { flexWrap: "wrap" }]}>
                     <Text style={{ color: 'white' }}>{languageHandler.getTranslation('developedWith')} </Text>

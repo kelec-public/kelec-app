@@ -34,7 +34,8 @@ function TariffPageLayout({ testID, title, onBack, backTestID, action, children,
     return (
         <SafeAreaView
             testID={testID}
-            edges={['top']}
+            // gauche / droite : en paysage, l'encoche ou la caméra sont sur un côté
+            edges={['top', 'left', 'right']}
             style={[commonStyles.flex, { backgroundColor: getWhiteColour(isDarkMode) }]}
         >
             <PageHeader title={title} onBack={onBack} backTestID={backTestID} action={action} />

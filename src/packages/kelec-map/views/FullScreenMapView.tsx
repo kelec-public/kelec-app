@@ -79,7 +79,8 @@ const FullScreenMapView = ({ navigation }: Props): React.JSX.Element => {
                 )}
             </MapView>
             {/* en haut : retour + météo, sur la même ligne (même hauteur) */}
-            <SafeAreaView edges={['top']} style={styles.top} pointerEvents="box-none">
+            {/* gauche / droite : en paysage, l'encoche ou la caméra sont sur un côté */}
+            <SafeAreaView edges={['top', 'left', 'right']} style={styles.top} pointerEvents="box-none">
                 <View style={styles.topRow} pointerEvents="box-none">
                     <FloatingPill testID="closeModalButton" onPress={() => navigation.goBack()}>
                         <Icon name="chevron-left" color={getBlackColour(isDarkMode)} size={FLOATING_PILL_ICON_SIZE}></Icon>
@@ -89,8 +90,9 @@ const FullScreenMapView = ({ navigation }: Props): React.JSX.Element => {
                 </View>
             </SafeAreaView>
             {/* en bas à droite : recentrer, type de carte, itinéraire */}
-            {/* SafeAreaView : au-dessus de la barre d'accueil en modale iOS ; sur Android, la barre d'onglets s'en charge */}
-            <SafeAreaView edges={modalSafeAreaEdges(['bottom'])} style={styles.bottomArea} pointerEvents="box-none">
+            {/* SafeAreaView : au-dessus de la barre d'accueil en modale iOS ; sur Android, la barre d'onglets s'en charge.
+                À droite : en paysage, l'encoche ou la caméra peuvent être de ce côté */}
+            <SafeAreaView edges={modalSafeAreaEdges(['bottom', 'right'])} style={styles.bottomArea} pointerEvents="box-none">
                 <View style={styles.bottom} pointerEvents="box-none">
                     {hasRegionChanged && (
                         <View style={styles.bottomRow} pointerEvents="box-none">

@@ -1993,7 +1993,7 @@ PODS:
     - Yoga
   - RNFS (2.20.0):
     - React-Core
-  - RNScreens (4.28.0):
+  - RNScreens (4.30.0):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2014,9 +2014,9 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
-    - RNScreens/common (= 4.28.0)
+    - RNScreens/common (= 4.30.0)
     - Yoga
-  - RNScreens/common (4.28.0):
+  - RNScreens/common (4.30.0):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2460,13 +2460,13 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: 6ab6369c8ec156e4a7785f1cd182cc5343f66148
   RNDateTimePicker: 012e8a24bd52350ae268a6ff2b83636c2b70f9f5
   RNFS: 89de7d7f4c0f6bafa05343c578f61118c8282ed8
-  RNScreens: 639aff03a0b6ae42564e94fe2393f438bd51f39e
+  RNScreens: 279de2ab476b196040c7652d0dc6cb03b1b3f6f5
   RNShare: d4f7b3d48066b5e6923db0df29f84101aba9238e
   RNWatch: 28fe1f5e0c6410d45fd20925f4796fce05522e3f
   SocketRocket: 37aec555668fb852ec12e3c0de59a86ca58f0871
   SwiftUIIntrospect: fee9aa07293ee280373a591e1824e8ddc869ba5d
   Yoga: 9ddcb167a9925a24e745b8548de3b77c69828931
 
-PODFILE CHECKSUM: 5e0f6bd3a81da1457af9876891bf29a1ff55c2d4
+PODFILE CHECKSUM: 37007b0c2e4b9a05bb942fe1d31105f747d6bff2
 
 COCOAPODS: 1.16.2

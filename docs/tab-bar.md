@@ -60,21 +60,17 @@ Les écrans à étapes ouverts depuis l'onglet Voitures ont leurs propres bouton
   ou de la barre de navigation (Android).
 - L'historique des charges garde la barre (page de consultation, sans boutons en bas).
 
-### Android : patch de react-native-screens (appuis sous la barre masquée)
-
-`patches/react-native-screens+4.28.0.patch` (patch-package, appliqué par `postinstall`).
+### Android : appuis sous la barre masquée (corrigé dans react-native-screens 4.29)
 
 - **Bug** : masquée, la barre Material passe en `GONE` mais garde ses dernières limites (bas de l'écran, ~105 dp).
-  `TouchTargetHelper` de React Native, qui choisit la cible des appuis JS, ne regarde pas la visibilité : il parcourt
-  les enfants du dernier au premier et tombait sur les items de la barre masquée. Les `Pressable` / `TouchableOpacity`
-  de cette zone ne recevaient rien (ex. « ← » et « Confirmer » de `StepLayout`, « Importer »), ou l'appui partait vers
-  une autre vue (l'identifiant Android d'un item pris pour un numéro de vue React Native).
-  Les vues natives (interrupteur, liste, champ de saisie) marchaient : Android, lui, ignore les vues `GONE`.
-- **Correctif** : `TabsAppearanceApplicator.updateSharedAppearance` ramène les limites de la barre masquée à zéro.
-  Réaffichée, la barre est remise en page normalement.
-- Toujours présent dans react-native-screens 4.30.0 et la 4.31 en développement, et dans `TouchTargetHelper` de React Native 0.87.1.
-  **À chaque mise à jour de react-native-screens** : le nom du patch contient la version ; vérifier si le bug est corrigé
-  (alors supprimer le patch), sinon régénérer le patch (`npx patch-package react-native-screens --include 'TabsAppearanceApplicator\.kt$'`).
+  `TouchTargetHelper` de React Native, qui choisit la cible des appuis JS, ne regarde pas la visibilité : il tombait sur
+  les items de la barre masquée. Les `Pressable` / `TouchableOpacity` de cette zone ne recevaient rien
+  (ex. « ← » et « Confirmer » de `StepLayout`, « Importer »). Les vues natives (interrupteur, liste, champ) marchaient.
+- Corrigé en amont ([#4489](https://github.com/software-mansion/react-native-screens/pull/4489), 4.29) :
+  la barre masquée (`CustomBottomNavigationView`) déclare `PointerEvents.NONE`. Notre patch-package
+  (`react-native-screens+4.28.0.patch`) a été supprimé au passage en 4.30.
+- **À retester sur Android à chaque mise à jour de react-native-screens** : boutons du bas de `StepLayout`
+  (modèle du véhicule, import de charges, double authentification), barre masquée.
 - Les modales (carte plein écran, café, bottom sheets, choix de réglages, zone de debug) passent par-dessus la barre.
   L'ajout de véhicule remplace l'écran entier (`setCurrentView`).
 

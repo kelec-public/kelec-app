@@ -103,7 +103,8 @@ function CarView({ carModel, navigation, account, pagerRef, tfaInProgress }: Car
             <SafeAreaView style={[styles.flex, {
                 backgroundColor: useTheme().colors.background
             }]}
-                edges={['top']}>
+                // gauche / droite : en paysage, l'encoche ou la caméra sont sur un côté
+                edges={['top', 'left', 'right']}>
                 <ScrollView
                     style={[styles.mainScrollView]}
                     // iOS : le contenu défile sous la barre d'onglets flottante, sans que le bas soit caché

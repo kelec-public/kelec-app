@@ -36,7 +36,8 @@ const BottomSheet = (props: Props) => {
                                 },
                                 styles.mainView,
                             ]}
-                        edges={['bottom']}
+                        // gauche / droite : en paysage, l'encoche ou la caméra sont sur un côté
+                        edges={['bottom', 'left', 'right']}
                     >
                         <View style={styles.mainViewContent}>
                             <View style={[commonStyles.rowFlex, { justifyContent: 'space-between', alignItems: 'center' }]}>
