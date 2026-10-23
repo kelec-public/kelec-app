@@ -27,7 +27,7 @@ function PickerButton({ mode, value, label, onChange, testID }: Props): React.JS
                 value,
                 mode,
                 is24Hour: true,
-                onChange: (_, selected) => { if (selected) onChange(selected); },
+                onValueChange: (_, selected) => onChange(selected),
             });
         } else {
             setIsPickerVisible(true);
@@ -45,10 +45,11 @@ function PickerButton({ mode, value, label, onChange, testID }: Props): React.JS
                     value={value}
                     mode={mode}
                     is24Hour
-                    onChange={(_, selected) => {
-                        if (selected) onChange(selected);
+                    onValueChange={(_, selected) => {
+                        onChange(selected);
                         setIsPickerVisible(false);
                     }}
+                    onDismiss={() => setIsPickerVisible(false)}
                 />
             )}
         </View>
