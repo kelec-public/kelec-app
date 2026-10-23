@@ -8,7 +8,7 @@ import { RenaultChargesSource } from "./sources/renaultChargesSource";
 export function createChargesSource(carModel: CarModel, account: Account): ChargesSource | null {
     switch (carModel.getCarmaker()) {
         case CarMaker.DEMO:
-            return new DemoChargesSource();
+            return new DemoChargesSource(carModel.getVin());
         case CarMaker.ALPINE:
         case CarMaker.DACIA:
         case CarMaker.RENAULT:

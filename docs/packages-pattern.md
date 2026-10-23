@@ -15,6 +15,7 @@ Il sert de référence pour les refactors en cours et à venir. Exemples concret
 - [Ajout de voiture / connexion](./login.md) (`kelec-login`)
 - [Plaques d'immatriculation](./licence-plate.md) (`kelec-licence-plate`)
 - [Ouvrir une voiture depuis Spotlight, un raccourci ou un widget](./car-shortcuts.md) (`kelec-car-shortcuts`)
+- [Mode démo](./demo-mode.md) (transverse : sources démo des packages, données natives)
 
 ## Objectifs
 

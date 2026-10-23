@@ -8,7 +8,7 @@ import { RenaultLocationSource } from "./sources/renaultLocationSource";
 export function createLocationSource(carModel: CarModel, account: Account): LocationSource | null {
     switch (carModel.getCarmaker()) {
         case CarMaker.DEMO:
-            return new DemoLocationSource();
+            return new DemoLocationSource(carModel.getVin());
         case CarMaker.ALPINE:
         case CarMaker.DACIA:
         case CarMaker.RENAULT:

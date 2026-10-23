@@ -8,7 +8,7 @@ export interface ChargesSource {
     syncFromNetwork(): Promise<Charge[] | null>;
     /**
      * Ajoute des charges importées à l'historique stocké (celles déjà présentes sont gardées)
-     * et renvoie l'historique complet. Absent si la source ne stocke rien (ex. démo).
+     * et renvoie l'historique complet. Absent si la source n'accepte pas d'import. En démo, les charges importées restent en mémoire seulement.
      */
     importCharges?(charges: Charge[]): Promise<Charge[]>;
 }

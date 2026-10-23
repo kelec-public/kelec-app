@@ -25,7 +25,7 @@ public struct DemoApiClient: ApiClient{
     }
     
     public func getVehicleInfo(vin: String) async throws -> ApiHandler {
-        return DemoApiHandler()
+        return DemoApiHandler(vin: vin)
     }
     
     public func getMapCoordinates(vin: String) async throws -> (Latitude, Longitude) {

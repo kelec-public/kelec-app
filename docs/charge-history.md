@@ -29,7 +29,7 @@ kelec-charge-history/
 │   ├── createChargesSource.ts Choix de la source selon le constructeur
 │   └── sources/
 │       ├── renaultChargesSource.ts   Renault / Dacia / Alpine : API historique + sessions V2G
-│       └── demoChargesSource.ts      Données de démo
+│       └── demoChargesSource.ts      Données de démo par VIN (dont sessions V2G), import gardé en mémoire
 ├── controllers/
 │   ├── ChargesHistoryProvider.tsx      Historique partagé d'une voiture : useChargesHistory() → { history, sync, importCharges }
 │   ├── useChargesHistoryController.ts  État de l'écran : filtres, tri, pagination, modales, export
@@ -78,7 +78,7 @@ kelec-charge-history/
 - Lors d'un enregistrement, l'app dédoublonne sur l'**instant** de début, **à 5 secondes près** (`KnownChargeStarts`) : une date peut avoir ou non des millisecondes, et l'API Renault a déjà renvoyé une même charge avec une seconde d'écart d'un jour à l'autre. Elle trie ensuite par date croissante et calcule le kilométrage de départ quand l'historique kilométrique natif le permet.
   - `saveNewCharges` (API) : en cas de doublon, la nouvelle charge l'emporte.
   - `addMissingCharges` (import) : en cas de doublon, la charge déjà stockée l'emporte.
-- Import : une source qui stocke les charges implémente `importCharges` (Renault). Le provider expose alors `importCharges`, sinon `null` (démo) et le bouton d'import n'est pas affiché.
+- Import : une source qui accepte des charges implémente `importCharges` (Renault : stockées ; démo : en mémoire, perdues au redémarrage). Le provider expose alors `importCharges`, sinon `null` et le bouton d'import n'est pas affiché.
   `ChargesHistoryView` reçoit `onImport` de `CarsPageView`, qui seul connaît la route d'import : `kelec-charge-history` ne dépend pas de `kelec-charge-import`.
 
 ## Coût des charges

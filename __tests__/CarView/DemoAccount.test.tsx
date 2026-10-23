@@ -95,7 +95,7 @@ test('Should use the demo account', async () => {
     await fireEventAsync.press(loginButton);
 
     const carList = queryAllByTestId('carRowCard');
-    expect(carList).toHaveLength(2);
+    expect(carList).toHaveLength(3);
 
     // select the first car
 

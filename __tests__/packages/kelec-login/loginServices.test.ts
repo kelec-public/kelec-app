@@ -73,9 +73,9 @@ describe('RenaultLoginSource.authenticate', () => {
     });
 });
 
-test('démo : deux voitures de démonstration', async () => {
+test('démo : trois voitures de démonstration', async () => {
     const cars = await new DemoLoginSource().listVehicles();
-    expect(cars.map(car => car.getVin())).toEqual(['VF1AA', 'VF1AA2']);
+    expect(cars.map(car => car.getVin())).toEqual(['VF1AA', 'VF1AA2', 'VF1AA3']);
 });
 
 test('RenaultLoginSource.listVehicles : un véhicule sans détails ou sans modèle ne fait pas planter la liste', async () => {

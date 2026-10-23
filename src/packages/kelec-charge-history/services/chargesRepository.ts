@@ -9,6 +9,22 @@ const storedCharges = new BatchedList<ChargeJSON>({
     legacyKey: 'chargesHistorySaved',
 });
 
+/**
+ * Dédoublonne sur le début (la première occurrence l'emporte, voir `KnownChargeStarts`)
+ * et trie par date ; les charges sans date de début sont écartées.
+ */
+export function uniqueSortedCharges(candidates: Charge[]): Charge[] {
+    const known = new KnownChargeStarts();
+    return candidates
+        .filter(charge => {
+            if (charge.chargeStartDate === undefined) return false;
+            if (known.has(charge)) return false;
+            known.add(charge);
+            return true;
+        })
+        .sort((a, b) => a.getStartDate().getTime() - b.getStartDate().getTime());
+}
+
 /** Persistance locale de l'historique de charge d'une voiture. */
 class ChargesRepository {
     /** Renvoie null si aucune charge n'a jamais été enregistrée. */
@@ -35,21 +51,9 @@ class ChargesRepository {
         return this.save(vin, [...stored, ...charges]);
     }
 
-    /**
-     * Dédoublonne sur le début (la première occurrence l'emporte, voir `KnownChargeStarts`), trie par date,
-     * complète le kilométrage puis enregistre.
-     */
+    /** Dédoublonne et trie (voir `uniqueSortedCharges`), complète le kilométrage puis enregistre. */
     private static async save(vin: string, candidates: Charge[]): Promise<Charge[]> {
-        const known = new KnownChargeStarts();
-        const charges = candidates
-            .filter(charge => {
-                if (charge.chargeStartDate === undefined) return false;
-                if (known.has(charge)) return false;
-                known.add(charge);
-                return true;
-            })
-            .sort((a, b) => a.getStartDate().getTime() - b.getStartDate().getTime());
-
+        const charges = uniqueSortedCharges(candidates);
         await this.fillMileageAtStart(vin, charges);
         await storedCharges.write(vin, charges);
         return charges;

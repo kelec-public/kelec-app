@@ -2,6 +2,7 @@ package com.kelec.shared
 
 import android.content.Context
 import com.kelec.carapi.CarLocation
+import com.kelec.carapi.DemoCar
 import com.kelec.carapi.RenaultApiClient
 import com.kelec.carapi.RenaultApiKeys
 import kotlin.coroutines.cancellation.CancellationException
@@ -20,7 +21,7 @@ class VehicleCommands(context: Context, private val keys: RenaultApiKeys) {
 
     /** null si la position ne peut pas être obtenue. */
     suspend fun location(car: UserCar): CarLocation? {
-        if (car.maker == CarMaker.DEMO) return DEMO_LOCATION
+        if (car.maker == CarMaker.DEMO) return DemoCar.forVin(car.vin).location
         val client = renaultClient(car) ?: return null
         return try {
             client.fetchLocation(car.vin)
@@ -39,7 +40,5 @@ class VehicleCommands(context: Context, private val keys: RenaultApiKeys) {
 
     private companion object {
         val RENAULT_GROUP = setOf(CarMaker.RENAULT, CarMaker.DACIA, CarMaker.ALPINE)
-        /** Position de la voiture de démo (celle du package iOS). */
-        val DEMO_LOCATION = CarLocation(48.854700, 2.347749)
     }
 }
