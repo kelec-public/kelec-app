@@ -2,7 +2,9 @@ import Account, { CarFetchStatus } from "../../../../lib/clients/accounts/accoun
 import { HVACStatus } from "../../../../lib/clients/carMakers/renaultClient";
 import { HVACStatusEnum } from "../../../../lib/clients/carMakers/renaultEnums";
 import { VinStorage } from "../../../kelec-storage/vinStorage";
+import { CarTypeRepository } from "../../../kelec-garage";
 import HvacStatus from "../../models/HvacStatus";
+import { hvacStopActions } from "../../models/hvacStopActions";
 import { CommandOnlyHvacSource } from "./commandOnlyHvacSource";
 
 /** Réponse API brute, mise en cache telle quelle. */
@@ -14,6 +16,8 @@ const toHvacStatus = (fetched: CarFetchStatus): HvacStatus => {
 };
 
 export class RenaultHvacSource extends CommandOnlyHvacSource {
+    readonly canStop: boolean = true;
+
     constructor(account: Account, private readonly vin: string) {
         super(account);
     }
@@ -29,5 +33,14 @@ export class RenaultHvacSource extends CommandOnlyHvacSource {
 
         await VinStorage.setJSON(this.vin, CACHE_KEY, fetched);
         return toHvacStatus(fetched);
+    }
+
+    /** L'action d'arrêt dépend du modèle : on essaie celle attendue, puis l'autre si elle est refusée. */
+    async stop(): Promise<boolean> {
+        const carType = await CarTypeRepository.get(this.vin);
+        for (const action of hvacStopActions(carType?.getCarModel().name)) {
+            if (await this.account.stopHVAC(this.vin, action)) return true;
+        }
+        return false;
     }
 }

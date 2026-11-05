@@ -1,4 +1,5 @@
 import { V2GApiSession } from "../carMakers/renault/v2gApiResponse";
+import { HvacStopAction } from "../carMakers/renaultEnums";
 import CarModel from "../cars/carModel";
 
 type CarFetchStatus = {
@@ -111,6 +112,10 @@ class Account implements AccountInterface {
     }
 
     launchHVAC = async (temperature: number): Promise<boolean> => {
+        return false;
+    }
+
+    stopHVAC = async (_vin: string, _action: HvacStopAction): Promise<boolean> => {
         return false;
     }
 

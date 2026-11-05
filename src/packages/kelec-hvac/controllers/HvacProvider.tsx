@@ -9,12 +9,17 @@ type HvacController = {
     /** Synchronise le statut avec l'API. À appeler seulement après un fetch batterie réussi. */
     sync: () => Promise<void>;
     launch: (temperature: number) => Promise<boolean>;
+    /** Vrai si la climatisation peut être arrêtée à distance pour ce constructeur. */
+    canStop: boolean;
+    stop: () => Promise<boolean>;
 };
 
 const HvacContext = createContext<HvacController>({
     status: HvacStatus.unknown(),
     sync: async () => { },
     launch: async () => false,
+    canStop: false,
+    stop: async () => false,
 });
 
 export const useHvac = (): HvacController => useContext(HvacContext);
@@ -26,7 +31,7 @@ type Props = {
 };
 
 /**
- * Climatisation d'une voiture : statut (cache au montage, réseau via `sync`) et commande de lancement.
+ * Climatisation d'une voiture : statut (cache au montage, réseau via `sync`), commandes de lancement et d'arrêt.
  */
 export function HvacProvider({ carModel, account, children }: Props): React.JSX.Element {
     const source = useMemo(() => createHvacSource(carModel, account), [carModel, account]);
@@ -62,8 +67,12 @@ export function HvacProvider({ carModel, account, children }: Props): React.JSX.
     }, [source, commit]);
 
     const launch = useCallback((temperature: number) => source.launch(temperature), [source]);
+    const stop = useCallback(() => source.stop(), [source]);
 
-    const value = useMemo(() => ({ status, sync, launch }), [status, sync, launch]);
+    const value = useMemo(
+        () => ({ status, sync, launch, canStop: source.canStop, stop }),
+        [status, sync, launch, source, stop],
+    );
 
     return (
         <HvacContext.Provider value={value}>

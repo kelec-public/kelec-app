@@ -1,6 +1,6 @@
 import CarMakerClient, { CarMakerClientErrors } from "./carMakerClient";
 import Charge from "../../../packages/kelec-charge-history/models/Charge";
-import { HVACStatusEnum } from "./renaultEnums";
+import { HVACStatusEnum, HvacStopAction } from "./renaultEnums";
 import { CarMaker } from "../accounts/account";
 import { RenaultCredentials } from "./renaultCredentials";
 import { V2GApiResponse, V2GApiSession } from "./renault/v2gApiResponse";
@@ -647,7 +647,6 @@ class RenaultClient extends CarMakerClient {
     }
 
     private readonly launchHVACApi = async (jwtToken: string, vin: string, temperature: number): Promise<boolean> => {
-        const url = `${RenaultClient.KAMEREON_URL}/commerce/v1/accounts/${this.kamereonAccountID}/kamereon/kca/car-adapter/v1/cars/${vin}/actions/hvac-start?country=FR`;
         const body = {
             data: {
                 type: 'HvacStart',
@@ -659,6 +658,24 @@ class RenaultClient extends CarMakerClient {
                 }
             }
         }
+        return this.postHVACAction(jwtToken, vin, body);
+    };
+
+    private readonly stopHVACApi = async (jwtToken: string, vin: string, action: HvacStopAction): Promise<boolean> => {
+        const body = {
+            data: {
+                type: 'HvacStart',
+                attributes: {
+                    action
+                }
+            }
+        }
+        return this.postHVACAction(jwtToken, vin, body);
+    };
+
+    // lancement et arrêt passent par le même endpoint, seule l'action du body change
+    private readonly postHVACAction = async (jwtToken: string, vin: string, body: object): Promise<boolean> => {
+        const url = `${RenaultClient.KAMEREON_URL}/commerce/v1/accounts/${this.kamereonAccountID}/kamereon/kca/car-adapter/v1/cars/${vin}/actions/hvac-start?country=FR`;
         try {
             const response = await fetch(url, {
                 method: 'POST',
@@ -840,6 +857,18 @@ class RenaultClient extends CarMakerClient {
         }
         const hasLaunched = await this.launchHVACApi(jwtToken.jwtToken!, vin, temperature);
         return hasLaunched;
+    }
+
+    stopHVAC = async (vin: string, action: HvacStopAction): Promise<boolean> => {
+        const gigyaToken = await this.getGigyaToken();
+        if (!gigyaToken.canLogin) {
+            return false;
+        }
+        const jwtToken = await this.getJWTToken(gigyaToken.cookieValue!);
+        if (!jwtToken.canLogin) {
+            return false;
+        }
+        return await this.stopHVACApi(jwtToken.jwtToken!, vin, action);
     }
 
     getChargesHistory = async (vin: string): Promise<RenaultStatus> => {

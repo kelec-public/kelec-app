@@ -1,5 +1,6 @@
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useContext } from "react";
+import { useTheme } from "@react-navigation/native";
 import MainContext from "../../../lib/Contexts/MainContext";
 import commonStyles from "../../../lib/graphics/commonStyle";
 import BottomSheet from "../../../screen/Common/bottomSheet/BottomSheet";
@@ -19,11 +20,17 @@ type Props = {
     readonly minimumSoc: number | null;
     readonly isLaunching: boolean;
     readonly onLaunch: () => void;
+    /** Climatisation en cours et arrêt possible : bouton d'arrêt sous le bouton de lancement. */
+    readonly showStop: boolean;
+    readonly isStopping: boolean;
+    readonly onStop: () => void;
 }
 
-/** Feuille de lancement du préchauffage. */
+/** Feuille de lancement (et d'arrêt, si la climatisation tourne) du préchauffage. */
 function HvacSheet(props: Props): React.JSX.Element {
     const { languageHandler } = useContext(MainContext);
+    const theme = useTheme();
+    const isSending = props.isLaunching || props.isStopping;
 
     return (
         <BottomSheet
@@ -43,15 +50,34 @@ function HvacSheet(props: Props): React.JSX.Element {
 
             <View style={[commonStyles.navSeparator, { marginBottom: 10 }]}></View>
             <Button
-                disabled={props.isLaunching}
+                disabled={isSending}
                 testID={'confirmButton'}
                 isLoading={props.isLaunching}
                 onPress={props.onLaunch}
                 icon={"ac-unit"}
                 text={languageHandler.getTranslation("launchPreHeat")}
             />
+            {props.showStop && (
+                <View style={styles.stopButton}>
+                    <Button
+                        disabled={isSending}
+                        testID={'stopButton'}
+                        isLoading={props.isStopping}
+                        onPress={props.onStop}
+                        icon={"stop"}
+                        buttonStyle={theme.buttons.neutral}
+                        text={languageHandler.getTranslation("stopPreHeat")}
+                    />
+                </View>
+            )}
         </BottomSheet>
     );
 }
+
+const styles = StyleSheet.create({
+    stopButton: {
+        marginTop: 10,
+    },
+});
 
 export default HvacSheet;

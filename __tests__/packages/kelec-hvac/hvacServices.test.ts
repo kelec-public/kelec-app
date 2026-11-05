@@ -5,6 +5,10 @@ import { TemperaturePreferences } from "../../../src/packages/kelec-hvac/service
 import { RenaultHvacSource } from "../../../src/packages/kelec-hvac/services/sources/renaultHvacSource";
 import { HyundaiHvacSource } from "../../../src/packages/kelec-hvac/services/sources/hyundaiHvacSource";
 import Account, { CarMaker } from "../../../src/lib/clients/accounts/account";
+import CarType from "../../../src/lib/clients/cars/carTypes/carType";
+import { HvacStopAction } from "../../../src/lib/clients/carMakers/renaultEnums";
+import { CarTypeRepository } from "../../../src/packages/kelec-garage";
+import { hvacStopActions } from "../../../src/packages/kelec-hvac/models/hvacStopActions";
 
 beforeEach(async () => {
     await AsyncStorage.clear();
@@ -69,6 +73,54 @@ describe('RenaultHvacSource', () => {
         expect(await source.syncStatus()).toBeNull();
         expect(await source.loadCachedStatus()).toBeNull();
     });
+
+    const saveModel = (name: string) => CarTypeRepository.save('VIN', new CarType({
+        brand: { name: 'renault' },
+        model: { name },
+        battery: { size: 60, max_ac_power: 22, max_dc_power: 130 },
+        chargingLimit: 100,
+    } as any));
+
+    test('arrêt : envoie l\'action attendue pour le modèle', async () => {
+        await saveModel('megane_e_tech');
+        account.stopHVAC = jest.fn().mockResolvedValue(true);
+        const source = new RenaultHvacSource(account, 'VIN');
+
+        expect(source.canStop).toBe(true);
+        expect(await source.stop()).toBe(true);
+        expect(account.stopHVAC).toHaveBeenCalledTimes(1);
+        expect(account.stopHVAC).toHaveBeenCalledWith('VIN', HvacStopAction.STOP);
+    });
+
+    test('arrêt : modèle inconnu, « cancel » puis « stop » si la première action est refusée', async () => {
+        account.stopHVAC = jest.fn().mockResolvedValueOnce(false).mockResolvedValueOnce(true);
+        const source = new RenaultHvacSource(account, 'VIN');
+
+        expect(await source.stop()).toBe(true);
+        expect(jest.mocked(account.stopHVAC).mock.calls).toEqual([
+            ['VIN', HvacStopAction.CANCEL],
+            ['VIN', HvacStopAction.STOP],
+        ]);
+    });
+
+    test('arrêt : false si les deux actions sont refusées', async () => {
+        account.stopHVAC = jest.fn().mockResolvedValue(false);
+        const source = new RenaultHvacSource(account, 'VIN');
+
+        expect(await source.stop()).toBe(false);
+        expect(account.stopHVAC).toHaveBeenCalledTimes(2);
+    });
+});
+
+describe('hvacStopActions', () => {
+    test('« stop » d\'abord pour Mégane, Scénic, R5 et A290 ; « cancel » d\'abord sinon', () => {
+        expect(hvacStopActions('megane_e_tech')).toEqual([HvacStopAction.STOP, HvacStopAction.CANCEL]);
+        expect(hvacStopActions('scenic_e_tech')).toEqual([HvacStopAction.STOP, HvacStopAction.CANCEL]);
+        expect(hvacStopActions('r5_e_tech')).toEqual([HvacStopAction.STOP, HvacStopAction.CANCEL]);
+        expect(hvacStopActions('a290')).toEqual([HvacStopAction.STOP, HvacStopAction.CANCEL]);
+        expect(hvacStopActions('r4_e_tech')).toEqual([HvacStopAction.CANCEL, HvacStopAction.STOP]);
+        expect(hvacStopActions(undefined)).toEqual([HvacStopAction.CANCEL, HvacStopAction.STOP]);
+    });
 });
 
 describe('HyundaiHvacSource', () => {
@@ -88,5 +140,10 @@ describe('HyundaiHvacSource', () => {
 
         await storeCarStatus(false);
         expect(await source.loadCachedStatus()).toEqual(new HvacStatus(false, null));
+    });
+
+    test('pas d\'arrêt à distance', async () => {
+        expect(source.canStop).toBe(false);
+        expect(await source.stop()).toBe(false);
     });
 });
