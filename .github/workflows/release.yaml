@@ -15,14 +15,28 @@ concurrency:
 jobs:
   ios:
     name: iOS - TestFlight
-    # Apple requires the iOS 26 SDK (Xcode 26+) since 2026: macos-26 ships it.
-    runs-on: macos-26
+    # The app must be built with the iOS 27.1 SDK (Xcode 27.1+): with an older SDK, iPhone Duo shows it
+    # letterboxed (black bars on the inner display). macos-26 only ships Xcode 26 (SDK 26.x); the xcode-27
+    # image (macOS 27, preview) ships Xcode 27.x. We build with Xcode 27.2 (iOS 27.2 SDK).
+    runs-on: xcode-27
     # React Native core is built from source (RCT_USE_PREBUILT_RNCORE=0 in the Podfile).
     timeout-minutes: 90
 
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+
+      # Pinned rather than relying on the image default, which changes when the image is updated.
+      # On images older than 2026-11-04, Xcode_27.2.app is a link to the 27.2 Release Candidate: refuse it.
+      - name: Select Xcode 27.2
+        run: |
+          XCODE=$(readlink -f /Applications/Xcode_27.2.app)
+          case "$XCODE" in
+            *Release_Candidate*|*beta*) echo "::error::$XCODE is not a final Xcode release"; exit 1 ;;
+          esac
+          sudo xcode-select -s "$XCODE"
+          xcodebuild -version
+          xcodebuild -showsdks | grep -q 'iphoneos27\.2' || { echo "::error::iOS 27.2 SDK not found"; exit 1; }
 
       - name: Use Node.JS
         uses: actions/setup-node@v7
