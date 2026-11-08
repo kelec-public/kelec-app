@@ -271,7 +271,8 @@ Bouton du Centre de contrôle, de l'écran verrouillé et du bouton Action, dans
   - Raccourci « Obtenir l'état » : propriétés dans une action suivante, condition sur le statut de charge, Renault et Hyundai.
   - Contrôle du Centre de contrôle (iOS 18) : ajout (choix de la voiture et de la température), tap, échec réseau.
 - Débogage : Réglages → Debug → « export widget logs » (`widgetLogs`, 5 jours, messages de `VehicleLoader`,
-  `getCarMakerApiClient` et du client Renault), et « Debug zone » (choix d'une voiture, « Battery status »
+  `getCarMakerApiClient`, du client Renault, de `TempoService` et du client RTE : statut HTTP ou erreur réseau de chaque étape,
+  jamais la clé ni le token), et « Debug zone » (choix d'une voiture, « Battery status »
   pas à pas, « Mileage history » : 10 dernières entrées de `<vin>_mileageHistory`, export des logs en texte).
 
 ## Commits

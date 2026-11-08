@@ -13,13 +13,49 @@ import Foundation
 public struct rteApi {
     private var basicAuth: String
     private var apiUrl = "digital.iservices.rte-france.com"
+    // debug messages (the app writes them in its widget logs). Never log the credentials nor the token.
+    private let logger: (String) -> Void
+    // longest part of a response body written in the logs
+    private static let maxLoggedBodyLength = 300
 
-    public init(basicAuth: String) {
+    public init(basicAuth: String, logger: @escaping (String) -> Void = { _ in }) {
         self.basicAuth = basicAuth
+        self.logger = logger
+    }
 
+    // sends the request, logs and throws `error` when the request fails or the status is not 2xx
+    private func send(_ urlRequest: URLRequest, step: String, error: rteApiError) async throws -> Data {
+        let data: Data
+        let response: URLResponse
+        do {
+            (data, response) = try await URLSession.shared.data(for: urlRequest)
+        } catch let requestError {
+            // network or TLS error (e.g. untrusted certificate: NSURLErrorDomain -1202)
+            let nsError = requestError as NSError
+            logger("RTE \(step): request failed (\(nsError.domain) \(nsError.code)): \(nsError.localizedDescription)")
+            throw error
+        }
+        guard let httpResponse = response as? HTTPURLResponse else {
+            logger("RTE \(step): no HTTP response")
+            throw error
+        }
+        guard (200..<300).contains(httpResponse.statusCode) else {
+            logger("RTE \(step): HTTP \(httpResponse.statusCode): \(bodyExcerpt(data))")
+            throw error
+        }
+        return data
+    }
+
+    // start of the response body, for the logs (only for error responses and public data)
+    private func bodyExcerpt(_ data: Data) -> String {
+        String(decoding: data.prefix(Self.maxLoggedBodyLength), as: UTF8.self)
     }
 
     func getAuthToken() async throws -> AuthReturn? {
+        guard !basicAuth.isEmpty else {
+            logger("RTE token: RTE_BASIC_AUTH is empty")
+            throw rteApiError.tokenServerError
+        }
         var components = URLComponents()
         components.scheme = "https"
         components.host = self.apiUrl
@@ -30,13 +66,14 @@ public struct rteApi {
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "POST"
         urlRequest.setValue("Basic \(self.basicAuth)", forHTTPHeaderField: "Authorization")
-        guard let (data, _) = try? await URLSession.shared.data(for: urlRequest) else {
-            throw rteApiError.tokenServerError
-        }
-        guard let bearerToken = try? JSONDecoder().decode(AuthReturn.self, from: data) else {
+        let data = try await send(urlRequest, step: "token", error: .tokenServerError)
+        do {
+            return try JSONDecoder().decode(AuthReturn.self, from: data)
+        } catch let decodeError {
+            // the body is not logged: it may contain the token
+            logger("RTE token: unable to decode the response (\(data.count) bytes): \(decodeError)")
             throw rteApiError.tokenDecodeError
         }
-        return bearerToken
     }
 
     func getApiTempoCalendar(bearerToken: String, startDate: Date, endDate: Date) async throws -> TempoCalendarReturn? {
@@ -61,6 +98,7 @@ public struct rteApi {
         components.percentEncodedQuery = components.percentEncodedQuery?.replacingOccurrences(of: "+", with: "%2B")
         
         guard let url = components.url else {
+            logger("RTE calendar: invalid URL")
             throw rteApiError.tempoCalendarServerError
         }
         
@@ -68,19 +106,18 @@ public struct rteApi {
         urlRequest.setValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
         urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
         
-        guard let (data, _) = try? await URLSession.shared.data(for: urlRequest) else {
-            throw rteApiError.tempoCalendarServerError
-        }
-        
-        guard let tempoCalendar = try? JSONDecoder().decode(TempoCalendarReturn.self, from: data) else {
+        let data = try await send(urlRequest, step: "calendar \(startStr) - \(endStr)", error: .tempoCalendarServerError)
+        do {
+            return try JSONDecoder().decode(TempoCalendarReturn.self, from: data)
+        } catch let decodeError {
+            logger("RTE calendar: unable to decode the response: \(decodeError) - \(bodyExcerpt(data))")
             throw rteApiError.tempoCalendarDecodeError
         }
-        
-        return tempoCalendar
     }
 
     public func getTempo() async throws -> tempoFinalReturn {
-        guard let bearerToken = try? await self.getAuthToken() else {
+        let bearerToken = try await self.getAuthToken()
+        guard let bearerToken else {
             throw rteApiError.tokenServerError
         }
         
@@ -90,15 +127,23 @@ public struct rteApi {
         let startDate = calendar.date(byAdding: .day, value: -1, to: today)!
         let endDate = calendar.date(byAdding: .day, value: 2, to: today)!
         
-        guard let apiTempoCalendar = try? await self.getApiTempoCalendar(bearerToken: bearerToken.access_token, startDate: startDate, endDate: endDate) else {
+        let apiTempoCalendar = try await self.getApiTempoCalendar(bearerToken: bearerToken.access_token, startDate: startDate, endDate: endDate)
+        guard let apiTempoCalendar else {
             throw rteApiError.tempoCalendarServerError
         }
         
-        let sortedValues = apiTempoCalendar.tempo_like_calendars.values.sorted { lhs, rhs in
+        let values = apiTempoCalendar.tempo_like_calendars.values
+        logger("RTE calendar: \(values.map { "\($0.start_date) \($0.value)" }.joined(separator: ", "))")
+        for value in values where parseTimestamp(date: value.start_date) == nil {
+            logger("RTE calendar: unable to parse the date \(value.start_date), the current date is used")
+        }
+        
+        let sortedValues = values.sorted { lhs, rhs in
             convertTimestamp(date: lhs.start_date) < convertTimestamp(date: rhs.start_date)
         }
         
         guard sortedValues.count >= 2 else {
+            logger("RTE calendar: \(sortedValues.count) day(s), at least 2 needed")
             throw rteApiError.tempoCalculationError
         }
         
@@ -118,10 +163,13 @@ public struct rteApi {
     }
 
     func convertTimestamp(date: String) -> Date {
+        parseTimestamp(date: date) ?? Date.now
+    }
 
+    private func parseTimestamp(date: String) -> Date? {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZZ"
-        return (formatter.date(from: date) ?? Date.now)
+        return formatter.date(from: date)
     }
 
     public func getHPPrice(colour: String) -> Float {
