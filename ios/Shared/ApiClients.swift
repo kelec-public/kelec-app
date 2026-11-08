@@ -13,7 +13,7 @@ func envVar(_ key: String) -> String {
 }
 
 func getRteClient() -> rteApi {
-  return rteApi(basicAuth: envVar("RTE_BASIC_AUTH"))
+  return rteApi(basicAuth: envVar("RTE_BASIC_AUTH"), logger: { writeWidgetLog(message: $0) })
 }
 
 // the password is stored in the keychain under "<vin>_password".

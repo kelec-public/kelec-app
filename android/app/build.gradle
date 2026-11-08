@@ -86,7 +86,7 @@ android {
         minSdk 29
         targetSdk 37
         versionCode rootProject.ext.kelecVersionCode
-        versionName '2.7.1'
+        versionName '2.7.2'
         resValue "string", "build_config_package", "com.kelec"
     }
     // widgets de l'écran d'accueil en Jetpack Glance

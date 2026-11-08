@@ -18,7 +18,7 @@ android {
         minSdk 26
         // doit être différent de celui de l'app du téléphone (même fiche Play Store) : 2 000 000 + le sien
         versionCode 2000000 + rootProject.ext.kelecVersionCode
-        versionName '2.7.1'
+        versionName '2.7.2'
     }
 
     buildFeatures {
