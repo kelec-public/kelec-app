@@ -11,8 +11,7 @@ Pattern général : voir [packages-pattern.md](./packages-pattern.md).
 kelec-hvac/
 ├── models/
 │   ├── HvacStatus.ts        isRunning, minimumSoc (null si inconnu), isBelowMinimumSoc(level)
-│   ├── Temperature.ts       Plage 17–27 °C, défaut 21, libellés LOW / HIGH, stepTemperature
-│   └── hvacStopActions.ts   Renault : actions d'arrêt à essayer (« stop » / « cancel ») selon le modèle
+│   └── Temperature.ts       Plage 17–27 °C, défaut 21, libellés LOW / HIGH, stepTemperature
 ├── services/
 │   ├── temperaturePreferences.ts   Dernière température choisie, par voiture
 │   ├── createHvacSource.ts         Choix de la source selon le constructeur
@@ -25,7 +24,7 @@ kelec-hvac/
 │   └── useHvacCardController.ts   Température, feuille de lancement, envoi, arrêt, alertes
 ├── views/
 │   ├── HvacCard.tsx          Carte de la page voiture (+ animations « en cours »)
-│   ├── HvacSheet.tsx         Feuille de lancement (+ bouton d'arrêt quand la climatisation tourne)
+│   ├── HvacSheet.tsx         Feuille de lancement (+ avertissement et bouton d'arrêt quand la climatisation tourne)
 │   ├── TemperaturePicker.tsx Boutons − / + et température affichée
 │   ├── MinSocWarning.tsx     Avertissement batterie sous le minimum requis
 │   └── temperatureStyle.ts   Couleurs (bleu LOW, rouge HIGH) et affichage de l'unité
@@ -41,7 +40,8 @@ kelec-hvac/
 5. Lancement : `launch(temperature)` → `account.launchHVAC(temperature)`. En cas de succès, une alerte s'affiche et la feuille se ferme ; sinon, une alerte d'erreur s'affiche et la feuille reste ouverte.
    Le statut **n'est pas** mis à jour de façon optimiste après un lancement : la carte passe en « actif » au prochain fetch.
 6. Arrêt : quand la climatisation tourne (`status.isRunning`) et que la source le permet (`canStop`), la feuille affiche
-   un bouton d'arrêt (`stopButton`) sous le bouton de lancement. `stop()` → `account.stopHVAC(vin, action)`.
+   sous le bouton de lancement un avertissement « fonction expérimentale » (`hvacStopExperimentalWarning`)
+   et un bouton d'arrêt (`stopButton`). `stop()` → `account.stopHVAC(vin, action)`, avec « stop » puis « cancel ».
    Mêmes alertes et même absence de mise à jour optimiste que pour le lancement : la carte s'éteint au prochain fetch.
 
 ## Statut par constructeur
@@ -63,7 +63,7 @@ que le car loader Hyundai récupère déjà pour la batterie. Pour éviter un de
 - `HyundaiHvacSource` la relit via `CarStatusCache.getHyundaiStatus`, importé depuis l'API publique `kelec-car-page/index.ts` ;
 - `syncStatus()` ne fait que relire le cache : il est appelé après le fetch batterie, donc le cache vient d'être mis à jour.
 
-### Arrêt Renault : « stop » ou « cancel »
+### Arrêt Renault : « stop » et « cancel »
 
 L'arrêt passe par le même endpoint que le lancement (`actions/hvac-start`), avec une autre `action` dans le body.
 Selon le modèle, l'API attend `stop` ou `cancel`. La table par modèle de
@@ -72,17 +72,19 @@ Selon le modèle, l'API attend `stop` ou `cancel`. La table par modèle de
 | Action | Modèles |
 |---|---|
 | `stop` | Mégane E-Tech, R5, Alpine A290, Spring |
-| `cancel` | R4, Master E-Tech, Zoé phase 1 ; valeur par défaut pour un modèle non documenté (Scénic E-Tech, Zoé phase 2…) |
+| `cancel` | R4, Master E-Tech, Zoé phase 1 |
 
-renault-api précise ne pas avoir pu le vérifier sur tous les véhicules. `hvacStopActions` donne donc deux actions :
-celle attendue pour le modèle choisi dans `CarType` (`kelec-garage`), puis l'autre. `RenaultHvacSource.stop()` envoie
-la seconde seulement si l'API refuse la première (réponse sans `HvacStart` / `id`).
-La Spring n'est pas dans `CarAvailableModels` : elle passe par la valeur par défaut (« cancel », puis « stop »).
+renault-api précise ne pas avoir pu le vérifier sur tous les véhicules, et ne documente pas la Scénic E-Tech ni la Zoé phase 2.
 
 **Scénic E-Tech : `stop`, vérifié sur une voiture** (model code `XCB1SE`, novembre 2026). L'API accepte aussi `cancel`
-(réponse `HvacStart` avec un `id`), mais la climatisation continue de tourner. Le repli ne couvre donc pas ce cas :
-une action acceptée sans effet n'est pas détectée. La Scénic est dans la liste `stop` de `hvacStopActions`.
-Les autres modèles n'ont pas été vérifiés : ils suivent la table de renault-api.
+(réponse `HvacStart` avec un `id`), mais la climatisation continue de tourner. Une action acceptée sans effet ne peut
+donc pas être détectée, et une table par modèle fausse ne se corrigerait jamais d'elle-même.
+
+`RenaultHvacSource.stop()` envoie donc toujours les deux actions, quel que soit le modèle : `stop`, puis `cancel`.
+L'arrêt est réussi si l'API accepte au moins l'une des deux. Chaque arrêt coûte deux appels à l'API (quota Kamereon).
+L'envoi de `cancel` juste après `stop` n'a pas été vérifié sur une voiture.
+
+La feuille signale que l'arrêt est une fonction expérimentale (`hvacStopExperimental`).
 
 ## Stockage
 
@@ -106,8 +108,8 @@ Les autres modèles n'ont pas été vérifiés : ils suivent la table de renault
 
 ## Tests
 
-- `__tests__/packages/kelec-hvac/hvacServices.test.ts` : températures, `HvacStatus`, préférences (nouvelle clé, valeur hors plage), sources Renault (cache, erreur, arrêt : action du modèle, repli sur l'autre, double refus) et Hyundai (`airCtrlOn`, pas d'arrêt), `hvacStopActions`.
-- Tests d'intégration : `__tests__/CarView/HVACCard/HVACCard.renault.test.tsx` (dont bouton d'arrêt absent quand la climatisation est éteinte, arrêt quand elle tourne), `HVACCard.hyundai.test.tsx` (dont affichage « en cours » avec `airCtrlOn` à `true` / `false`), `DemoAccount.test.tsx`.
+- `__tests__/packages/kelec-hvac/hvacServices.test.ts` : températures, `HvacStatus`, préférences (nouvelle clé, valeur hors plage), sources Renault (cache, erreur, arrêt : « stop » puis « cancel », une seule action acceptée, double refus) et Hyundai (`airCtrlOn`, pas d'arrêt).
+- Tests d'intégration : `__tests__/CarView/HVACCard/HVACCard.renault.test.tsx` (dont avertissement et bouton d'arrêt absents quand la climatisation est éteinte, arrêt quand elle tourne), `HVACCard.hyundai.test.tsx` (dont affichage « en cours » avec `airCtrlOn` à `true` / `false`), `DemoAccount.test.tsx`.
 
 ## Traductions à ajouter
 
@@ -117,4 +119,5 @@ Clés nouvelles, absentes de `localizations.json` (en attendant, `getTranslation
 |---|---|---|
 | `stopPreHeat` | bouton d'arrêt de la feuille | Arrêter le confort thermique |
 | `preHeatStopped` | alerte après un arrêt réussi | Le confort thermique a été arrêté |
+| `hvacStopExperimental` | avertissement au-dessus du bouton d'arrêt | L'arrêt du confort thermique est expérimental et peut ne pas fonctionner sur tous les modèles. |
 

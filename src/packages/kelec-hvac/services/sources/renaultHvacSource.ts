@@ -1,10 +1,8 @@
 import Account, { CarFetchStatus } from "../../../../lib/clients/accounts/account";
 import { HVACStatus } from "../../../../lib/clients/carMakers/renaultClient";
-import { HVACStatusEnum } from "../../../../lib/clients/carMakers/renaultEnums";
+import { HVACStatusEnum, HvacStopAction } from "../../../../lib/clients/carMakers/renaultEnums";
 import { VinStorage } from "../../../kelec-storage/vinStorage";
-import { CarTypeRepository } from "../../../kelec-garage";
 import HvacStatus from "../../models/HvacStatus";
-import { hvacStopActions } from "../../models/hvacStopActions";
 import { CommandOnlyHvacSource } from "./commandOnlyHvacSource";
 
 /** Réponse API brute, mise en cache telle quelle. */
@@ -35,12 +33,14 @@ export class RenaultHvacSource extends CommandOnlyHvacSource {
         return toHvacStatus(fetched);
     }
 
-    /** L'action d'arrêt dépend du modèle : on essaie celle attendue, puis l'autre si elle est refusée. */
+    /**
+     * Selon le modèle, l'API arrête la climatisation avec « stop » ou avec « cancel », et elle accepte aussi
+     * l'action sans effet (vérifié sur une Scénic avec « cancel »). On envoie donc toujours les deux.
+     * Renvoie true si l'API accepte au moins une des deux actions.
+     */
     async stop(): Promise<boolean> {
-        const carType = await CarTypeRepository.get(this.vin);
-        for (const action of hvacStopActions(carType?.getCarModel().name)) {
-            if (await this.account.stopHVAC(this.vin, action)) return true;
-        }
-        return false;
+        const stopAccepted = await this.account.stopHVAC(this.vin, HvacStopAction.STOP);
+        const cancelAccepted = await this.account.stopHVAC(this.vin, HvacStopAction.CANCEL);
+        return stopAccepted || cancelAccepted;
     }
 }

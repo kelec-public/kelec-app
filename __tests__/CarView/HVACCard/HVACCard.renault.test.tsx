@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import RenaultCar from "../../../src/lib/clients/cars/renaultCar";
 import Account, { CarMaker } from "../../../src/lib/clients/accounts/account";
-import { render, waitFor, fireEventAsync } from "@testing-library/react-native";
+import { render, waitFor, fireEventAsync, within } from "@testing-library/react-native";
 import App from "../../../App";
 import React from "react";
 import { Alert } from "react-native";
@@ -320,6 +320,7 @@ test('should not offer to stop hvac when it is off', async () => {
         expect(getByTestId('confirmButton')).toBeDefined();
     });
     expect(queryByTestId('stopButton')).toBeNull();
+    expect(queryByTestId('hvacStopExperimentalWarning')).toBeNull();
 });
 
 test('should stop hvac when it is running', async () => {
@@ -330,11 +331,13 @@ test('should stop hvac when it is running', async () => {
     });
 
     await fireEventAsync.press(getByTestId('HVACCardButton'));
+    // le texte sera ajouté par les mainteneurs : la clé s'affiche en attendant
+    expect(within(getByTestId('hvacStopExperimentalWarning')).getByText('hvacStopExperimental')).toBeDefined();
     await fireEventAsync.press(getByTestId('stopButton'));
 
     await waitFor(() => {
-        // pas de modèle enregistré pour la voiture : « cancel » d'abord
-        expect(mockStopHVAC).toHaveBeenCalledWith('vin1', 'cancel');
+        // toujours « stop » puis « cancel », quel que soit le modèle
+        expect(mockStopHVAC.mock.calls.slice(-2)).toEqual([['vin1', 'stop'], ['vin1', 'cancel']]);
         // le texte sera ajouté par les mainteneurs : la clé s'affiche en attendant
         expect(Alert.alert).toHaveBeenLastCalledWith("Informations envoyées", "preHeatStopped");
     });
