@@ -1,11 +1,14 @@
 package com.kelec.shared
 
 import android.content.Context
+import android.text.format.DateFormat
 import com.kelec.carapi.ChargingState
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Date
 import java.util.Locale
 
 object Formatting {
@@ -21,14 +24,27 @@ object Formatting {
     fun localTime(dateTime: ZonedDateTime): String =
         dateTime.withZoneSameInstant(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("HH:mm", Locale.ROOT))
 
-    /** Heure de la dernière mise à jour, précédée de la date (« 07/10 14:05 ») si ce n'est pas aujourd'hui. */
-    fun lastRefresh(dateTime: ZonedDateTime, today: LocalDate = LocalDate.now()): String {
+    /** Time of the last refresh, preceded by the date ("07/10 14:05", "7.10. 14:05"...) when it is not today. */
+    fun lastRefresh(context: Context, dateTime: ZonedDateTime, today: LocalDate = LocalDate.now()): String {
         val local = dateTime.withZoneSameInstant(ZoneId.systemDefault())
-        return if (local.toLocalDate() == today) localTime(local) else "${dayMonth(local.toLocalDate())} ${localTime(local)}"
+        return if (local.toLocalDate() == today) localTime(local)
+        else "${dayMonth(context, local.toLocalDate())} ${localTime(local)}"
     }
 
-    /** « 08/10 » */
-    fun dayMonth(date: LocalDate): String = date.format(DateTimeFormatter.ofPattern("dd/MM", Locale.ROOT))
+    /** Day and month, without the year, in the locale's order and separators: "08/10" (fr), "8.10." (de), "10/8" (en-US). */
+    fun dayMonth(context: Context, date: LocalDate): String =
+        localized(context, "Md", date.atStartOfDay(ZoneId.systemDefault()))
+
+    /**
+     * Formats a date or time the way the displayed language writes it.
+     * The skeleton only lists the fields to show ("Md" = month and day);
+     * Android picks their order and separators for the locale ("d.M." in German, "M/d" in US English, ...).
+     */
+    private fun localized(context: Context, skeleton: String, dateTime: ZonedDateTime): String {
+        val locale = context.resources.configuration.locales[0]
+        val pattern = DateFormat.getBestDateTimePattern(locale, skeleton)
+        return SimpleDateFormat(pattern, locale).format(Date.from(dateTime.toInstant()))
+    }
 
     /** Prix Tempo : « 16.12 c/kWh » */
     fun tempoPrice(cents: Double): String = String.format(Locale.ROOT, "%.2f c/kWh", cents)
