@@ -1,76 +1,89 @@
 name: Sonar scan (fork PRs)
 
 on:
-    workflow_run:
-        workflows: ["Main pipeline"]
-        types:
-            - completed
+  workflow_run:
+    workflows: ["Main pipeline"]
+    types:
+      - completed
 
 permissions:
-    contents: read
-    actions: read
+  contents: read
+  actions: read
 
 jobs:
-    sonar-scan:
-        runs-on: ubuntu-latest
-        timeout-minutes: 10
-        if: |
-            github.event.workflow_run.conclusion == 'success' &&
-            github.event.workflow_run.head_repository.full_name != github.repository
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v6
-              with:
-                  repository: ${{ github.event.workflow_run.head_repository.full_name }}
-                  ref: ${{ github.event.workflow_run.head_sha }}
-                  fetch-depth: 0 
+  sonar-scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: sonar-fork
+    if: |
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_repository.full_name != github.repository
+    steps:
+      - name: Checkout trusted sonar config
+        uses: actions/checkout@v6
+        with:
+          sparse-checkout: sonar-project.properties
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+          path: trusted
 
-            - name: Download test artifacts from triggering workflow
-              uses: actions/download-artifact@v7
-              with:
-                  name: test-artifacts
-                  path: ./
-                  run-id: ${{ github.event.workflow_run.id }}
-                  github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout fork (data only)
+        uses: actions/checkout@v6
+        with:
+          repository: ${{ github.event.workflow_run.head_repository.full_name }}
+          ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 0
+          persist-credentials: false
+          allow-unsafe-pr-checkout: true
+          path: pr
 
-            - name: Load PR metadata
-              env:
-                  HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
-              run: |
-                  [ -f pr-meta.env ] || { echo "missing PR metadata"; exit 1; }
-                  value() { grep -m1 "^$1=" pr-meta.env | cut -d= -f2-; }
-                  num=$(value PR_NUMBER)
-                  sha=$(value PR_SHA)
-                  branch=$(value PR_BRANCH)
-                  base=$(value PR_BASE)
-                  [[ "$num" =~ ^[0-9]+$ ]] || { echo "invalid PR_NUMBER"; exit 1; }
-                  [[ "$sha" == "$HEAD_SHA" ]] || { echo "PR_SHA does not match the triggering run"; exit 1; }
-                  [[ "$branch" =~ ^[A-Za-z0-9._/:+@-]+$ ]] || { echo "invalid PR_BRANCH"; exit 1; }
-                  [[ "$base" =~ ^[A-Za-z0-9._/+@-]+$ ]] || { echo "invalid PR_BASE"; exit 1; }
-                  {
-                    echo "PR_NUMBER=$num"
-                    echo "PR_SHA=$sha"
-                    echo "PR_BRANCH=$branch"
-                    echo "PR_BASE=$base"
-                  } >> "$GITHUB_ENV"
+      - name: Download test artifacts
+        uses: actions/download-artifact@v7
+        with:
+          name: test-artifacts
+          path: pr
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
-            - name: Wake up SonarQube
-              uses: kelyanselme/kelyan_workflows_and_actions/.github/actions/wakeup-sonar@v1
-              with:
-                  sonar_instance_url: ${{ secrets.SONAR_URL }}
+      - name: Load PR metadata
+        env:
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          f=pr/pr-meta.env
+          [ -f "$f" ] || { echo "missing PR metadata"; exit 1; }
+          value() { grep -m1 "^$1=" "$f" | cut -d= -f2-; }
+          num=$(value PR_NUMBER)
+          sha=$(value PR_SHA)
+          branch=$(value PR_BRANCH)
+          base=$(value PR_BASE)
+          [[ "$num" =~ ^[0-9]+$ ]] || { echo "invalid PR_NUMBER"; exit 1; }
+          [[ "$sha" == "$HEAD_SHA" ]] || { echo "PR_SHA does not match the triggering run"; exit 1; }
+          [[ "$branch" =~ ^[A-Za-z0-9._/:+@-]+$ ]] || { echo "invalid PR_BRANCH"; exit 1; }
+          [[ "$base" =~ ^[A-Za-z0-9._/+@-]+$ ]] || { echo "invalid PR_BASE"; exit 1; }
+          {
+            echo "PR_NUMBER=$num"
+            echo "PR_SHA=$sha"
+            echo "PR_BRANCH=$branch"
+            echo "PR_BASE=$base"
+          } >> "$GITHUB_ENV"
 
-            - name: SonarQube Scan
-              uses: sonarsource/sonarqube-scan-action@v8
-              with:
-                  args: >
-                      -Dsonar.qualitygate.wait=true
-                      -Dsonar.projectKey=Kelec_Nextgen
-                      -Dsonar.projectName=Kelec_Nextgen
-                      -Dsonar.projectBaseDir=${{ github.workspace }}
-                      -Dsonar.scm.revision=${{ env.PR_SHA }}
-                      -Dsonar.pullrequest.key=${{ env.PR_NUMBER }}
-                      -Dsonar.pullrequest.branch=${{ env.PR_BRANCH }}
-                      -Dsonar.pullrequest.base=${{ env.PR_BASE }}
-              env:
-                  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-                  SONAR_HOST_URL: ${{ secrets.SONAR_URL }}
+      - name: Wake up SonarQube
+        uses: kelyanselme/kelyan_workflows_and_actions/.github/actions/wakeup-sonar@v1
+        with:
+          sonar_instance_url: ${{ secrets.SONAR_URL }}
+
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@v8
+        with:
+          projectBaseDir: pr
+          args: >
+            -Dproject.settings=${{ github.workspace }}/trusted/sonar-project.properties
+            -Dsonar.host.url=${{ secrets.SONAR_URL }}
+            -Dsonar.qualitygate.wait=true
+            -Dsonar.scm.revision=${{ env.PR_SHA }}
+            -Dsonar.pullrequest.key=${{ env.PR_NUMBER }}
+            -Dsonar.pullrequest.branch=${{ env.PR_BRANCH }}
+            -Dsonar.pullrequest.base=${{ env.PR_BASE }}
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_URL }}
