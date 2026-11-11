@@ -5,6 +5,7 @@ import { TemperaturePreferences } from "../../../src/packages/kelec-hvac/service
 import { RenaultHvacSource } from "../../../src/packages/kelec-hvac/services/sources/renaultHvacSource";
 import { HyundaiHvacSource } from "../../../src/packages/kelec-hvac/services/sources/hyundaiHvacSource";
 import Account, { CarMaker } from "../../../src/lib/clients/accounts/account";
+import { HvacStopAction } from "../../../src/lib/clients/carMakers/renaultEnums";
 
 beforeEach(async () => {
     await AsyncStorage.clear();
@@ -69,6 +70,37 @@ describe('RenaultHvacSource', () => {
         expect(await source.syncStatus()).toBeNull();
         expect(await source.loadCachedStatus()).toBeNull();
     });
+
+    test('arrêt : envoie toujours « stop » puis « cancel »', async () => {
+        account.stopHVAC = jest.fn().mockResolvedValue(true);
+        const source = new RenaultHvacSource(account, 'VIN');
+
+        expect(source.canStop).toBe(true);
+        expect(await source.stop()).toBe(true);
+        expect(jest.mocked(account.stopHVAC).mock.calls).toEqual([
+            ['VIN', HvacStopAction.STOP],
+            ['VIN', HvacStopAction.CANCEL],
+        ]);
+    });
+
+    test.each([
+        [true, false],
+        [false, true],
+    ])('arrêt : true si une seule action est acceptée (stop %s, cancel %s)', async (stop, cancel) => {
+        account.stopHVAC = jest.fn().mockResolvedValueOnce(stop).mockResolvedValueOnce(cancel);
+        const source = new RenaultHvacSource(account, 'VIN');
+
+        expect(await source.stop()).toBe(true);
+        expect(account.stopHVAC).toHaveBeenCalledTimes(2);
+    });
+
+    test('arrêt : false si les deux actions sont refusées', async () => {
+        account.stopHVAC = jest.fn().mockResolvedValue(false);
+        const source = new RenaultHvacSource(account, 'VIN');
+
+        expect(await source.stop()).toBe(false);
+        expect(account.stopHVAC).toHaveBeenCalledTimes(2);
+    });
 });
 
 describe('HyundaiHvacSource', () => {
@@ -88,5 +120,10 @@ describe('HyundaiHvacSource', () => {
 
         await storeCarStatus(false);
         expect(await source.loadCachedStatus()).toEqual(new HvacStatus(false, null));
+    });
+
+    test('pas d\'arrêt à distance', async () => {
+        expect(source.canStop).toBe(false);
+        expect(await source.stop()).toBe(false);
     });
 });

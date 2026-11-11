@@ -61,6 +61,9 @@ function HvacCard(): React.JSX.Element {
                 minimumSoc={status.minimumSoc}
                 isLaunching={controller.isLaunching}
                 onLaunch={controller.launchHvac}
+                showStop={controller.showStop}
+                isStopping={controller.isStopping}
+                onStop={controller.stopHvac}
             />
             <TouchableOpacity
                 testID="HVACCardButton"

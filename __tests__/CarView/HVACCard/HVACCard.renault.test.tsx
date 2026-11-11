@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import RenaultCar from "../../../src/lib/clients/cars/renaultCar";
 import Account, { CarMaker } from "../../../src/lib/clients/accounts/account";
-import { render, waitFor, fireEventAsync } from "@testing-library/react-native";
+import { render, waitFor, fireEventAsync, within } from "@testing-library/react-native";
 import App from "../../../App";
 import React from "react";
 import { Alert } from "react-native";
@@ -20,6 +20,7 @@ beforeEach(async () => {
 const mockGetBatteryStatus = jest.fn();
 const mockGetCockpitStatus = jest.fn();
 const mockLaunchHVAC = jest.fn();
+const mockStopHVAC = jest.fn();
 const mockGetHVACStatus = jest.fn();
 jest.mock('../../../src/lib/clients/carMakers/renaultClient', () => {
     return jest.fn().mockImplementation(() => {
@@ -32,6 +33,7 @@ jest.mock('../../../src/lib/clients/carMakers/renaultClient', () => {
                 }
             }),
             launchHVAC: mockLaunchHVAC,
+            stopHVAC: mockStopHVAC,
             getChargesHistory: jest.fn().mockResolvedValue({
                 hasError: true
             }),
@@ -288,5 +290,59 @@ test('should hvac be on', async () => {
         expect(amountOfIcons).toHaveLength(0);
         expect(getByTestId('hvacRunningOverlay')).toBeDefined();
         expect(getByTestId('animatedHvacIcon')).toBeDefined();
+    });
+});
+const renderWithHvacStatus = (hvacStatus: 'on' | 'off') => {
+    const rendered = render(<App />);
+    mockGetBatteryStatus.mockResolvedValueOnce({
+        hasError: false,
+        apiData: mockJSONBatteryStatus
+    });
+    mockGetCockpitStatus.mockResolvedValueOnce({
+        hasError: false,
+        apiData: mockJSONCockpit
+    });
+    mockGetHVACStatus.mockResolvedValueOnce({
+        hasError: false,
+        apiData: { ...mockJSONHVACStatus, hvacStatus }
+    });
+    return rendered;
+};
+
+test('should not offer to stop hvac when it is off', async () => {
+    const { getByTestId, queryByTestId } = renderWithHvacStatus('off');
+    await waitFor(() => {
+        expect(getByTestId('hvacIcon')).toBeDefined();
+    });
+
+    await fireEventAsync.press(getByTestId('HVACCardButton'));
+    await waitFor(() => {
+        expect(getByTestId('confirmButton')).toBeDefined();
+    });
+    expect(queryByTestId('stopButton')).toBeNull();
+    expect(queryByTestId('hvacStopExperimentalWarning')).toBeNull();
+});
+
+test('should stop hvac when it is running', async () => {
+    const { getByTestId } = renderWithHvacStatus('on');
+    mockStopHVAC.mockResolvedValueOnce(true);
+    await waitFor(() => {
+        expect(getByTestId('hvacRunningOverlay')).toBeDefined();
+    });
+
+    await fireEventAsync.press(getByTestId('HVACCardButton'));
+    // le texte sera ajouté par les mainteneurs : la clé s'affiche en attendant
+    expect(within(getByTestId('hvacStopExperimentalWarning')).getByText('hvacStopExperimental')).toBeDefined();
+    await fireEventAsync.press(getByTestId('stopButton'));
+
+    await waitFor(() => {
+        // toujours « stop » puis « cancel », quel que soit le modèle
+        expect(mockStopHVAC.mock.calls.slice(-2)).toEqual([['vin1', 'stop'], ['vin1', 'cancel']]);
+        // le texte sera ajouté par les mainteneurs : la clé s'affiche en attendant
+        expect(Alert.alert).toHaveBeenLastCalledWith("Informations envoyées", "preHeatStopped");
+    });
+    // the modal should now be closed
+    await waitFor(() => {
+        expect(() => getByTestId('stopButton')).toThrow();
     });
 });

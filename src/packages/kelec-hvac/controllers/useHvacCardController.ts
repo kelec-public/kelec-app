@@ -6,15 +6,16 @@ import { DEFAULT_TEMPERATURE, isMaxTemperature, isMinTemperature, stepTemperatur
 import { TemperaturePreferences } from "../services/temperaturePreferences";
 import { useHvac } from "./HvacProvider";
 
-/** Carte climatisation : température de consigne, feuille de lancement et envoi de la commande. */
+/** Carte climatisation : température de consigne, feuille de lancement, envoi des commandes de lancement et d'arrêt. */
 export function useHvacCardController(vin: string) {
     const { languageHandler } = useContext(MainContext);
     const { handleModalAnim } = useContext(CarsViewContext);
-    const { status, launch } = useHvac();
+    const { status, launch, canStop, stop } = useHvac();
 
     const [temperature, setTemperature] = useState(DEFAULT_TEMPERATURE);
     const [isSheetOpen, setIsSheetOpen] = useState(false);
     const [isLaunching, setIsLaunching] = useState(false);
+    const [isStopping, setIsStopping] = useState(false);
 
     useEffect(() => {
         TemperaturePreferences.get(vin).then(setTemperature);
@@ -50,6 +51,19 @@ export function useHvacCardController(vin: string) {
         setIsLaunching(false);
     }, [launch, temperature, languageHandler, closeSheet]);
 
+    // comme pour le lancement, le statut n'est pas mis à jour de façon optimiste : la carte s'éteint au prochain fetch
+    const stopHvac = useCallback(async () => {
+        setIsStopping(true);
+        const hasStopped = await stop();
+        if (hasStopped) {
+            Alert.alert(languageHandler.getTranslation("informationSent"), languageHandler.getTranslation("preHeatStopped"));
+            closeSheet();
+        } else {
+            Alert.alert(languageHandler.getTranslation("error"), languageHandler.getTranslation("commandSendError"));
+        }
+        setIsStopping(false);
+    }, [stop, languageHandler, closeSheet]);
+
     return {
         status,
         temperature,
@@ -62,5 +76,8 @@ export function useHvacCardController(vin: string) {
         closeSheet,
         isLaunching,
         launchHvac,
+        showStop: canStop && status.isRunning,
+        isStopping,
+        stopHvac,
     };
 }

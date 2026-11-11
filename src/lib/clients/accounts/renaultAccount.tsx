@@ -1,5 +1,6 @@
 import { V2GApiSession } from "../carMakers/renault/v2gApiResponse";
 import RenaultClient from "../carMakers/renaultClient";
+import { HvacStopAction } from "../carMakers/renaultEnums";
 import CarModel from "../cars/carModel";
 import Account, { CarFetchStatus, CarMaker } from "./account";
 
@@ -47,6 +48,14 @@ class RenaultAccount extends Account {
     launchHVAC = async (temperature: number): Promise<boolean> => {
         const client = new RenaultClient(this.getEmail(), this.getPassword(), this.getKamereonAccountID());
         return await client.launchHVAC(this.getCar()?.getVin() ?? "", temperature);
+    }
+
+    stopHVAC = async (vin: string, action: HvacStopAction): Promise<boolean> => {
+        const client = new RenaultClient(this.getEmail(), this.getPassword(), this.getKamereonAccountID());
+        if (client.stopHVAC) {
+            return await client.stopHVAC(vin, action);
+        }
+        return false;
     }
 
     fetchChargesHistory = async (vin: string): Promise<CarFetchStatus> => {

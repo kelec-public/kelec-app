@@ -1,7 +1,7 @@
 # Package `kelec-hvac`
 
 Climatisation / préchauffage : carte sur la page voiture (animée quand la climatisation tourne),
-choix de la température, avertissement de SOC minimum et envoi de la commande.
+choix de la température, avertissement de SOC minimum, envoi des commandes de lancement et d'arrêt.
 
 Pattern général : voir [packages-pattern.md](./packages-pattern.md).
 
@@ -16,15 +16,15 @@ kelec-hvac/
 │   ├── temperaturePreferences.ts   Dernière température choisie, par voiture
 │   ├── createHvacSource.ts         Choix de la source selon le constructeur
 │   └── sources/
-│       ├── commandOnlyHvacSource.ts   Commande seule, pas de statut (Démo ; classe de base)
-│       ├── renaultHvacSource.ts       Renault / Dacia / Alpine : statut via l'API HVAC + cache
+│       ├── commandOnlyHvacSource.ts   Lancement seul, pas de statut ni d'arrêt (Démo ; classe de base)
+│       ├── renaultHvacSource.ts       Renault / Dacia / Alpine : statut via l'API HVAC + cache, arrêt
 │       └── hyundaiHvacSource.ts       Hyundai : statut lu dans la réponse de statut de la voiture
 ├── controllers/
-│   ├── HvacProvider.tsx           Statut partagé d'une voiture : useHvac() → { status, sync, launch }
-│   └── useHvacCardController.ts   Température, feuille de lancement, envoi, alertes
+│   ├── HvacProvider.tsx           Statut partagé d'une voiture : useHvac() → { status, sync, launch, canStop, stop }
+│   └── useHvacCardController.ts   Température, feuille de lancement, envoi, arrêt, alertes
 ├── views/
 │   ├── HvacCard.tsx          Carte de la page voiture (+ animations « en cours »)
-│   ├── HvacSheet.tsx         Feuille de lancement
+│   ├── HvacSheet.tsx         Feuille de lancement (+ avertissement et bouton d'arrêt quand la climatisation tourne)
 │   ├── TemperaturePicker.tsx Boutons − / + et température affichée
 │   ├── MinSocWarning.tsx     Avertissement batterie sous le minimum requis
 │   └── temperatureStyle.ts   Couleurs (bleu LOW, rouge HIGH) et affichage de l'unité
@@ -39,14 +39,18 @@ kelec-hvac/
 4. `HvacCard` lit le statut via `useHvacCardController` → `useHvac()`. Le niveau de batterie de l'avertissement vient de `CarViewContext` (`apiHandler.getBatteryLevel()`).
 5. Lancement : `launch(temperature)` → `account.launchHVAC(temperature)`. En cas de succès, une alerte s'affiche et la feuille se ferme ; sinon, une alerte d'erreur s'affiche et la feuille reste ouverte.
    Le statut **n'est pas** mis à jour de façon optimiste après un lancement : la carte passe en « actif » au prochain fetch.
+6. Arrêt : quand la climatisation tourne (`status.isRunning`) et que la source le permet (`canStop`), la feuille affiche
+   sous le bouton de lancement un avertissement « fonction expérimentale » (`hvacStopExperimentalWarning`)
+   et un bouton d'arrêt (`stopButton`). `stop()` → `account.stopHVAC(vin, action)`, avec « stop » puis « cancel ».
+   Mêmes alertes et même absence de mise à jour optimiste que pour le lancement : la carte s'éteint au prochain fetch.
 
 ## Statut par constructeur
 
-| Constructeur | Source | « En cours » | SOC minimum |
-|---|---|---|---|
-| Renault / Dacia / Alpine | `RenaultHvacSource` | `hvacStatus === 'on'` (API HVAC) | `socThreshold` |
-| Hyundai | `HyundaiHvacSource` | `vehicleStatus.airCtrlOn === true` | non fourni (`null`) |
-| Démo | `CommandOnlyHvacSource` | jamais | `null` |
+| Constructeur | Source | « En cours » | SOC minimum | Arrêt |
+|---|---|---|---|---|
+| Renault / Dacia / Alpine | `RenaultHvacSource` | `hvacStatus === 'on'` (API HVAC) | `socThreshold` | oui |
+| Hyundai | `HyundaiHvacSource` | `vehicleStatus.airCtrlOn === true` | non fourni (`null`) | non |
+| Démo | `CommandOnlyHvacSource` | jamais | `null` | non |
 
 Quand le SOC minimum est inconnu, l'avertissement « SOC minimum inconnu » est toujours affiché (comportement d'origine).
 
@@ -58,6 +62,29 @@ que le car loader Hyundai récupère déjà pour la batterie. Pour éviter un de
 - `HyundaiCarLoader` enregistre cette réponse via `CarStatusCache.saveHyundaiStatus` ;
 - `HyundaiHvacSource` la relit via `CarStatusCache.getHyundaiStatus`, importé depuis l'API publique `kelec-car-page/index.ts` ;
 - `syncStatus()` ne fait que relire le cache : il est appelé après le fetch batterie, donc le cache vient d'être mis à jour.
+
+### Arrêt Renault : « stop » et « cancel »
+
+L'arrêt passe par le même endpoint que le lancement (`actions/hvac-start`), avec une autre `action` dans le body.
+Selon le modèle, l'API attend `stop` ou `cancel`. La table par modèle de
+[renault-api](https://github.com/hacf-fr/renault-api) (`kamereon/models.py`, `set_ac_stop`) indique :
+
+| Action | Modèles |
+|---|---|
+| `stop` | Mégane E-Tech, R5, Alpine A290, Spring |
+| `cancel` | R4, Master E-Tech, Zoé phase 1 |
+
+renault-api précise ne pas avoir pu le vérifier sur tous les véhicules, et ne documente pas la Scénic E-Tech ni la Zoé phase 2.
+
+**Scénic E-Tech : `stop`, vérifié sur une voiture** (model code `XCB1SE`, novembre 2026). L'API accepte aussi `cancel`
+(réponse `HvacStart` avec un `id`), mais la climatisation continue de tourner. Une action acceptée sans effet ne peut
+donc pas être détectée, et une table par modèle fausse ne se corrigerait jamais d'elle-même.
+
+`RenaultHvacSource.stop()` envoie donc toujours les deux actions, quel que soit le modèle : `stop`, puis `cancel`.
+L'arrêt est réussi si l'API accepte au moins l'une des deux. Chaque arrêt coûte deux appels à l'API (quota Kamereon).
+L'envoi de `cancel` juste après `stop` n'a pas été vérifié sur une voiture.
+
+La feuille signale que l'arrêt est une fonction expérimentale (`hvacStopExperimental`).
 
 ## Stockage
 
@@ -81,6 +108,16 @@ que le car loader Hyundai récupère déjà pour la batterie. Pour éviter un de
 
 ## Tests
 
-- `__tests__/packages/kelec-hvac/hvacServices.test.ts` : températures, `HvacStatus`, préférences (nouvelle clé, valeur hors plage), sources Renault (cache, erreur) et Hyundai (`airCtrlOn`).
-- Tests d'intégration existants : `__tests__/CarView/HVACCard/HVACCard.renault.test.tsx`, `HVACCard.hyundai.test.tsx` (dont affichage « en cours » avec `airCtrlOn` à `true` / `false`), `DemoAccount.test.tsx`.
+- `__tests__/packages/kelec-hvac/hvacServices.test.ts` : températures, `HvacStatus`, préférences (nouvelle clé, valeur hors plage), sources Renault (cache, erreur, arrêt : « stop » puis « cancel », une seule action acceptée, double refus) et Hyundai (`airCtrlOn`, pas d'arrêt).
+- Tests d'intégration : `__tests__/CarView/HVACCard/HVACCard.renault.test.tsx` (dont avertissement et bouton d'arrêt absents quand la climatisation est éteinte, arrêt quand elle tourne), `HVACCard.hyundai.test.tsx` (dont affichage « en cours » avec `airCtrlOn` à `true` / `false`), `DemoAccount.test.tsx`.
+
+## Traductions à ajouter
+
+Clés nouvelles, absentes de `localizations.json` (en attendant, `getTranslation` affiche la clé) :
+
+| Clé | Utilisation | Texte proposé (fr) |
+|---|---|---|
+| `stopPreHeat` | bouton d'arrêt de la feuille | Arrêter le confort thermique |
+| `preHeatStopped` | alerte après un arrêt réussi | Le confort thermique a été arrêté |
+| `hvacStopExperimental` | avertissement au-dessus du bouton d'arrêt | L'arrêt du confort thermique est expérimental et peut ne pas fonctionner sur tous les modèles. |
 
