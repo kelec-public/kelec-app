@@ -85,7 +85,7 @@ private fun TempoDayView(day: TempoDay, withPrices: Boolean, modifier: GlanceMod
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = Formatting.dayMonth(day.date),
+            text = Formatting.dayMonth(LocalContext.current, day.date),
             style = TextStyle(color = foreground, fontSize = 18.sp, fontWeight = FontWeight.Bold),
         )
         Text(

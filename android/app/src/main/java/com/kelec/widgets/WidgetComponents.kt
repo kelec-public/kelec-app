@@ -110,7 +110,8 @@ fun BatteryBar(battery: BatteryStatus, height: Int = 10) {
 /** Heure de la dernière mise à jour avec l'icône de rechargement ; la toucher relance le chargement. */
 @Composable
 fun LastRefreshLabel(battery: BatteryStatus, fontSize: TextUnit = 11.sp) {
-    val text = Formatting.parseTimestamp(battery.timestamp)?.let { Formatting.lastRefresh(it) } ?: "--:--"
+    val context = LocalContext.current
+    val text = Formatting.parseTimestamp(battery.timestamp)?.let { Formatting.lastRefresh(context, it) } ?: "--:--"
     Row(
         modifier = GlanceModifier.clickable(actionRunCallback<RefreshWidgetsAction>()),
         verticalAlignment = Alignment.CenterVertically,
