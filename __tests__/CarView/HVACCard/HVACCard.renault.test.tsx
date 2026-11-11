@@ -331,15 +331,13 @@ test('should stop hvac when it is running', async () => {
     });
 
     await fireEventAsync.press(getByTestId('HVACCardButton'));
-    // le texte sera ajouté par les mainteneurs : la clé s'affiche en attendant
-    expect(within(getByTestId('hvacStopExperimentalWarning')).getByText('hvacStopExperimental')).toBeDefined();
+    expect(within(getByTestId('hvacStopExperimentalWarning')).getByText(/expérimental/)).toBeDefined();
     await fireEventAsync.press(getByTestId('stopButton'));
 
     await waitFor(() => {
         // toujours « stop » puis « cancel », quel que soit le modèle
         expect(mockStopHVAC.mock.calls.slice(-2)).toEqual([['vin1', 'stop'], ['vin1', 'cancel']]);
-        // le texte sera ajouté par les mainteneurs : la clé s'affiche en attendant
-        expect(Alert.alert).toHaveBeenLastCalledWith("Informations envoyées", "preHeatStopped");
+        expect(Alert.alert).toHaveBeenLastCalledWith("Informations envoyées", "La demande d’arrêt du confort thermique a été envoyée.");
     });
     // the modal should now be closed
     await waitFor(() => {
