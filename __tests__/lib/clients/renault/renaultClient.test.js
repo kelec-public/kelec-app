@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CarMaker } from '../../../../src/lib/clients/accounts/account';
 import RenaultClient from '../../../../src/lib/clients/carMakers/renaultClient';
-import { HVACStatusEnum } from '../../../../src/lib/clients/carMakers/renaultEnums';
+import { HVACStatusEnum, HvacStopAction } from '../../../../src/lib/clients/carMakers/renaultEnums';
 import { describe, it, expect, jest, beforeEach } from '@jest/globals';
 
 
@@ -1459,6 +1459,85 @@ describe('getChargeSettings', () => {
     });
 });
 
+
+describe('stopHVAC', () => {
+    const gigyaResponse = (statusCode) => ({
+        json: jest.fn().mockResolvedValueOnce({
+            statusCode,
+            data: {
+                personId: "personId"
+            },
+            sessionInfo: {
+                cookieName: "cookieName",
+                cookieValue: "cookieValue"
+            }
+        })
+    });
+    const jwtResponse = (statusCode) => ({
+        json: jest.fn().mockResolvedValueOnce({
+            statusCode,
+            id_token: "id_token"
+        })
+    });
+
+    it('should not connect to gigya', async () => {
+        global.fetch = jest.fn().mockResolvedValueOnce(gigyaResponse(401));
+        const hasStopped = await renaultClient.stopHVAC("vin", HvacStopAction.STOP);
+        expect(hasStopped).toBe(false);
+        expect(global.fetch).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not connect to jwtToken', async () => {
+        global.fetch = jest.fn()
+            .mockResolvedValueOnce(gigyaResponse(200))
+            .mockResolvedValueOnce(jwtResponse(401));
+        const hasStopped = await renaultClient.stopHVAC("vin", HvacStopAction.STOP);
+        expect(hasStopped).toBe(false);
+        expect(global.fetch).toHaveBeenCalledTimes(2);
+    });
+
+    it.each([HvacStopAction.STOP, HvacStopAction.CANCEL])('should send the %s action', async (action) => {
+        global.fetch = jest.fn()
+            .mockResolvedValueOnce(gigyaResponse(200))
+            .mockResolvedValueOnce(jwtResponse(200))
+            .mockResolvedValueOnce({
+                json: jest.fn().mockResolvedValueOnce({
+                    data: {
+                        type: "HvacStart",
+                        id: "-----",
+                        attributes: { action }
+                    }
+                })
+            });
+        const hasStopped = await renaultClient.stopHVAC("vin", action);
+        expect(hasStopped).toBe(true);
+        const [url, options] = global.fetch.mock.calls[2];
+        expect(url).toContain('/cars/vin/actions/hvac-start');
+        expect(options.method).toBe('POST');
+        expect(options.headers['x-gigya-id_token']).toBe('id_token');
+        expect(JSON.parse(options.body)).toEqual({ data: { type: 'HvacStart', attributes: { action } } });
+    });
+
+    it('should not have stopped HVAC when the server refuses', async () => {
+        global.fetch = jest.fn()
+            .mockResolvedValueOnce(gigyaResponse(200))
+            .mockResolvedValueOnce(jwtResponse(200))
+            .mockResolvedValueOnce({
+                json: jest.fn().mockResolvedValueOnce({ error: true })
+            });
+        const hasStopped = await renaultClient.stopHVAC("vin", HvacStopAction.STOP);
+        expect(hasStopped).toBe(false);
+    });
+
+    it('should not have stopped HVAC without network', async () => {
+        global.fetch = jest.fn()
+            .mockResolvedValueOnce(gigyaResponse(200))
+            .mockResolvedValueOnce(jwtResponse(200))
+            .mockRejectedValueOnce("error");
+        const hasStopped = await renaultClient.stopHVAC("vin", HvacStopAction.STOP);
+        expect(hasStopped).toBe(false);
+    });
+});
 
 describe('get hvac status', () => {
     it('shoul\'d not connect to gigya', async () => {

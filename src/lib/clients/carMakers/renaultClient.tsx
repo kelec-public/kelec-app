@@ -860,15 +860,15 @@ class RenaultClient extends CarMakerClient {
     }
 
     stopHVAC = async (vin: string, action: HvacStopAction): Promise<boolean> => {
-        const gigyaToken = await this.getGigyaToken();
-        if (!gigyaToken.canLogin) {
+        const { canLogin: gigyaOk, cookieValue } = await this.getGigyaToken();
+        if (!gigyaOk || cookieValue === undefined) {
             return false;
         }
-        const jwtToken = await this.getJWTToken(gigyaToken.cookieValue!);
-        if (!jwtToken.canLogin) {
+        const { canLogin: jwtOk, jwtToken } = await this.getJWTToken(cookieValue);
+        if (!jwtOk || jwtToken === undefined) {
             return false;
         }
-        return await this.stopHVACApi(jwtToken.jwtToken!, vin, action);
+        return this.stopHVACApi(jwtToken, vin, action);
     }
 
     getChargesHistory = async (vin: string): Promise<RenaultStatus> => {
