@@ -42,7 +42,7 @@
 "| %lldkm" = "| %lldkm";
 
 /* No comment provided by engineer. */
-"watchAddVehicleOnIphone" = "Fügen Sie der App auf dem iPhone ein Fahrzeug hinzu";
+"watchAddVehicleOnIphone" = "Füge der App auf dem iPhone ein Fahrzeug hinzu";
 
 /* No comment provided by engineer. */
 "widgetServerError" = "Es kann keine Verbindung zum Server hergestellt werden";
@@ -51,25 +51,25 @@
 "carMakerServerError %@" = "Es kann keine Verbindung zum Server hergestellt werden %@";
 
 /* No comment provided by engineer. */
-"watchOpenIphoneToSync" = "Öffnen Sie die App auf dem iPhone, um sie zu synchronisieren";
+"watchOpenIphoneToSync" = "Öffne die App auf dem iPhone, um sie zu synchronisieren";
 
 /* No comment provided by engineer. */
 "refresh" = "Aktualisierung";
 
 /* No comment provided by engineer. */
-"widgetHomeScreenDescription" = "Führt Informationen von Ihrem Renault E-Tech auf Ihrem Startbildschirm zusammen";
+"widgetHomeScreenDescription" = "Führt Informationen von deinem Renault E-Tech auf deinem Startbildschirm zusammen";
 
 /* No comment provided by engineer. */
-"widgetLockScreenDescription" = "Führt Informationen von Ihrem Renault E-Tech auf Ihrem Sperrbildschirm zusammen";
+"widgetLockScreenDescription" = "Führt Informationen von deinem Renault E-Tech auf deinem Sperrbildschirm zusammen";
 
 /* No comment provided by engineer. */
 "Renault E-Tech" = "Renault E-Tech";
 
 /* No comment provided by engineer. */
-"widgetNoCarSelected" = "Sie müssen zunächst in der App ein Auto auswählen";
+"widgetNoCarSelected" = "Du musst zunächst in der App ein Auto auswählen";
 
 /* No comment provided by engineer. */
-"widgetNotLoggedIn" = "Sie müssen sich zunächst bei der App anmelden";
+"widgetNotLoggedIn" = "Du musst dich zunächst bei der App anmelden";
 
 "CHARGE PLANIFIÉE | " = "GEPLANTE LADUNG | ";
 
@@ -95,7 +95,7 @@
 
 "error" = "Fehler";
 
-"commandSendError" = "Fehler beim Senden des Kommandos an den Server. Bitte versuchen Sie es später noch einmal.";
+"commandSendError" = "Fehler beim Senden des Kommandos an den Server. Bitte versuche es später noch einmal.";
 
 "Car" = "Fahrzeug";
 
@@ -106,10 +106,10 @@
 "launchPreHeatTemperatureDescription" = "Gewünschte Innenraumtemperatur in °C.";
 "launchPreHeatSummary ${car} ${temperature}" = "Vorklimatisierung von ${car} auf ${temperature} °C starten";
 "preHeatLaunchedOn %@ %@" = "Vorklimatisierung von %1$@ auf %2$@ °C gestartet.";
-"preHeatLaunchError %@" = "Die Vorklimatisierung von %@ konnte nicht gestartet werden. Bitte versuchen Sie es später noch einmal.";
+"preHeatLaunchError %@" = "Die Vorklimatisierung von %@ konnte nicht gestartet werden. Bitte versuche es später noch einmal.";
 "launchPreHeatControlDescription" = "Startet die Vorklimatisierung des gewählten Fahrzeugs mit der gewählten Temperatur.";
 
-"areYouSureYouWantToLaunchPreheating" = "Sind Sie sicher, dass Sie die Vorklimatisierung starten möchten?";
+"areYouSureYouWantToLaunchPreheating" = "Bist du sicher, dass du die Vorklimatisierung starten möchtest?";
 
 "confirm" = "Bestätigen";
 
@@ -120,16 +120,16 @@
 "tempoLoadingError" = "FEHLER BEIM LADEN DER DATEN";
 "watchCarLocationError" = "Standort des Fahrzeugs kann nicht abgerufen werden";
 "tempoLockScreenWidgetDescription" = "Tempo-Anzeige";
-"tempoWidgetDescription" = "Führt Informationen von Ihrem Renault E-Tech mit der Tempo-Anzeige auf Ihrem Startbildschirm zusammen";
-"tempo2DaysWidgetDescription" = "Führt Informationen von Ihrem Renault E-Tech mit der Tempo-Anzeige für 2 Tage auf Ihrem Startbildschirm zusammen";
-"watchWidgetDescription" = "Ladestand Ihres Renault E-Tech";
+"tempoWidgetDescription" = "Führt Informationen von deinem Renault E-Tech mit der Tempo-Anzeige auf deinem Startbildschirm zusammen";
+"tempo2DaysWidgetDescription" = "Führt Informationen von deinem Renault E-Tech mit der Tempo-Anzeige für 2 Tage auf deinem Startbildschirm zusammen";
+"watchWidgetDescription" = "Ladestand deines Renault E-Tech";
 "watchSettings" = "Einstellungen";
 "watchWidgetCar" = "Fahrzeug in den Widgets";
 
 "getCarStatus" = "Fahrzeugstatus abrufen";
 "getCarStatusDescription" = "Gibt Akkustand, Reichweite, Ladestatus usw. des gewählten Fahrzeugs für die nächsten Aktionen zurück. Verriegelung und Ladelimit bleiben bei Renault, Dacia und Alpine leer, da deren API sie nicht liefert.";
 "getCarStatusSummary ${car}" = "Status von ${car} abrufen";
-"getCarStatusCarDescription" = "Das Fahrzeug, dessen Status Sie abrufen möchten.";
+"getCarStatusCarDescription" = "Das Fahrzeug, dessen Status du abrufen möchtest.";
 "carStatus" = "Fahrzeugstatus";
 "carStatusBatteryLevel" = "Akkustand";
 "carStatusRange" = "Reichweite";

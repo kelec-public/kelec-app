@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Kelec</string>
-    <string name="app_widget_description">Regroupe les informations de votre Renault E-Tech sur votre écran d\'accueil</string>
+    <string name="app_widget_description">Führt Informationen von deinem Renault E-Tech auf deinem Startbildschirm zusammen</string>
     <string name="widget_image_description">Car logo manufacturer</string>
     <string name="widget_time_remaining_image_description">Remaining time image</string>
     <string name="widget_end_time_image_description">End time image</string>
@@ -12,12 +12,12 @@
     <string name="widget_battery_autonomy">77 km</string>
     <string name="time_remaining_text">5h38</string>
     <string name="end_time_text">04:34</string>
-    <string name="widget_configure_subtitle">Wählen Sie das Auto aus, das in diesem Widget angezeigt werden soll</string>
-    <string name="widget_configure_title">Wählen Sie ein Auto aus</string>
+    <string name="widget_configure_subtitle">Wähle das Auto aus, das in diesem Widget angezeigt werden soll</string>
+    <string name="widget_configure_title">Wähle ein Auto aus</string>
 
     <!-- Widgets Tempo -->
-    <string name="tempo_widget_description">Führt Informationen von Ihrem Renault E-Tech mit der Tempo-Anzeige auf Ihrem Startbildschirm zusammen</string>
-    <string name="tempo_2days_widget_description">Führt Informationen von Ihrem Renault E-Tech mit der Tempo-Anzeige für 2 Tage auf Ihrem Startbildschirm zusammen</string>
+    <string name="tempo_widget_description">Führt Informationen von deinem Renault E-Tech mit der Tempo-Anzeige auf deinem Startbildschirm zusammen</string>
+    <string name="tempo_2days_widget_description">Führt Informationen von deinem Renault E-Tech mit der Tempo-Anzeige für 2 Tage auf deinem Startbildschirm zusammen</string>
     <string name="tempo_blue">BLAU</string>
     <string name="tempo_white">WEISS</string>
     <string name="tempo_red">ROT</string>
