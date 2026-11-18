@@ -595,6 +595,8 @@ test('should set the electricity tariff', async () => {
 
     await user.press(screen.getByTestId('testSettingRowelectrical-services'));
     await waitFor(() => expect(screen.getByTestId('noTariff')).toBeDefined());
+    // la voiture concernée est rappelée sous le titre
+    expect(screen.getByTestId('tariffVehicleName').props.children).toBe('model1 · AA0001AA');
     await user.press(screen.getByTestId('currencyButtonSEK'));
 
     // premier tarif : prix fixe, depuis le début (bouton de la liste vide)
@@ -604,11 +606,10 @@ test('should set the electricity tariff', async () => {
     await user.press(screen.getByTestId('saveTariffButton'));
 
     await waitFor(() => expect(screen.getByTestId('tariffRow0')).toBeDefined());
-    const stored = JSON.parse(await AsyncStorage.getItem('electricityTariffs') ?? 'null');
-    expect(stored).toMatchObject({
-        currency: 'SEK',
-        tariffs: [{ validFrom: null, kind: 'flat', pricePerKwh: 1.5 }],
-    });
+    // une seule voiture : ses tarifs s'ouvrent directement ; la devise est commune à toute l'app
+    expect(JSON.parse(await AsyncStorage.getItem('electricityTariffs') ?? 'null')).toEqual({ currency: 'SEK' });
+    const stored = { tariffs: JSON.parse(await AsyncStorage.getItem('vin1/electricityTariffs') ?? 'null') };
+    expect(stored.tariffs).toMatchObject([{ validFrom: null, kind: 'flat', pricePerKwh: 1.5 }]);
     expect(stored.tariffs[0].id).toEqual(expect.any(String));
 
     // passage en heures pleines / creuses
@@ -622,8 +623,8 @@ test('should set the electricity tariff', async () => {
     await user.press(screen.getByTestId('saveTariffButton'));
 
     await waitFor(async () => {
-        const updated = JSON.parse(await AsyncStorage.getItem('electricityTariffs') ?? 'null');
-        expect(updated.tariffs).toEqual([{
+        const updated = JSON.parse(await AsyncStorage.getItem('vin1/electricityTariffs') ?? 'null');
+        expect(updated).toEqual([{
             id: stored.tariffs[0].id, validFrom: null, kind: 'peakOffPeak',
             peakPrice: 2, offPeakPrice: 1, offPeakSlots: [{ start: '22:00', end: '06:00' }],
         }]);
@@ -640,4 +641,43 @@ test('should set the electricity tariff', async () => {
     await user.press(screen.getByTestId('tariffListBackButton'));
     await waitFor(() => expect(screen.queryByTestId('tariffListView')).toBeNull());
     expect(screen.getByTestId('settingsView')).toBeDefined();
+});
+
+test('with several cars, the electricity tariff is set for the chosen car', async () => {
+    const car1 = new RenaultCar('vin1', 'model1', 'image1', CarMaker.RENAULT, 'AA0001AA');
+    // pas de plaque : la voiture est désignée par son VIN
+    const car2 = new RenaultCar('vin2', 'model2', 'image2', CarMaker.RENAULT);
+    const userAccount = new UserAccount([
+        new Account('email', 'passwod', CarMaker.RENAULT, car1),
+        new Account('email', 'passwod', CarMaker.RENAULT, car2),
+    ]);
+    await AsyncStorage.setItem('account', JSON.stringify(userAccount));
+    const user = userEvent.setup();
+    render(<App />);
+
+    await waitFor(() => expect(hasTab('account')).toBe(true));
+    await selectTab('settings');
+    await waitFor(() => expect(screen.getByTestId('settingsView')).toBeDefined());
+
+    // choix de la voiture, puis ses tarifs
+    await user.press(screen.getByTestId('testSettingRowelectrical-services'));
+    await user.press(await screen.findByTestId('tariffVehicleButtonvin2'));
+    await waitFor(() => expect(screen.getByTestId('noTariff')).toBeDefined());
+    expect(screen.getByTestId('tariffVehicleName').props.children).toBe('model2 · vin2');
+    await user.press(screen.getByTestId('addFirstTariffButton'));
+    await waitFor(() => expect(screen.getByTestId('tariffEditorView')).toBeDefined());
+    await user.type(screen.getByTestId('priceInputpricePerKwh'), '0,3');
+    await user.press(screen.getByTestId('saveTariffButton'));
+    await waitFor(() => expect(screen.getByTestId('tariffRow0')).toBeDefined());
+
+    expect(JSON.parse(await AsyncStorage.getItem('vin2/electricityTariffs') ?? 'null'))
+        .toMatchObject([{ validFrom: null, kind: 'flat', pricePerKwh: 0.3 }]);
+    expect(await AsyncStorage.getItem('vin1/electricityTariffs')).toBeNull();
+
+    // l'autre voiture n'a toujours pas de tarif
+    await user.press(screen.getByTestId('tariffListBackButton'));
+    await waitFor(() => expect(screen.queryByTestId('tariffListView')).toBeNull());
+    await user.press(screen.getByTestId('testSettingRowelectrical-services'));
+    await user.press(await screen.findByTestId('tariffVehicleButtonvin1'));
+    await waitFor(() => expect(screen.getByTestId('noTariff')).toBeDefined());
 });

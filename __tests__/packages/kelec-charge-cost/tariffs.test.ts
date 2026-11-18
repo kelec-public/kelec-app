@@ -113,25 +113,64 @@ describe("TariffRepository", () => {
         await AsyncStorage.clear();
     });
 
+    const stored = async (key: string) => JSON.parse(await AsyncStorage.getItem(key) ?? 'null');
+
     test("nothing stored: no tariff, in euros", async () => {
-        expect(await TariffRepository.get()).toEqual({ currency: 'EUR', tariffs: [] });
+        expect(await TariffRepository.get('vin1')).toEqual({ currency: 'EUR', tariffs: [] });
     });
 
-    test("listeners get each saved version until they unsubscribe", async () => {
+    test("listeners get each saved version, with its car, until they unsubscribe", async () => {
         const listener = jest.fn();
         const unsubscribe = TariffRepository.subscribe(listener);
-        await TariffRepository.save({ currency: 'EUR', tariffs: [flat('second', '2027-02-01'), flat('first', null)] });
-        expect(listener).toHaveBeenCalledWith({ currency: 'EUR', tariffs: [flat('first', null), flat('second', '2027-02-01')] });
+        await TariffRepository.save('vin1', { currency: 'EUR', tariffs: [flat('second', '2027-02-01'), flat('first', null)] });
+        expect(listener).toHaveBeenCalledWith({
+            vin: 'vin1',
+            settings: { currency: 'EUR', tariffs: [flat('first', null), flat('second', '2027-02-01')] },
+        });
         unsubscribe();
-        await TariffRepository.save({ currency: 'EUR', tariffs: [] });
+        await TariffRepository.save('vin1', { currency: 'EUR', tariffs: [] });
         expect(listener).toHaveBeenCalledTimes(1);
     });
 
-    test("saves under the global key, sorted", async () => {
-        await TariffRepository.save({ currency: 'NOK', tariffs: [flat('second', '2027-02-01'), flat('first', null)] });
-        const stored = JSON.parse(await AsyncStorage.getItem('electricityTariffs') ?? 'null');
-        expect(stored).toEqual({ currency: 'NOK', tariffs: [flat('first', null), flat('second', '2027-02-01')] });
-        expect(await TariffRepository.get()).toEqual(stored);
+    test("tariffs are saved per car, sorted; the currency is shared by all cars", async () => {
+        await AsyncStorage.setItem('electricityTariffsPerVehicle', 'true');
+        await TariffRepository.save('vin1', { currency: 'NOK', tariffs: [flat('second', '2027-02-01'), flat('first', null)] });
+        expect(await stored('vin1/electricityTariffs')).toEqual([flat('first', null), flat('second', '2027-02-01')]);
+        expect(await stored('electricityTariffs')).toEqual({ currency: 'NOK' });
+
+        expect(await TariffRepository.get('vin1')).toEqual({ currency: 'NOK', tariffs: [flat('first', null), flat('second', '2027-02-01')] });
+        // une autre voiture : pas de tarif, mais la même devise
+        expect(await TariffRepository.get('vin2')).toEqual({ currency: 'NOK', tariffs: [] });
+
+        await TariffRepository.save('vin2', { currency: 'SEK', tariffs: [flat('other', null, 0.3)] });
+        expect(await TariffRepository.get('vin1')).toEqual({ currency: 'SEK', tariffs: [flat('first', null), flat('second', '2027-02-01')] });
+    });
+
+    test("the former shared tariff is copied once to the cars already there", async () => {
+        const legacy = { currency: 'CHF', tariffs: [flat('second', '2027-02-01'), flat('first', null)] };
+        await AsyncStorage.setItem('electricityTariffs', JSON.stringify(legacy));
+        await AsyncStorage.setItem('vin2/electricityTariffs', JSON.stringify([flat('own', null, 0.3)]));
+
+        // avant la migration : l'ancien tarif commun s'applique
+        expect(await TariffRepository.get('vin1')).toEqual({ currency: 'CHF', tariffs: [flat('first', null), flat('second', '2027-02-01')] });
+
+        await TariffRepository.migrateToVehicles(['vin1', 'vin2']);
+        expect(await stored('vin1/electricityTariffs')).toEqual([flat('first', null), flat('second', '2027-02-01')]);
+        // une voiture qui a déjà ses tarifs les garde
+        expect(await stored('vin2/electricityTariffs')).toEqual([flat('own', null, 0.3)]);
+        // l'ancienne clé n'est pas effacée
+        expect(await stored('electricityTariffs')).toEqual(legacy);
+
+        // une voiture ajoutée ensuite démarre sans tarif, même si on relance la migration
+        await TariffRepository.migrateToVehicles(['vin1', 'vin2', 'vin3']);
+        expect(await TariffRepository.get('vin3')).toEqual({ currency: 'CHF', tariffs: [] });
+        expect(await AsyncStorage.getItem('vin3/electricityTariffs')).toBeNull();
+    });
+
+    test("nothing to copy: the migration is still marked done", async () => {
+        await TariffRepository.migrateToVehicles(['vin1']);
+        expect(await AsyncStorage.getItem('electricityTariffsPerVehicle')).toBe('true');
+        expect(await AsyncStorage.getItem('vin1/electricityTariffs')).toBeNull();
     });
 });
 

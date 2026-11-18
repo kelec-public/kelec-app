@@ -83,13 +83,13 @@ kelec-charge-history/
 
 ## Coût des charges
 
-Les tarifs sont ceux de [`kelec-charge-cost`](./charge-cost.md) (globaux), lus via son `index.ts` et mis à jour à chaque enregistrement
+Les tarifs sont ceux de la voiture, dans [`kelec-charge-cost`](./charge-cost.md) (VIN fourni par `ChargesHistoryProvider`, devise commune à l'app), lus via son `index.ts` et mis à jour à chaque enregistrement
 (au retour des pages des tarifs, ou depuis l'onglet Réglages).
 
 - `ChargeCard` : coût de la charge (`chargeCostText`), toujours sur sa propre ligne en bas à gauche ; à droite, le type de charge
   (`chargeCurrentType`) : « AC » avec la prise Type 2, « DC » avec la prise CCS2 (`isDCCharge`, vitesse moyenne ≥ 26 kW). En-tête du mois : total des charges affichées (`chargeIndexCost`).
 - Rien n'est affiché sans tarif ; une bannière (`setTariffBanner`) ouvre alors les tarifs. La feuille « … » a aussi un bouton « Tarif d'électricité ».
-- `ChargesHistoryView` reçoit `onOpenTariffs` de `CarsPageView`, qui enregistre les pages des tarifs (`TARIFF_LIST_ROUTE`, `TARIFF_EDITOR_ROUTE`).
+- `ChargesHistoryView` reçoit `onOpenTariffs` de `CarsPageView`, qui enregistre les pages des tarifs (`TARIFF_LIST_ROUTE`, `TARIFF_EDITOR_ROUTE`) et les ouvre pour cette voiture.
 - Session V2G : pas de coût. Charge fusionnée : somme du coût des sous-charges, chacune à ses horaires (HP / HC).
 - Le coût est calculé à l'affichage, jamais stocké : changer un tarif met à jour tout l'historique.
 

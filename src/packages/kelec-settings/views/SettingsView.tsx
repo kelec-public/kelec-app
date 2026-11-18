@@ -46,6 +46,16 @@ function SettingsView(): React.JSX.Element {
                 onSelect={controller.selectColorTheme}
                 onClose={controller.closeColorThemeModal}
             />
+            {/* tarifs de l'électricité : choix de la voiture (plusieurs voitures) */}
+            <ChoiceModal
+                visible={controller.isTariffVehicleModalOpen}
+                title={languageHandler.getTranslation("chooseTheCar")}
+                choices={controller.tariffVehicleChoices}
+                // aucune voiture présélectionnée (un VIN n'est jamais vide)
+                selected=""
+                onSelect={controller.openTariffs}
+                onClose={controller.closeTariffVehicleModal}
+            />
             <View
                 testID='settingsView'
                 style={[commonStyles.flex, { backgroundColor: theme.colors.background }]}>

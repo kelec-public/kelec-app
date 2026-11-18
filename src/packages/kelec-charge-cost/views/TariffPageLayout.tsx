@@ -9,6 +9,8 @@ type Props = {
     readonly testID: string;
     /** Titre déjà traduit. */
     readonly title: string;
+    /** Sous le titre : la voiture dont on affiche les tarifs. */
+    readonly subtitle?: string;
     readonly onBack: () => void;
     readonly backTestID: string;
     readonly action: PageHeaderAction;
@@ -28,7 +30,7 @@ const FOOTER_EDGES: Edge[] = Platform.OS === 'ios' ? ['bottom'] : [];
  * La barre d'onglets reste affichée : iOS décale le bas du contenu (`contentInsetAdjustmentBehavior`),
  * et sur Android la barre réserve déjà sa hauteur.
  */
-function TariffPageLayout({ testID, title, onBack, backTestID, action, children, footer }: Props): React.JSX.Element {
+function TariffPageLayout({ testID, title, subtitle, onBack, backTestID, action, children, footer }: Props): React.JSX.Element {
     const isDarkMode = useColorScheme() === 'dark';
 
     return (
@@ -38,7 +40,7 @@ function TariffPageLayout({ testID, title, onBack, backTestID, action, children,
             edges={['top', 'left', 'right']}
             style={[commonStyles.flex, { backgroundColor: getWhiteColour(isDarkMode) }]}
         >
-            <PageHeader title={title} onBack={onBack} backTestID={backTestID} action={action} />
+            <PageHeader title={title} subtitle={subtitle} subtitleTestID="tariffVehicleName" onBack={onBack} backTestID={backTestID} action={action} />
             <View style={commonStyles.navSeparator} />
             <ScrollView
                 contentInsetAdjustmentBehavior="automatic"

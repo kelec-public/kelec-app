@@ -1,7 +1,10 @@
+import { useVehicleName } from "../controllers/useVehicleName";
 import { useTariffEditor } from "../controllers/useTariffEditor";
 import TariffEditorView from "./TariffEditorView";
 
 type Props = {
+    /** Voiture dont on saisit un tarif. */
+    readonly vin: string;
     readonly tariffId?: string;
     readonly onBack: () => void;
     /** Après l'enregistrement ou la suppression (en général : retour à la liste). */
@@ -9,13 +12,15 @@ type Props = {
 };
 
 /** Page de saisie d'un tarif (route `TARIFF_EDITOR_ROUTE`). */
-function TariffEditorScreen({ tariffId, onBack, onDone }: Props): React.JSX.Element | null {
-    const controller = useTariffEditor(tariffId, onDone);
+function TariffEditorScreen({ vin, tariffId, onBack, onDone }: Props): React.JSX.Element | null {
+    const controller = useTariffEditor(vin, tariffId, onDone);
+    const vehicleName = useVehicleName(vin);
     const { settings, draft } = controller;
     if (!settings || !draft) return null;
 
     return (
         <TariffEditorView
+            vehicleName={vehicleName}
             draft={draft}
             tariffs={settings.tariffs}
             currency={settings.currency}

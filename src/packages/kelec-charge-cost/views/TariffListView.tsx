@@ -14,6 +14,8 @@ import Badge from "./Badge";
 import TariffCard from "./TariffCard";
 
 type Props = {
+    /** Voiture dont ce sont les tarifs (déjà mise en forme). */
+    readonly vehicleName?: string;
     readonly settings: TariffSettings;
     readonly onBack: () => void;
     readonly onSelectCurrency: (currency: Currency) => void;
@@ -22,7 +24,7 @@ type Props = {
 };
 
 /** Devise, puis une carte par tarif, le plus récent en haut. */
-function TariffListView({ settings, onBack, onSelectCurrency, onEditTariff, onAddTariff }: Props): React.JSX.Element {
+function TariffListView({ vehicleName, settings, onBack, onSelectCurrency, onEditTariff, onAddTariff }: Props): React.JSX.Element {
     const { languageHandler } = useContext(MainContext);
     const t = (key: string) => languageHandler.getTranslation(key);
     const today = toLocalDate(new Date());
@@ -31,6 +33,7 @@ function TariffListView({ settings, onBack, onSelectCurrency, onEditTariff, onAd
         <TariffPageLayout
             testID="tariffListView"
             title={t("electricityTariff")}
+            subtitle={vehicleName}
             onBack={onBack}
             backTestID="tariffListBackButton"
             action={{ icon: "add", onPress: onAddTariff, testID: "addTariffButton" }}

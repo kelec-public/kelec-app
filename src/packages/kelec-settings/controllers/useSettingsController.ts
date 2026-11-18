@@ -4,7 +4,7 @@ import { NavigationProp, useNavigation } from "@react-navigation/native";
 import MainContext from "../../../lib/Contexts/MainContext";
 import ColorTheme from "../../../lib/appPreferences/interface/colorTheme";
 import { BooleanPreference, COLOR_THEMES, usePreferences } from "../../kelec-preferences";
-import { logOut as clearSession } from "../../kelec-garage";
+import { carLabel, logOut as clearSession } from "../../kelec-garage";
 import { ExternalLinks, openExternalLink } from "../services/externalLinks";
 import { syncWithAppleWatch } from "../services/appleWatchSync";
 import { exportWidgetLogs } from "../services/widgetLogsExport";
@@ -30,6 +30,7 @@ export function useSettingsController() {
     const [isTimezoneModalOpen, setIsTimezoneModalOpen] = useState(false);
     const [isColorThemeModalOpen, setIsColorThemeModalOpen] = useState(false);
     const [isDebugZoneOpen, setIsDebugZoneOpen] = useState(false);
+    const [isTariffVehicleModalOpen, setIsTariffVehicleModalOpen] = useState(false);
 
     const logOut = useCallback(async () => {
         await clearSession(currentUser);
@@ -54,6 +55,22 @@ export function useSettingsController() {
     const colorThemeChoices: Choice<ColorTheme>[] = COLOR_THEMES.map(theme => (
         { value: theme, label: t(COLOR_THEME_LABELS[theme]), testID: "colorThemeButton" + theme }
     ));
+
+    // les tarifs de l'électricité sont propres à chaque voiture : on choisit d'abord la voiture (sauf s'il n'y en a qu'une)
+    const cars = currentUser.getCars().flatMap(account => account.getCar() ?? []);
+    const tariffVehicleChoices: Choice<string>[] = cars.map(car => (
+        { value: car.getVin(), label: carLabel(car), testID: "tariffVehicleButton" + car.getVin() }
+    ));
+
+    const openTariffs = (vin: string) => {
+        setIsTariffVehicleModalOpen(false);
+        navigation.navigate(TARIFF_LIST_ROUTE, { vin });
+    };
+
+    const openTariffsOrChooseVehicle = () => {
+        if (cars.length === 1) openTariffs(cars[0].getVin());
+        else setIsTariffVehicleModalOpen(true);
+    };
 
     const toggle = (field: BooleanPreference) =>
         () => { update({ [field]: !preferences[field] }); };
@@ -134,7 +151,8 @@ export function useSettingsController() {
             items: [
                 {
                     title: t("electricityTariff"), icon: "electrical-services", type: OptionType.NAVIGATE,
-                    onPress: () => navigation.navigate(TARIFF_LIST_ROUTE),
+                    visible: cars.length > 0,
+                    onPress: openTariffsOrChooseVehicle,
                 },
             ],
         },
@@ -162,5 +180,9 @@ export function useSettingsController() {
         selectColorTheme,
         isDebugZoneOpen,
         setIsDebugZoneOpen,
+        tariffVehicleChoices,
+        isTariffVehicleModalOpen,
+        closeTariffVehicleModal: () => setIsTariffVehicleModalOpen(false),
+        openTariffs,
     };
 }

@@ -28,7 +28,8 @@ kelec-garage/                         (domaine partagé, importé via index.ts)
 │   ├── carTypeRepository.ts    Modèle technique de la voiture (<vin>/carType)
 │   ├── carImageRepository.ts   Image de la voiture : get / save (+ envoi aux widgets natifs), toImageUri
 │   ├── garageService.ts        moveCar, renameCar, deleteCar (modifie le UserAccount + enregistre)
-│   └── session.ts              logOut : efface les identifiants du trousseau, tout le stockage local et le compte des widgets
+│   ├── session.ts              logOut : efface les identifiants du trousseau, tout le stockage local et le compte des widgets
+│   └── carLabel.ts             carLabel (« modèle · plaque », ou « modèle · VIN » sans plaque), findCar (voiture du garage par VIN)
 ├── controllers/
 │   └── useCarImage.ts          Hook : image d'une voiture
 └── index.ts
