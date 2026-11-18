@@ -1,5 +1,5 @@
 import { computeCost } from "../../../src/packages/kelec-charge-cost/services/chargeCost";
-import { FlatTariff, PeakOffPeakTariff, Tariff } from "../../../src/packages/kelec-charge-cost/models/Tariff";
+import { FlatTariff, OffPeakSlot, PeakOffPeakTariff, Tariff } from "../../../src/packages/kelec-charge-cost/models/Tariff";
 
 // jest.config.js : TZ = Europe/Paris. Les dates ci-dessous sont en heure locale.
 const local = (iso: string) => new Date(iso);
@@ -85,5 +85,46 @@ describe("computeCost", () => {
         const tariff = peakOffPeak([["22:00", "06:00"]]);
         expect(cost("2026-03-01T23:00", "2026-03-01T23:00", 5, [tariff])).toBeCloseTo(5 * 0.2);
         expect(cost("2026-03-01T12:00", "2026-03-01T12:00", 5, [tariff])).toBeCloseTo(5 * 0.3);
+    });
+
+    describe("off-peak hours depending on the day", () => {
+        // 2026-03-06 : vendredi, 03-07 : samedi, 03-08 : dimanche, 03-09 : lundi
+        const withSlots = (offPeakSlots: OffPeakSlot[]): PeakOffPeakTariff =>
+            ({ id: 'days', validFrom: null, kind: 'peakOffPeak', peakPrice: 0.3, offPeakPrice: 0.2, offPeakSlots });
+        const weekNights: OffPeakSlot = { start: '22:00', end: '06:00', days: [1, 2, 3, 4, 5] };
+
+        test("a slot only counts on its days", () => {
+            const tariff = withSlots([weekNights]);
+            expect(cost("2026-03-05T23:00", "2026-03-06T01:00", 2, [tariff])).toBeCloseTo(2 * 0.2);
+            expect(cost("2026-03-07T23:00", "2026-03-08T01:00", 2, [tariff])).toBeCloseTo(2 * 0.3);
+        });
+
+        test("a slot over midnight ends the next morning, on a day it does not start", () => {
+            const tariff = withSlots([weekNights]);
+            // vendredi soir → samedi matin : creuses
+            expect(cost("2026-03-06T23:00", "2026-03-07T05:00", 6, [tariff])).toBeCloseTo(6 * 0.2);
+            // dimanche soir → lundi matin : pas de plage le dimanche
+            expect(cost("2026-03-08T23:00", "2026-03-09T05:00", 6, [tariff])).toBeCloseTo(6 * 0.3);
+        });
+
+        test("whole weekend off-peak, week nights off-peak", () => {
+            const weekend: OffPeakSlot[] = [
+                { start: '00:00', end: '12:00', days: [6, 0] },
+                { start: '12:00', end: '00:00', days: [6, 0] },
+            ];
+            const tariff = withSlots([weekNights, ...weekend]);
+            // samedi 08:00 → dimanche 20:00 : 36 h creuses
+            expect(cost("2026-03-07T08:00", "2026-03-08T20:00", 36, [tariff])).toBeCloseTo(36 * 0.2);
+            // lundi 04:00 → 10:00 : rien depuis dimanche (pas de plage de nuit le dimanche), 6 h pleines
+            expect(cost("2026-03-09T04:00", "2026-03-09T10:00", 6, [tariff])).toBeCloseTo(6 * 0.3);
+            // vendredi 20:00 → samedi 02:00 : 2 h pleines puis 4 h creuses
+            expect(cost("2026-03-06T20:00", "2026-03-07T02:00", 6, [tariff])).toBeCloseTo(2 * 0.3 + 4 * 0.2);
+        });
+
+        test("a charge without duration uses the price of its day", () => {
+            const tariff = withSlots([weekNights]);
+            expect(cost("2026-03-06T23:00", "2026-03-06T23:00", 5, [tariff])).toBeCloseTo(5 * 0.2);
+            expect(cost("2026-03-07T23:00", "2026-03-07T23:00", 5, [tariff])).toBeCloseTo(5 * 0.3);
+        });
     });
 });

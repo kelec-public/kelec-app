@@ -16,7 +16,7 @@ kelec-charge-cost/
 │   ├── chargeCost.ts          computeCost(début, fin, kWh, tarifs) (pur)
 │   ├── tariffList.ts          Ajout / modification par id, suppression, fin et état (terminé, en cours, à venir) d'un tarif (pur)
 │   ├── tariffRepository.ts    Lecture / écriture (tarifs par VIN, devise globale), migration de l'ancien tarif commun, abonnement aux enregistrements
-│   ├── offPeakSummary.ts      Plages sur la journée (frise), heures pleines (le reste de la journée), total par jour, économie en %
+│   ├── offPeakSummary.ts      Plages sur la journée (frise), heures pleines (le reste de la journée), total par jour / semaine, jours aux mêmes plages, noms des jours, économie en %
 │   └── priceFormat.ts         Montants dans la devise, symbole de la devise, dates locales
 ├── controllers/
 │   ├── useTariffSettings.ts   Tarifs d'une voiture lus au montage, puis mis à jour à chaque enregistrement (aussi utilisé par l'historique)
@@ -31,6 +31,7 @@ kelec-charge-cost/
 │   ├── TariffEditorView.tsx      Période, type, carte des prix, carte des plages d'heures creuses
 │   ├── TariffCard.tsx            État, type, période, une ligne par prix
 │   ├── PriceRow.tsx, OffPeakTimeline.tsx, PickerButton.tsx (date ou heure), Badge.tsx, IconBox.tsx
+│   ├── DayPicker.tsx             Jours d'une plage d'heures creuses (une pastille par jour, du lundi au dimanche)
 │   ├── ChoicePills.tsx           Choix sur une ligne qui défile (devise, type de tarif)
 │   └── tariffLabels.ts           Libellé de la période
 ├── routes.ts                  TARIFF_LIST_ROUTE, TARIFF_EDITOR_ROUTE, TariffListRouteParams, TariffEditorRouteParams
@@ -63,7 +64,9 @@ Les paramètres de route sont sérialisables (`vin`, et `tariffId` pour la saisi
   période, puis les prix : heures pleines avec leurs plages (le reste de la journée), heures creuses avec leurs plages, leur durée et l'économie en %.
 - **Page de saisie** : « Période d'application » (« Depuis le début », ou la date de début à droite, puis la fin si un tarif suit),
   type de tarif, carte « Prix par kWh » (badge « -28 % » quand les heures creuses coûtent moins cher),
-  et pour les heures pleines / creuses une carte des plages : total par jour, frise de 00h à 24h, une ligne par plage, ajout en pointillés.
+  et pour les heures pleines / creuses une carte des plages : total par jour, frise de 00h à 24h, une ligne par plage (heures, puis ses jours), ajout en pointillés.
+  Quand les plages changent selon le jour : total par semaine, et une frise par groupe de jours aux mêmes plages (« lun. – ven. », « sam., dim. »).
+  Sur la carte de la liste, les plages sont alors données par groupe de jours (un jour sans heures creuses : « toute la journée » en heures pleines).
 - **Grande police** : les titres de carte passent à la ligne ; les lignes de choix (devise, type de tarif) défilent horizontalement.
 - Pas de `Modal` de React Native : avec une pile native à l'intérieur, la modale ne recevait plus aucun appui sur iOS.
 
@@ -83,6 +86,11 @@ Les paramètres de route sont sérialisables (`vin`, et `tariffId` pour la saisi
 - **Heures creuses** : une ou plusieurs plages « HH:MM → HH:MM », éventuellement à cheval sur minuit. Début et fin égaux : refusé.
   **Les plages ne peuvent pas se chevaucher** (refusé à l'enregistrement, ex. 22:00 → 06:00 puis 03:00 → 07:00) ; elles peuvent se toucher (06:00).
   Le calcul ne compte de toute façon qu'une fois un temps couvert par deux plages.
+- **Jours des heures creuses** : chaque plage a ses jours (`days`, numérotés comme `Date.getDay()`, 0 = dimanche). Ce sont les jours où elle **commence** :
+  22:00 → 06:00 du lundi au vendredi couvre aussi le samedi matin, mais pas le lundi matin. Pas de champ `days` : tous les jours
+  (les tarifs enregistrés avant les jours n'en ont pas, et il n'est pas écrit pour « tous les jours »). Au moins un jour (le dernier ne se décoche pas).
+  Le chevauchement est vérifié sur la semaine (22:00 → 06:00 le vendredi chevauche 03:00 → 07:00 le samedi).
+  Une journée entière se saisit en deux plages (00:00 → 12:00 et 12:00 → 00:00), car début et fin égaux restent refusés.
 - **Calcul** : l'énergie est répartie au prorata du temps (puissance supposée constante), entre tarifs et entre heures pleines / creuses.
   Les jours sont construits en heure locale : la nuit d'un changement d'heure dure bien 7 h ou 9 h. Charge sans durée : tout au prix du début.
 - Les coûts ne sont jamais stockés : modifier un tarif met à jour tous les coûts.
@@ -107,8 +115,11 @@ Les lectures et écritures attendent une migration en cours. En cas d'échec, ri
 ## Tests
 
 - `__tests__/packages/kelec-charge-cost/chargeCost.test.ts` : prix fixe, plage sur minuit, prorata HP / HC, plusieurs plages,
-  plages qui se chevauchent, charge sur plusieurs jours, changement d'heure, changement de tarif (avant, après, à cheval), charge sans durée.
+  plages qui se chevauchent, charge sur plusieurs jours, changement d'heure, changement de tarif (avant, après, à cheval), charge sans durée,
+  heures creuses selon le jour (plage qui déborde sur le lendemain, week-end entier).
 - `__tests__/packages/kelec-charge-cost/tariffs.test.ts` : saisie (prix, plages), ajout / modification par id, dates en double,
-  tarif « depuis le début », suppression, fin d'un tarif, stockage par voiture et devise commune, migration de l'ancien tarif commun, format des prix, total d'heures creuses, heures pleines, économie, état d'un tarif.
+  tarif « depuis le début », suppression, fin d'un tarif, stockage par voiture et devise commune, migration de l'ancien tarif commun, format des prix, total d'heures creuses, heures pleines, économie, état d'un tarif,
+  plages selon le jour (chevauchement sur la semaine, ordre des jours, jours regroupés, total par semaine, jours en texte).
 - `__tests__/SettingsView/SettingsView.test.tsx` (« should set the electricity tariff ») : une voiture (ouverture directe), devise, premier tarif, passage en HP / HC, prix manquant refusé ;
-  (« with several cars… ») choix de la voiture, tarif enregistré pour elle seule.
+  (« with several cars… ») choix de la voiture, tarif enregistré pour elle seule ;
+  (« off-peak hours can depend on the day of the week ») jours d'une plage, frise par groupe de jours, dernier jour gardé.

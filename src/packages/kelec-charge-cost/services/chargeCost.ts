@@ -1,4 +1,4 @@
-import { minutesOfDay, OffPeakSlot, parseLocalDate, sortTariffs, Tariff } from "../models/Tariff";
+import { minutesOfDay, OffPeakSlot, parseLocalDate, slotStartsOn, sortTariffs, Tariff, Weekday } from "../models/Tariff";
 
 type Interval = { start: number; end: number }; // ms
 
@@ -67,7 +67,10 @@ function offPeakDuration(slots: OffPeakSlot[], part: Interval): number {
     // on part de la veille, pour une plage qui passe minuit
     const firstDay = startOfLocalDay(part.start - DAY_MS);
     for (let day = firstDay; day < part.end; day = nextLocalDay(day)) {
+        const weekday = new Date(day).getDay() as Weekday;
         for (const slot of slots) {
+            // une plage compte le jour où elle commence (jusqu'au lendemain matin si elle passe minuit)
+            if (!slotStartsOn(slot, weekday)) continue;
             const interval = slotOnDay(slot, day);
             const overlap = intersect(interval, part);
             if (overlap) intervals.push(overlap);

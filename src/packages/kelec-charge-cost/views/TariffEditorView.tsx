@@ -10,7 +10,7 @@ import KelecCard from "../../kelec-model/view/Card";
 import { BLACK_COLOUR, NEUTRAL_200, NEUTRAL_300, ORANGE_ONE, PRIMARY_COLOUR } from "../../kelec-model/lib/colours";
 import { spacerL, spacerM, spacerS, spacerXL } from "../../kelec-model/view/Spacers";
 import { subTitle2, textBody } from "../../kelec-model/view/Titles";
-import { Currency, minutesOfDay, OffPeakSlot, parseLocalDate, Tariff, TariffKind, timeOfDayFromDate, toLocalDate } from "../models/Tariff";
+import { Currency, minutesOfDay, OffPeakSlot, parseLocalDate, slotDays, Tariff, TariffKind, timeOfDayFromDate, toLocalDate, withDays } from "../models/Tariff";
 import { DEFAULT_OFF_PEAK_SLOT, parsePrice, TariffDraft } from "../models/tariffDraft";
 import ChoicePills from "./ChoicePills";
 import Badge from "./Badge";
@@ -19,7 +19,8 @@ import PriceRow from "./PriceRow";
 import OffPeakTimeline from "./OffPeakTimeline";
 import { tariffEnd, withPeriod } from "../services/tariffList";
 import { currencySymbol, formatLocalDate } from "../services/priceFormat";
-import { formatDuration, offPeakMinutesPerDay, offPeakSaving } from "../services/offPeakSummary";
+import { daySchedules, formatDays, formatDuration, offPeakMinutesPerDay, offPeakMinutesPerWeek, offPeakSaving } from "../services/offPeakSummary";
+import DayPicker from "./DayPicker";
 
 type Props = {
     /** Voiture dont ce sont les tarifs (déjà mise en forme). */
@@ -65,9 +66,13 @@ function TariffEditorView({ vehicleName, draft, tariffs, currency, canDelete, on
         onChange({ offPeakSlots: draft.offPeakSlots.filter((_, i) => i !== index) });
     };
 
-    const updateSlot = (index: number, patch: Partial<OffPeakSlot>) => {
-        onChange({ offPeakSlots: draft.offPeakSlots.map((slot, i) => i === index ? { ...slot, ...patch } : slot) });
+    const updateSlot = (index: number, update: (slot: OffPeakSlot) => OffPeakSlot) => {
+        onChange({ offPeakSlots: draft.offPeakSlots.map((slot, i) => i === index ? update(slot) : slot) });
     };
+
+    // une frise par groupe de jours quand les heures creuses changent selon le jour
+    const schedules = daySchedules(draft.offPeakSlots);
+    const sameEveryDay = schedules.length === 1;
 
     const kindChoices = (['flat', 'peakOffPeak'] as TariffKind[]).map(kind => (
         { value: kind, label: t(kind === 'flat' ? "flatRate" : "peakOffPeak"), testID: 'tariffKind' + kind }
@@ -171,22 +176,51 @@ function TariffEditorView({ vehicleName, draft, tariffs, currency, canDelete, on
                         <View style={styles.card}>
                             {cardHeader(
                                 t("offPeakSlots"),
-                                t("offPeakTotalPerDay").replace('{duration}', formatDuration(offPeakMinutesPerDay(draft.offPeakSlots))),
+                                sameEveryDay
+                                    ? t("offPeakTotalPerDay").replace('{duration}', formatDuration(offPeakMinutesPerDay(draft.offPeakSlots)))
+                                    : t("offPeakTotalPerWeek").replace('{duration}', formatDuration(offPeakMinutesPerWeek(draft.offPeakSlots))),
                             )}
-                            <OffPeakTimeline slots={draft.offPeakSlots} />
+                            {sameEveryDay ? (
+                                <OffPeakTimeline slots={draft.offPeakSlots} />
+                            ) : (
+                                <View style={styles.schedules}>
+                                    {schedules.map((schedule, index) => (
+                                        <View key={schedule.days.join()} testID={'offPeakSchedule' + index} style={styles.schedule}>
+                                            <View style={styles.scheduleHeader}>
+                                                <Text style={[subTitle2, styles.scheduleDays]}>{formatDays(schedule.days)}</Text>
+                                                <Text style={[subTitle2, { color: NEUTRAL_300 }]}>
+                                                    {formatDuration(offPeakMinutesPerDay(schedule.slots))}
+                                                </Text>
+                                            </View>
+                                            <OffPeakTimeline
+                                                testID={'offPeakTimeline' + index}
+                                                slots={schedule.slots}
+                                                showHours={index === schedules.length - 1}
+                                            />
+                                        </View>
+                                    ))}
+                                </View>
+                            )}
                             {draft.offPeakSlots.map((slot, index) => (
                                 <View key={slotKeys.current[index]} style={[styles.slotRow, { backgroundColor: theme.colors.background }]}>
-                                    {timeButton('slotStart' + index, slot.start, start => updateSlot(index, { start }))}
-                                    <Icon name="arrow-forward" size={spacerL} color={NEUTRAL_300} />
-                                    {timeButton('slotEnd' + index, slot.end, end => updateSlot(index, { end }))}
-                                    <View style={styles.spacer} />
-                                    <TouchableOpacity
-                                        testID={'removeSlot' + index}
-                                        accessibilityRole="button"
-                                        onPress={() => removeSlot(index)}
-                                    >
-                                        <Icon name="delete-outline" size={spacerXL} color={BLACK_COLOUR(isDarkMode)} />
-                                    </TouchableOpacity>
+                                    <View style={styles.slotTimes}>
+                                        {timeButton('slotStart' + index, slot.start, start => updateSlot(index, current => ({ ...current, start })))}
+                                        <Icon name="arrow-forward" size={spacerL} color={NEUTRAL_300} />
+                                        {timeButton('slotEnd' + index, slot.end, end => updateSlot(index, current => ({ ...current, end })))}
+                                        <View style={styles.spacer} />
+                                        <TouchableOpacity
+                                            testID={'removeSlot' + index}
+                                            accessibilityRole="button"
+                                            onPress={() => removeSlot(index)}
+                                        >
+                                            <Icon name="delete-outline" size={spacerXL} color={BLACK_COLOUR(isDarkMode)} />
+                                        </TouchableOpacity>
+                                    </View>
+                                    <DayPicker
+                                        testID={'slotDay' + index + '-'}
+                                        selected={slotDays(slot)}
+                                        onChange={days => updateSlot(index, current => withDays(current, days))}
+                                    />
                                 </View>
                             ))}
                             <TouchableOpacity
@@ -250,13 +284,31 @@ const styles = StyleSheet.create({
         height: StyleSheet.hairlineWidth,
         backgroundColor: NEUTRAL_200,
     },
+    schedules: {
+        gap: spacerM,
+    },
+    schedule: {
+        gap: spacerS,
+    },
+    scheduleHeader: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+        gap: spacerS,
+    },
+    scheduleDays: {
+        flexShrink: 1,
+    },
     slotRow: {
+        gap: spacerM,
+        padding: spacerM,
+        borderRadius: spacerM,
+    },
+    slotTimes: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         alignItems: 'center',
         gap: spacerM,
-        padding: spacerM,
-        borderRadius: spacerM,
     },
     spacer: {
         flex: 1,

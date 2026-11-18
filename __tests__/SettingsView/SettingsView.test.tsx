@@ -643,6 +643,49 @@ test('should set the electricity tariff', async () => {
     expect(screen.getByTestId('settingsView')).toBeDefined();
 });
 
+test('off-peak hours can depend on the day of the week', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await waitFor(() => expect(hasTab('account')).toBe(true));
+    await selectTab('settings');
+    await waitFor(() => expect(screen.getByTestId('settingsView')).toBeDefined());
+    await user.press(screen.getByTestId('testSettingRowelectrical-services'));
+    await waitFor(() => expect(screen.getByTestId('noTariff')).toBeDefined());
+
+    await user.press(screen.getByTestId('addFirstTariffButton'));
+    await waitFor(() => expect(screen.getByTestId('tariffEditorView')).toBeDefined());
+    await user.press(screen.getByTestId('tariffKindpeakOffPeak'));
+    await user.type(screen.getByTestId('priceInputpeakPrice'), '2');
+    await user.type(screen.getByTestId('priceInputoffPeakPrice'), '1');
+    // tous les jours : une seule frise
+    expect(screen.getByTestId('offPeakTimeline')).toBeDefined();
+
+    // plus d'heures creuses le samedi ni le dimanche (0 = dimanche)
+    await user.press(screen.getByTestId('slotDay0-6'));
+    await user.press(screen.getByTestId('slotDay0-0'));
+    expect(screen.getByTestId('slotDay0-0').props.accessibilityState).toMatchObject({ checked: false });
+    // une frise par groupe de jours : lundi – vendredi, puis le week-end
+    expect(screen.queryByTestId('offPeakTimeline')).toBeNull();
+    expect(screen.getByTestId('offPeakSchedule0')).toBeDefined();
+    expect(screen.getByTestId('offPeakSchedule1')).toBeDefined();
+
+    // le dernier jour d'une plage ne se retire pas
+    for (const day of [1, 2, 3, 4, 5]) await user.press(screen.getByTestId('slotDay0-' + day));
+    expect(screen.getByTestId('slotDay0-5').props.accessibilityState).toMatchObject({ checked: true });
+    for (const day of [1, 2, 3, 4]) await user.press(screen.getByTestId('slotDay0-' + day));
+
+    await user.press(screen.getByTestId('saveTariffButton'));
+    await waitFor(async () => {
+        const stored = JSON.parse(await AsyncStorage.getItem('vin1/electricityTariffs') ?? 'null');
+        expect(stored).toMatchObject([{
+            kind: 'peakOffPeak', peakPrice: 2, offPeakPrice: 1,
+            offPeakSlots: [{ start: '22:00', end: '06:00', days: [1, 2, 3, 4, 5] }],
+        }]);
+    });
+    await waitFor(() => expect(screen.getByTestId('tariffRow0')).toBeDefined());
+});
+
 test('with several cars, the electricity tariff is set for the chosen car', async () => {
     const car1 = new RenaultCar('vin1', 'model1', 'image1', CarMaker.RENAULT, 'AA0001AA');
     // pas de plaque : la voiture est désignée par son VIN

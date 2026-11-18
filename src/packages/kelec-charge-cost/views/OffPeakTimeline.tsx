@@ -10,10 +10,15 @@ const DAY_MINUTES = 24 * 60;
 const HOURS = ['00h', '06h', '12h', '18h', '24h'];
 
 /** Journée de 00h à 24h, plages d'heures creuses en vert (une plage qui passe minuit apparaît aux deux bouts). */
-function OffPeakTimeline({ slots }: { readonly slots: OffPeakSlot[] }): React.JSX.Element {
+function OffPeakTimeline({ slots, testID = "offPeakTimeline", showHours = true }: {
+    readonly slots: OffPeakSlot[];
+    readonly testID?: string;
+    /** Heures sous la frise (00h … 24h) : seulement sous la dernière quand il y a une frise par groupe de jours. */
+    readonly showHours?: boolean;
+}): React.JSX.Element {
     const isDarkMode = useColorScheme() === 'dark';
     return (
-        <View testID="offPeakTimeline" style={styles.container}>
+        <View testID={testID} style={styles.container}>
             <View style={[styles.bar, { backgroundColor: isDarkMode ? NEUTRAL_450 : NEUTRAL_100 }]}>
                 {offPeakRanges(slots).map(([start, end]) => (
                     <View
@@ -22,9 +27,11 @@ function OffPeakTimeline({ slots }: { readonly slots: OffPeakSlot[] }): React.JS
                     />
                 ))}
             </View>
-            <View style={styles.hours}>
-                {HOURS.map(hour => <Text key={hour} style={[subTitle3, { color: NEUTRAL_300 }]}>{hour}</Text>)}
-            </View>
+            {showHours && (
+                <View style={styles.hours}>
+                    {HOURS.map(hour => <Text key={hour} style={[subTitle3, { color: NEUTRAL_300 }]}>{hour}</Text>)}
+                </View>
+            )}
         </View>
     );
 }
