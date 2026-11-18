@@ -22,7 +22,7 @@ type Props = {
     readonly navigation: { goBack: () => void };
     /** Ouvre l'écran d'import (fourni par l'écran parent) ; absent : pas d'import. */
     readonly onImport?: () => void;
-    /** Ouvre les tarifs de l'électricité (fournis par l'écran parent) ; absent : pas d'accès aux tarifs. */
+    /** Ouvre les tarifs de l'électricité de la voiture (fournis par l'écran parent) ; absent : pas d'accès aux tarifs. */
     readonly onOpenTariffs?: () => void;
     /** Ouvre la modification du prix d'une charge (début de la charge) ; absent : prix non modifiables. */
     readonly onEditChargeCost?: (chargeStartDate: string) => void;
@@ -31,10 +31,10 @@ type Props = {
 function ChargesHistoryView({ navigation, onImport, onOpenTariffs, onEditChargeCost }: Props): React.JSX.Element {
     const isDarkMode = useColorScheme() === 'dark';
     const { languageHandler } = useContext(MainContext);
-    const { history, importCharges, costOverrides } = useChargesHistory();
+    const { vin, history, importCharges, costOverrides } = useChargesHistory();
 
-    // relus au retour des pages des tarifs
-    const [tariffSettings] = useTariffSettings();
+    // tarifs de cette voiture, relus au retour des pages des tarifs
+    const [tariffSettings] = useTariffSettings(vin);
     const editCost = useMemo(
         () => onEditChargeCost && ((charge: Charge) => onEditChargeCost(charge.getStartDate().toISOString())),
         [onEditChargeCost],

@@ -15,8 +15,8 @@ const TOLERANCE_MS = 5 * 1000;
  */
 export function useChargeCostEditor(chargeStartDate: string, onDone: () => void) {
     const { languageHandler } = useContext(MainContext);
-    const { history, costOverrides, setCostOverride } = useChargesHistory();
-    const [tariffSettings] = useTariffSettings();
+    const { vin, history, costOverrides, setCostOverride } = useChargesHistory();
+    const [tariffSettings] = useTariffSettings(vin);
 
     const charge = useMemo(() => {
         const start = new Date(chargeStartDate).getTime();

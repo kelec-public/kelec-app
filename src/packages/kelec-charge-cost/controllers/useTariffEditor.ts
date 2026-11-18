@@ -8,10 +8,10 @@ import { TariffRepository } from "../services/tariffRepository";
 import { canDeleteTariff, deleteTariff, upsertTariff } from "../services/tariffList";
 
 /**
- * Page de saisie d'un tarif : celui dont l'id est donné, ou un nouveau tarif.
+ * Page de saisie d'un tarif de la voiture : celui dont l'id est donné, ou un nouveau tarif.
  * `onDone` est appelé après l'enregistrement ou la suppression.
  */
-export function useTariffEditor(tariffId: string | undefined, onDone: () => void) {
+export function useTariffEditor(vin: string, tariffId: string | undefined, onDone: () => void) {
     const { languageHandler } = useContext(MainContext);
     const t = (key: string) => languageHandler.getTranslation(key);
 
@@ -19,12 +19,12 @@ export function useTariffEditor(tariffId: string | undefined, onDone: () => void
     const [draft, setDraft] = useState<TariffDraft | null>(null);
 
     useEffect(() => {
-        TariffRepository.get().then(loaded => {
+        TariffRepository.get(vin).then(loaded => {
             const tariff = loaded.tariffs.find(other => other.id === tariffId);
             setSettings(loaded);
             setDraft(tariff ? draftFromTariff(tariff) : newDraft(uuid.v4() as string, loaded.tariffs, new Date()));
         });
-    }, [tariffId]);
+    }, [vin, tariffId]);
 
     const showError = (errorKey: string) => Alert.alert(t("error"), t(errorKey));
 
@@ -38,7 +38,7 @@ export function useTariffEditor(tariffId: string | undefined, onDone: () => void
         if (!tariff.ok) return showError(tariff.errorKey);
         const tariffs = upsertTariff(settings.tariffs, tariff.value);
         if (!tariffs.ok) return showError(tariffs.errorKey);
-        await TariffRepository.save({ ...settings, tariffs: tariffs.value });
+        await TariffRepository.save(vin, { ...settings, tariffs: tariffs.value });
         onDone();
     };
 
@@ -50,7 +50,7 @@ export function useTariffEditor(tariffId: string | undefined, onDone: () => void
             { text: t("cancel"), style: 'cancel' },
             {
                 text: t("confirm"), style: 'destructive', onPress: async () => {
-                    await TariffRepository.save({ ...settings, tariffs: tariffs.value });
+                    await TariffRepository.save(vin, { ...settings, tariffs: tariffs.value });
                     onDone();
                 },
             },

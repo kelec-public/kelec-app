@@ -1,6 +1,6 @@
 import PagerView from "react-native-pager-view";
 import { StyleSheet, View } from "react-native";
-import { useContext, useRef } from "react";
+import { useContext, useEffect, useRef } from "react";
 import MainContext from "../../../lib/Contexts/MainContext";
 import TabBarContext from "../../../lib/Contexts/TabBarContext";
 import CarView from "./CarView/CarView";
@@ -17,7 +17,8 @@ import { CAR_TYPE_ROUTE, CarTypeRouteParams, CarTypeScreen } from "../../../pack
 import { TFA_ROUTE, TfaRouteParams, TfaView } from "../../../packages/kelec-tfa";
 import { CHARGES_IMPORT_ROUTE, ChargesImportView } from "../../../packages/kelec-charge-import";
 import { useOpenCarRequest } from "../../../packages/kelec-car-shortcuts";
-import { TARIFF_EDITOR_ROUTE, TARIFF_LIST_ROUTE, TariffEditorRouteParams, TariffEditorScreen, TariffListScreen } from "../../../packages/kelec-charge-cost";
+import { TARIFF_EDITOR_ROUTE, TARIFF_LIST_ROUTE, TariffEditorRouteParams, TariffEditorScreen, TariffListRouteParams, TariffListScreen, TariffRepository } from "../../../packages/kelec-charge-cost";
+import { CarMaker } from "../../../lib/clients/accounts/account";
 
 
 export type CarsViewParamList = {
@@ -29,7 +30,7 @@ export type CarsViewParamList = {
     [CHARGES_IMPORT_ROUTE]: undefined;
     [TFA_ROUTE]: TfaRouteParams;
     [CHARGE_COST_ROUTE]: ChargeCostRouteParams;
-    [TARIFF_LIST_ROUTE]: undefined;
+    [TARIFF_LIST_ROUTE]: TariffListRouteParams;
     [TARIFF_EDITOR_ROUTE]: TariffEditorRouteParams;
 }
 
@@ -42,6 +43,14 @@ function CarsPageView(): React.JSX.Element {
     const theme = useTheme()
 
     const Stack = createNativeStackNavigator<CarsViewParamList>();
+
+    // l'ancien tarif commun est recopié une fois sur les voitures déjà là (pas sur celles de la démo, qui n'ont pas de tarif)
+    useEffect(() => {
+        TariffRepository.migrateToVehicles(currentUser.getCars()
+            .map(account => account.getCar())
+            .filter(car => car !== undefined && car.getCarmaker() !== CarMaker.DEMO)
+            .map(car => car!.getVin()));
+    }, [currentUser]);
 
     const ref = useRef<PagerView>(null);
     const tfaInProgress = useRef(false);
@@ -103,7 +112,7 @@ function CarsPageView(): React.JSX.Element {
                                       <ChargesHistoryView
                                         {...props}
                                         onImport={() => props.navigation.navigate(CHARGES_IMPORT_ROUTE)}
-                                        onOpenTariffs={() => props.navigation.navigate(TARIFF_LIST_ROUTE)}
+                                        onOpenTariffs={() => props.navigation.navigate(TARIFF_LIST_ROUTE, { vin: carModel.getVin() })}
                                         onEditChargeCost={chargeStartDate => props.navigation.navigate(CHARGE_COST_ROUTE, { chargeStartDate })}
                                       />
                                     )}
@@ -117,19 +126,21 @@ function CarsPageView(): React.JSX.Element {
                                       />
                                     )}
                                   </Stack.Screen>
-                                  {/* tarifs de l'électricité (globaux) : les mêmes pages que dans Réglages */}
+                                  {/* tarifs de l'électricité de cette voiture : les mêmes pages que dans Réglages */}
                                   <Stack.Screen name={TARIFF_LIST_ROUTE}>
                                     {props => (
                                       <TariffListScreen
+                                        vin={props.route.params.vin}
                                         onBack={() => props.navigation.goBack()}
-                                        onOpenTariff={tariffId => props.navigation.navigate(TARIFF_EDITOR_ROUTE, { tariffId })}
+                                        onOpenTariff={tariffId => props.navigation.navigate(TARIFF_EDITOR_ROUTE, { vin: props.route.params.vin, tariffId })}
                                       />
                                     )}
                                   </Stack.Screen>
                                   <Stack.Screen name={TARIFF_EDITOR_ROUTE}>
                                     {props => (
                                       <TariffEditorScreen
-                                        tariffId={props.route.params?.tariffId}
+                                        vin={props.route.params.vin}
+                                        tariffId={props.route.params.tariffId}
                                         onBack={() => props.navigation.goBack()}
                                         onDone={() => props.navigation.goBack()}
                                       />

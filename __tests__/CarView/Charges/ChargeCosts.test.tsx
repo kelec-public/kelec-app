@@ -71,7 +71,7 @@ test('should display the cost of the charges with the home tariff', async () => 
     expect(screen.queryByTestId('setTariffBanner')).toBeNull();
 
     // tarifs supprimés depuis l'onglet Réglages : l'historique, resté ouvert dans l'onglet Voitures, ne reprend pas le focus
-    await act(() => TariffRepository.save({ currency: 'EUR', tariffs: [] }));
+    await act(() => TariffRepository.save('vin1', { currency: 'EUR', tariffs: [] }));
     await waitFor(() => expect(screen.queryAllByTestId('chargeCostText')).toHaveLength(0));
     expect(screen.getByTestId('setTariffBanner')).toBeDefined();
 });

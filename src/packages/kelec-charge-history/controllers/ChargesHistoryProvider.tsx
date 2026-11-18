@@ -8,6 +8,8 @@ import ChargeCostOverrides from "../models/ChargeCostOverrides";
 import { ChargeCostOverridesRepository } from "../services/chargeCostOverridesRepository";
 
 type ChargesHistoryController = {
+    /** VIN de la voiture (ses tarifs de l'électricité, ses prix saisis). */
+    vin: string;
     /** Indisponible (`hasError`) tant que rien n'a été chargé, ou si le constructeur n'est pas supporté. */
     history: ChargesHistory;
     /** Synchronise avec l'API. À appeler seulement après un fetch batterie réussi. */
@@ -29,6 +31,7 @@ export type ManualCost = {
 };
 
 const ChargesHistoryContext = createContext<ChargesHistoryController>({
+    vin: '',
     history: ChargesHistory.unavailable(),
     sync: async () => { },
     importCharges: null,
@@ -124,8 +127,8 @@ export function ChargesHistoryProvider({ carModel, account, children }: Props): 
     }, [vin]);
 
     const value = useMemo(
-        () => ({ history, sync, importCharges, costOverrides, setCostOverride, importCostOverrides }),
-        [history, sync, importCharges, costOverrides, setCostOverride, importCostOverrides],
+        () => ({ vin, history, sync, importCharges, costOverrides, setCostOverride, importCostOverrides }),
+        [vin, history, sync, importCharges, costOverrides, setCostOverride, importCostOverrides],
     );
 
     return (
