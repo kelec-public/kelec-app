@@ -16,12 +16,13 @@ struct MediumTempo2DaysWidgetView: View {
   var image: String
   var appPreferences: AppPreferences?
   var tempoApi: tempoFinalReturn
+  var vin: String? = nil
   
   var body: some View{
     GeometryReader { geo in
       HStack{
         
-        SmallCarWidgetView(apiHandler: apiHandler, carName: carName, image: image, appPreferences: appPreferences)
+        SmallCarWidgetView(apiHandler: apiHandler, carName: carName, image: image, appPreferences: appPreferences, vin: vin)
           .widgetBackground()
           .frame(width: geo.size.width/2, height: geo.size.height)
         

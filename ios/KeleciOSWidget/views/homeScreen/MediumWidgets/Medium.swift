@@ -34,6 +34,11 @@ struct MediumCarWidgetView: View{
           
           
           Spacer()
+          // pre-heating button in the header, before the level
+          if let vin = userCar.car?.vin {
+            HvacWidgetButton(vin: vin)
+              .padding(.trailing, 4)
+          }
           HStack(spacing: 0){
             if(!apiHandler.getIsCarLocked()){
               Image(systemName: "lock.open")
@@ -104,7 +109,7 @@ struct MediumCarWidgetView: View{
         }
         .widgetAccentable(false)
         HStack{
-          VStack(spacing: 10) {
+          VStack(alignment: .leading, spacing: 8) {
             if(apiHandler.getIsCarPlugged()){
               
               HStack(spacing: 15){
@@ -119,6 +124,7 @@ struct MediumCarWidgetView: View{
                   .opacity(apiHandler.getIsCarCharging() ? 1 : 0)
               }
             }
+            Spacer(minLength: 0)
           }
           .widgetAccentable(false)
           Spacer()

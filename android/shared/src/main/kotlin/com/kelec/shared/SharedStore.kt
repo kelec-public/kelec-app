@@ -60,6 +60,15 @@ class SharedStore(context: Context) {
 
     fun clearWidgetVin(appWidgetId: Int) = remove(StorageKey.widgetVin(appWidgetId))
 
+    /** Retour du bouton de confort thermique des widgets, null s'il n'y en a pas ou s'il a expiré. */
+    fun widgetHvacFeedback(vin: String, now: Long = System.currentTimeMillis()): WidgetHvacFeedback? =
+        getString(StorageKey.widgetHvacStatus(vin))?.let { WidgetHvacFeedback.decode(it) }?.takeUnless { it.isExpired(now) }
+
+    fun saveWidgetHvacFeedback(vin: String, feedback: WidgetHvacFeedback) =
+        putString(StorageKey.widgetHvacStatus(vin), feedback.encode())
+
+    fun clearWidgetHvacFeedback(vin: String) = remove(StorageKey.widgetHvacStatus(vin))
+
     /** Montre : VIN de la voiture des complications, choisi dans les Réglages de l'app de la montre. */
     fun watchWidgetVin(): String? = getString(StorageKey.WATCH_WIDGET_CAR)?.takeIf { it.isNotEmpty() }
 

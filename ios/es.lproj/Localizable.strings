@@ -142,3 +142,4 @@ Primero debes iniciar sesión en la aplicación.";
 "chargeStatusV2G" = "V2G";
 "chargeStatusV2L" = "V2L";
 "carStatusDialog %@ %@ %@ %@" = "%1$@: %2$@ %% · %3$@ · %4$@";
+"widgetHvacOk" = "Aceptar";

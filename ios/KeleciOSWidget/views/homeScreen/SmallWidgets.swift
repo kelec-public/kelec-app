@@ -16,6 +16,8 @@ struct SmallCarWidgetView: View{
   var carName: String
   var image: String
   var appPreferences: AppPreferences?
+  // car of the pre-heating button (bottom left), no button when nil
+  var vin: String? = nil
   var body: some View{
     VStack(alignment: .leading, spacing: 0){
       HStack{
@@ -75,6 +77,9 @@ struct SmallCarWidgetView: View{
         VStack{
           Spacer()
           HStack(spacing: 0){
+            if let vin = vin {
+              HvacWidgetButton(vin: vin, compact: true)
+            }
             Spacer()
             LastRefreshLabel(lastRefreshDate: apiHandler.getLastRefreshDate(), font: .system(size: 10))
           }

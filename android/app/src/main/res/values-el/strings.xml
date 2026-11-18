@@ -23,4 +23,11 @@
     <string name="tempo_red">ΚΟΚΚΙΝΟ</string>
     <string name="tempo_car_server_error">Δεν είναι δυνατή η σύνδεση με τον διακομιστή της Renault</string>
     <string name="tempo_rte_server_error">Δεν είναι δυνατή η σύνδεση με τον διακομιστή της RTE</string>
+
+    <!-- Bouton de confort thermique du widget 4x2 -->
+    <string name="widget_launch_pre_heat">Έναρξη προθέρμανσης</string>
+    <string name="widget_pre_heat_launched">Η προθέρμανση ξεκίνησε</string>
+    <string name="widget_pre_heat_error">Σφάλμα</string>
+    <string name="widget_pre_heat_sending">Αποστολή…</string>
+    <string name="widget_ok">OK</string>
 </resources>

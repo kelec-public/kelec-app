@@ -11,6 +11,7 @@ import renaultApi
 
 struct MediumCarWidgetAltView: View {
   var apiHandler: ApiHandler
+  var userCar: UserCar
   var carName: String
   var image: String
   var appPreferences: AppPreferences?
@@ -22,6 +23,11 @@ struct MediumCarWidgetAltView: View {
           .font(.title3)
           .fontWeight(.bold)
         Spacer()
+        // pre-heating button in the header, before the charging time (compact: same height as the title)
+        if let vin = userCar.car?.vin {
+          HvacWidgetButton(vin: vin, compact: true)
+            .padding(.trailing, 4)
+        }
         if(apiHandler.getIsCarPlugged()){
           Image(systemName: "clock.badge.checkmark")
             .foregroundColor(apiHandler.chargingColour)

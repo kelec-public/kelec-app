@@ -24,11 +24,17 @@ struct Provider: AppIntentTimelineProvider {
   func timeline(for configuration: ConfigurationAppIntent, in context: Context) async -> Timeline<SimpleEntry>  {
     let currentDate = Date()
     let nextRefresh = Calendar.current.date(byAdding: .minute, value: 15, to: currentDate)!
-    let data = await VehicleLoader.loadWidgetData { account in
-      widgetCar(account: account, configuredVin: configuration.car?.id)
+    let data = await VehicleLoader.loadWidgetData(
+      selectCar: { account in widgetCar(account: account, configuredVin: configuration.car?.id) },
+      // reload right after the pre-heating button: the status has not changed, no need for a request
+      useCache: { userCar in WidgetHvacFeedback.isJustSaved(vin: userCar.car?.vin, now: currentDate) }
+    )
+    // result of the pre-heating button: shown until it expires, then the button again
+    return WidgetHvacFeedback.timeline(vin: data.userCar?.car?.vin, now: currentDate, nextRefresh: nextRefresh) { date, hvacFeedback in
+      var entry = SimpleEntry(date: date, data: data)
+      entry.hvacFeedback = hvacFeedback
+      return entry
     }
-    let entry = SimpleEntry(date: currentDate, data: data)
-    return Timeline(entries: [entry], policy: .after(nextRefresh))
   }
 }
 
@@ -40,6 +46,8 @@ struct SimpleEntry: TimelineEntry {
   let image: String
   let appPreferences: AppPreferences?
   let apiHandler: ApiHandler?
+  // result of the pre-heating button of the home screen widgets, nil to show the button
+  var hvacFeedback: WidgetHvacFeedback? = nil
 }
 
 extension SimpleEntry {
@@ -67,19 +75,22 @@ struct KeleciOSWidgetEntryView : View {
   var body: some View{
     switch family{
     case .systemSmall:
-      CarWidgetStateView(account: entry.account, userCar: entry.userCar, apiHandler: entry.apiHandler) { _, _, apiHandler in
-        SmallCarWidgetView(apiHandler: apiHandler, carName: entry.carName, image: entry.image, appPreferences: entry.appPreferences)
-          .widgetBackground()
+      CarWidgetStateView(account: entry.account, userCar: entry.userCar, apiHandler: entry.apiHandler) { _, userCar, apiHandler in
+        HvacFeedbackContainer(vin: userCar.car?.vin, feedback: entry.hvacFeedback) {
+          SmallCarWidgetView(apiHandler: apiHandler, carName: entry.carName, image: entry.image, appPreferences: entry.appPreferences, vin: userCar.car?.vin)
+        }
+        .widgetBackground()
       }
     case .systemMedium:
       CarWidgetStateView(account: entry.account, userCar: entry.userCar, apiHandler: entry.apiHandler) { _, userCar, apiHandler in
-        if self.style == .alternative {
-          MediumCarWidgetAltView(apiHandler: apiHandler, carName: entry.carName, image: entry.image, appPreferences: entry.appPreferences)
-            .widgetBackground()
-        } else {
-          MediumCarWidgetView(apiHandler: apiHandler, userCar: userCar, carName: entry.carName, image: entry.image, appPreferences: entry.appPreferences)
-            .widgetBackground()
+        HvacFeedbackContainer(vin: userCar.car?.vin, feedback: entry.hvacFeedback) {
+          if self.style == .alternative {
+            MediumCarWidgetAltView(apiHandler: apiHandler, userCar: userCar, carName: entry.carName, image: entry.image, appPreferences: entry.appPreferences)
+          } else {
+            MediumCarWidgetView(apiHandler: apiHandler, userCar: userCar, carName: entry.carName, image: entry.image, appPreferences: entry.appPreferences)
+          }
         }
+        .widgetBackground()
       }
     default:
       Text("error")

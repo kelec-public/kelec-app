@@ -39,7 +39,7 @@ object WidgetUpdater {
         )
 
         // d'abord avec le cache : la voiture choisie à la pose s'affiche sans attendre le réseau
-        redraw(context, manager, carWidgetIds)
+        redrawAll(context)
 
         val account = store.loadAccount()
         if (account == null || account.cars.isEmpty()) {
@@ -55,11 +55,13 @@ object WidgetUpdater {
             }
         }
 
-        redraw(context, manager, carWidgetIds)
+        redrawAll(context)
     }
 
-    private suspend fun redraw(context: Context, manager: AppWidgetManager, carWidgetIds: IntArray) {
-        if (carWidgetIds.isNotEmpty()) WidgetRedraw.all(context, CarStatusWidget())
+    /** Redessine tous les widgets posés (batterie, Tempo, Tempo 2 jours) en relisant le cache. */
+    suspend fun redrawAll(context: Context) {
+        val manager = AppWidgetManager.getInstance(context)
+        if (idsOf(context, manager, KelecMainWIdget::class.java).isNotEmpty()) WidgetRedraw.all(context, CarStatusWidget())
         if (idsOf(context, manager, KelecTempoWidgetReceiver::class.java).isNotEmpty()) WidgetRedraw.all(context, TempoWidget())
         if (idsOf(context, manager, KelecTempo2DaysWidgetReceiver::class.java).isNotEmpty()) WidgetRedraw.all(context, Tempo2DaysWidget())
     }

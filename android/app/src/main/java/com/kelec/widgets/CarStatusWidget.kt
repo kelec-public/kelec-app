@@ -66,10 +66,13 @@ class CarStatusWidget : GlanceAppWidget() {
 @Composable
 private fun CarStatusContent(state: CarWidgetState) {
     when (state) {
-        is CarWidgetState.Message -> WidgetMessage(state.text)
+        is CarWidgetState.Message -> WidgetMessage(state.text, state.illustration)
         is CarWidgetState.Loaded -> {
             val size = LocalSize.current
+            val feedback = state.hvacFeedback
             when {
+                // le retour du bouton de confort thermique recouvre tout le widget
+                feedback != null -> HvacFeedbackView(state.car.vin, feedback)
                 size.height < CarStatusWidget.SQUARE.height -> CarBarView(state)
                 size.width < CarStatusWidget.LARGE.width -> CarSquareView(state)
                 else -> CarLargeView(state)
@@ -78,7 +81,7 @@ private fun CarStatusContent(state: CarWidgetState) {
     }
 }
 
-/** 4x1 : logo, nom et niveau, jauge, état de charge et autonomie, temps de charge, heure (bouton de rechargement). */
+/** 4x1 : logo, nom et niveau, jauge, état de charge et autonomie, temps de charge, bouton de confort thermique, heure (bouton de rechargement). */
 @Composable
 private fun CarBarView(state: CarWidgetState.Loaded) {
     val battery = state.battery
@@ -102,12 +105,14 @@ private fun CarBarView(state: CarWidgetState.Loaded) {
                 ChargeAndRange(state, 12)
                 if (battery.isPlugged) ChargingTimes(battery, 12)
             }
+            HvacButton(state.car.vin, compact = true)
+            Spacer(GlanceModifier.width(8.dp))
             LastRefreshLabel(battery, 12.sp)
         }
     }
 }
 
-/** 2x2 : nom, niveau et autonomie (ou temps de charge), image de la voiture, heure. Aussi la moitié gauche des widgets Tempo. */
+/** 2x2 : nom, niveau et autonomie (ou temps de charge), image de la voiture, bouton de confort thermique, heure. Aussi la moitié gauche des widgets Tempo. */
 @Composable
 internal fun CarSquareView(state: CarWidgetState.Loaded, modifier: GlanceModifier = GlanceModifier.widgetContainer(state.car.vin)) {
     val battery = state.battery
@@ -144,12 +149,17 @@ internal fun CarSquareView(state: CarWidgetState.Loaded, modifier: GlanceModifie
         }
         Box(modifier = GlanceModifier.fillMaxWidth().defaultWeight(), contentAlignment = Alignment.BottomEnd) {
             CarImage(state, GlanceModifier.fillMaxSize().padding(top = 4.dp, bottom = 8.dp))
-            LastRefreshLabel(battery, 10.sp)
+            // bouton en bas à gauche, heure en bas à droite, par-dessus l'image
+            Row(modifier = GlanceModifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                HvacButton(state.car.vin, compact = true)
+                Spacer(GlanceModifier.defaultWeight())
+                LastRefreshLabel(battery, 10.sp)
+            }
         }
     }
 }
 
-/** 4x2 : logo, nom et niveau, jauge, état de charge et autonomie, heure, temps de charge et image de la voiture. */
+/** 4x2 : logo, nom, bouton de confort thermique et niveau, jauge, état de charge et autonomie, heure, temps de charge et image de la voiture. */
 @Composable
 private fun CarLargeView(state: CarWidgetState.Loaded) {
     val battery = state.battery
@@ -163,6 +173,8 @@ private fun CarLargeView(state: CarWidgetState.Loaded) {
                 maxLines = 1,
                 modifier = GlanceModifier.defaultWeight(),
             )
+            HvacButton(state.car.vin)
+            Spacer(GlanceModifier.width(8.dp))
             BatteryLevelText(battery, 26.sp)
         }
         Spacer(GlanceModifier.height(6.dp))

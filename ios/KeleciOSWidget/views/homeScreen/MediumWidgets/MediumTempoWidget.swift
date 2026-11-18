@@ -17,15 +17,17 @@ struct TempoWidgetEntryView: View {
   var body: some View{
     switch family{
     case .systemMedium:
-      CarWidgetStateView(account: entry.account, userCar: entry.userCar, apiHandler: entry.apiHandler, serverError: "tempoCarServerError") { _, _, apiHandler in
+      CarWidgetStateView(account: entry.account, userCar: entry.userCar, apiHandler: entry.apiHandler, serverError: "tempoCarServerError") { _, userCar, apiHandler in
         if let tempoApi = entry.tempoApi {
-          if (self.twoDays) {
-            MediumTempo2DaysWidgetView(apiHandler: apiHandler, carName: entry.carName, image: entry.image, appPreferences: entry.appPreferences, tempoApi: tempoApi)
-              .widgetBackground()
-          } else {
-            MediumTempoWidgetView(apiHandler: apiHandler, carName: entry.carName, image: entry.image, appPreferences: entry.appPreferences, tempoApi: tempoApi)
-              .widgetBackground()
+          // the result of the pre-heating button covers the whole widget
+          HvacFeedbackContainer(vin: userCar.car?.vin, feedback: entry.hvacFeedback) {
+            if (self.twoDays) {
+              MediumTempo2DaysWidgetView(apiHandler: apiHandler, carName: entry.carName, image: entry.image, appPreferences: entry.appPreferences, tempoApi: tempoApi, vin: userCar.car?.vin)
+            } else {
+              MediumTempoWidgetView(apiHandler: apiHandler, carName: entry.carName, image: entry.image, appPreferences: entry.appPreferences, tempoApi: tempoApi, vin: userCar.car?.vin)
+            }
           }
+          .widgetBackground()
         } else {
           Text("tempoRteServerError")
         }
@@ -42,11 +44,12 @@ struct MediumTempoWidgetView: View{
   var image: String
   var appPreferences: AppPreferences?
   var tempoApi: tempoFinalReturn
+  var vin: String? = nil
   var body: some View{
     GeometryReader { geo in
       HStack{
         
-        SmallCarWidgetView(apiHandler: apiHandler, carName: carName, image: image, appPreferences: appPreferences)
+        SmallCarWidgetView(apiHandler: apiHandler, carName: carName, image: image, appPreferences: appPreferences, vin: vin)
           .widgetBackground()
         .frame(width: geo.size.width/2, height: geo.size.height)
         

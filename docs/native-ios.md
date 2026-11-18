@@ -84,6 +84,7 @@ et l'app RN en lit une partie.
 | `widgetLogs` | App Group | Logs des 5 derniers jours (`[{date, message}]`) | `writeWidgetLog` | App RN (export) |
 | `<vin>_mileageHistory` | App Group | Kilométrage du dernier mois (`[{mileage, timestamp ISO}]`) | `SharedHistory` | App RN (historique de charge) |
 | `<vin>_batteryStatus` | App Group | Dernier `RenaultBatteryStatus` | `SharedHistory` | App RN |
+| `<vin>/widgetHvacStatus` | App Group | Retour du bouton de confort thermique des widgets de l'écran d'accueil (`{status: success/error, date}`, secondes depuis 1970) (`dismissed: true` après OK) | `LaunchHVACWidgetIntent`, `DismissHvacFeedbackIntent` | Widgets de l'écran d'accueil (affiché 10 s) |
 | `watchWidgetCar` | App Group (montre) | VIN choisi dans les Réglages de la montre | `WatchSettingsView` | Widgets de la montre |
 | `<vin>/savedTemperature` | UserDefaults.standard (montre) | Dernière température du préchauffage (`"21"`), même clé et format que l'app RN (AsyncStorage) | `CarViewModel` | App de la montre |
 | `<vin>_password` | Keychain | Mot de passe du compte | Stockage chiffré RN / `WatchSync` (Hyundai) | Clients d'API, intent |
@@ -201,6 +202,40 @@ Bouton du Centre de contrôle, de l'écran verrouillé et du bouton Action, dans
 - Pas de dernière température de l'app : elle est dans AsyncStorage, illisible depuis le natif.
 - Textes : `launchPreHeat`, `launchPreHeatControlDescription`, et ceux de l'intent Siri pour les paramètres.
 
+### Bouton de confort thermique des widgets de l'écran d'accueil (`LaunchHVACWidgetIntent`)
+
+`HvacWidgetButton` (`views/Components.swift`, iOS 17, `Button(intent:)`), comme sur Android : pastille ronde grise
+avec l'icône seule (style par défaut du bouton, `.tint(.gray)` et `.buttonBorderShape(.circle)` posés sur un conteneur),
+plus petite en version compacte.
+
+| Widget | Bouton |
+|---|---|
+| Moyen | Dans l'en-tête, avant le niveau (comme le 4x2 Android) |
+| Moyen « Alternative » | Compact, dans l'en-tête, avant le temps de charge |
+| Petit | Compact, en bas à gauche, l'heure en bas à droite |
+| Tempo et Tempo 2 jours | Compact, dans la moitié voiture (`SmallCarWidgetView`) |
+
+Pas sur les widgets de l'écran verrouillé (pas la place).
+
+- Au tap, `LaunchHVACWidgetIntent` (dans `LaunchHVACControl.swift`, masqué de Raccourcis) s'exécute dans l'extension :
+  voiture du widget (VIN), `sendHVACCommand` à 21 °C (`WidgetHvacFeedback.temperature`), log dans `widgetLogs`.
+- Pendant la requête : l'effet de chargement du système sur tout le widget (`invalidatableContent()` sur le contenu, dans
+  `HvacFeedbackContainer`). iOS ne redessine pas le widget pendant l'intent : pas d'écran « envoi en cours » personnalisé.
+- Les `Button` n'ont aucun modificateur à eux : l'apparence est posée dans le label et sur un conteneur.
+  Avec `.buttonStyle(.plain)`, `.invalidatableContent()` et `.accessibilityLabel` sur le bouton, il n'était pas interactif :
+  le tap ouvrait l'app (`Launching from widgetURL` dans les logs).
+- Le résultat est enregistré sous `<vin>/widgetHvacStatus`, puis WidgetKit recharge le widget : le provider
+  (`Provider` et `TempoProvider`, via `WidgetHvacFeedback.timeline`) ajoute une entrée avec le retour et une seconde
+  entrée, 10 s plus tard (`displayDuration`), avec le widget normal.
+- Le retour recouvre tout le widget, Tempo compris (`HvacFeedbackView`) : coche verte et « Confort thermique actif »
+  (`preHeatLaunched`), ou croix rouge et « Erreur » (`error`). Pas de Réessayer : le bouton revient avec le widget. Les deux ont OK (`widgetHvacOk`) : `DismissHvacFeedbackIntent` marque le retour `dismissed` et le widget revient.
+- Démo : `DemoApiClient.launchHvac` attend 3 s avant de réussir, pour simuler une requête.
+- Le rechargement qui suit le tap ou OK (dans les 15 s, `WidgetHvacFeedback.isJustSaved`, même après OK) affiche le statut du cache
+  (`loadWidgetData(useCache:)`) sans requête : le statut n'a pas changé, et chaque tap ferait sinon une requête
+  de plus par widget. Sans cache, la requête est faite.
+- Budget de WidgetKit : le rechargement qui suit l'intent d'un widget interactif n'est pas compté, et l'entrée
+  qui remet le bouton est déjà dans la timeline (pas de rechargement).
+
 ## Affichage des widgets
 
 `CarWidgetStateView` (`Shared/WidgetComponents.swift`) choisit l'état avant d'afficher le contenu :
@@ -212,11 +247,15 @@ Bouton du Centre de contrôle, de l'écran verrouillé et du bouton Action, dans
 | Aucune donnée (échec sans cache) | `widgetServerError` (« Impossible de se connecter au serveur ») |
 | Données (réseau ou cache) | Contenu du widget ci-dessous |
 
+Les trois messages passent par `WidgetEmptyView` : sur l'écran d'accueil, un SF Symbol sur un disque clair au-dessus
+du texte (`person.crop.circle.fill`, `car.fill` avec un « + » vert, `icloud.slash.fill` en orange), comme Android, et le
+fond du widget (`widgetBackground`). Écran verrouillé et montre : le texte seul.
+
 | Widget | Contenu |
 |---|---|
-| Petit (accueil) | Modèle, éclair si branchée, niveau (%), puis durée restante (« 2h05 ») en charge, sinon autonomie |
-| Moyen (accueil) | Logo du constructeur, modèle, cadenas ouvert si non verrouillée, niveau, barre de charge (limite de charge), puissance instantanée (> 0,5 kW), état et autonomie, heure du statut ; branchée : durée restante et heure de fin ; image de la voiture |
-| Moyen « Alternative » | Mêmes données, autre mise en page (`MediumAlt1`) |
+| Petit (accueil) | Modèle, éclair si branchée, niveau (%), puis durée restante (« 2h05 ») en charge, sinon autonomie ; bouton de confort thermique compact |
+| Moyen (accueil) | Logo du constructeur, modèle, cadenas ouvert si non verrouillée, niveau, barre de charge (limite de charge), puissance instantanée (> 0,5 kW), état et autonomie, heure du statut ; branchée : durée restante et heure de fin ; bouton de confort thermique ; image de la voiture |
+| Moyen « Alternative » | Mêmes données, autre mise en page (`MediumAlt1`), bouton de confort thermique sous le niveau |
 | Écran verrouillé en ligne | Icône d'état (`carStatusIcon`) et niveau |
 | Écran verrouillé rectangulaire | Icône d'état, modèle, niveau et autonomie |
 | Écran verrouillé rond (et « Alternative ») | Jauge du niveau ; logique d'icône inversée, gardée telle quelle (voir les décisions) |
@@ -270,6 +309,7 @@ Bouton du Centre de contrôle, de l'écran verrouillé et du bouton Action, dans
   - Siri / Raccourcis : « confort thermique » sur une voiture.
   - Raccourci « Obtenir l'état » : propriétés dans une action suivante, condition sur le statut de charge, Renault et Hyundai.
   - Contrôle du Centre de contrôle (iOS 18) : ajout (choix de la voiture et de la température), tap, échec réseau.
+  - Bouton de confort thermique (moyens, petit, Tempo) : tap, coche verte puis retour du bouton après 60 s, échec réseau (croix rouge).
 - Débogage : Réglages → Debug → « export widget logs » (`widgetLogs`, 5 jours, messages de `VehicleLoader`,
   `getCarMakerApiClient`, du client Renault, de `TempoService` et du client RTE : statut HTTP ou erreur réseau de chaque étape,
   jamais la clé ni le token), et « Debug zone » (choix d'une voiture, « Battery status »

@@ -15,17 +15,20 @@ import com.kelec.shared.TempoLoader
 import com.kelec.shared.UserCar
 import com.kelec.shared.VehicleLoader
 import com.kelec.shared.VehicleStatus
+import com.kelec.shared.WidgetHvacFeedback
 import com.kelec.shared.R as SharedR
 
 /** Ce qu'affiche un widget de voiture : un message (pas connecté, erreur…) ou la voiture chargée. */
 sealed interface CarWidgetState {
-    data class Message(val text: String) : CarWidgetState
+    data class Message(val text: String, val illustration: MessageIllustration = MessageIllustration.ERROR) : CarWidgetState
 
     data class Loaded(
         val car: UserCar,
         val battery: BatteryStatus,
         val prefs: AppPreferences,
         val image: Bitmap?,
+        /** Retour du bouton de confort thermique (widget 4x2), null hors envoi et après son affichage. */
+        val hvacFeedback: WidgetHvacFeedback? = null,
     ) : CarWidgetState
 }
 
@@ -44,9 +47,9 @@ object WidgetData {
     ): CarWidgetState {
         val store = SharedStore(context)
         val account = store.loadAccount()
-            ?: return CarWidgetState.Message(context.getString(SharedR.string.not_yet_logged_in))
+            ?: return CarWidgetState.Message(context.getString(SharedR.string.not_yet_logged_in), MessageIllustration.ACCOUNT)
         val car = account.carFor(store.widgetVin(appWidgetId))
-            ?: return CarWidgetState.Message(context.getString(SharedR.string.no_car_added))
+            ?: return CarWidgetState.Message(context.getString(SharedR.string.no_car_added), MessageIllustration.CAR)
 
         return when (val status = VehicleLoader(context, ApiKeys.renault).cached(car)) {
             is VehicleStatus.Loaded -> CarWidgetState.Loaded(
@@ -54,8 +57,9 @@ object WidgetData {
                 battery = status.battery,
                 prefs = store.loadPreferences() ?: AppPreferences(),
                 image = carImage(store, car.vin),
+                hvacFeedback = store.widgetHvacFeedback(car.vin),
             )
-            VehicleStatus.NotLoggedIn -> CarWidgetState.Message(context.getString(SharedR.string.not_yet_logged_in))
+            VehicleStatus.NotLoggedIn -> CarWidgetState.Message(context.getString(SharedR.string.not_yet_logged_in), MessageIllustration.ACCOUNT)
             VehicleStatus.Unavailable -> CarWidgetState.Message(context.getString(serverError))
         }
     }

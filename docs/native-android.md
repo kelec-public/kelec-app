@@ -81,7 +81,7 @@ Java 17 et les dépôts Maven des nouveaux modules sont réglés par le plugin G
 
 | Widget | Receiver (ne jamais renommer) | Tailles | Contenu |
 |---|---|---|---|
-| Batterie | `com.kelec.KelecMainWIdget` | 4x2 par défaut, redimensionnable : barre 4x1 (le widget historique), carré 2x2, large 4x2 | Selon la taille : 4x1 = logo, nom, niveau, jauge, état, autonomie, temps de charge, heure ; 2x2 = petit widget iOS ; 4x2 = widget moyen iOS |
+| Batterie | `com.kelec.KelecMainWIdget` | 4x2 par défaut, redimensionnable : barre 4x1 (le widget historique), carré 2x2, large 4x2 | Selon la taille : 4x1 = logo, nom, niveau, jauge, état, autonomie, temps de charge, heure ; 2x2 = petit widget iOS ; 4x2 = widget moyen iOS ; bouton de confort thermique dans les trois tailles |
 | Tempo | `com.kelec.widgets.KelecTempoWidgetReceiver` | 4x2 | Voiture (vue 2x2) + dernier jour Tempo connu, avec les prix HP / HC |
 | Tempo 2 jours | `com.kelec.widgets.KelecTempo2DaysWidgetReceiver` | 4x2 | Voiture (vue 2x2) + les deux derniers jours connus |
 
@@ -95,6 +95,39 @@ Java 17 et les dépôts Maven des nouveaux modules sont réglés par le plugin G
 - La mise en page du widget batterie suit `SizeMode.Responsive` (110x40, 110x110, 250x110 dp) : `LocalSize` choisit la vue.
 - Aperçus du sélecteur : `kelec_main_w_idget.xml` (widget 4x2) et `tempo_*_widget_preview.xml`, des layouts statiques
   avec la Mégane en dur (`widget_preview_megane`, comme les aperçus iOS).
+
+### Bouton de confort thermique
+
+`HvacButton` (`WidgetComponents.kt`), sur tous les widgets : pastille ronde avec l'icône seule (30 dp, 26 dp en compact).
+
+| Où | Bouton |
+|---|---|
+| Widget batterie 4x2 | Dans l'en-tête, entre le nom et le niveau |
+| Barre 4x1 | Compact, sur la dernière ligne, avant l'heure |
+| Carré 2x2 et moitié voiture des widgets Tempo (`CarSquareView`) | Compact, en bas à gauche, l'heure en bas à droite, par-dessus l'image |
+
+Le retour recouvre tout le widget, Tempo compris (`HvacFeedbackView`, sur une ligne pour la barre 4x1) :
+- `SENDING` : indicateur de chargement et « Envoi… » ;
+- `SUCCESS` : coche verte, « Confort thermique actif » et OK ;
+- `ERROR` : croix rouge, « Erreur » et OK (pas de Réessayer : le bouton revient avec le widget).
+
+OK (`DismissHvacFeedbackAction`) efface le retour tout de suite. Chaque changement redessine tous les widgets posés
+(`WidgetUpdater.redrawAll`), Tempo compris.
+
+1. Le tap lance `LaunchHvacAction` (`HvacWidgetCommand.kt`) : retour `SENDING` enregistré sous `<vin>/widgetHvacStatus`,
+   redessin (chargement), puis `HvacWidgetWorker` (tâche unique `kelec_widget_hvac_<vin>`, `KEEP`) :
+   le BroadcastReceiver de Glance est limité à ~10 s. La tâche est *expedited* (`RUN_AS_NON_EXPEDITED_WORK_REQUEST` sans quota) :
+   une tâche normale peut être retardée dans un bucket App Standby bas. Android 10 et 11 la font tourner dans un service
+   au premier plan, avec une notification discrète le temps de l'envoi (canal `kelec_widget_hvac`, `getForegroundInfo`).
+2. Le worker envoie `VehicleCommands.launchHvac` à 21 °C (`WidgetHvacFeedback.TEMPERATURE`), enregistre `SUCCESS`
+   ou `ERROR`, redessine, et programme `HvacFeedbackClearWorker` dans 10 s (`DISPLAY_DURATION_MS`).
+   Voiture de démo : `launchHvac` attend 3 s avant de réussir, pour simuler une requête.
+3. `HvacFeedbackClearWorker` efface le retour et redessine : le widget normal revient (WorkManager peut le retarder un
+   peu en veille). Le retour est aussi ignoré à la lecture une fois expiré (`WidgetHvacFeedback.isExpired` : 10 s,
+   2 min pour un `SENDING` dont le processus aurait été tué).
+
+Textes : `widget_launch_pre_heat`, `widget_pre_heat_launched`, `widget_pre_heat_error`, repris de `launchPreHeat`,
+`preHeatLaunched` et `error` des `Localizable.strings` iOS ; `widget_ok` comme `widgetHvacOk` sur iOS ; `widget_pre_heat_sending` (Android seulement).
 
 ## Rafraîchissement des widgets
 
@@ -137,6 +170,9 @@ Java 17 et les dépôts Maven des nouveaux modules sont réglés par le plugin G
 | Branchée | Libellé de l'état (`EN CHARGE |`, `CHARGE PLANIFIÉE |`, `CHARGE TERMINÉE |`, `NE CHARGE PAS |`, `V2G`, `V2L`), barre « en charge » |
 | En charge | Durée restante (« 2h05 ») et heure de fin, sinon « --h-- » |
 
+- Widget vide (lignes « Pas de compte » à « sans données RTE ») : `WidgetMessage`, une illustration (`MessageIllustration`,
+  `drawable/widget_empty_account|car|error` : icône sur un disque clair, « + » vert pour la voiture) au-dessus du texte,
+  côte à côte sur la barre 4x1. Compte → `ACCOUNT`, voiture → `CAR`, erreurs serveur → `ERROR`.
 - Autonomie : convertie en miles si `convertToMiles`, unité « mi » si `displayMiles` (deux réglages distincts, comme l'app).
 - Toucher le widget ouvre l'app sur la page de sa voiture (`CarShortcuts.openIntent`) ; toucher l'heure relance le chargement.
 - Une voiture Hyundai est traitée comme Renault (hors périmètre) : elle affiche `not_yet_logged_in`.
@@ -147,6 +183,8 @@ Java 17 et les dépôts Maven des nouveaux modules sont réglés par le plugin G
   `com.kelec.shared.R` (alias `SharedR` dans l'app).
 - `app/src/main/res/values*/strings.xml` : textes propres à l'app (configuration du widget, widgets Tempo, textes des aperçus).
   Les textes Tempo viennent des `Localizable.strings` iOS (`BLUE`, `tempoRteServerError`…).
+- Clé `<vin>/widgetHvacStatus` (`StorageKey.widgetHvacStatus`, en clair) : retour du bouton de confort thermique,
+  `{"status":"SUCCESS","date":<ms>}`, propre au widget.
 - `values/` est le français (langue par défaut), puis 20 langues (`values-en`, `values-de`…). Un nouveau texte doit être
   ajouté dans les 21 dossiers ; les traductions des widgets iOS (`ios/<langue>.lproj/Localizable.strings`) peuvent servir.
 
@@ -156,7 +194,7 @@ Java 17 et les dépôts Maven des nouveaux modules sont réglés par le plugin G
 - `./gradlew :app:assembleDebug` : compile les trois modules (l'app avec Compose et Glance).
 - À vérifier sur appareil après un changement du widget : un widget déjà posé s'affiche toujours, le bouton de l'heure,
   le choix de la voiture, les trois tailles du widget batterie (redimensionner), les widgets Tempo (jour et 2 jours),
-  le mode sombre, l'historique de kilométrage dans l'app, l'export des logs.
+  le mode sombre, le bouton de confort thermique dans chaque taille et sur les widgets Tempo (chargement, réussite, échec, retour du bouton après 60 s), l'historique de kilométrage dans l'app, l'export des logs.
 - Réglages → Debug → « Debug zone » (côté RN) : choix d'une voiture, puis « Battery status » (appel Renault pas à pas)
   ou « Mileage history » (10 dernières entrées écrites par le widget), avec export des logs en fichier texte.
 
