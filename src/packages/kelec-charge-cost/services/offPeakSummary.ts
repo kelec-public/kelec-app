@@ -108,11 +108,11 @@ export function formatDays(days: Weekday[], name: (day: Weekday) => string = day
     const runs: number[][] = [];
     positions.forEach(position => {
         const run = runs.at(-1);
-        if (run && run.at(-1) === position - 1) run.push(position);
+        if (run?.at(-1) === position - 1) run.push(position);
         else runs.push([position]);
     });
     return runs.flatMap(run => run.length >= 3
-        ? [`${name(WEEKDAYS[run[0]])} – ${name(WEEKDAYS[run.at(-1)!])}`]
+        ? [`${name(WEEKDAYS[run[0]])} – ${name(WEEKDAYS[run[run.length - 1]])}`]
         : run.map(position => name(WEEKDAYS[position])),
     ).join(', ');
 }

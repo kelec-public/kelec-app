@@ -27,7 +27,8 @@ export type OffPeakSlot = {
 
 /** Jours où la plage commence, dans l'ordre de la semaine. */
 export function slotDays(slot: OffPeakSlot): Weekday[] {
-    return slot.days ? WEEKDAYS.filter(day => slot.days!.includes(day)) : [...WEEKDAYS];
+    const days = slot.days;
+    return days ? WEEKDAYS.filter(day => days.includes(day)) : [...WEEKDAYS];
 }
 
 export function slotStartsOn(slot: OffPeakSlot, day: Weekday): boolean {
