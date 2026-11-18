@@ -15,6 +15,7 @@ import com.kelec.shared.TempoLoader
 import com.kelec.shared.UserCar
 import com.kelec.shared.VehicleLoader
 import com.kelec.shared.VehicleStatus
+import com.kelec.shared.WidgetHvacFeedback
 import com.kelec.shared.R as SharedR
 
 /** Ce qu'affiche un widget de voiture : un message (pas connecté, erreur…) ou la voiture chargée. */
@@ -26,6 +27,8 @@ sealed interface CarWidgetState {
         val battery: BatteryStatus,
         val prefs: AppPreferences,
         val image: Bitmap?,
+        /** Retour du bouton de confort thermique (widget 4x2), null hors envoi et après son affichage. */
+        val hvacFeedback: WidgetHvacFeedback? = null,
     ) : CarWidgetState
 }
 
@@ -54,6 +57,7 @@ object WidgetData {
                 battery = status.battery,
                 prefs = store.loadPreferences() ?: AppPreferences(),
                 image = carImage(store, car.vin),
+                hvacFeedback = store.widgetHvacFeedback(car.vin),
             )
             VehicleStatus.NotLoggedIn -> CarWidgetState.Message(context.getString(SharedR.string.not_yet_logged_in))
             VehicleStatus.Unavailable -> CarWidgetState.Message(context.getString(serverError))

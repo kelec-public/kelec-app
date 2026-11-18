@@ -19,6 +19,7 @@ struct MediumCarWidgetView: View{
   var carName: String
   var image: String
   var appPreferences: AppPreferences?
+  var hvacFeedback: WidgetHvacFeedback? = nil
   var body: some View{
     GeometryReader{ geo in
       VStack(alignment: .leading, spacing: 5) {
@@ -104,7 +105,7 @@ struct MediumCarWidgetView: View{
         }
         .widgetAccentable(false)
         HStack{
-          VStack(spacing: 10) {
+          VStack(alignment: .leading, spacing: 8) {
             if(apiHandler.getIsCarPlugged()){
               
               HStack(spacing: 15){
@@ -118,6 +119,10 @@ struct MediumCarWidgetView: View{
                 }.foregroundColor(.gray)
                   .opacity(apiHandler.getIsCarCharging() ? 1 : 0)
               }
+            }
+            Spacer(minLength: 0)
+            if let vin = userCar.car?.vin {
+              HvacWidgetButton(vin: vin, feedback: hvacFeedback)
             }
           }
           .widgetAccentable(false)

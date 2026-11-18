@@ -27,8 +27,14 @@ struct Provider: AppIntentTimelineProvider {
     let data = await VehicleLoader.loadWidgetData { account in
       widgetCar(account: account, configuredVin: configuration.car?.id)
     }
-    let entry = SimpleEntry(date: currentDate, data: data)
-    return Timeline(entries: [entry], policy: .after(nextRefresh))
+    var entry = SimpleEntry(date: currentDate, data: data)
+    // result of the pre-heating button: shown until it expires, then the button again
+    guard let hvacFeedback = WidgetHvacFeedback.load(vin: data.userCar?.car?.vin, now: currentDate) else {
+      return Timeline(entries: [entry], policy: .after(nextRefresh))
+    }
+    let buttonEntry = SimpleEntry(date: hvacFeedback.expiryDate, data: data)
+    entry.hvacFeedback = hvacFeedback
+    return Timeline(entries: [entry, buttonEntry], policy: .after(nextRefresh))
   }
 }
 
@@ -40,6 +46,8 @@ struct SimpleEntry: TimelineEntry {
   let image: String
   let appPreferences: AppPreferences?
   let apiHandler: ApiHandler?
+  // result of the pre-heating button of the medium widgets, nil to show the button
+  var hvacFeedback: WidgetHvacFeedback? = nil
 }
 
 extension SimpleEntry {
@@ -74,10 +82,10 @@ struct KeleciOSWidgetEntryView : View {
     case .systemMedium:
       CarWidgetStateView(account: entry.account, userCar: entry.userCar, apiHandler: entry.apiHandler) { _, userCar, apiHandler in
         if self.style == .alternative {
-          MediumCarWidgetAltView(apiHandler: apiHandler, carName: entry.carName, image: entry.image, appPreferences: entry.appPreferences)
+          MediumCarWidgetAltView(apiHandler: apiHandler, userCar: userCar, carName: entry.carName, image: entry.image, appPreferences: entry.appPreferences, hvacFeedback: entry.hvacFeedback)
             .widgetBackground()
         } else {
-          MediumCarWidgetView(apiHandler: apiHandler, userCar: userCar, carName: entry.carName, image: entry.image, appPreferences: entry.appPreferences)
+          MediumCarWidgetView(apiHandler: apiHandler, userCar: userCar, carName: entry.carName, image: entry.image, appPreferences: entry.appPreferences, hvacFeedback: entry.hvacFeedback)
             .widgetBackground()
         }
       }

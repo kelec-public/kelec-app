@@ -23,4 +23,9 @@
     <string name="tempo_red">RDEČA</string>
     <string name="tempo_car_server_error">Ni mogoče vzpostaviti povezave s strežnikom Renault</string>
     <string name="tempo_rte_server_error">Ni mogoče vzpostaviti povezave s strežnikom RTE</string>
+
+    <!-- Bouton de confort thermique du widget 4x2 -->
+    <string name="widget_launch_pre_heat">Zaženi predgrevanje</string>
+    <string name="widget_pre_heat_launched">Predgrevanje zagnano</string>
+    <string name="widget_pre_heat_error">Napaka</string>
 </resources>

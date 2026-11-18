@@ -23,4 +23,9 @@
     <string name="tempo_red">KIRMIZI</string>
     <string name="tempo_car_server_error">Renault sunucusuna bağlanılamıyor</string>
     <string name="tempo_rte_server_error">RTE sunucusuna bağlanılamıyor</string>
+
+    <!-- Bouton de confort thermique du widget 4x2 -->
+    <string name="widget_launch_pre_heat">Ön ısıtmayı başlat</string>
+    <string name="widget_pre_heat_launched">Ön ısıtma başlatıldı</string>
+    <string name="widget_pre_heat_error">Hata</string>
 </resources>

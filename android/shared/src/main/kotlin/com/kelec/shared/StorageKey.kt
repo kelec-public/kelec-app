@@ -18,6 +18,8 @@ object StorageKey {
     fun widgetVin(appWidgetId: Int) = "widget_vin_$appWidgetId"
     /** Ancien cache du widget (même contenu que [batteryStatus]) : seulement relu. */
     fun legacyCarData(vin: String) = "$vin/carData"
+    /** Retour du bouton de confort thermique des widgets ([WidgetHvacFeedback]), par voiture. */
+    fun widgetHvacStatus(vin: String) = "$vin/widgetHvacStatus"
     /** Derniers jours Tempo connus (cache des widgets Tempo, propre à Android). */
     const val TEMPO = "tempo"
 

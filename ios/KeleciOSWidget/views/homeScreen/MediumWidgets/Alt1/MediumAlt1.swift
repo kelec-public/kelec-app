@@ -11,9 +11,11 @@ import renaultApi
 
 struct MediumCarWidgetAltView: View {
   var apiHandler: ApiHandler
+  var userCar: UserCar
   var carName: String
   var image: String
   var appPreferences: AppPreferences?
+  var hvacFeedback: WidgetHvacFeedback? = nil
   var body: some View {
     VStack {
       HStack {
@@ -66,6 +68,9 @@ struct MediumCarWidgetAltView: View {
               Image(systemName: apiHandler.getBatteryLevel() == 100 ? "bolt.badge.checkmark.fill" : "powercord")
                 .foregroundColor(apiHandler.chargingColour)
             }
+          }
+          if let vin = userCar.car?.vin {
+            HvacWidgetButton(vin: vin, feedback: hvacFeedback)
           }
         }
         Spacer()

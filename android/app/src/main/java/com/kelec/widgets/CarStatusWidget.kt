@@ -149,7 +149,7 @@ internal fun CarSquareView(state: CarWidgetState.Loaded, modifier: GlanceModifie
     }
 }
 
-/** 4x2 : logo, nom et niveau, jauge, état de charge et autonomie, heure, temps de charge et image de la voiture. */
+/** 4x2 : logo, nom, bouton de confort thermique et niveau, jauge, état de charge et autonomie, heure, temps de charge et image de la voiture. */
 @Composable
 private fun CarLargeView(state: CarWidgetState.Loaded) {
     val battery = state.battery
@@ -163,6 +163,9 @@ private fun CarLargeView(state: CarWidgetState.Loaded) {
                 maxLines = 1,
                 modifier = GlanceModifier.defaultWeight(),
             )
+            // seulement sur le 4x2 : il n'y a pas la place sur la barre 4x1 ni sur le carré 2x2
+            HvacButton(state.car.vin, state.hvacFeedback)
+            Spacer(GlanceModifier.width(8.dp))
             BatteryLevelText(battery, 26.sp)
         }
         Spacer(GlanceModifier.height(6.dp))

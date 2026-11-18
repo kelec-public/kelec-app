@@ -23,4 +23,9 @@
     <string name="tempo_red">ROŞU</string>
     <string name="tempo_car_server_error">Nu se poate conecta la serverul Renault</string>
     <string name="tempo_rte_server_error">Nu se poate conecta la serverul RTE</string>
+
+    <!-- Bouton de confort thermique du widget 4x2 -->
+    <string name="widget_launch_pre_heat">Pornire preîncălzire</string>
+    <string name="widget_pre_heat_launched">Preîncălzire pornită</string>
+    <string name="widget_pre_heat_error">Eroare</string>
 </resources>

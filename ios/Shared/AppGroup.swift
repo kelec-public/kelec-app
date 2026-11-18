@@ -26,6 +26,8 @@ enum StorageKey {
   static let widgetLogs = "widgetLogs"
   static func mileageHistory(vin: String) -> String { "\(vin)_mileageHistory" }
   static func batteryStatus(vin: String) -> String { "\(vin)_batteryStatus" }
+  // iOS widgets: feedback of the pre-heating button (WidgetHvacFeedback)
+  static func widgetHvacStatus(vin: String) -> String { "\(vin)/widgetHvacStatus" }
   // watch only: vin of the car shown by the watch widgets (watch app settings)
   static let watchWidgetCar = "watchWidgetCar"
 

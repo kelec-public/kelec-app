@@ -30,4 +30,9 @@
     <string name="widget_preview_battery" translatable="false">62 % | 175 km</string>
     <string name="widget_preview_hp_price" translatable="false">HP 16.12 c/kWh</string>
     <string name="widget_preview_hc_price" translatable="false">HC 13.25 c/kWh</string>
+
+    <!-- Bouton de confort thermique du widget 4x2 -->
+    <string name="widget_launch_pre_heat">Lancer le confort thermique</string>
+    <string name="widget_pre_heat_launched">Confort thermique actif</string>
+    <string name="widget_pre_heat_error">Erreur</string>
 </resources>

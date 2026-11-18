@@ -24,4 +24,9 @@
     <string name="tempo_red">PIROS</string>
     <string name="tempo_car_server_error">Nem lehet csatlakozni a Renault szerverhez</string>
     <string name="tempo_rte_server_error">Nem lehet csatlakozni az RTE szerverhez</string>
+
+    <!-- Bouton de confort thermique du widget 4x2 -->
+    <string name="widget_launch_pre_heat">Előfűtés indítása</string>
+    <string name="widget_pre_heat_launched">Előfűtés elindítva</string>
+    <string name="widget_pre_heat_error">Hiba</string>
 </resources>

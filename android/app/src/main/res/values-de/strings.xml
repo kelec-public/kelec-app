@@ -23,4 +23,9 @@
     <string name="tempo_red">ROT</string>
     <string name="tempo_car_server_error">Es kann keine Verbindung zum Renault-Server hergestellt werden</string>
     <string name="tempo_rte_server_error">Es kann keine Verbindung zum RTE-Server hergestellt werden</string>
+
+    <!-- Bouton de confort thermique du widget 4x2 -->
+    <string name="widget_launch_pre_heat">Vorklimatisierung starten</string>
+    <string name="widget_pre_heat_launched">Vorklimatisierung gestartet</string>
+    <string name="widget_pre_heat_error">Fehler</string>
 </resources>

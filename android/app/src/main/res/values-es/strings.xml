@@ -23,4 +23,9 @@
     <string name="tempo_red">ROJO</string>
     <string name="tempo_car_server_error">Imposible conectar con el servidor de Renault</string>
     <string name="tempo_rte_server_error">Imposible conectar con el servidor de RTE</string>
+
+    <!-- Bouton de confort thermique du widget 4x2 -->
+    <string name="widget_launch_pre_heat">Iniciar el preacondicionamiento</string>
+    <string name="widget_pre_heat_launched">Preacondicionamiento iniciado</string>
+    <string name="widget_pre_heat_error">Error</string>
 </resources>

@@ -10,8 +10,10 @@ import androidx.glance.GlanceModifier
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
+import androidx.glance.action.actionParametersOf
 import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
+import androidx.glance.appwidget.CircularProgressIndicator
 import androidx.glance.appwidget.LinearProgressIndicator
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.action.actionStartActivity
@@ -22,6 +24,8 @@ import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.layout.ContentScale
 import androidx.glance.layout.Row
+import androidx.glance.layout.Spacer
+import androidx.glance.layout.width
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
@@ -37,6 +41,8 @@ import com.kelec.R
 import com.kelec.carapi.BatteryStatus
 import com.kelec.shared.CarMaker
 import com.kelec.shared.Formatting
+import com.kelec.shared.WidgetHvacFeedback
+import com.kelec.shared.WidgetHvacFeedback.Status
 import com.kelec.shortcuts.CarShortcuts
 
 /** Couleurs des widgets (jour / nuit), reprises du widget RemoteViews et des widgets iOS. */
@@ -47,6 +53,7 @@ object WidgetColors {
     val track = DayNightColor(day = Color(0xFFE5E5EA), night = Color(0xFF3A3A3C))
     val charging = ColorProvider(Color(0xFF27CD41))
     val notCharging = ColorProvider(Color(0xFF007AFF))
+    val error = ColorProvider(Color(0xFFFF3B30))
 
     /** Vert si la voiture est branchée, sinon [unplugged] (comme `chargingColour` sur iOS). */
     fun chargingColour(battery: BatteryStatus, unplugged: ColorProvider = notCharging): ColorProvider =
@@ -136,5 +143,48 @@ fun BatteryLevelText(battery: BatteryStatus, fontSize: TextUnit, colour: ColorPr
             style = TextStyle(color = colour, fontSize = fontSize, fontWeight = FontWeight.Bold),
         )
         Text(text = "%", style = TextStyle(color = WidgetColors.secondary, fontSize = fontSize))
+    }
+}
+
+/**
+ * Bouton de confort thermique (« 21°C »), avec son retour : envoi en cours, puis réussite (vert) ou erreur (rouge).
+ * Inactif pendant l'envoi ; après une erreur, il peut être touché à nouveau.
+ */
+@Composable
+fun HvacButton(vin: String, feedback: WidgetHvacFeedback?) {
+    val context = LocalContext.current
+    val status = feedback?.status
+    val temperature = "${WidgetHvacFeedback.TEMPERATURE}°C"
+    val (text, colour) = when (status) {
+        Status.SUCCESS -> temperature to WidgetColors.charging
+        Status.ERROR -> context.getString(R.string.widget_pre_heat_error) to WidgetColors.error
+        Status.SENDING -> temperature to WidgetColors.secondary
+        null -> temperature to WidgetColors.primary
+    }
+    val description = context.getString(
+        if (status == Status.SUCCESS) R.string.widget_pre_heat_launched else R.string.widget_launch_pre_heat
+    )
+    var modifier = GlanceModifier.height(28.dp).background(WidgetColors.track).cornerRadius(14.dp).padding(horizontal = 10.dp)
+    if (status != Status.SENDING) {
+        modifier = modifier.clickable(actionRunCallback<LaunchHvacAction>(actionParametersOf(LaunchHvacAction.VIN to vin)))
+    }
+    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+        if (status == Status.SENDING) {
+            CircularProgressIndicator(modifier = GlanceModifier.size(14.dp), color = WidgetColors.primary)
+        } else {
+            val icon = when (status) {
+                Status.SUCCESS -> R.drawable.ic_check_24
+                Status.ERROR -> R.drawable.ic_close_24
+                else -> R.drawable.ic_hvac_24
+            }
+            Image(
+                provider = ImageProvider(icon),
+                contentDescription = description,
+                modifier = GlanceModifier.size(16.dp),
+                colorFilter = ColorFilter.tint(colour),
+            )
+        }
+        Spacer(GlanceModifier.width(4.dp))
+        Text(text = text, style = TextStyle(color = colour, fontSize = 13.sp, fontWeight = FontWeight.Medium), maxLines = 1)
     }
 }

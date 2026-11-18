@@ -23,4 +23,9 @@
     <string name="tempo_red">RØD</string>
     <string name="tempo_car_server_error">Kan ikke koble til Renault-serveren</string>
     <string name="tempo_rte_server_error">Kan ikke koble til RTE-serveren</string>
+
+    <!-- Bouton de confort thermique du widget 4x2 -->
+    <string name="widget_launch_pre_heat">Start forvarming</string>
+    <string name="widget_pre_heat_launched">Forvarming startet</string>
+    <string name="widget_pre_heat_error">Feil</string>
 </resources>

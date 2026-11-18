@@ -23,4 +23,9 @@
     <string name="tempo_red">PUNAINEN</string>
     <string name="tempo_car_server_error">Renault-palvelimeen ei voida muodostaa yhteyttä</string>
     <string name="tempo_rte_server_error">RTE-palvelimeen ei voida muodostaa yhteyttä</string>
+
+    <!-- Bouton de confort thermique du widget 4x2 -->
+    <string name="widget_launch_pre_heat">Käynnistä esilämmitys</string>
+    <string name="widget_pre_heat_launched">Esilämmitys käynnistetty</string>
+    <string name="widget_pre_heat_error">Virhe</string>
 </resources>
