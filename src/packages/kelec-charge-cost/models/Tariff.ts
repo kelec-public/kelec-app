@@ -5,6 +5,12 @@
 export const CURRENCIES = ['EUR', 'GBP', 'CHF', 'NOK', 'SEK', 'DKK', 'ISK', 'PLN', 'CZK', 'HUF', 'RON'] as const;
 export type Currency = typeof CURRENCIES[number];
 
+/** Jour de la semaine, numéroté comme `Date.getDay()` : 0 = dimanche … 6 = samedi. */
+export type Weekday = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+
+/** Jours dans l'ordre d'affichage : la semaine commence le lundi. */
+export const WEEKDAYS: readonly Weekday[] = [1, 2, 3, 4, 5, 6, 0];
+
 /**
  * Plage d'heures creuses, en heures locales « HH:MM » (heure du téléphone).
  * Si `end` est avant `start`, la plage passe minuit (ex. 22:00 → 06:00).
@@ -12,7 +18,29 @@ export type Currency = typeof CURRENCIES[number];
 export type OffPeakSlot = {
     start: string;
     end: string;
+    /**
+     * Jours où la plage commence (une plage qui passe minuit finit le lendemain matin).
+     * Absent : tous les jours (les tarifs enregistrés avant les jours n'ont pas ce champ). Jamais vide.
+     */
+    days?: Weekday[];
 };
+
+/** Jours où la plage commence, dans l'ordre de la semaine. */
+export function slotDays(slot: OffPeakSlot): Weekday[] {
+    const days = slot.days;
+    return days ? WEEKDAYS.filter(day => days.includes(day)) : [...WEEKDAYS];
+}
+
+export function slotStartsOn(slot: OffPeakSlot, day: Weekday): boolean {
+    return !slot.days || slot.days.includes(day);
+}
+
+/** Jours choisis → champ `days` : absent quand ce sont tous les jours. */
+export function withDays(slot: OffPeakSlot, days: Weekday[]): OffPeakSlot {
+    const sorted = WEEKDAYS.filter(day => days.includes(day));
+    const everyDay = { start: slot.start, end: slot.end };
+    return sorted.length === WEEKDAYS.length ? everyDay : { ...everyDay, days: sorted };
+}
 
 type TariffBase = {
     id: string;

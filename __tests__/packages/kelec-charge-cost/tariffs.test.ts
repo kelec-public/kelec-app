@@ -1,10 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { FlatTariff, Tariff } from "../../../src/packages/kelec-charge-cost/models/Tariff";
+import { FlatTariff, OffPeakSlot, Tariff } from "../../../src/packages/kelec-charge-cost/models/Tariff";
 import { draftFromTariff, newDraft, parsePrice, tariffFromDraft } from "../../../src/packages/kelec-charge-cost/models/tariffDraft";
 import { canDeleteTariff, deleteTariff, tariffEnd, tariffStatus, upsertTariff, withPeriod } from "../../../src/packages/kelec-charge-cost/services/tariffList";
 import { TariffRepository } from "../../../src/packages/kelec-charge-cost/services/tariffRepository";
 import { currencySymbol, formatKwhPrice, formatPrice, formatPricePerKwh } from "../../../src/packages/kelec-charge-cost/services/priceFormat";
-import { formatDuration, offPeakMinutesPerDay, offPeakRanges, offPeakSaving, peakSlots } from "../../../src/packages/kelec-charge-cost/services/offPeakSummary";
+import { daySchedules, formatDays, formatDuration, isSameEveryDay, offPeakMinutesPerDay, offPeakMinutesPerWeek, offPeakRanges, offPeakSaving, peakSlots } from "../../../src/packages/kelec-charge-cost/services/offPeakSummary";
 
 const flat = (id: string, validFrom: string | null, pricePerKwh = 0.2): FlatTariff =>
     ({ id, validFrom, kind: 'flat', pricePerKwh });
@@ -54,6 +54,36 @@ describe("tariff draft", () => {
         expect(withSlots(['22:00', '06:00'], ['06:00', '07:00']).ok).toBe(true);
         expect(withSlots(['22:00', '06:00'], ['12:30', '14:30']).ok).toBe(true);
         expect(withSlots(['20:00', '22:00'], ['22:00', '06:00']).ok).toBe(true);    });
+
+    test("off-peak slots on different days", () => {
+        const draft = { ...newDraft('a', [], new Date()), kind: 'peakOffPeak' as const, peakPrice: "0.27", offPeakPrice: "0.21" };
+        const withSlots = (...offPeakSlots: OffPeakSlot[]) => tariffFromDraft({ ...draft, offPeakSlots });
+        const overlap = { ok: false, errorKey: 'offPeakSlotsOverlap' };
+        // mêmes heures, jours différents : acceptées
+        expect(withSlots({ start: '22:00', end: '06:00', days: [1, 2, 3, 4, 5] }, { start: '20:00', end: '08:00', days: [6, 0] }).ok).toBe(true);
+        // le vendredi soir déborde sur le samedi matin
+        expect(withSlots({ start: '22:00', end: '06:00', days: [5] }, { start: '03:00', end: '07:00', days: [6] })).toEqual(overlap);
+        expect(withSlots({ start: '22:00', end: '06:00', days: [5] }, { start: '06:00', end: '07:00', days: [6] }).ok).toBe(true);
+        // du samedi soir au dimanche matin (fin de la semaine)
+        expect(withSlots({ start: '22:00', end: '06:00', days: [6] }, { start: '01:00', end: '02:00', days: [0] })).toEqual(overlap);
+        // une plage de tous les jours chevauche celle d'un seul jour
+        expect(withSlots({ start: '22:00', end: '06:00' }, { start: '23:00', end: '01:00', days: [3] })).toEqual(overlap);
+        // aucun jour : refusé
+        expect(withSlots({ start: '22:00', end: '06:00', days: [] })).toEqual({ ok: false, errorKey: 'invalidOffPeakSlot' });
+    });
+
+    test("days are stored in the order of the week, and not at all for every day", () => {
+        const draft = { ...newDraft('a', [], new Date()), kind: 'peakOffPeak' as const, peakPrice: "0.27", offPeakPrice: "0.21" };
+        const saved = tariffFromDraft({ ...draft, offPeakSlots: [
+            { start: '22:00', end: '06:00', days: [0, 3, 1] },
+            { start: '12:00', end: '14:00', days: [0, 1, 2, 3, 4, 5, 6] },
+        ] });
+        expect(saved.ok && saved.value.kind === 'peakOffPeak' && saved.value.offPeakSlots).toEqual([
+            { start: '22:00', end: '06:00', days: [1, 3, 0] },
+            { start: '12:00', end: '14:00' },
+        ]);
+        expect(saved.ok && saved.value.kind === 'peakOffPeak' && 'days' in saved.value.offPeakSlots[1]).toBe(false);
+    });
 
     test("editing a tariff starts from its values", () => {
         const tariff: Tariff = { id: 'a', validFrom: '2027-02-01', kind: 'peakOffPeak', peakPrice: 0.27, offPeakPrice: 0.21, offPeakSlots: [{ start: '12:30', end: '14:30' }] };
@@ -209,6 +239,37 @@ describe("off-peak summary", () => {
         expect(offPeakMinutesPerDay([{ start: '22:00', end: '06:00' }])).toBe(8 * 60);
         expect(offPeakMinutesPerDay([{ start: '22:00', end: '06:00' }, { start: '03:00', end: '07:00' }])).toBe(9 * 60);
         expect(offPeakMinutesPerDay([])).toBe(0);
+    });
+
+    test("days with the same slots are grouped, from Monday", () => {
+        const nights: OffPeakSlot = { start: '22:00', end: '06:00', days: [1, 2, 3, 4, 5] };
+        const noon: OffPeakSlot = { start: '12:00', end: '14:00', days: [3, 6] };
+        expect(daySchedules([nights, noon])).toEqual([
+            { days: [1, 2, 4, 5], slots: [nights] },
+            { days: [3], slots: [nights, noon] },
+            { days: [6], slots: [noon] },
+            { days: [0], slots: [] },
+        ]);
+        expect(isSameEveryDay([nights, noon])).toBe(false);
+        expect(isSameEveryDay([{ start: '22:00', end: '06:00' }])).toBe(true);
+        expect(isSameEveryDay([])).toBe(true);
+    });
+
+    test("total per week", () => {
+        expect(offPeakMinutesPerWeek([{ start: '22:00', end: '06:00' }])).toBe(7 * 8 * 60);
+        expect(offPeakMinutesPerWeek([
+            { start: '22:00', end: '06:00', days: [1, 2, 3, 4, 5] },
+            { start: '00:00', end: '12:00', days: [6, 0] },
+            { start: '12:00', end: '00:00', days: [6, 0] },
+        ])).toBe(5 * 8 * 60 + 2 * 24 * 60);
+    });
+
+    test("days as text: three days in a row or more become a range", () => {
+        const name = (day: number) => ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'][day];
+        expect(formatDays([1, 2, 3, 4, 5], name)).toBe('Mo – Fr');
+        expect(formatDays([6, 0], name)).toBe('Sa, Su');
+        expect(formatDays([0, 1, 3, 4, 5, 6], name)).toBe('Mo, We – Su');
+        expect(formatDays([3], name)).toBe('We');
     });
 
     test("duration", () => {

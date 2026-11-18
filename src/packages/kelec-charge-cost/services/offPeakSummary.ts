@@ -1,4 +1,4 @@
-import { OffPeakSlot } from "../models/Tariff";
+import { OffPeakSlot, slotStartsOn, Weekday, WEEKDAYS } from "../models/Tariff";
 import { slotMinutes } from "../models/tariffDraft";
 
 const DAY_MINUTES = 24 * 60;
@@ -59,4 +59,60 @@ export function formatDuration(minutes: number): string {
 export function offPeakSaving(peakPrice: number | null, offPeakPrice: number | null): number | null {
     if (peakPrice === null || offPeakPrice === null || peakPrice <= 0 || offPeakPrice >= peakPrice) return null;
     return Math.round((1 - offPeakPrice / peakPrice) * 100);
+}
+
+/** Jours qui ont les mêmes plages d'heures creuses (celles qui commencent ces jours-là). */
+export type DaySchedule = {
+    days: Weekday[];
+    slots: OffPeakSlot[];
+};
+
+/**
+ * Plages de chaque jour, les jours aux plages identiques regroupés, dans l'ordre de la semaine (à partir du lundi).
+ * Une seule entrée (les 7 jours) quand toutes les plages valent tous les jours.
+ * Les jours sans plage forment une entrée sans plage.
+ */
+export function daySchedules(slots: OffPeakSlot[]): DaySchedule[] {
+    const schedules = new Map<string, DaySchedule>();
+    for (const day of WEEKDAYS) {
+        const indices = slots.flatMap((slot, index) => slotStartsOn(slot, day) ? [index] : []);
+        const key = indices.join(',');
+        const schedule = schedules.get(key);
+        if (schedule) schedule.days.push(day);
+        else schedules.set(key, { days: [day], slots: indices.map(index => slots[index]) });
+    }
+    return [...schedules.values()];
+}
+
+/** Les heures creuses sont les mêmes tous les jours. */
+export function isSameEveryDay(slots: OffPeakSlot[]): boolean {
+    return daySchedules(slots).length === 1;
+}
+
+/** Minutes d'heures creuses par semaine. */
+export function offPeakMinutesPerWeek(slots: OffPeakSlot[]): number {
+    return daySchedules(slots).reduce((total, schedule) => total + offPeakMinutesPerDay(schedule.slots) * schedule.days.length, 0);
+}
+
+/** Nom du jour au format du téléphone (« lun. », « Mon »). Le 7 janvier 2024 est un dimanche. */
+export function weekdayName(day: Weekday, format: 'narrow' | 'short' | 'long' = 'short'): string {
+    return new Date(2024, 0, 7 + day).toLocaleDateString(undefined, { weekday: format });
+}
+
+/**
+ * Jours de la semaine en texte : trois jours qui se suivent ou plus deviennent un intervalle
+ * (« lun. – ven. », « lun., mer., sam. – dim. »).
+ */
+export function formatDays(days: Weekday[], name: (day: Weekday) => string = day => weekdayName(day)): string {
+    const positions = WEEKDAYS.flatMap((day, position) => days.includes(day) ? [position] : []);
+    const runs: number[][] = [];
+    positions.forEach(position => {
+        const run = runs.at(-1);
+        if (run?.at(-1) === position - 1) run.push(position);
+        else runs.push([position]);
+    });
+    return runs.flatMap(run => run.length >= 3
+        ? [`${name(WEEKDAYS[run[0]])} – ${name(WEEKDAYS[run[run.length - 1]])}`]
+        : run.map(position => name(WEEKDAYS[position])),
+    ).join(', ');
 }
