@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="not_yet_logged_in">Önce uygulamada oturum açmalısınız</string>
+    <string name="no_car_added">Önce uygulamaya bir araç eklemelisiniz</string>
+    <string name="widget_server_error">Sunucuya bağlanılamıyor</string>
+    <string name="scheduled_charge_status">"PLANLI ŞARJ | "</string>
+    <string name="ended_charge_status">"ŞARJ TAMAMLANDI | "</string>
+    <string name="charging_status">"ŞARJ EDİLİYOR | "</string>
+    <string name="not_charging_status">"ŞARJ EDİLMİYOR | "</string>
+</resources>

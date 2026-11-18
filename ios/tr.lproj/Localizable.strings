@@ -1,0 +1,143 @@
+/* No comment provided by engineer. */
+" %@" = "%@";
+
+/* No comment provided by engineer. */
+" | %lldkm" = "| %lldkm";
+
+/* No comment provided by engineer. */
+"--h--" = "--h--";
+
+/* No comment provided by engineer. */
+"%" = "%";
+
+/* No comment provided by engineer. */
+"% | " = "% |";
+
+/* No comment provided by engineer. */
+"%@" = "%@";
+
+/* No comment provided by engineer. */
+"%lld" = "%lld";
+
+/* No comment provided by engineer. */
+"%lld km" = "%lld km";
+
+/* No comment provided by engineer. */
+"%lld%%" = "%lld%%";
+
+/* No comment provided by engineer. */
+"%lldh%@%lld" = "%lldh%@%lld";
+
+/* No comment provided by engineer. */
+"| %lld km " = "| %lld km ";
+
+/* No comment provided by engineer. */
+"| %lldkm" = "| %lldkm";
+
+/* No comment provided by engineer. */
+"watchAddVehicleOnIphone" = "iPhone'daki uygulamaya bir araç ekleyin";
+
+/* No comment provided by engineer. */
+"widgetServerError" = "Sunucuya bağlanılamıyor";
+
+/* No comment provided by engineer. */
+"carMakerServerError %@" = "%@ sunucusuna bağlanılamıyor";
+
+/* No comment provided by engineer. */
+"watchOpenIphoneToSync" = "Eşzamanlamak için iPhone'da uygulamayı açın";
+
+/* No comment provided by engineer. */
+"refresh" = "Yenile";
+
+/* No comment provided by engineer. */
+"widgetHomeScreenDescription" = "Renault E-Tech aracınızın bilgilerini Ana Ekranınızda gösterir";
+
+/* No comment provided by engineer. */
+"widgetLockScreenDescription" = "Renault E-Tech aracınızın bilgilerini Kilitli Ekranınızda gösterir";
+
+/* No comment provided by engineer. */
+"Renault E-Tech" = "Renault E-Tech";
+
+/* No comment provided by engineer. */
+"widgetNoCarSelected" = "Önce uygulamaya bir araç eklemelisiniz";
+
+/* No comment provided by engineer. */
+"widgetNotLoggedIn" = "Önce uygulamada oturum açmalısınız";
+
+"CHARGE PLANIFIÉE | " = "PLANLI ŞARJ | ";
+
+"CHARGE TERMINÉE | " = "ŞARJ TAMAMLANDI | ";
+
+"EN CHARGE | " = "ŞARJ EDİLİYOR | ";
+
+"NE CHARGE PAS | " = "ŞARJ EDİLMİYOR | ";
+
+"Demain" = "Yarın";
+
+"Aujourd'hui" = "Bugün";
+
+"BLUE" = "MAVİ";
+
+"WHITE" = "BEYAZ";
+
+"RED" = "KIRMIZI";
+
+"informationSent" = "Bilgi gönderildi";
+
+"preHeatLaunched" = "Ön ısıtma başlatıldı";
+
+"error" = "Hata";
+
+"commandSendError" = "Komut sunucuya gönderilirken hata oluştu. Lütfen daha sonra tekrar deneyin.";
+
+"Car" = "Araç";
+
+"launchPreHeat" = "Ön ısıtmayı başlat";
+
+"launchPreHeatCarDescription" = "Ön ısıtma yapılacak araç.";
+"launchPreHeatTemperature" = "Sıcaklık";
+"launchPreHeatTemperatureDescription" = "Hedef kabin sıcaklığı, °C cinsinden.";
+"launchPreHeatSummary ${car} ${temperature}" = "${car} aracını ${temperature} °C'ye ön ısıt";
+"preHeatLaunchedOn %@ %@" = "%1$@ için %2$@ °C'de ön ısıtma başlatıldı.";
+"preHeatLaunchError %@" = "%@ için ön ısıtma başlatılamadı. Lütfen daha sonra tekrar deneyin.";
+"launchPreHeatControlDescription" = "Seçilen aracın ön ısıtmasını seçilen sıcaklıkta başlatır.";
+
+"areYouSureYouWantToLaunchPreheating" = "Ön ısıtmayı başlatmak istediğinizden emin misiniz?";
+
+"confirm" = "Onayla";
+
+"cancel" = "İptal";
+
+"tempoCarServerError" = "Renault sunucusuna bağlanılamıyor";
+"tempoRteServerError" = "RTE sunucusuna bağlanılamıyor";
+"tempoLoadingError" = "VERİ YÜKLEME HATASI";
+"watchCarLocationError" = "Aracın konumu alınamıyor";
+"tempoLockScreenWidgetDescription" = "Tempo göstergesi";
+"tempoWidgetDescription" = "Renault E-Tech aracınızın bilgilerini Tempo göstergesiyle birlikte Ana Ekranınızda gösterir";
+"tempo2DaysWidgetDescription" = "Renault E-Tech aracınızın bilgilerini 2 günlük Tempo göstergesiyle birlikte Ana Ekranınızda gösterir";
+"watchWidgetDescription" = "Renault E-Tech aracınızın şarj seviyesi";
+"watchSettings" = "Ayarlar";
+"watchWidgetCar" = "Widget'larda gösterilen araç";
+
+"getCarStatus" = "Araç durumunu al";
+"getCarStatusDescription" = "Seçilen aracın pil seviyesini, menzilini, şarj durumunu ve diğer bilgilerini sonraki eylemlerde kullanmak üzere döndürür. Kilit durumu ve şarj sınırı, API'si bu bilgileri sağlamayan Renault, Dacia ve Alpine araçlarında boş kalır.";
+"getCarStatusSummary ${car}" = "${car} aracının durumunu al";
+"getCarStatusCarDescription" = "Durumunu öğrenmek istediğiniz araç.";
+"carStatus" = "Araç durumu";
+"carStatusBatteryLevel" = "Pil seviyesi";
+"carStatusRange" = "Menzil";
+"carStatusChargeStatus" = "Şarj durumu";
+"carStatusIsPlugged" = "Takılı";
+"carStatusRemainingTime" = "Kalan şarj süresi";
+"carStatusChargeLimit" = "Şarj sınırı";
+"carStatusIsLocked" = "Kilitli";
+"carStatusMileage" = "Kilometre";
+"carStatusLastUpdate" = "Son güncelleme";
+"chargeStatusNotPlugged" = "Takılı değil";
+"chargeStatusNotCharging" = "Şarj edilmiyor";
+"chargeStatusCharging" = "Şarj ediliyor";
+"chargeStatusScheduled" = "Planlı şarj";
+"chargeStatusEnded" = "Şarj tamamlandı";
+"chargeStatusV2G" = "V2G";
+"chargeStatusV2L" = "V2L";
+"carStatusDialog %@ %@ %@ %@" = "%1$@: %2$@%% · %3$@ · %4$@";

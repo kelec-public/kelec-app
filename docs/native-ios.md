@@ -245,14 +245,14 @@ Bouton du Centre de contrôle, de l'écran verrouillé et du bouton Action, dans
 
 ## Traductions iOS
 
-- Fichiers : `ios/<langue>.lproj/Localizable.strings` (19 langues). Ils sont maintenant aussi embarqués dans les widgets de la montre, qui affichaient toujours du français.
+- Fichiers : `ios/<langue>.lproj/Localizable.strings` (21 langues). Ils sont maintenant aussi embarqués dans les widgets de la montre, qui affichaient toujours du français.
 - Clés : `widgetNotLoggedIn`, `widgetNoCarSelected`, `widgetServerError`, `carMakerServerError %@`, `refresh`,
   `widgetHomeScreenDescription`, `widgetLockScreenDescription`, `tempo*`, `watch*`…
 - En SwiftUI, `Text("clé")` avec une chaîne littérale est traduit. `Text(variable)` ne l'est pas : utiliser `LocalizedStringKey` ou `localized(_:)`.
 - Les fichiers ne contiennent plus le doublon de `error`. Les erreurs de traduction existantes (catalan, croate, norvégien, tchèque, italien) sont corrigées.
 - Montre et Siri/Raccourcis : « préchauffage » devient « confort thermique » en français (`preHeatLaunched`, `launchPreHeat`, `areYouSureYouWantToLaunchPreheating`). Les clés ne changent pas, et les autres langues et `localizations.json` non plus.
 - La clé RN `isSelectedAsDefault` de `localizations.json` n'est plus utilisée (fichier non modifié).
-- Ajouter un texte : une clé (pas une phrase) dans les 19 `Localizable.strings`, puis `Text("clé")` ou `localized("clé")`.
+- Ajouter un texte : une clé (pas une phrase) dans les 21 `Localizable.strings`, puis `Text("clé")` ou `localized("clé")`.
   Les fichiers doivent être membres des targets qui l'affichent (app, widgets iOS, widgets de la montre).
 
 ## Compiler et tester

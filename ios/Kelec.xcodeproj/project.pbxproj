@@ -319,6 +319,8 @@
 		EB87950E2F0D52DE00B24DA6 /* ca */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ca; path = ca.lproj/Localizable.strings; sourceTree = "<group>"; };
 		EB87950F2F0D52E900B24DA6 /* fi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fi; path = fi.lproj/Localizable.strings; sourceTree = "<group>"; };
 		EB8795112F0D558000B24DA6 /* hr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hr; path = hr.lproj/Localizable.strings; sourceTree = "<group>"; };
+		EB8795132F0D560000B24DA6 /* el */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = el; path = el.lproj/Localizable.strings; sourceTree = "<group>"; };
+		EB8795142F0D560000B24DA6 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/Localizable.strings; sourceTree = "<group>"; };
 		EB94F87D2FB3C22F004E0BB4 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		EB94F8822FB3C47B004E0BB4 /* KelecWatchOs-Watch-App-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "KelecWatchOs-Watch-App-Info.plist"; sourceTree = SOURCE_ROOT; };
 		EBBEC8B92C5EC18900539BC6 /* da */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = da; path = da.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -787,6 +789,8 @@
 				ca,
 				fi,
 				hr,
+				el,
+				tr,
 			);
 			mainGroup = 83CBB9F61A601CBA00E9B192;
 			packageReferences = (
@@ -1117,6 +1121,8 @@
 				EB87950E2F0D52DE00B24DA6 /* ca */,
 				EB87950F2F0D52E900B24DA6 /* fi */,
 				EB8795112F0D558000B24DA6 /* hr */,
+				EB8795132F0D560000B24DA6 /* el */,
+				EB8795142F0D560000B24DA6 /* tr */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";

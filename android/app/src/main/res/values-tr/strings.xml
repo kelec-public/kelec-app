@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Kelec</string>
+    <string name="app_widget_description">Renault E-Tech aracınızın bilgilerini Ana Ekranınızda gösterir</string>
+    <string name="widget_image_description">Car logo manufacturer</string>
+    <string name="widget_time_remaining_image_description">Remaining time image</string>
+    <string name="widget_end_time_image_description">End time image</string>
+    <string name="widget_car_name">RENAULT</string>
+    <string name="widget_battery_level">50</string>
+    <string name="widget_percent">%</string>
+    <string name="widget_charging_status">"ŞARJ EDİLİYOR | "</string>
+    <string name="widget_battery_autonomy">77 km</string>
+    <string name="time_remaining_text">5h38</string>
+    <string name="end_time_text">04:34</string>
+    <string name="widget_configure_subtitle">Bu widget\'ta gösterilecek aracı seçin</string>
+    <string name="widget_configure_title">Bir araç seçin</string>
+
+    <!-- Widgets Tempo -->
+    <string name="tempo_widget_description">Renault E-Tech aracınızın bilgilerini Tempo göstergesiyle birlikte Ana Ekranınızda gösterir</string>
+    <string name="tempo_2days_widget_description">Renault E-Tech aracınızın bilgilerini 2 günlük Tempo göstergesiyle birlikte Ana Ekranınızda gösterir</string>
+    <string name="tempo_blue">MAVİ</string>
+    <string name="tempo_white">BEYAZ</string>
+    <string name="tempo_red">KIRMIZI</string>
+    <string name="tempo_car_server_error">Renault sunucusuna bağlanılamıyor</string>
+    <string name="tempo_rte_server_error">RTE sunucusuna bağlanılamıyor</string>
+</resources>

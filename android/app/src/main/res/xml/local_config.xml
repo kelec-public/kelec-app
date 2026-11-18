@@ -19,4 +19,6 @@
     <locale android:name="ca-ES" />
     <locale android:name="fi-FI" />
     <locale android:name="hr-HR" />
+    <locale android:name="el-GR" />
+    <locale android:name="tr-TR" />
 </locale-config>

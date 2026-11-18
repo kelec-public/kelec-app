@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="not_yet_logged_in">Πρέπει πρώτα να συνδεθείτε στην εφαρμογή</string>
+    <string name="no_car_added">Πρέπει πρώτα να προσθέσετε ένα όχημα στην εφαρμογή</string>
+    <string name="widget_server_error">Δεν είναι δυνατή η σύνδεση με τον διακομιστή</string>
+    <string name="scheduled_charge_status">"ΠΡΟΓΡΑΜΜΑΤΙΣΜΕΝΗ ΦΟΡΤΙΣΗ | "</string>
+    <string name="ended_charge_status">"ΦΟΡΤΙΣΗ ΟΛΟΚΛΗΡΩΘΗΚΕ | "</string>
+    <string name="charging_status">"ΦΟΡΤΙΖΕΙ | "</string>
+    <string name="not_charging_status">"ΔΕΝ ΦΟΡΤΙΖΕΙ | "</string>
+</resources>

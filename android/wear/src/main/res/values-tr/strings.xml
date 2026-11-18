@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Textes de l'app Wear OS, repris des Localizable.strings iOS (« iPhone » remplacé par « téléphone »). -->
+<resources>
+    <string name="watch_open_phone_to_sync">Eşzamanlamak için telefondaki uygulamayı açın</string>
+    <string name="watch_add_vehicle_on_phone">Telefondaki uygulamaya bir araç ekleyin</string>
+    <string name="refresh">Yenile</string>
+    <string name="car_maker_server_error">%1$s sunucusuna bağlanılamıyor</string>
+    <string name="watch_widget_car">Widget\'larda gösterilen araç</string>
+    <string name="watch_settings">Ayarlar</string>
+    <string name="watch_car_location_error">Aracın konumu alınamıyor</string>
+    <string name="information_sent">Bilgi gönderildi</string>
+    <string name="pre_heat_launched">Ön ısıtma başlatıldı</string>
+    <string name="error">Hata</string>
+    <string name="command_send_error">Komut sunucuya gönderilirken hata oluştu. Lütfen daha sonra tekrar deneyin.</string>
+    <string name="launch_pre_heat">Ön ısıtmayı başlat</string>
+    <string name="are_you_sure_launch_pre_heating">Ön ısıtmayı başlatmak istediğinizden emin misiniz?</string>
+    <string name="confirm">Onayla</string>
+    <string name="cancel">İptal</string>
+    <string name="watch_widget_description">Renault E-Tech aracınızın şarj seviyesi</string>
+</resources>
