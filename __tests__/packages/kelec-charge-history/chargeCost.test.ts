@@ -27,6 +27,14 @@ describe('chargeCost', () => {
         expect(chargeCost(charge('2024-01-01T21:00:00', '2024-01-01T23:00:00', 120, 20, 40, 10), hphc)).toBeCloseTo(5 * 0.3 + 5 * 0.1);
     });
 
+    test('charging losses are added to the tariff cost, of each sub-charge of a merged charge', () => {
+        expect(chargeCost(charge('2024-01-01T10:00:00', '2024-01-01T11:00:00', 60, 20, 40, 10), flat, undefined, 10)).toBeCloseTo(2.2);
+        const day = charge('2024-01-01T12:00:00', '2024-01-01T13:00:00', 60, 20, 40, 10);
+        const night = charge('2024-01-01T23:00:00', '2024-01-02T00:00:00', 60, 40, 60, 10);
+        const [merged] = mergeCharges([day, night]);
+        expect(chargeCost(merged, hphc, undefined, 10)).toBeCloseTo((10 * 0.3 + 10 * 0.1) * 1.1);
+    });
+
     test('V2G sessions have no cost', () => {
         const v2g = new Charge('2024-01-01T10:00:00', '2024-01-01T11:00:00', 60, 20, 40, 10, 'ok', false, [], undefined, undefined, 3, true);
         expect(chargeCost(v2g, flat)).toBeNull();
@@ -98,6 +106,12 @@ describe('manual prices', () => {
         expect(chargeCost(home, [], overrides)).toBeNull();
         const v2g = new Charge('2024-01-03T10:00:00', '2024-01-03T11:00:00', 60, 20, 40, 10, 'ok', false, [], undefined, undefined, 3, true);
         expect(chargeCost(v2g, flat, new ChargeCostOverrides().with(v2g, 1))).toBe(1);
+    });
+
+    test('charging losses are not added to a manual price (the amount paid)', () => {
+        const overrides = new ChargeCostOverrides().with(away, 12.5);
+        expect(chargeCost(away, flat, overrides, 10)).toBe(12.5);
+        expect(chargeCost(home, flat, overrides, 10)).toBeCloseTo(2.2);
     });
 
     test('a merged charge adds the manual price of a sub-charge to the tariff cost of the others', () => {

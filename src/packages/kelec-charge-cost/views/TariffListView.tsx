@@ -3,15 +3,17 @@ import { StyleSheet, View } from "react-native";
 import MainContext from "../../../lib/Contexts/MainContext";
 import Text from "../../../screen/Common/CustomText";
 import Button from "../../kelec-model/view/Button";
+import KelecCard from "../../kelec-model/view/Card";
 import TariffPageLayout from "./TariffPageLayout";
-import { NEUTRAL_300 } from "../../kelec-model/lib/colours";
-import { spacerM, spacerXL } from "../../kelec-model/view/Spacers";
+import { NEUTRAL_300, ORANGE_ONE } from "../../kelec-model/lib/colours";
+import { spacerM, spacerS, spacerXL } from "../../kelec-model/view/Spacers";
 import { subTitle2, textBody } from "../../kelec-model/view/Titles";
 import { CURRENCIES, Currency, TariffSettings, toLocalDate } from "../models/Tariff";
 import { tariffStatus } from "../services/tariffList";
 import ChoicePills from "./ChoicePills";
 import Badge from "./Badge";
 import TariffCard from "./TariffCard";
+import PriceRow from "./PriceRow";
 
 type Props = {
     /** Voiture dont ce sont les tarifs (déjà mise en forme). */
@@ -19,12 +21,18 @@ type Props = {
     readonly settings: TariffSettings;
     readonly onBack: () => void;
     readonly onSelectCurrency: (currency: Currency) => void;
+    /** Pertes à la recharge saisies (%), telles quelles. */
+    readonly chargingLoss: string;
+    readonly isChargingLossValid: boolean;
+    readonly onChangeChargingLoss: (text: string) => void;
     readonly onEditTariff: (id: string) => void;
     readonly onAddTariff: () => void;
 };
 
-/** Devise, puis une carte par tarif, le plus récent en haut. */
-function TariffListView({ vehicleName, settings, onBack, onSelectCurrency, onEditTariff, onAddTariff }: Props): React.JSX.Element {
+/** Devise, pertes à la recharge, puis une carte par tarif, le plus récent en haut. */
+function TariffListView({
+    vehicleName, settings, onBack, onSelectCurrency, chargingLoss, isChargingLossValid, onChangeChargingLoss, onEditTariff, onAddTariff,
+}: Props): React.JSX.Element {
     const { languageHandler } = useContext(MainContext);
     const t = (key: string) => languageHandler.getTranslation(key);
     const today = toLocalDate(new Date());
@@ -46,6 +54,26 @@ function TariffListView({ vehicleName, settings, onBack, onSelectCurrency, onEdi
                         selected={settings.currency}
                         onSelect={onSelectCurrency}
                     />
+                </View>
+                <View style={styles.section}>
+                    <Text style={[subTitle2, styles.caption]}>{t("chargingLoss").toUpperCase()}</Text>
+                    <KelecCard>
+                        <View style={styles.card}>
+                            <PriceRow
+                                testID="chargingLossInput"
+                                icon="trending-down"
+                                iconColour={ORANGE_ONE}
+                                label={t("chargingLossLabel")}
+                                value={chargingLoss}
+                                onChangeText={onChangeChargingLoss}
+                                unit="%"
+                                placeholder="0"
+                            />
+                            <Text testID="chargingLossHint" style={[subTitle2, styles.hint]}>
+                                {t(isChargingLossValid ? "chargingLossDescription" : "invalidChargingLoss")}
+                            </Text>
+                        </View>
+                    </KelecCard>
                 </View>
                 {settings.tariffs.length === 0 ? (
                     <View style={styles.section}>
@@ -91,6 +119,15 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: spacerM,
+    },
+    card: {
+        // la carte (KelecCard) est en ligne : le contenu prend toute sa largeur
+        flex: 1,
+        gap: spacerM,
+        padding: spacerS,
+    },
+    hint: {
+        color: NEUTRAL_300,
     },
     caption: {
         color: NEUTRAL_300,

@@ -17,17 +17,19 @@ type Props = {
     /** « €/kWh ». */
     readonly unit: string;
     readonly testID: string;
+    /** Par défaut « 0,00 ». */
+    readonly placeholder?: string;
 };
 
 /** Prix au kWh : icône, libellé, champ aligné à droite et unité. */
-function PriceRow({ icon, iconColour, label, value, onChangeText, unit, testID }: Props): React.JSX.Element {
+function PriceRow({ icon, iconColour, label, value, onChangeText, unit, testID, placeholder = "0,00" }: Props): React.JSX.Element {
     return (
         <View style={styles.row}>
             <IconBox icon={icon} colour={iconColour} />
             <Text style={[textBody, styles.label]}>{label}</Text>
             <TextInput
                 testID={testID}
-                placeholder="0,00"
+                placeholder={placeholder}
                 value={value}
                 onChangeText={onChangeText}
                 keyboardType="decimal-pad"

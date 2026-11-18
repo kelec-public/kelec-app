@@ -8,6 +8,7 @@ import UserAccount from "../../../src/lib/clients/accounts/userAccount";
 import { Alert } from "react-native";
 import { formatPrice, TariffRepository } from "../../../src/packages/kelec-charge-cost";
 import { isTabBarHidden } from "../../../testUtils/tabs";
+import LanguageHandler from "../../../src/lib/model/localization/languageHandler";
 
 jest.useFakeTimers();
 
@@ -74,6 +75,34 @@ test('should display the cost of the charges with the home tariff', async () => 
     await act(() => TariffRepository.save('vin1', { currency: 'EUR', tariffs: [] }));
     await waitFor(() => expect(screen.queryAllByTestId('chargeCostText')).toHaveLength(0));
     expect(screen.getByTestId('setTariffBanner')).toBeDefined();
+});
+
+test('charging losses entered on the tariffs page are added to the cost of the charges', async () => {
+    await AsyncStorage.setItem('electricityTariffs', JSON.stringify({
+        currency: 'EUR',
+        tariffs: [{ id: 'flat', validFrom: null, kind: 'flat', pricePerKwh: 0.2 }],
+    }));
+    const user = userEvent.setup();
+    await openHistory(user);
+    await waitFor(() => expect(screen.getAllByTestId('chargeCostText')).toHaveLength(2));
+
+    await user.press(screen.getByTestId('openModal'));
+    await user.press(await screen.findByTestId('tariffButton'));
+    await screen.findByTestId('tariffListView');
+    // enregistré à chaque saisie valide ; une saisie invalide est signalée et garde la dernière valeur valide
+    await user.type(screen.getByTestId('chargingLossInput'), '200');
+    expect(screen.getByTestId('chargingLossHint').props.children).toBe(new LanguageHandler().getTranslation('invalidChargingLoss'));
+    expect(await AsyncStorage.getItem('vin1/chargingLoss')).toBe('20');
+    await user.clear(screen.getByTestId('chargingLossInput'));
+    expect(await AsyncStorage.getItem('vin1/chargingLoss')).toBeNull();
+    await user.type(screen.getByTestId('chargingLossInput'), '20');
+    expect(screen.getByTestId('chargingLossHint').props.children).toBe(new LanguageHandler().getTranslation('chargingLossDescription'));
+    await waitFor(async () => expect(await AsyncStorage.getItem('vin1/chargingLoss')).toBe('20'));
+    await user.press(screen.getByTestId('tariffListBackButton'));
+
+    // 0,20 €/kWh + 20 % : 32,25 kWh puis 50 kWh
+    await waitFor(() => expect(screen.getAllByTestId('chargeCostText').map(text => text.props.children))
+        .toEqual([formatPrice(7.74, 'EUR'), formatPrice(12, 'EUR')]));
 });
 
 test('without tariff: no cost, and an invitation to set one', async () => {

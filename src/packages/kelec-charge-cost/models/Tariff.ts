@@ -66,11 +66,19 @@ export type PeakOffPeakTariff = TariffBase & {
 export type Tariff = FlatTariff | PeakOffPeakTariff;
 export type TariffKind = Tariff['kind'];
 
-/** Tarifs de l'électricité à la maison, communs à toutes les voitures. Un tarif s'arrête quand le suivant commence. */
+/** Tarifs de l'électricité à la maison d'une voiture. Un tarif s'arrête quand le suivant commence. */
 export type TariffSettings = {
     currency: Currency;
     tariffs: Tariff[];
+    /**
+     * Pertes à la recharge, en % de l'énergie reçue par la batterie (ex. 10 : 10 % de plus est payé au réseau).
+     * Absent : aucune perte.
+     */
+    chargingLoss?: number;
 };
+
+/** Pertes de 0 à 100 %. */
+export const MAX_CHARGING_LOSS = 100;
 
 export const DEFAULT_CURRENCY: Currency = 'EUR';
 

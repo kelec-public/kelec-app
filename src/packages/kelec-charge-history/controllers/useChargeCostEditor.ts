@@ -26,8 +26,10 @@ export function useChargeCostEditor(chargeStartDate: string, onDone: () => void)
     const manualCost = charge && costOverrides.get(charge);
     const [amount, setAmount] = useState(manualCost === null || manualCost === undefined ? '' : String(manualCost));
 
-    // prix avec le tarif seul, pour comparer
-    const tariffCost = charge && tariffSettings ? chargeCost(charge, tariffSettings.tariffs) : null;
+    // prix avec le tarif seul (pertes comprises), pour comparer
+    const tariffCost = charge && tariffSettings
+        ? chargeCost(charge, tariffSettings.tariffs, undefined, tariffSettings.chargingLoss)
+        : null;
 
     const save = async () => {
         if (!charge) return;

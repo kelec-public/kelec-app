@@ -4,19 +4,25 @@ import ChargeCostOverrides from "../models/ChargeCostOverrides";
 
 /**
  * Coût d'une charge, ou `null` s'il n'est pas connu.
- * - Prix saisi à la main : il l'emporte sur le tarif.
+ * - Prix saisi à la main : il l'emporte sur le tarif (c'est le montant payé : les pertes ne s'y ajoutent pas).
+ * - Au tarif : les pertes à la recharge (`chargingLoss`, en %) s'ajoutent à l'énergie reçue par la batterie.
  * - Session V2G : pas de coût (l'énergie renvoyée au réseau n'est pas valorisée), sauf prix saisi.
  * - Charge fusionnée : somme du coût de ses sous-charges, chacune avec son prix saisi ou à ses propres horaires.
  *   (Elle commence comme sa première sous-charge : on ne cherche donc pas de prix saisi pour elle-même.)
  */
-export function chargeCost(charge: Charge, tariffs: Tariff[], overrides = new ChargeCostOverrides()): number | null {
+export function chargeCost(
+    charge: Charge,
+    tariffs: Tariff[],
+    overrides = new ChargeCostOverrides(),
+    chargingLoss = 0,
+): number | null {
     if (charge.getIsAMergeCharge() && charge.getSubCharges().length > 0) {
-        return sumCosts(charge.getSubCharges().map(subCharge => chargeCost(subCharge, tariffs, overrides)));
+        return sumCosts(charge.getSubCharges().map(subCharge => chargeCost(subCharge, tariffs, overrides, chargingLoss)));
     }
     const manual = overrides.get(charge);
     if (manual !== null) return manual;
     if (tariffs.length === 0 || charge.isV2G) return null;
-    return computeCost(charge.getStartDate(), charge.getEndDate(), charge.getEnergyRecovered(), tariffs);
+    return computeCost(charge.getStartDate(), charge.getEndDate(), charge.getEnergyRecovered(), tariffs, chargingLoss);
 }
 
 /** Le prix de cette charge (ou d'une de ses sous-charges) a été saisi à la main. */

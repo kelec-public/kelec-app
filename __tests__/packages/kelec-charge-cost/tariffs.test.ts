@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FlatTariff, OffPeakSlot, Tariff } from "../../../src/packages/kelec-charge-cost/models/Tariff";
-import { draftFromTariff, newDraft, parsePrice, tariffFromDraft } from "../../../src/packages/kelec-charge-cost/models/tariffDraft";
+import { draftFromTariff, newDraft, parseChargingLoss, parsePrice, tariffFromDraft } from "../../../src/packages/kelec-charge-cost/models/tariffDraft";
 import { canDeleteTariff, deleteTariff, tariffEnd, tariffStatus, upsertTariff, withPeriod } from "../../../src/packages/kelec-charge-cost/services/tariffList";
 import { TariffRepository } from "../../../src/packages/kelec-charge-cost/services/tariffRepository";
 import { currencySymbol, formatKwhPrice, formatPrice, formatPricePerKwh } from "../../../src/packages/kelec-charge-cost/services/priceFormat";
@@ -22,6 +22,16 @@ describe("tariff draft", () => {
         expect(parsePrice("")).toBeNull();
         expect(parsePrice("-1")).toBeNull();
         expect(parsePrice("abc")).toBeNull();
+    });
+
+    test("charging losses: empty is none, from 0 to 100 %", () => {
+        expect(parseChargingLoss("")).toBe(0);
+        expect(parseChargingLoss(" 10 ")).toBe(10);
+        expect(parseChargingLoss("12,5")).toBe(12.5);
+        expect(parseChargingLoss("100")).toBe(100);
+        expect(parseChargingLoss("100,1")).toBeNull();
+        expect(parseChargingLoss("-5")).toBeNull();
+        expect(parseChargingLoss("10,")).toBeNull();
     });
 
     test("flat rate", () => {
@@ -174,6 +184,22 @@ describe("TariffRepository", () => {
 
         await TariffRepository.save('vin2', { currency: 'SEK', tariffs: [flat('other', null, 0.3)] });
         expect(await TariffRepository.get('vin1')).toEqual({ currency: 'SEK', tariffs: [flat('first', null), flat('second', '2027-02-01')] });
+    });
+
+    test("charging losses are saved per car, and removed when set back to 0", async () => {
+        await AsyncStorage.setItem('electricityTariffsPerVehicle', 'true');
+        await TariffRepository.save('vin1', { currency: 'EUR', tariffs: [flat('first', null)], chargingLoss: 12.5 });
+        expect(await AsyncStorage.getItem('vin1/chargingLoss')).toBe('12.5');
+        expect(await TariffRepository.get('vin1')).toEqual({ currency: 'EUR', tariffs: [flat('first', null)], chargingLoss: 12.5 });
+        // une autre voiture : pas de pertes
+        expect(await TariffRepository.get('vin2')).toEqual({ currency: 'EUR', tariffs: [] });
+        // les autres enregistrements gardent les pertes qu'on leur donne
+        await TariffRepository.save('vin1', { ...await TariffRepository.get('vin1'), currency: 'GBP' });
+        expect(await TariffRepository.get('vin1')).toMatchObject({ currency: 'GBP', chargingLoss: 12.5 });
+
+        await TariffRepository.save('vin1', { currency: 'EUR', tariffs: [flat('first', null)], chargingLoss: 0 });
+        expect(await AsyncStorage.getItem('vin1/chargingLoss')).toBeNull();
+        expect(await TariffRepository.get('vin1')).toEqual({ currency: 'EUR', tariffs: [flat('first', null)] });
     });
 
     test("the former shared tariff is copied once to the cars already there", async () => {

@@ -13,14 +13,14 @@ kelec-charge-cost/
 │   ├── Tariff.ts              Tariff (prix fixe | heures pleines / creuses), TariffSettings (devise + tarifs), dates et heures locales
 │   └── tariffDraft.ts         Tarif en cours de saisie (prix en texte) → Tariff, ou clé de l'erreur
 ├── services/
-│   ├── chargeCost.ts          computeCost(début, fin, kWh, tarifs) (pur)
+│   ├── chargeCost.ts          computeCost(début, fin, kWh, tarifs, pertes en %) (pur)
 │   ├── tariffList.ts          Ajout / modification par id, suppression, fin et état (terminé, en cours, à venir) d'un tarif (pur)
 │   ├── tariffRepository.ts    Lecture / écriture (tarifs par VIN, devise globale), migration de l'ancien tarif commun, abonnement aux enregistrements
 │   ├── offPeakSummary.ts      Plages sur la journée (frise), heures pleines (le reste de la journée), total par jour / semaine, jours aux mêmes plages, noms des jours, économie en %
 │   └── priceFormat.ts         Montants dans la devise, symbole de la devise, dates locales
 ├── controllers/
 │   ├── useTariffSettings.ts   Tarifs d'une voiture lus au montage, puis mis à jour à chaque enregistrement (aussi utilisé par l'historique)
-│   ├── useTariffList.ts       Tarifs relus à chaque affichage de la page, devise
+│   ├── useTariffList.ts       Tarifs relus à chaque affichage de la page, devise, pertes à la recharge (texte saisi, enregistré à chaque valeur valide)
 │   ├── useTariffEditor.ts     Tarif saisi (existant ou nouveau), enregistrement, suppression, alertes
 │   └── useVehicleName.ts      Nom de la voiture dont on affiche les tarifs (sous-titre des pages)
 ├── views/
@@ -59,7 +59,7 @@ Les paramètres de route sont sérialisables (`vin`, et `tariffId` pour la saisi
 - « Supprimer le tarif » est fixé en bas de la saisie, juste au-dessus de la barre d'onglets, loin de ✓ (`footer` de `TariffPageLayout`).
   Sur iOS, la barre flotte par-dessus l'écran : le bouton prend la marge du bas de l'onglet, qui comprend la barre ; sur Android, l'écran s'arrête déjà au-dessus.
 - Un tarif se modifie sur sa page, puis on revient à la liste, mise à jour par l'enregistrement.
-- **Page des tarifs** : devise (sans carte), puis « Historique d'application » (nombre de périodes) et une carte par tarif, la plus récente en haut
+- **Page des tarifs** : devise (sans carte), « Pertes à la recharge » (champ en %, `chargingLossInput`, avec une explication ou l'erreur en dessous, `chargingLossHint`), puis « Historique d'application » (nombre de périodes) et une carte par tarif, la plus récente en haut
   (`tariffRow<index>` garde l'index chronologique). Chaque carte : état (« Actif en ce moment » en vert, « Archivé », « À venir »), type,
   période, puis les prix : heures pleines avec leurs plages (le reste de la journée), heures creuses avec leurs plages, leur durée et l'économie en %.
 - **Page de saisie** : « Période d'application » (« Depuis le début », ou la date de début à droite, puis la fin si un tarif suit),
@@ -93,6 +93,10 @@ Les paramètres de route sont sérialisables (`vin`, et `tariffId` pour la saisi
   Une journée entière se saisit en deux plages (00:00 → 12:00 et 12:00 → 00:00), car début et fin égaux restent refusés.
 - **Calcul** : l'énergie est répartie au prorata du temps (puissance supposée constante), entre tarifs et entre heures pleines / creuses.
   Les jours sont construits en heure locale : la nuit d'un changement d'heure dure bien 7 h ou 9 h. Charge sans durée : tout au prix du début.
+- **Pertes à la recharge** (par voiture, `chargingLoss` de `TariffSettings`, en %) : l'énergie payée au réseau est celle reçue par la batterie, plus les pertes.
+  Avec 10 %, le coût au tarif est multiplié par 1,10 (toutes les charges, quelle que soit la période du tarif). Saisie de 0 à 100 % (virgule ou point) ; vide = 0.
+  Elle est enregistrée à chaque saisie valide (taper « 20 » enregistre 2, puis 20) ; une saisie invalide est signalée et garde la dernière valeur valide.
+  Les prix saisis à la main dans l'historique sont des montants payés : les pertes ne s'y ajoutent pas.
 - Les coûts ne sont jamais stockés : modifier un tarif met à jour tous les coûts.
 - **Mise à jour des écrans ouverts** : `TariffRepository.save` prévient les abonnés (`subscribe`, avec le VIN), et `useTariffSettings(vin)` s'abonne
   (il reprend les tarifs de sa voiture, et la devise de n'importe quel enregistrement)
@@ -105,6 +109,7 @@ Les paramètres de route sont sérialisables (`vin`, et `tariffId` pour la saisi
 |---|---|---|
 | `electricityTariffs` (AppStorage) | `{ currency, tariffs? }` : la devise de l'app. `tariffs` est l'ancien tarif commun à toutes les voitures, gardé tel quel mais plus écrit | `kelec-charge-cost` (`TariffRepository`) |
 | `<vin>/electricityTariffs` (VinStorage) | `Tariff[]`, trié par date de début | `kelec-charge-cost` (`TariffRepository`) |
+| `<vin>/chargingLoss` (VinStorage) | Pertes à la recharge en % (texte, ex. `'12.5'`). Absente : aucune perte (retirée quand on revient à 0) | `kelec-charge-cost` (`TariffRepository`) |
 | `electricityTariffsPerVehicle` (AppStorage) | `'true'` une fois l'ancien tarif commun recopié sur les voitures | `kelec-charge-cost` (`TariffRepository`) |
 
 **Migration** (une seule fois, au montage de `CarsPageView`, `TariffRepository.migrateToVehicles`) : l'ancien tarif commun est recopié
@@ -114,11 +119,11 @@ Les lectures et écritures attendent une migration en cours. En cas d'échec, ri
 
 ## Tests
 
-- `__tests__/packages/kelec-charge-cost/chargeCost.test.ts` : prix fixe, plage sur minuit, prorata HP / HC, plusieurs plages,
+- `__tests__/packages/kelec-charge-cost/chargeCost.test.ts` : prix fixe, pertes à la recharge, plage sur minuit, prorata HP / HC, plusieurs plages,
   plages qui se chevauchent, charge sur plusieurs jours, changement d'heure, changement de tarif (avant, après, à cheval), charge sans durée,
   heures creuses selon le jour (plage qui déborde sur le lendemain, week-end entier).
 - `__tests__/packages/kelec-charge-cost/tariffs.test.ts` : saisie (prix, plages), ajout / modification par id, dates en double,
-  tarif « depuis le début », suppression, fin d'un tarif, stockage par voiture et devise commune, migration de l'ancien tarif commun, format des prix, total d'heures creuses, heures pleines, économie, état d'un tarif,
+  tarif « depuis le début », suppression, fin d'un tarif, stockage par voiture et devise commune, pertes (saisie, stockage par voiture), migration de l'ancien tarif commun, format des prix, total d'heures creuses, heures pleines, économie, état d'un tarif,
   plages selon le jour (chevauchement sur la semaine, ordre des jours, jours regroupés, total par semaine, jours en texte).
 - `__tests__/SettingsView/SettingsView.test.tsx` (« should set the electricity tariff ») : une voiture (ouverture directe), devise, premier tarif, passage en HP / HC, prix manquant refusé ;
   (« with several cars… ») choix de la voiture, tarif enregistré pour elle seule ;
