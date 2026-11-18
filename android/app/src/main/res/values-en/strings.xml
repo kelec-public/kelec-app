@@ -28,4 +28,6 @@
     <string name="widget_launch_pre_heat">Start pre-heating</string>
     <string name="widget_pre_heat_launched">Pre-heating started</string>
     <string name="widget_pre_heat_error">Error</string>
+    <string name="widget_pre_heat_sending">Sending…</string>
+    <string name="widget_ok">OK</string>
 </resources>

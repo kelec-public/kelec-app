@@ -69,7 +69,10 @@ private fun CarStatusContent(state: CarWidgetState) {
         is CarWidgetState.Message -> WidgetMessage(state.text)
         is CarWidgetState.Loaded -> {
             val size = LocalSize.current
+            val feedback = state.hvacFeedback
             when {
+                // le retour du bouton de confort thermique recouvre tout le widget
+                feedback != null -> HvacFeedbackView(state.car.vin, feedback)
                 size.height < CarStatusWidget.SQUARE.height -> CarBarView(state)
                 size.width < CarStatusWidget.LARGE.width -> CarSquareView(state)
                 else -> CarLargeView(state)
@@ -102,7 +105,7 @@ private fun CarBarView(state: CarWidgetState.Loaded) {
                 ChargeAndRange(state, 12)
                 if (battery.isPlugged) ChargingTimes(battery, 12)
             }
-            HvacButton(state.car.vin, state.hvacFeedback, compact = true)
+            HvacButton(state.car.vin, compact = true)
             Spacer(GlanceModifier.width(8.dp))
             LastRefreshLabel(battery, 12.sp)
         }
@@ -148,7 +151,7 @@ internal fun CarSquareView(state: CarWidgetState.Loaded, modifier: GlanceModifie
             CarImage(state, GlanceModifier.fillMaxSize().padding(top = 4.dp, bottom = 8.dp))
             // bouton en bas à gauche, heure en bas à droite, par-dessus l'image
             Row(modifier = GlanceModifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                HvacButton(state.car.vin, state.hvacFeedback, compact = true)
+                HvacButton(state.car.vin, compact = true)
                 Spacer(GlanceModifier.defaultWeight())
                 LastRefreshLabel(battery, 10.sp)
             }
@@ -170,7 +173,7 @@ private fun CarLargeView(state: CarWidgetState.Loaded) {
                 maxLines = 1,
                 modifier = GlanceModifier.defaultWeight(),
             )
-            HvacButton(state.car.vin, state.hvacFeedback)
+            HvacButton(state.car.vin)
             Spacer(GlanceModifier.width(8.dp))
             BatteryLevelText(battery, 26.sp)
         }

@@ -28,4 +28,6 @@
     <string name="widget_launch_pre_heat">Vorklimatisierung starten</string>
     <string name="widget_pre_heat_launched">Vorklimatisierung gestartet</string>
     <string name="widget_pre_heat_error">Fehler</string>
+    <string name="widget_pre_heat_sending">Wird gesendet…</string>
+    <string name="widget_ok">OK</string>
 </resources>

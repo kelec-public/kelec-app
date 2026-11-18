@@ -99,7 +99,6 @@ Java 17 et les dépôts Maven des nouveaux modules sont réglés par le plugin G
 ### Bouton de confort thermique
 
 `HvacButton` (`WidgetComponents.kt`), sur tous les widgets : pastille ronde avec l'icône seule (30 dp, 26 dp en compact).
-Le retour passe par l'icône (chargement, coche verte, croix rouge).
 
 | Où | Bouton |
 |---|---|
@@ -107,21 +106,28 @@ Le retour passe par l'icône (chargement, coche verte, croix rouge).
 | Barre 4x1 | Compact, sur la dernière ligne, avant l'heure |
 | Carré 2x2 et moitié voiture des widgets Tempo (`CarSquareView`) | Compact, en bas à gauche, l'heure en bas à droite, par-dessus l'image |
 
-Chaque changement redessine tous les widgets posés (`WidgetUpdater.redrawAll`), Tempo compris.
+Le retour recouvre tout le widget, Tempo compris (`HvacFeedbackView`, sur une ligne pour la barre 4x1) :
+- `SENDING` : indicateur de chargement et « Envoi… » ;
+- `SUCCESS` : coche verte, « Confort thermique actif » et OK ;
+- `ERROR` : croix rouge, « Erreur » et OK (pas de Réessayer : le bouton revient avec le widget).
+
+OK (`DismissHvacFeedbackAction`) efface le retour tout de suite. Chaque changement redessine tous les widgets posés
+(`WidgetUpdater.redrawAll`), Tempo compris.
 
 1. Le tap lance `LaunchHvacAction` (`HvacWidgetCommand.kt`) : retour `SENDING` enregistré sous `<vin>/widgetHvacStatus`,
-   redessin (indicateur de chargement, bouton inactif), puis `HvacWidgetWorker` (tâche unique `kelec_widget_hvac_<vin>`, `KEEP`) :
+   redessin (chargement), puis `HvacWidgetWorker` (tâche unique `kelec_widget_hvac_<vin>`, `KEEP`) :
    le BroadcastReceiver de Glance est limité à ~10 s. La tâche est *expedited* (`RUN_AS_NON_EXPEDITED_WORK_REQUEST` sans quota) :
    une tâche normale peut être retardée dans un bucket App Standby bas. Android 10 et 11 la font tourner dans un service
    au premier plan, avec une notification discrète le temps de l'envoi (canal `kelec_widget_hvac`, `getForegroundInfo`).
 2. Le worker envoie `VehicleCommands.launchHvac` à 21 °C (`WidgetHvacFeedback.TEMPERATURE`), enregistre `SUCCESS`
-   (coche verte) ou `ERROR` (croix rouge), redessine, et programme `HvacFeedbackClearWorker` dans 60 s.
-   Voiture de démo : `launchHvac` attend 3 s avant de réussir, pour simuler une requête (le chargement s'affiche).
-3. `HvacFeedbackClearWorker` efface le retour et redessine : le bouton revient. Le retour est aussi ignoré à la lecture
-   une fois expiré (`WidgetHvacFeedback.isExpired` : 60 s, 2 min pour un `SENDING` dont le processus aurait été tué).
+   ou `ERROR`, redessine, et programme `HvacFeedbackClearWorker` dans 10 s (`DISPLAY_DURATION_MS`).
+   Voiture de démo : `launchHvac` attend 3 s avant de réussir, pour simuler une requête.
+3. `HvacFeedbackClearWorker` efface le retour et redessine : le widget normal revient (WorkManager peut le retarder un
+   peu en veille). Le retour est aussi ignoré à la lecture une fois expiré (`WidgetHvacFeedback.isExpired` : 10 s,
+   2 min pour un `SENDING` dont le processus aurait été tué).
 
-Textes : `widget_launch_pre_heat`, `widget_pre_heat_launched` (descriptions), `widget_pre_heat_error` (description après un échec), repris de
-`launchPreHeat`, `preHeatLaunched` et `error` des `Localizable.strings` iOS.
+Textes : `widget_launch_pre_heat`, `widget_pre_heat_launched`, `widget_pre_heat_error`, repris de `launchPreHeat`,
+`preHeatLaunched` et `error` des `Localizable.strings` iOS ; `widget_ok` comme `widgetHvacOk` sur iOS ; `widget_pre_heat_sending` (Android seulement).
 
 ## Rafraîchissement des widgets
 

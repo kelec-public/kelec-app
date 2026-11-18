@@ -28,4 +28,6 @@
     <string name="widget_launch_pre_heat">Start forvarming</string>
     <string name="widget_pre_heat_launched">Forvarming startet</string>
     <string name="widget_pre_heat_error">Feil</string>
+    <string name="widget_pre_heat_sending">Sender…</string>
+    <string name="widget_ok">OK</string>
 </resources>

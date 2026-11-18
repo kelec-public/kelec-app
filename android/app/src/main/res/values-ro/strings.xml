@@ -28,4 +28,6 @@
     <string name="widget_launch_pre_heat">Pornire preîncălzire</string>
     <string name="widget_pre_heat_launched">Preîncălzire pornită</string>
     <string name="widget_pre_heat_error">Eroare</string>
+    <string name="widget_pre_heat_sending">Se trimite…</string>
+    <string name="widget_ok">OK</string>
 </resources>

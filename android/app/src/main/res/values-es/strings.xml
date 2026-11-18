@@ -28,4 +28,6 @@
     <string name="widget_launch_pre_heat">Iniciar el preacondicionamiento</string>
     <string name="widget_pre_heat_launched">Preacondicionamiento iniciado</string>
     <string name="widget_pre_heat_error">Error</string>
+    <string name="widget_pre_heat_sending">Enviando…</string>
+    <string name="widget_ok">Aceptar</string>
 </resources>

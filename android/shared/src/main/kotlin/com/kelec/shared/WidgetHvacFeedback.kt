@@ -18,7 +18,7 @@ data class WidgetHvacFeedback(val status: Status, val date: Long) {
 
     companion object {
         /** Durée d'affichage de la réussite ou de l'échec. */
-        const val DISPLAY_DURATION_MS = 60_000L
+        const val DISPLAY_DURATION_MS = 10_000L
         const val SENDING_TIMEOUT_MS = 2 * 60_000L
 
         /** Température du bouton des widgets (°C), celle par défaut de l'app. */

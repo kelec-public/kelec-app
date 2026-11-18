@@ -28,4 +28,6 @@
     <string name="widget_launch_pre_heat">Pokreni predgrijavanje</string>
     <string name="widget_pre_heat_launched">Predgrijavanje pokrenuto</string>
     <string name="widget_pre_heat_error">Greška</string>
+    <string name="widget_pre_heat_sending">Slanje…</string>
+    <string name="widget_ok">U redu</string>
 </resources>

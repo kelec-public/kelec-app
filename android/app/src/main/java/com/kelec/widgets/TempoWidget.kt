@@ -61,6 +61,8 @@ private fun TempoContent(state: CarWidgetState, tempo: Tempo?, twoDays: Boolean)
     when {
         state is CarWidgetState.Message -> WidgetMessage(state.text)
         tempo == null -> WidgetMessage(LocalContext.current.getString(R.string.tempo_rte_server_error))
+        // le retour du bouton de confort thermique recouvre tout le widget
+        state is CarWidgetState.Loaded && state.hvacFeedback != null -> HvacFeedbackView(state.car.vin, state.hvacFeedback)
         state is CarWidgetState.Loaded -> Row(modifier = GlanceModifier.widgetContainer(state.car.vin)) {
             CarSquareView(state, GlanceModifier.defaultWeight().fillMaxHeight())
             Column(modifier = GlanceModifier.defaultWeight().fillMaxHeight()) {

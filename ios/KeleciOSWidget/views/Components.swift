@@ -52,48 +52,84 @@ struct LastRefreshLabel: View {
   }
 }
 
-// pre-heating button (21 °C), with the result of the last tap:
-// green (sent) or red (error) for WidgetHvacFeedback.displayDuration. It can be tapped again after an error.
+// pre-heating button (21 °C): round gray pill with the icon only, smaller when compact (small widget, car half of the
+// Tempo widgets). Its result covers the whole widget (HvacFeedbackContainer).
 // The Button keeps the default style and no modifier of its own: with .buttonStyle(.plain), .invalidatableContent()
 // and .accessibilityLabel on it, the widget did not see it as interactive and a tap opened the app.
-// Round gray pill with the icon only; compact (small widget, car half of the Tempo widgets) is smaller.
 struct HvacWidgetButton: View {
   var vin: String
-  var feedback: WidgetHvacFeedback?
   var compact: Bool = false
 
   var body: some View {
-    // the pill is drawn by the default button style (gray tint, circle). These are environment values set on a
-    // container, not modifiers of the Button itself: those made it non-interactive (see above)
+    // the pill is drawn by the default button style. Tint and shape are environment values set on a container,
+    // not modifiers of the Button itself (see above)
     HStack(spacing: 0) {
       Button(intent: LaunchHVACWidgetIntent(vin: vin)) {
-        label
-          .foregroundStyle(colour)
+        Image(systemName: "heat.waves.and.fan")
+          .font(.system(size: compact ? 12 : 14, weight: .semibold))
+          .foregroundStyle(Color.primary)
           .widgetAccentable()
       }
     }
     .tint(.gray)
     .buttonBorderShape(.circle)
   }
+}
 
-  private var label: some View {
-    Image(systemName: icon)
-      .font(.system(size: compact ? 12 : 14, weight: .semibold))
-  }
+// Home screen widget with a pre-heating button:
+// - while the command is sent, the system loading effect on the whole widget (invalidatableContent, on the content
+//   and not on the Button);
+// - then the result over the whole widget (HvacFeedbackView), until OK or WidgetHvacFeedback.displayDuration.
+struct HvacFeedbackContainer<Content: View>: View {
+  var vin: String?
+  var feedback: WidgetHvacFeedback?
+  @ViewBuilder var content: Content
 
-  private var icon: String {
-    switch feedback?.status {
-    case .success: return "checkmark"
-    case .error: return "xmark"
-    case nil: return "heat.waves.and.fan"
+  var body: some View {
+    if let vin = vin, let feedback = feedback {
+      HvacFeedbackView(vin: vin, feedback: feedback)
+    } else {
+      content
+        .invalidatableContent()
     }
   }
+}
 
-  private var colour: Color {
-    switch feedback?.status {
-    case .success: return .green
-    case .error: return .red
-    case nil: return Color.primary
+// result of the pre-heating button, the size of the widget, with OK
+struct HvacFeedbackView: View {
+  var vin: String
+  var feedback: WidgetHvacFeedback
+  @Environment(\.widgetFamily) private var family
+
+  private var success: Bool { feedback.status == .success }
+  private var small: Bool { family == .systemSmall }
+
+  var body: some View {
+    VStack(spacing: 8) {
+      Spacer(minLength: 0)
+      Image(systemName: success ? "checkmark.circle.fill" : "xmark.circle.fill")
+        .font(.system(size: small ? 30 : 36))
+        .foregroundStyle(success ? Color.green : Color.red)
+        .widgetAccentable()
+      Text(success ? "preHeatLaunched" : "error")
+        .font(.headline)
+        .multilineTextAlignment(.center)
+        .lineLimit(2)
+        .minimumScaleFactor(0.8)
+      Spacer(minLength: 0)
+      // same rule as HvacWidgetButton: style set on the container, no modifier on the Button
+      HStack(spacing: 0) {
+        Button(intent: DismissHvacFeedbackIntent(vin: vin)) {
+          Text("widgetHvacOk")
+            .padding(.horizontal, 6)
+        }
+      }
+      .font(.subheadline.weight(.semibold))
+      .foregroundStyle(Color.primary)
+      .tint(.gray)
+      .buttonBorderShape(.capsule)
     }
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .padding()
   }
 }

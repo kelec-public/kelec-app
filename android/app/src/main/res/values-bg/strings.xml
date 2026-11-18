@@ -28,4 +28,6 @@
     <string name="widget_launch_pre_heat">Стартиране на подгряване на купето</string>
     <string name="widget_pre_heat_launched">Подгряването започна</string>
     <string name="widget_pre_heat_error">Грешка</string>
+    <string name="widget_pre_heat_sending">Изпращане…</string>
+    <string name="widget_ok">OK</string>
 </resources>

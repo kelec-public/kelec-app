@@ -25,9 +25,9 @@ import com.kelec.shared.WidgetHvacFeedback.Status
 import java.util.concurrent.TimeUnit
 
 /**
- * Bouton de confort thermique du widget 4x2 : lance le préchauffage à [WidgetHvacFeedback.TEMPERATURE] °C.
- * Le widget affiche tout de suite « envoi en cours », puis la réussite ou l'échec pendant
- * [WidgetHvacFeedback.DISPLAY_DURATION_MS] (état enregistré par voiture et relu par [WidgetData]).
+ * Bouton de confort thermique des widgets : lance le préchauffage à [WidgetHvacFeedback.TEMPERATURE] °C.
+ * Le widget affiche tout de suite « envoi en cours » sur toute sa taille, puis la réussite ou l'échec jusqu'à OK ou
+ * pendant [WidgetHvacFeedback.DISPLAY_DURATION_MS] (état enregistré par voiture et relu par [WidgetData]).
  */
 class LaunchHvacAction : ActionCallback {
     override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
@@ -105,6 +105,18 @@ class HvacWidgetWorker(context: Context, params: WorkerParameters) : CoroutineWo
                     .build(),
             )
         }
+    }
+}
+
+/** Bouton OK du retour : le widget revient à la voiture sans attendre [WidgetHvacFeedback.DISPLAY_DURATION_MS]. */
+class DismissHvacFeedbackAction : ActionCallback {
+    override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
+        val vin = parameters[LaunchHvacAction.VIN] ?: return
+        val store = SharedStore(context)
+        // pas d'OK pendant l'envoi, mais un nouvel envoi a pu partir entre-temps
+        if (store.widgetHvacFeedback(vin)?.status == Status.SENDING) return
+        store.clearWidgetHvacFeedback(vin)
+        WidgetUpdater.redrawAll(context)
     }
 }
 

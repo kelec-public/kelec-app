@@ -19,7 +19,6 @@ struct MediumCarWidgetView: View{
   var carName: String
   var image: String
   var appPreferences: AppPreferences?
-  var hvacFeedback: WidgetHvacFeedback? = nil
   var body: some View{
     GeometryReader{ geo in
       VStack(alignment: .leading, spacing: 5) {
@@ -35,6 +34,11 @@ struct MediumCarWidgetView: View{
           
           
           Spacer()
+          // pre-heating button in the header, before the level
+          if let vin = userCar.car?.vin {
+            HvacWidgetButton(vin: vin)
+              .padding(.trailing, 4)
+          }
           HStack(spacing: 0){
             if(!apiHandler.getIsCarLocked()){
               Image(systemName: "lock.open")
@@ -121,9 +125,6 @@ struct MediumCarWidgetView: View{
               }
             }
             Spacer(minLength: 0)
-            if let vin = userCar.car?.vin {
-              HvacWidgetButton(vin: vin, feedback: hvacFeedback)
-            }
           }
           .widgetAccentable(false)
           Spacer()

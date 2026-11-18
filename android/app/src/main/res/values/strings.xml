@@ -35,4 +35,6 @@
     <string name="widget_launch_pre_heat">Lancer le confort thermique</string>
     <string name="widget_pre_heat_launched">Confort thermique actif</string>
     <string name="widget_pre_heat_error">Erreur</string>
+    <string name="widget_pre_heat_sending">Envoi…</string>
+    <string name="widget_ok">OK</string>
 </resources>

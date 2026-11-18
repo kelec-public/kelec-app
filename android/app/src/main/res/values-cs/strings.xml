@@ -28,4 +28,6 @@
     <string name="widget_launch_pre_heat">Spustit předehřev vozu</string>
     <string name="widget_pre_heat_launched">Předehřev vozu spuštěn</string>
     <string name="widget_pre_heat_error">Chyba</string>
+    <string name="widget_pre_heat_sending">Odesílání…</string>
+    <string name="widget_ok">OK</string>
 </resources>

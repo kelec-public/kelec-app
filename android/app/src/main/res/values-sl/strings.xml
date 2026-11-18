@@ -28,4 +28,6 @@
     <string name="widget_launch_pre_heat">Zaženi predgrevanje</string>
     <string name="widget_pre_heat_launched">Predgrevanje zagnano</string>
     <string name="widget_pre_heat_error">Napaka</string>
+    <string name="widget_pre_heat_sending">Pošiljanje…</string>
+    <string name="widget_ok">V redu</string>
 </resources>

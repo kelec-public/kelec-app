@@ -28,4 +28,6 @@
     <string name="widget_launch_pre_heat">Starta förvärmning</string>
     <string name="widget_pre_heat_launched">Förvärmningen har startats</string>
     <string name="widget_pre_heat_error">Fel</string>
+    <string name="widget_pre_heat_sending">Skickar…</string>
+    <string name="widget_ok">OK</string>
 </resources>

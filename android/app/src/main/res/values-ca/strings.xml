@@ -28,4 +28,6 @@
     <string name="widget_launch_pre_heat">Inicia el preescalfament</string>
     <string name="widget_pre_heat_launched">Preescalfament iniciat</string>
     <string name="widget_pre_heat_error">Error</string>
+    <string name="widget_pre_heat_sending">Enviant…</string>
+    <string name="widget_ok">D\'acord</string>
 </resources>

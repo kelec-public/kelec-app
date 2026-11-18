@@ -28,4 +28,6 @@
     <string name="widget_launch_pre_heat">Käynnistä esilämmitys</string>
     <string name="widget_pre_heat_launched">Esilämmitys käynnistetty</string>
     <string name="widget_pre_heat_error">Virhe</string>
+    <string name="widget_pre_heat_sending">Lähetetään…</string>
+    <string name="widget_ok">OK</string>
 </resources>

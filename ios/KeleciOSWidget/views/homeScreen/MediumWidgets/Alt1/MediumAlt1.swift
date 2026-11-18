@@ -15,7 +15,6 @@ struct MediumCarWidgetAltView: View {
   var carName: String
   var image: String
   var appPreferences: AppPreferences?
-  var hvacFeedback: WidgetHvacFeedback? = nil
   var body: some View {
     VStack {
       HStack {
@@ -24,6 +23,11 @@ struct MediumCarWidgetAltView: View {
           .font(.title3)
           .fontWeight(.bold)
         Spacer()
+        // pre-heating button in the header, before the charging time (compact: same height as the title)
+        if let vin = userCar.car?.vin {
+          HvacWidgetButton(vin: vin, compact: true)
+            .padding(.trailing, 4)
+        }
         if(apiHandler.getIsCarPlugged()){
           Image(systemName: "clock.badge.checkmark")
             .foregroundColor(apiHandler.chargingColour)
@@ -68,9 +72,6 @@ struct MediumCarWidgetAltView: View {
               Image(systemName: apiHandler.getBatteryLevel() == 100 ? "bolt.badge.checkmark.fill" : "powercord")
                 .foregroundColor(apiHandler.chargingColour)
             }
-          }
-          if let vin = userCar.car?.vin {
-            HvacWidgetButton(vin: vin, feedback: hvacFeedback)
           }
         }
         Spacer()

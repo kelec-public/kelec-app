@@ -10,6 +10,8 @@ import androidx.glance.GlanceModifier
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
+import androidx.glance.LocalSize
+import androidx.glance.action.Action
 import androidx.glance.action.actionParametersOf
 import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
@@ -22,6 +24,7 @@ import androidx.glance.background
 import androidx.glance.color.ColorProvider as DayNightColor
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
+import androidx.glance.layout.Column
 import androidx.glance.layout.ContentScale
 import androidx.glance.layout.Row
 import androidx.glance.layout.Spacer
@@ -147,50 +150,104 @@ fun BatteryLevelText(battery: BatteryStatus, fontSize: TextUnit, colour: ColorPr
 }
 
 /**
- * Bouton de confort thermique, avec son retour : envoi en cours, puis réussite (vert) ou erreur (rouge).
- * Inactif pendant l'envoi ; après une erreur, il peut être touché à nouveau.
- * Pastille ronde avec l'icône seule ; [compact] (barre 4x1, carré 2x2, widgets Tempo) la rend plus petite.
+ * Bouton de confort thermique : pastille ronde avec l'icône seule, plus petite en [compact] (barre 4x1, carré 2x2,
+ * widgets Tempo). Son retour recouvre tout le widget ([HvacFeedbackView]).
  */
 @Composable
-fun HvacButton(vin: String, feedback: WidgetHvacFeedback?, compact: Boolean = false) {
-    val context = LocalContext.current
-    val status = feedback?.status
-    val colour = when (status) {
-        Status.SUCCESS -> WidgetColors.charging
-        Status.ERROR -> WidgetColors.error
-        Status.SENDING -> WidgetColors.secondary
-        null -> WidgetColors.primary
+fun HvacButton(vin: String, compact: Boolean = false) {
+    val size = if (compact) 26.dp else 30.dp
+    Box(
+        modifier = GlanceModifier.size(size).background(WidgetColors.track).cornerRadius(size / 2)
+            .clickable(actionRunCallback<LaunchHvacAction>(actionParametersOf(LaunchHvacAction.VIN to vin))),
+        contentAlignment = Alignment.Center,
+    ) {
+        Image(
+            provider = ImageProvider(R.drawable.ic_hvac_24),
+            contentDescription = LocalContext.current.getString(R.string.widget_launch_pre_heat),
+            modifier = GlanceModifier.size(if (compact) 14.dp else 16.dp),
+            colorFilter = ColorFilter.tint(WidgetColors.primary),
+        )
     }
-    val description = context.getString(
-        when (status) {
-            Status.SUCCESS -> R.string.widget_pre_heat_launched
-            Status.ERROR -> R.string.widget_pre_heat_error
-            else -> R.string.widget_launch_pre_heat
-        }
-    )
-    val iconSize = if (compact) 14.dp else 16.dp
+}
+
+/**
+ * Retour du bouton de confort thermique, à la taille du widget :
+ * - envoi en cours : indicateur de chargement ;
+ * - réussite : coche verte et OK ;
+ * - erreur : croix rouge et OK.
+ * Sur une ligne pour la barre 4x1, centré sinon. Sans OK, il disparaît après [WidgetHvacFeedback.DISPLAY_DURATION_MS].
+ */
+@Composable
+fun HvacFeedbackView(vin: String, feedback: WidgetHvacFeedback) {
+    val context = LocalContext.current
+    val size = LocalSize.current
+    val bar = size.height < CarStatusWidget.SQUARE.height
+    val (text, colour) = when (feedback.status) {
+        Status.SENDING -> context.getString(R.string.widget_pre_heat_sending) to WidgetColors.primary
+        Status.SUCCESS -> context.getString(R.string.widget_pre_heat_launched) to WidgetColors.charging
+        Status.ERROR -> context.getString(R.string.widget_pre_heat_error) to WidgetColors.error
+    }
+    val iconSize = if (bar) 22.dp else 36.dp
     val icon = @Composable {
-        if (status == Status.SENDING) {
-            CircularProgressIndicator(modifier = GlanceModifier.size(iconSize - 2.dp), color = WidgetColors.primary)
+        if (feedback.status == Status.SENDING) {
+            CircularProgressIndicator(modifier = GlanceModifier.size(iconSize), color = WidgetColors.primary)
         } else {
-            val drawable = when (status) {
-                Status.SUCCESS -> R.drawable.ic_check_24
-                Status.ERROR -> R.drawable.ic_close_24
-                else -> R.drawable.ic_hvac_24
-            }
             Image(
-                provider = ImageProvider(drawable),
-                contentDescription = description,
+                provider = ImageProvider(if (feedback.status == Status.SUCCESS) R.drawable.ic_check_24 else R.drawable.ic_close_24),
+                contentDescription = null,
                 modifier = GlanceModifier.size(iconSize),
                 colorFilter = ColorFilter.tint(colour),
             )
         }
     }
-
-    val size = if (compact) 26.dp else 30.dp
-    var modifier = GlanceModifier.size(size).background(WidgetColors.track).cornerRadius(size / 2)
-    if (status != Status.SENDING) {
-        modifier = modifier.clickable(actionRunCallback<LaunchHvacAction>(actionParametersOf(LaunchHvacAction.VIN to vin)))
+    val label = @Composable { modifier: GlanceModifier ->
+        Text(
+            text = text,
+            style = TextStyle(color = WidgetColors.primary, fontSize = if (bar) 14.sp else 15.sp, fontWeight = FontWeight.Medium, textAlign = if (bar) TextAlign.Start else TextAlign.Center),
+            maxLines = 2,
+            modifier = modifier,
+        )
     }
-    Box(modifier = modifier, contentAlignment = Alignment.Center) { icon() }
+    val buttons = @Composable {
+        if (feedback.status != Status.SENDING) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                FeedbackButton(context.getString(R.string.widget_ok), actionRunCallback<DismissHvacFeedbackAction>(actionParametersOf(LaunchHvacAction.VIN to vin)))
+            }
+        }
+    }
+
+    if (bar) {
+        Row(modifier = GlanceModifier.widgetContainer(vin).padding(horizontal = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+            icon()
+            Spacer(GlanceModifier.width(10.dp))
+            label(GlanceModifier.defaultWeight())
+            buttons()
+        }
+    } else {
+        Column(
+            modifier = GlanceModifier.widgetContainer(vin).padding(12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            icon()
+            Spacer(GlanceModifier.height(8.dp))
+            label(GlanceModifier.fillMaxWidth())
+            if (feedback.status != Status.SENDING) {
+                Spacer(GlanceModifier.height(10.dp))
+                buttons()
+            }
+        }
+    }
+}
+
+/** Bouton texte du retour (OK). */
+@Composable
+private fun FeedbackButton(text: String, action: Action) {
+    Box(
+        modifier = GlanceModifier.height(30.dp).background(WidgetColors.track).cornerRadius(15.dp)
+            .padding(horizontal = 14.dp).clickable(action),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(text = text, style = TextStyle(color = WidgetColors.primary, fontSize = 13.sp, fontWeight = FontWeight.Medium), maxLines = 1)
+    }
 }

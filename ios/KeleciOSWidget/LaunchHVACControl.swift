@@ -103,9 +103,9 @@ enum LaunchHVACControlError: Error, CustomLocalizedStringResourceConvertible {
   }
 }
 
-// action of the pre-heating button of the medium widgets: the car of the widget, at 21 °C.
-// While it runs, the button is dimmed (invalidatableContent); WidgetKit then reloads the widget,
-// which shows the saved result (WidgetHvacFeedback) for WidgetHvacFeedback.displayDuration.
+// action of the pre-heating button of the home screen widgets: the car of the widget, at 21 °C.
+// While it runs, the widget shows the system loading effect (invalidatableContent); WidgetKit then reloads the widget,
+// which shows the saved result (WidgetHvacFeedback) over the whole widget (HvacFeedbackContainer).
 struct LaunchHVACWidgetIntent: AppIntent {
   static let title: LocalizedStringResource = "launchPreHeat"
   static let isDiscoverable = false
@@ -137,8 +137,31 @@ struct LaunchHVACWidgetIntent: AppIntent {
   }
 }
 
-// result of the last pre-heating button tap of a car, shown by the medium widgets for `displayDuration`.
-// Saved in the App Group under "<vin>/widgetHvacStatus": {"status":"success","date":<seconds since 1970>}
+// OK button of the result of the pre-heating button: the widget goes back to the car before displayDuration
+struct DismissHvacFeedbackIntent: AppIntent {
+  static let title: LocalizedStringResource = "widgetHvacOk"
+  static let isDiscoverable = false
+
+  @Parameter(title: "Car")
+  var car: CarEntity?
+
+  init() {}
+
+  init(vin: String) {
+    self.car = CarEntity(name: "", id: vin, registrationNumber: nil)
+  }
+
+  func perform() async throws -> some IntentResult {
+    if let vin = car?.id {
+      WidgetHvacFeedback.dismiss(vin: vin)
+    }
+    return .result()
+  }
+}
+
+// result of the last pre-heating button tap of a car, shown over the home screen widgets for `displayDuration`
+// or until OK. Saved in the App Group under "<vin>/widgetHvacStatus":
+// {"status":"success","date":<seconds since 1970>}, and "dismissed":true after OK.
 struct WidgetHvacFeedback: Codable {
   enum Status: String, Codable {
     case success
@@ -146,28 +169,35 @@ struct WidgetHvacFeedback: Codable {
   }
 
   static let temperature = HvacTemperature.defaultValue
-  static let displayDuration: TimeInterval = 60
+  static let displayDuration: TimeInterval = 10
   // reloads that follow the tap within this delay use the cached status (WidgetKit reloads every widget of the kind)
   static let reloadDelay: TimeInterval = 15
 
   let status: Status
   let date: Double
+  // OK tapped: no longer shown, but still a recent tap for isJustSaved
+  var dismissed: Bool? = nil
 
   // when the widget must show the button again
   var expiryDate: Date {
     Date(timeIntervalSince1970: date + Self.displayDuration)
   }
 
-  // nil when there is none or when it has expired
+  // nil when there is none, when it has expired or after OK
   static func load(vin: String?, now: Date = Date()) -> WidgetHvacFeedback? {
-    guard let vin = vin,
-          let data = AppGroup.userDefaults?.data(forKey: StorageKey.widgetHvacStatus(vin: vin)),
-          let feedback = try? JSONDecoder().decode(WidgetHvacFeedback.self, from: data),
-          feedback.expiryDate > now
-    else {
+    guard let feedback = stored(vin: vin), feedback.dismissed != true, feedback.expiryDate > now else {
       return nil
     }
     return feedback
+  }
+
+  private static func stored(vin: String?) -> WidgetHvacFeedback? {
+    guard let vin = vin,
+          let data = AppGroup.userDefaults?.data(forKey: StorageKey.widgetHvacStatus(vin: vin))
+    else {
+      return nil
+    }
+    return try? JSONDecoder().decode(WidgetHvacFeedback.self, from: data)
   }
 
   // timeline of a car widget: one entry with the feedback until it expires, then one with the button
@@ -183,14 +213,24 @@ struct WidgetHvacFeedback: Codable {
     return Timeline(entries: [entry(now, feedback), entry(feedback.expiryDate, nil)], policy: .after(nextRefresh))
   }
 
-  // true right after a tap on the button of this car
+  // true right after a tap on the button of this car, or on OK
   static func isJustSaved(vin: String?, now: Date = Date()) -> Bool {
-    guard let feedback = load(vin: vin, now: now) else { return false }
+    guard let feedback = stored(vin: vin) else { return false }
     return now.timeIntervalSince1970 - feedback.date < reloadDelay
   }
 
   static func save(vin: String, status: Status) {
-    let feedback = WidgetHvacFeedback(status: status, date: Date().timeIntervalSince1970)
+    write(vin: vin, feedback: WidgetHvacFeedback(status: status, date: Date().timeIntervalSince1970))
+  }
+
+  // OK: the date is kept, so the reload that follows still uses the cache
+  static func dismiss(vin: String) {
+    guard var feedback = stored(vin: vin) else { return }
+    feedback.dismissed = true
+    write(vin: vin, feedback: feedback)
+  }
+
+  private static func write(vin: String, feedback: WidgetHvacFeedback) {
     guard let data = try? JSONEncoder().encode(feedback) else { return }
     AppGroup.userDefaults?.set(data, forKey: StorageKey.widgetHvacStatus(vin: vin))
   }

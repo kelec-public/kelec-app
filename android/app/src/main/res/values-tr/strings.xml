@@ -28,4 +28,6 @@
     <string name="widget_launch_pre_heat">Ön ısıtmayı başlat</string>
     <string name="widget_pre_heat_launched">Ön ısıtma başlatıldı</string>
     <string name="widget_pre_heat_error">Hata</string>
+    <string name="widget_pre_heat_sending">Gönderiliyor…</string>
+    <string name="widget_ok">Tamam</string>
 </resources>

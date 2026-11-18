@@ -76,18 +76,21 @@ struct KeleciOSWidgetEntryView : View {
     switch family{
     case .systemSmall:
       CarWidgetStateView(account: entry.account, userCar: entry.userCar, apiHandler: entry.apiHandler) { _, userCar, apiHandler in
-        SmallCarWidgetView(apiHandler: apiHandler, carName: entry.carName, image: entry.image, appPreferences: entry.appPreferences, vin: userCar.car?.vin, hvacFeedback: entry.hvacFeedback)
-          .widgetBackground()
+        HvacFeedbackContainer(vin: userCar.car?.vin, feedback: entry.hvacFeedback) {
+          SmallCarWidgetView(apiHandler: apiHandler, carName: entry.carName, image: entry.image, appPreferences: entry.appPreferences, vin: userCar.car?.vin)
+        }
+        .widgetBackground()
       }
     case .systemMedium:
       CarWidgetStateView(account: entry.account, userCar: entry.userCar, apiHandler: entry.apiHandler) { _, userCar, apiHandler in
-        if self.style == .alternative {
-          MediumCarWidgetAltView(apiHandler: apiHandler, userCar: userCar, carName: entry.carName, image: entry.image, appPreferences: entry.appPreferences, hvacFeedback: entry.hvacFeedback)
-            .widgetBackground()
-        } else {
-          MediumCarWidgetView(apiHandler: apiHandler, userCar: userCar, carName: entry.carName, image: entry.image, appPreferences: entry.appPreferences, hvacFeedback: entry.hvacFeedback)
-            .widgetBackground()
+        HvacFeedbackContainer(vin: userCar.car?.vin, feedback: entry.hvacFeedback) {
+          if self.style == .alternative {
+            MediumCarWidgetAltView(apiHandler: apiHandler, userCar: userCar, carName: entry.carName, image: entry.image, appPreferences: entry.appPreferences)
+          } else {
+            MediumCarWidgetView(apiHandler: apiHandler, userCar: userCar, carName: entry.carName, image: entry.image, appPreferences: entry.appPreferences)
+          }
         }
+        .widgetBackground()
       }
     default:
       Text("error")

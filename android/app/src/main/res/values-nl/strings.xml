@@ -29,4 +29,6 @@
     <string name="widget_launch_pre_heat">Start klimaatregeling op afstand</string>
     <string name="widget_pre_heat_launched">Klimaatregeling op afstand gestart</string>
     <string name="widget_pre_heat_error">Fout</string>
+    <string name="widget_pre_heat_sending">Verzenden…</string>
+    <string name="widget_ok">OK</string>
 </resources>
