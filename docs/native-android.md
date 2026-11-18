@@ -103,7 +103,9 @@ Pas sur la barre 4x1, le carré 2x2 ni les widgets Tempo (pas la place).
 
 1. Le tap lance `LaunchHvacAction` (`HvacWidgetCommand.kt`) : retour `SENDING` enregistré sous `<vin>/widgetHvacStatus`,
    redessin (indicateur de chargement, bouton inactif), puis `HvacWidgetWorker` (tâche unique `kelec_widget_hvac_<vin>`, `KEEP`) :
-   le BroadcastReceiver de Glance est limité à ~10 s.
+   le BroadcastReceiver de Glance est limité à ~10 s. La tâche est *expedited* (`RUN_AS_NON_EXPEDITED_WORK_REQUEST` sans quota) :
+   une tâche normale peut être retardée dans un bucket App Standby bas. Android 10 et 11 la font tourner dans un service
+   au premier plan, avec une notification discrète le temps de l'envoi (canal `kelec_widget_hvac`, `getForegroundInfo`).
 2. Le worker envoie `VehicleCommands.launchHvac` à 21 °C (`WidgetHvacFeedback.TEMPERATURE`), enregistre `SUCCESS`
    (coche verte) ou `ERROR` (croix rouge, « Erreur »), redessine, et programme `HvacFeedbackClearWorker` dans 60 s.
 3. `HvacFeedbackClearWorker` efface le retour et redessine : le bouton revient. Le retour est aussi ignoré à la lecture

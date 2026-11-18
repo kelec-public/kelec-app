@@ -142,6 +142,8 @@ struct WidgetHvacFeedback: Codable {
 
   static let temperature = HvacTemperature.defaultValue
   static let displayDuration: TimeInterval = 60
+  // reloads that follow the tap within this delay use the cached status (WidgetKit reloads every widget of the kind)
+  static let reloadDelay: TimeInterval = 15
 
   let status: Status
   let date: Double
@@ -161,6 +163,12 @@ struct WidgetHvacFeedback: Codable {
       return nil
     }
     return feedback
+  }
+
+  // true right after a tap on the button of this car
+  static func isJustSaved(vin: String?, now: Date = Date()) -> Bool {
+    guard let feedback = load(vin: vin, now: now) else { return false }
+    return now.timeIntervalSince1970 - feedback.date < reloadDelay
   }
 
   static func save(vin: String, status: Status) {

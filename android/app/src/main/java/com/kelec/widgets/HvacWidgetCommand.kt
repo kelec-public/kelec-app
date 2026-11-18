@@ -1,16 +1,22 @@
 package com.kelec.widgets
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
+import androidx.core.app.NotificationCompat
 import androidx.glance.GlanceId
 import androidx.glance.action.ActionParameters
 import androidx.glance.appwidget.action.ActionCallback
 import androidx.work.CoroutineWorker
 import androidx.work.ExistingWorkPolicy
+import androidx.work.ForegroundInfo
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.kelec.ApiKeys
+import com.kelec.R
 import com.kelec.shared.SharedHistory
 import com.kelec.shared.SharedStore
 import com.kelec.shared.VehicleCommands
@@ -40,7 +46,11 @@ class LaunchHvacAction : ActionCallback {
     }
 }
 
-/** Envoie la commande, enregistre le résultat, puis programme son effacement. */
+/**
+ * Envoie la commande, enregistre le résultat, puis programme son effacement.
+ * Tâche « expedited » : l'utilisateur attend le retour, et une tâche normale peut être retardée quand l'app est
+ * dans un bucket App Standby bas. Sans quota disponible, elle part comme une tâche normale.
+ */
 class HvacWidgetWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
@@ -61,14 +71,38 @@ class HvacWidgetWorker(context: Context, params: WorkerParameters) : CoroutineWo
         return Result.success()
     }
 
+    /**
+     * Android 11 et avant : une tâche expedited tourne dans un service au premier plan, qui exige une notification
+     * (affichée le temps de l'envoi). À partir d'Android 12, c'est une tâche JobScheduler expedited, sans notification.
+     */
+    override suspend fun getForegroundInfo(): ForegroundInfo {
+        val context = applicationContext
+        val title = context.getString(R.string.widget_launch_pre_heat)
+        val manager = context.getSystemService(NotificationManager::class.java)
+        manager.createNotificationChannel(NotificationChannel(CHANNEL_ID, title, NotificationManager.IMPORTANCE_LOW))
+        val notification = NotificationCompat.Builder(context, CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_hvac_24)
+            .setContentTitle(title)
+            .setProgress(0, 0, true)
+            .setOngoing(true)
+            .setSilent(true)
+            .build()
+        return ForegroundInfo(NOTIFICATION_ID, notification)
+    }
+
     companion object {
         const val KEY_VIN = "vin"
+        private const val CHANNEL_ID = "kelec_widget_hvac"
+        private const val NOTIFICATION_ID = 4821
 
         fun launch(context: Context, vin: String) {
             WorkManager.getInstance(context).enqueueUniqueWork(
                 "kelec_widget_hvac_$vin",
                 ExistingWorkPolicy.KEEP,
-                OneTimeWorkRequestBuilder<HvacWidgetWorker>().setInputData(workDataOf(KEY_VIN to vin)).build(),
+                OneTimeWorkRequestBuilder<HvacWidgetWorker>()
+                    .setInputData(workDataOf(KEY_VIN to vin))
+                    .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+                    .build(),
             )
         }
     }

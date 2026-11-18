@@ -214,6 +214,11 @@ ni sur les widgets Tempo et de l'écran verrouillé (pas la place).
 - Le résultat est enregistré sous `<vin>/widgetHvacStatus`, puis WidgetKit recharge le widget : le provider ajoute une
   entrée avec le retour (coche verte, ou croix rouge et « Erreur ») et une seconde entrée, 60 s plus tard, avec le bouton.
   Le bouton reste actif après une erreur (nouvel essai).
+- Le rechargement qui suit le tap (dans les 15 s, `WidgetHvacFeedback.isJustSaved`) affiche le statut du cache
+  (`loadWidgetData(useCache:)`) sans requête : le statut n'a pas changé, et chaque tap ferait sinon une requête
+  de plus par widget. Sans cache, la requête est faite.
+- Budget de WidgetKit : le rechargement qui suit l'intent d'un widget interactif n'est pas compté, et l'entrée
+  qui remet le bouton est déjà dans la timeline (pas de rechargement).
 
 ## Affichage des widgets
 

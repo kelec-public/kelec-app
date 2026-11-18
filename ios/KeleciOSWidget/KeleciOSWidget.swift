@@ -24,9 +24,11 @@ struct Provider: AppIntentTimelineProvider {
   func timeline(for configuration: ConfigurationAppIntent, in context: Context) async -> Timeline<SimpleEntry>  {
     let currentDate = Date()
     let nextRefresh = Calendar.current.date(byAdding: .minute, value: 15, to: currentDate)!
-    let data = await VehicleLoader.loadWidgetData { account in
-      widgetCar(account: account, configuredVin: configuration.car?.id)
-    }
+    let data = await VehicleLoader.loadWidgetData(
+      selectCar: { account in widgetCar(account: account, configuredVin: configuration.car?.id) },
+      // reload right after the pre-heating button: the status has not changed, no need for a request
+      useCache: { userCar in WidgetHvacFeedback.isJustSaved(vin: userCar.car?.vin, now: currentDate) }
+    )
     var entry = SimpleEntry(date: currentDate, data: data)
     // result of the pre-heating button: shown until it expires, then the button again
     guard let hvacFeedback = WidgetHvacFeedback.load(vin: data.userCar?.car?.vin, now: currentDate) else {

@@ -38,8 +38,12 @@ enum VehicleLoader {
     VehicleCache.loadStatus(vin: userCar.car?.vin ?? "", carMaker: userCar.maker)
   }
 
-  // account, preferences, car (chosen by `selectCar`), image and status
-  static func loadWidgetData(selectCar: (UserAccount) -> UserCar?) async -> CarWidgetData {
+  // account, preferences, car (chosen by `selectCar`), image and status;
+  // the cached status when `useCache` returns true for the car and there is one (no request)
+  static func loadWidgetData(
+    selectCar: (UserAccount) -> UserCar?,
+    useCache: (UserCar) -> Bool = { _ in false }
+  ) async -> CarWidgetData {
     var data = CarWidgetData()
     data.appPreferences = SharedStore.loadPreferences()
     if data.appPreferences == nil {
@@ -58,7 +62,12 @@ enum VehicleLoader {
     data.image = SharedStore.carImage(vin: data.userCar?.car?.vin ?? "")
 
     if let userCar = data.userCar {
-      data.apiHandler = await fetchStatus(userCar: userCar)
+      if useCache(userCar), let cached = cachedStatus(userCar: userCar) {
+        writeWidgetLog(message: "Using cache data (no request)")
+        data.apiHandler = cached
+      } else {
+        data.apiHandler = await fetchStatus(userCar: userCar)
+      }
     }
     return data
   }
