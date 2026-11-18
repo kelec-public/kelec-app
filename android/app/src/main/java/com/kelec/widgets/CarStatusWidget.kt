@@ -66,7 +66,7 @@ class CarStatusWidget : GlanceAppWidget() {
 @Composable
 private fun CarStatusContent(state: CarWidgetState) {
     when (state) {
-        is CarWidgetState.Message -> WidgetMessage(state.text)
+        is CarWidgetState.Message -> WidgetMessage(state.text, state.illustration)
         is CarWidgetState.Loaded -> {
             val size = LocalSize.current
             val feedback = state.hvacFeedback

@@ -59,7 +59,7 @@ class Tempo2DaysWidget : TempoWidgetBase(twoDays = true)
 @Composable
 private fun TempoContent(state: CarWidgetState, tempo: Tempo?, twoDays: Boolean) {
     when {
-        state is CarWidgetState.Message -> WidgetMessage(state.text)
+        state is CarWidgetState.Message -> WidgetMessage(state.text, state.illustration)
         tempo == null -> WidgetMessage(LocalContext.current.getString(R.string.tempo_rte_server_error))
         // le retour du bouton de confort thermique recouvre tout le widget
         state is CarWidgetState.Loaded && state.hvacFeedback != null -> HvacFeedbackView(state.car.vin, state.hvacFeedback)

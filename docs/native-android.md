@@ -170,6 +170,9 @@ Textes : `widget_launch_pre_heat`, `widget_pre_heat_launched`, `widget_pre_heat_
 | Branchée | Libellé de l'état (`EN CHARGE |`, `CHARGE PLANIFIÉE |`, `CHARGE TERMINÉE |`, `NE CHARGE PAS |`, `V2G`, `V2L`), barre « en charge » |
 | En charge | Durée restante (« 2h05 ») et heure de fin, sinon « --h-- » |
 
+- Widget vide (lignes « Pas de compte » à « sans données RTE ») : `WidgetMessage`, une illustration (`MessageIllustration`,
+  `drawable/widget_empty_account|car|error` : icône sur un disque clair, « + » vert pour la voiture) au-dessus du texte,
+  côte à côte sur la barre 4x1. Compte → `ACCOUNT`, voiture → `CAR`, erreurs serveur → `ERROR`.
 - Autonomie : convertie en miles si `convertToMiles`, unité « mi » si `displayMiles` (deux réglages distincts, comme l'app).
 - Toucher le widget ouvre l'app sur la page de sa voiture (`CarShortcuts.openIntent`) ; toucher l'heure relance le chargement.
 - Une voiture Hyundai est traitée comme Renault (hors périmètre) : elle affiche `not_yet_logged_in`.

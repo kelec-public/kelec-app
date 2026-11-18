@@ -20,7 +20,7 @@ import com.kelec.shared.R as SharedR
 
 /** Ce qu'affiche un widget de voiture : un message (pas connecté, erreur…) ou la voiture chargée. */
 sealed interface CarWidgetState {
-    data class Message(val text: String) : CarWidgetState
+    data class Message(val text: String, val illustration: MessageIllustration = MessageIllustration.ERROR) : CarWidgetState
 
     data class Loaded(
         val car: UserCar,
@@ -47,9 +47,9 @@ object WidgetData {
     ): CarWidgetState {
         val store = SharedStore(context)
         val account = store.loadAccount()
-            ?: return CarWidgetState.Message(context.getString(SharedR.string.not_yet_logged_in))
+            ?: return CarWidgetState.Message(context.getString(SharedR.string.not_yet_logged_in), MessageIllustration.ACCOUNT)
         val car = account.carFor(store.widgetVin(appWidgetId))
-            ?: return CarWidgetState.Message(context.getString(SharedR.string.no_car_added))
+            ?: return CarWidgetState.Message(context.getString(SharedR.string.no_car_added), MessageIllustration.CAR)
 
         return when (val status = VehicleLoader(context, ApiKeys.renault).cached(car)) {
             is VehicleStatus.Loaded -> CarWidgetState.Loaded(
@@ -59,7 +59,7 @@ object WidgetData {
                 image = carImage(store, car.vin),
                 hvacFeedback = store.widgetHvacFeedback(car.vin),
             )
-            VehicleStatus.NotLoggedIn -> CarWidgetState.Message(context.getString(SharedR.string.not_yet_logged_in))
+            VehicleStatus.NotLoggedIn -> CarWidgetState.Message(context.getString(SharedR.string.not_yet_logged_in), MessageIllustration.ACCOUNT)
             VehicleStatus.Unavailable -> CarWidgetState.Message(context.getString(serverError))
         }
     }

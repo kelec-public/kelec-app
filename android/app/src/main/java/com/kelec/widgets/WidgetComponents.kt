@@ -2,6 +2,8 @@ package com.kelec.widgets
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.annotation.DrawableRes
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -74,14 +76,48 @@ fun GlanceModifier.widgetContainer(vin: String? = null): GlanceModifier =
             else actionStartActivity(CarShortcuts.openIntent(LocalContext.current, vin))
         )
 
-/** Message centré (pas connecté, aucune voiture, erreur serveur). */
+/** Illustration d'un widget vide (`drawable/widget_empty_*`) : icône sur un disque de couleur claire. */
+enum class MessageIllustration(@DrawableRes val drawable: Int) {
+    ACCOUNT(R.drawable.widget_empty_account),
+    CAR(R.drawable.widget_empty_car),
+    ERROR(R.drawable.widget_empty_error),
+}
+
+/**
+ * Widget vide (pas connecté, aucune voiture, erreur serveur) : illustration et message. Centrés l'un sous l'autre,
+ * côte à côte sur la barre 4x1. Le toucher ouvre l'app.
+ */
 @Composable
-fun WidgetMessage(text: String) {
-    Box(modifier = GlanceModifier.widgetContainer().padding(12.dp), contentAlignment = Alignment.Center) {
-        Text(
-            text = text,
-            style = TextStyle(color = WidgetColors.primary, fontSize = 13.sp, textAlign = TextAlign.Center),
-        )
+fun WidgetMessage(text: String, illustration: MessageIllustration = MessageIllustration.ERROR) {
+    val bar = LocalSize.current.height < CarStatusWidget.SQUARE.height
+    val image = @Composable { size: Dp ->
+        Image(provider = ImageProvider(illustration.drawable), contentDescription = null, modifier = GlanceModifier.size(size))
+    }
+    if (bar) {
+        Row(modifier = GlanceModifier.widgetContainer().padding(horizontal = 14.dp), verticalAlignment = Alignment.CenterVertically) {
+            image(34.dp)
+            Spacer(GlanceModifier.width(12.dp))
+            Text(
+                text = text,
+                style = TextStyle(color = WidgetColors.primary, fontSize = 13.sp, fontWeight = FontWeight.Medium),
+                maxLines = 2,
+                modifier = GlanceModifier.defaultWeight(),
+            )
+        }
+    } else {
+        Column(
+            modifier = GlanceModifier.widgetContainer().padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            image(56.dp)
+            Spacer(GlanceModifier.height(12.dp))
+            Text(
+                text = text,
+                style = TextStyle(color = WidgetColors.primary, fontSize = 14.sp, fontWeight = FontWeight.Medium, textAlign = TextAlign.Center),
+                maxLines = 3,
+            )
+        }
     }
 }
 

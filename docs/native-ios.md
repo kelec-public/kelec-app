@@ -247,6 +247,10 @@ Pas sur les widgets de l'écran verrouillé (pas la place).
 | Aucune donnée (échec sans cache) | `widgetServerError` (« Impossible de se connecter au serveur ») |
 | Données (réseau ou cache) | Contenu du widget ci-dessous |
 
+Les trois messages passent par `WidgetEmptyView` : sur l'écran d'accueil, un SF Symbol sur un disque clair au-dessus
+du texte (`person.crop.circle.fill`, `car.fill` avec un « + » vert, `icloud.slash.fill` en orange), comme Android, et le
+fond du widget (`widgetBackground`). Écran verrouillé et montre : le texte seul.
+
 | Widget | Contenu |
 |---|---|
 | Petit (accueil) | Modèle, éclair si branchée, niveau (%), puis durée restante (« 2h05 ») en charge, sinon autonomie ; bouton de confort thermique compact |
