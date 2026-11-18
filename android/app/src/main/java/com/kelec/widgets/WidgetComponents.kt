@@ -149,22 +149,24 @@ fun BatteryLevelText(battery: BatteryStatus, fontSize: TextUnit, colour: ColorPr
 /**
  * Bouton de confort thermique, avec son retour : envoi en cours, puis réussite (vert) ou erreur (rouge).
  * Inactif pendant l'envoi ; après une erreur, il peut être touché à nouveau.
- * - complet (4x2) : icône et « 21°C » (« Erreur » après un échec) ;
- * - [compact] (barre 4x1, carré 2x2, widgets Tempo) : pastille ronde avec l'icône seule, pour tenir à la taille minimale.
+ * Pastille ronde avec l'icône seule ; [compact] (barre 4x1, carré 2x2, widgets Tempo) la rend plus petite.
  */
 @Composable
 fun HvacButton(vin: String, feedback: WidgetHvacFeedback?, compact: Boolean = false) {
     val context = LocalContext.current
     val status = feedback?.status
-    val temperature = "${WidgetHvacFeedback.TEMPERATURE}°C"
-    val (text, colour) = when (status) {
-        Status.SUCCESS -> temperature to WidgetColors.charging
-        Status.ERROR -> context.getString(R.string.widget_pre_heat_error) to WidgetColors.error
-        Status.SENDING -> temperature to WidgetColors.secondary
-        null -> temperature to WidgetColors.primary
+    val colour = when (status) {
+        Status.SUCCESS -> WidgetColors.charging
+        Status.ERROR -> WidgetColors.error
+        Status.SENDING -> WidgetColors.secondary
+        null -> WidgetColors.primary
     }
     val description = context.getString(
-        if (status == Status.SUCCESS) R.string.widget_pre_heat_launched else R.string.widget_launch_pre_heat
+        when (status) {
+            Status.SUCCESS -> R.string.widget_pre_heat_launched
+            Status.ERROR -> R.string.widget_pre_heat_error
+            else -> R.string.widget_launch_pre_heat
+        }
     )
     val iconSize = if (compact) 14.dp else 16.dp
     val icon = @Composable {
@@ -185,22 +187,10 @@ fun HvacButton(vin: String, feedback: WidgetHvacFeedback?, compact: Boolean = fa
         }
     }
 
-    var modifier = if (compact) {
-        GlanceModifier.size(26.dp).background(WidgetColors.track).cornerRadius(13.dp)
-    } else {
-        GlanceModifier.height(28.dp).background(WidgetColors.track).cornerRadius(14.dp).padding(horizontal = 10.dp)
-    }
+    val size = if (compact) 26.dp else 30.dp
+    var modifier = GlanceModifier.size(size).background(WidgetColors.track).cornerRadius(size / 2)
     if (status != Status.SENDING) {
         modifier = modifier.clickable(actionRunCallback<LaunchHvacAction>(actionParametersOf(LaunchHvacAction.VIN to vin)))
     }
-
-    if (compact) {
-        Box(modifier = modifier, contentAlignment = Alignment.Center) { icon() }
-    } else {
-        Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-            icon()
-            Spacer(GlanceModifier.width(4.dp))
-            Text(text = text, style = TextStyle(color = colour, fontSize = 13.sp, fontWeight = FontWeight.Medium), maxLines = 1)
-        }
-    }
+    Box(modifier = modifier, contentAlignment = Alignment.Center) { icon() }
 }

@@ -204,23 +204,28 @@ Bouton du Centre de contrôle, de l'écran verrouillé et du bouton Action, dans
 
 ### Bouton de confort thermique des widgets de l'écran d'accueil (`LaunchHVACWidgetIntent`)
 
-`HvacWidgetButton` (`views/Components.swift`, iOS 17, `Button(intent:)`), comme sur Android :
+`HvacWidgetButton` (`views/Components.swift`, iOS 17, `Button(intent:)`), comme sur Android : pastille ronde grise
+avec l'icône seule (style par défaut du bouton, `.tint(.gray)` et `.buttonBorderShape(.circle)` posés sur un conteneur).
+Le retour passe par l'icône (coche verte, croix rouge). Plus petite en version compacte.
 
 | Widget | Bouton |
 |---|---|
-| Moyen | Complet (icône et « 21°C ») en bas à gauche |
-| Moyen « Alternative » | Complet, sous le niveau |
-| Petit | Compact (pastille ronde, icône seule) en bas à gauche, l'heure en bas à droite |
+| Moyen | En bas à gauche |
+| Moyen « Alternative » | Sous le niveau |
+| Petit | Compact, en bas à gauche, l'heure en bas à droite |
 | Tempo et Tempo 2 jours | Compact, dans la moitié voiture (`SmallCarWidgetView`) |
 
-Pas sur les widgets de l'écran verrouillé (pas la place). Le bouton compact n'a pas de texte : le retour passe par
-l'icône (coche verte, croix rouge).
+Pas sur les widgets de l'écran verrouillé (pas la place).
 
 - Au tap, `LaunchHVACWidgetIntent` (dans `LaunchHVACControl.swift`, masqué de Raccourcis) s'exécute dans l'extension :
   voiture du widget (VIN), `sendHVACCommand` à 21 °C (`WidgetHvacFeedback.temperature`), log dans `widgetLogs`.
-- Pendant l'envoi, WidgetKit grise le bouton (`invalidatableContent`).
+- Le `Button` garde le style par défaut et n'a aucun modificateur à lui : l'apparence est posée dans le label et sur le conteneur.
+- Démo : `DemoApiClient.launchHvac` attend 3 s avant de réussir, pour simuler une requête. Sans état « envoi en cours »,
+  le widget ne change pas pendant ces 3 s.
+  Avec `.buttonStyle(.plain)`, `.invalidatableContent()` et `.accessibilityLabel` sur le bouton, il n'était pas interactif :
+  le tap ouvrait l'app (`Launching from widgetURL` dans les logs). Pas d'état « envoi en cours » pour l'instant.
 - Le résultat est enregistré sous `<vin>/widgetHvacStatus`, puis WidgetKit recharge le widget : le provider
-  (`Provider` et `TempoProvider`, via `WidgetHvacFeedback.timeline`) ajoute une entrée avec le retour (coche verte, ou croix rouge et « Erreur ») et une seconde entrée, 60 s plus tard, avec le bouton.
+  (`Provider` et `TempoProvider`, via `WidgetHvacFeedback.timeline`) ajoute une entrée avec le retour (coche verte ou croix rouge) et une seconde entrée, 60 s plus tard, avec le bouton.
   Le bouton reste actif après une erreur (nouvel essai).
 - Le rechargement qui suit le tap (dans les 15 s, `WidgetHvacFeedback.isJustSaved`) affiche le statut du cache
   (`loadWidgetData(useCache:)`) sans requête : le statut n'a pas changé, et chaque tap ferait sinon une requête
@@ -297,7 +302,7 @@ l'icône (coche verte, croix rouge).
   - Siri / Raccourcis : « confort thermique » sur une voiture.
   - Raccourci « Obtenir l'état » : propriétés dans une action suivante, condition sur le statut de charge, Renault et Hyundai.
   - Contrôle du Centre de contrôle (iOS 18) : ajout (choix de la voiture et de la température), tap, échec réseau.
-  - Bouton de confort thermique (moyens, petit, Tempo) : tap (bouton grisé), coche verte puis retour du bouton après 60 s, échec réseau (croix rouge).
+  - Bouton de confort thermique (moyens, petit, Tempo) : tap, coche verte puis retour du bouton après 60 s, échec réseau (croix rouge).
 - Débogage : Réglages → Debug → « export widget logs » (`widgetLogs`, 5 jours, messages de `VehicleLoader`,
   `getCarMakerApiClient`, du client Renault, de `TempoService` et du client RTE : statut HTTP ou erreur réseau de chaque étape,
   jamais la clé ni le token), et « Debug zone » (choix d'une voiture, « Battery status »

@@ -17,6 +17,8 @@ public struct DemoApiClient: ApiClient{
     }
     
     public func launchHvac(vin: String, temperature: Int) async throws -> Bool {
+        // simulates the delay of a real request
+        try? await Task.sleep(nanoseconds: 3_000_000_000)
         return true
     }
     

@@ -6,6 +6,7 @@ import com.kelec.carapi.DemoCar
 import com.kelec.carapi.RenaultApiClient
 import com.kelec.carapi.RenaultApiKeys
 import kotlin.coroutines.cancellation.CancellationException
+import kotlinx.coroutines.delay
 
 /** Commandes et données à la demande (montre) : confort thermique et position. Renault group et démo seulement. */
 class VehicleCommands(context: Context, private val keys: RenaultApiKeys) {
@@ -14,7 +15,11 @@ class VehicleCommands(context: Context, private val keys: RenaultApiKeys) {
 
     /** false si la commande n'a pas pu être envoyée (pas de session, constructeur non géré, refus du serveur). */
     suspend fun launchHvac(car: UserCar, temperature: Int): Boolean {
-        if (car.maker == CarMaker.DEMO) return true
+        if (car.maker == CarMaker.DEMO) {
+            // simule la durée d'une vraie requête
+            delay(DEMO_HVAC_DELAY_MS)
+            return true
+        }
         val client = renaultClient(car) ?: return false
         return client.launchHvac(car.vin, temperature)
     }
@@ -39,6 +44,7 @@ class VehicleCommands(context: Context, private val keys: RenaultApiKeys) {
     }
 
     private companion object {
+        const val DEMO_HVAC_DELAY_MS = 3_000L
         val RENAULT_GROUP = setOf(CarMaker.RENAULT, CarMaker.DACIA, CarMaker.ALPINE)
     }
 }

@@ -53,49 +53,32 @@ struct LastRefreshLabel: View {
 }
 
 // pre-heating button (21 °C), with the result of the last tap:
-// dimmed while the command is sent, then green (sent) or red (error) for WidgetHvacFeedback.displayDuration.
-// It can be tapped again after an error.
-// - full (medium widgets): icon and "21°C" ("Error" after a failure);
-// - compact (small widget, car half of the Tempo widgets): round pill with the icon only.
+// green (sent) or red (error) for WidgetHvacFeedback.displayDuration. It can be tapped again after an error.
+// The Button keeps the default style and no modifier of its own: with .buttonStyle(.plain), .invalidatableContent()
+// and .accessibilityLabel on it, the widget did not see it as interactive and a tap opened the app.
+// Round gray pill with the icon only; compact (small widget, car half of the Tempo widgets) is smaller.
 struct HvacWidgetButton: View {
   var vin: String
   var feedback: WidgetHvacFeedback?
   var compact: Bool = false
 
   var body: some View {
-    Button(intent: LaunchHVACWidgetIntent(vin: vin)) {
-      label
-        .foregroundColor(colour)
-        .widgetAccentable()
-        // dimmed by WidgetKit while the intent runs
-        .invalidatableContent()
+    // the pill is drawn by the default button style (gray tint, circle). These are environment values set on a
+    // container, not modifiers of the Button itself: those made it non-interactive (see above)
+    HStack(spacing: 0) {
+      Button(intent: LaunchHVACWidgetIntent(vin: vin)) {
+        label
+          .foregroundStyle(colour)
+          .widgetAccentable()
+      }
     }
-    .buttonStyle(.plain)
-    .accessibilityLabel(Text(feedback?.status == .success ? "preHeatLaunched" : "launchPreHeat"))
+    .tint(.gray)
+    .buttonBorderShape(.circle)
   }
 
-  @ViewBuilder
   private var label: some View {
-    if compact {
-      Image(systemName: icon)
-        .font(.system(size: 12, weight: .semibold))
-        .frame(width: 26, height: 26)
-        .background(Circle().fill(Color("gris")))
-    } else {
-      HStack(spacing: 4) {
-        Image(systemName: icon)
-        if feedback?.status == .error {
-          Text("error")
-        } else {
-          Text("\(WidgetHvacFeedback.temperature)°C")
-        }
-      }
-      .font(.caption)
-      .fontWeight(.semibold)
-      .padding(.horizontal, 10)
-      .padding(.vertical, 5)
-      .background(Capsule().fill(Color("gris")))
-    }
+    Image(systemName: icon)
+      .font(.system(size: compact ? 12 : 14, weight: .semibold))
   }
 
   private var icon: String {

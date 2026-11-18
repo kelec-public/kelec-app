@@ -110,16 +110,21 @@ struct LaunchHVACWidgetIntent: AppIntent {
   static let title: LocalizedStringResource = "launchPreHeat"
   static let isDiscoverable = false
 
+  // the car of the widget, like LaunchHVACControlIntent
   @Parameter(title: "Car")
-  var vin: String
+  var car: CarEntity?
 
   init() {}
 
   init(vin: String) {
-    self.vin = vin
+    self.car = CarEntity(name: "", id: vin, registrationNumber: nil)
   }
 
   func perform() async throws -> some IntentResult {
+    guard let vin = car?.id else {
+      writeWidgetLog(message: "HVAC widget: no car")
+      return .result()
+    }
     var sent = false
     if let userCar = SharedStore.loadAccount()?.cars.first(where: { $0.car?.vin == vin }) {
       sent = await sendHVACCommand(userCar: userCar, temperature: WidgetHvacFeedback.temperature)
