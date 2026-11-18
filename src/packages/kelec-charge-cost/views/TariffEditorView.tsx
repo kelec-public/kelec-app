@@ -22,6 +22,8 @@ import { currencySymbol, formatLocalDate } from "../services/priceFormat";
 import { formatDuration, offPeakMinutesPerDay, offPeakSaving } from "../services/offPeakSummary";
 
 type Props = {
+    /** Voiture dont ce sont les tarifs (déjà mise en forme). */
+    readonly vehicleName?: string;
     readonly draft: TariffDraft;
     readonly tariffs: Tariff[];
     readonly currency: Currency;
@@ -44,7 +46,7 @@ function timeAsDate(time: string): Date {
  * Saisie d'un tarif : période, type, carte des prix au kWh,
  * puis pour les heures pleines / creuses une carte des plages avec la journée en frise.
  */
-function TariffEditorView({ draft, tariffs, currency, canDelete, onChange, onSave, onDelete, onBack }: Props): React.JSX.Element {
+function TariffEditorView({ vehicleName, draft, tariffs, currency, canDelete, onChange, onSave, onDelete, onBack }: Props): React.JSX.Element {
     const isDarkMode = useColorScheme() === 'dark';
     const theme = useTheme();
     const { languageHandler } = useContext(MainContext);
@@ -89,6 +91,7 @@ function TariffEditorView({ draft, tariffs, currency, canDelete, onChange, onSav
         <TariffPageLayout
             testID="tariffEditorView"
             title={t("electricityTariff")}
+            subtitle={vehicleName}
             onBack={onBack}
             backTestID="tariffEditorBackButton"
             action={{ icon: "check", onPress: onSave, testID: "saveTariffButton" }}

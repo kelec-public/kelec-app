@@ -7,3 +7,4 @@ export { GarageService } from "./services/garageService";
 export { retrofitRegistrationCountry } from "./services/registrationCountryRetrofit";
 export { logOut } from "./services/session";
 export { buildUserAccount } from "./models/userAccountFactory";
+export { carLabel, findCar } from "./services/carLabel";

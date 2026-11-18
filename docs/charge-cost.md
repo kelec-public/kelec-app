@@ -21,7 +21,8 @@ kelec-charge-cost/
 ├── controllers/
 │   ├── useTariffSettings.ts   Tarifs d'une voiture lus au montage, puis mis à jour à chaque enregistrement (aussi utilisé par l'historique)
 │   ├── useTariffList.ts       Tarifs relus à chaque affichage de la page, devise
-│   └── useTariffEditor.ts     Tarif saisi (existant ou nouveau), enregistrement, suppression, alertes
+│   ├── useTariffEditor.ts     Tarif saisi (existant ou nouveau), enregistrement, suppression, alertes
+│   └── useVehicleName.ts      Nom de la voiture dont on affiche les tarifs (sous-titre des pages)
 ├── views/
 │   ├── TariffListScreen.tsx      Page des tarifs d'une voiture (TARIFF_LIST_ROUTE, param vin)
 │   ├── TariffEditorScreen.tsx    Page de saisie d'un tarif (TARIFF_EDITOR_ROUTE, params vin et tariffId)
@@ -47,7 +48,9 @@ Les paramètres de route sont sérialisables (`vin`, et `tariffId` pour la saisi
 
 - **Depuis l'historique** : les tarifs de la voiture affichée (`CarsPageView` passe son VIN).
 - **Depuis Réglages → Tarif d'électricité** : avec une seule voiture, ses tarifs s'ouvrent directement ; avec plusieurs, on choisit d'abord
-  la voiture (`ChoiceModal`, titre `chooseTheCar`, une ligne « modèle · plaque » par voiture, `tariffVehicleButton<vin>`). Sans voiture, la ligne est masquée.
+  la voiture (`ChoiceModal`, titre `chooseTheCar`, une ligne par voiture, `tariffVehicleButton<vin>`). Sans voiture, la ligne est masquée.
+- **La voiture est rappelée sous le titre** des deux pages (sous-titre de `PageHeader`, `tariffVehicleName`) : « modèle · plaque »,
+  ou « modèle · VIN » sans plaque (`carLabel`, kelec-garage : le même libellé que dans la liste des Réglages).
 
 - **En-tête `PageHeader`** (kelec-model, le même que l'historique de charge) : retour à gauche, action à droite
   (« + » sur la liste, ✓ sur la saisie). Pas de boutons en bas, donc **la barre d'onglets reste affichée**.

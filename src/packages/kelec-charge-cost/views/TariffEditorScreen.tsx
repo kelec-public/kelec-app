@@ -1,3 +1,4 @@
+import { useVehicleName } from "../controllers/useVehicleName";
 import { useTariffEditor } from "../controllers/useTariffEditor";
 import TariffEditorView from "./TariffEditorView";
 
@@ -13,11 +14,13 @@ type Props = {
 /** Page de saisie d'un tarif (route `TARIFF_EDITOR_ROUTE`). */
 function TariffEditorScreen({ vin, tariffId, onBack, onDone }: Props): React.JSX.Element | null {
     const controller = useTariffEditor(vin, tariffId, onDone);
+    const vehicleName = useVehicleName(vin);
     const { settings, draft } = controller;
     if (!settings || !draft) return null;
 
     return (
         <TariffEditorView
+            vehicleName={vehicleName}
             draft={draft}
             tariffs={settings.tariffs}
             currency={settings.currency}

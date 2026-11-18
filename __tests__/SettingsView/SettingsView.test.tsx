@@ -595,6 +595,8 @@ test('should set the electricity tariff', async () => {
 
     await user.press(screen.getByTestId('testSettingRowelectrical-services'));
     await waitFor(() => expect(screen.getByTestId('noTariff')).toBeDefined());
+    // la voiture concernée est rappelée sous le titre
+    expect(screen.getByTestId('tariffVehicleName').props.children).toBe('model1 · AA0001AA');
     await user.press(screen.getByTestId('currencyButtonSEK'));
 
     // premier tarif : prix fixe, depuis le début (bouton de la liste vide)
@@ -643,7 +645,8 @@ test('should set the electricity tariff', async () => {
 
 test('with several cars, the electricity tariff is set for the chosen car', async () => {
     const car1 = new RenaultCar('vin1', 'model1', 'image1', CarMaker.RENAULT, 'AA0001AA');
-    const car2 = new RenaultCar('vin2', 'model2', 'image2', CarMaker.RENAULT, 'BB0002BB');
+    // pas de plaque : la voiture est désignée par son VIN
+    const car2 = new RenaultCar('vin2', 'model2', 'image2', CarMaker.RENAULT);
     const userAccount = new UserAccount([
         new Account('email', 'passwod', CarMaker.RENAULT, car1),
         new Account('email', 'passwod', CarMaker.RENAULT, car2),
@@ -660,6 +663,7 @@ test('with several cars, the electricity tariff is set for the chosen car', asyn
     await user.press(screen.getByTestId('testSettingRowelectrical-services'));
     await user.press(await screen.findByTestId('tariffVehicleButtonvin2'));
     await waitFor(() => expect(screen.getByTestId('noTariff')).toBeDefined());
+    expect(screen.getByTestId('tariffVehicleName').props.children).toBe('model2 · vin2');
     await user.press(screen.getByTestId('addFirstTariffButton'));
     await waitFor(() => expect(screen.getByTestId('tariffEditorView')).toBeDefined());
     await user.type(screen.getByTestId('priceInputpricePerKwh'), '0,3');

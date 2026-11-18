@@ -4,7 +4,7 @@ import { NavigationProp, useNavigation } from "@react-navigation/native";
 import MainContext from "../../../lib/Contexts/MainContext";
 import ColorTheme from "../../../lib/appPreferences/interface/colorTheme";
 import { BooleanPreference, COLOR_THEMES, usePreferences } from "../../kelec-preferences";
-import { logOut as clearSession } from "../../kelec-garage";
+import { carLabel, logOut as clearSession } from "../../kelec-garage";
 import { ExternalLinks, openExternalLink } from "../services/externalLinks";
 import { syncWithAppleWatch } from "../services/appleWatchSync";
 import { exportWidgetLogs } from "../services/widgetLogsExport";
@@ -12,7 +12,6 @@ import { OptionType, SettingSection } from "./settingsTypes";
 import { TIMEZONE_OFFSETS } from "../services/timezoneOffsets";
 import { Choice } from "../views/ChoiceModal";
 import { TARIFF_LIST_ROUTE } from "../../kelec-charge-cost";
-import { formatLicencePlate } from "../../kelec-licence-plate";
 import { SettingsParamList } from "../routes";
 
 const COLOR_THEME_LABELS: Record<ColorTheme, string> = {
@@ -59,14 +58,9 @@ export function useSettingsController() {
 
     // les tarifs de l'électricité sont propres à chaque voiture : on choisit d'abord la voiture (sauf s'il n'y en a qu'une)
     const cars = currentUser.getCars().flatMap(account => account.getCar() ?? []);
-    const tariffVehicleChoices: Choice<string>[] = cars.map(car => {
-        const plate = car.getRegistrationNumber();
-        return {
-            value: car.getVin(),
-            label: plate ? `${car.getModel()} · ${formatLicencePlate(plate, car.getRegistrationCountry())}` : car.getModel(),
-            testID: "tariffVehicleButton" + car.getVin(),
-        };
-    });
+    const tariffVehicleChoices: Choice<string>[] = cars.map(car => (
+        { value: car.getVin(), label: carLabel(car), testID: "tariffVehicleButton" + car.getVin() }
+    ));
 
     const openTariffs = (vin: string) => {
         setIsTariffVehicleModalOpen(false);

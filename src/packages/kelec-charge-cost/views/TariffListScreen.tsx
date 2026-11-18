@@ -1,3 +1,4 @@
+import { useVehicleName } from "../controllers/useVehicleName";
 import { useTariffList } from "../controllers/useTariffList";
 import TariffListView from "./TariffListView";
 
@@ -12,10 +13,12 @@ type Props = {
 /** Page des tarifs d'une voiture (route `TARIFF_LIST_ROUTE`). */
 function TariffListScreen({ vin, onBack, onOpenTariff }: Props): React.JSX.Element | null {
     const { settings, setCurrency } = useTariffList(vin);
+    const vehicleName = useVehicleName(vin);
     if (!settings) return null;
 
     return (
         <TariffListView
+            vehicleName={vehicleName}
             settings={settings}
             onBack={onBack}
             onSelectCurrency={setCurrency}
