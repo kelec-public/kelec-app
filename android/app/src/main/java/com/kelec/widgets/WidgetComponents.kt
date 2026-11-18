@@ -147,11 +147,13 @@ fun BatteryLevelText(battery: BatteryStatus, fontSize: TextUnit, colour: ColorPr
 }
 
 /**
- * Bouton de confort thermique (« 21°C »), avec son retour : envoi en cours, puis réussite (vert) ou erreur (rouge).
+ * Bouton de confort thermique, avec son retour : envoi en cours, puis réussite (vert) ou erreur (rouge).
  * Inactif pendant l'envoi ; après une erreur, il peut être touché à nouveau.
+ * - complet (4x2) : icône et « 21°C » (« Erreur » après un échec) ;
+ * - [compact] (barre 4x1, carré 2x2, widgets Tempo) : pastille ronde avec l'icône seule, pour tenir à la taille minimale.
  */
 @Composable
-fun HvacButton(vin: String, feedback: WidgetHvacFeedback?) {
+fun HvacButton(vin: String, feedback: WidgetHvacFeedback?, compact: Boolean = false) {
     val context = LocalContext.current
     val status = feedback?.status
     val temperature = "${WidgetHvacFeedback.TEMPERATURE}°C"
@@ -164,27 +166,41 @@ fun HvacButton(vin: String, feedback: WidgetHvacFeedback?) {
     val description = context.getString(
         if (status == Status.SUCCESS) R.string.widget_pre_heat_launched else R.string.widget_launch_pre_heat
     )
-    var modifier = GlanceModifier.height(28.dp).background(WidgetColors.track).cornerRadius(14.dp).padding(horizontal = 10.dp)
-    if (status != Status.SENDING) {
-        modifier = modifier.clickable(actionRunCallback<LaunchHvacAction>(actionParametersOf(LaunchHvacAction.VIN to vin)))
-    }
-    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+    val iconSize = if (compact) 14.dp else 16.dp
+    val icon = @Composable {
         if (status == Status.SENDING) {
-            CircularProgressIndicator(modifier = GlanceModifier.size(14.dp), color = WidgetColors.primary)
+            CircularProgressIndicator(modifier = GlanceModifier.size(iconSize - 2.dp), color = WidgetColors.primary)
         } else {
-            val icon = when (status) {
+            val drawable = when (status) {
                 Status.SUCCESS -> R.drawable.ic_check_24
                 Status.ERROR -> R.drawable.ic_close_24
                 else -> R.drawable.ic_hvac_24
             }
             Image(
-                provider = ImageProvider(icon),
+                provider = ImageProvider(drawable),
                 contentDescription = description,
-                modifier = GlanceModifier.size(16.dp),
+                modifier = GlanceModifier.size(iconSize),
                 colorFilter = ColorFilter.tint(colour),
             )
         }
-        Spacer(GlanceModifier.width(4.dp))
-        Text(text = text, style = TextStyle(color = colour, fontSize = 13.sp, fontWeight = FontWeight.Medium), maxLines = 1)
+    }
+
+    var modifier = if (compact) {
+        GlanceModifier.size(26.dp).background(WidgetColors.track).cornerRadius(13.dp)
+    } else {
+        GlanceModifier.height(28.dp).background(WidgetColors.track).cornerRadius(14.dp).padding(horizontal = 10.dp)
+    }
+    if (status != Status.SENDING) {
+        modifier = modifier.clickable(actionRunCallback<LaunchHvacAction>(actionParametersOf(LaunchHvacAction.VIN to vin)))
+    }
+
+    if (compact) {
+        Box(modifier = modifier, contentAlignment = Alignment.Center) { icon() }
+    } else {
+        Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+            icon()
+            Spacer(GlanceModifier.width(4.dp))
+            Text(text = text, style = TextStyle(color = colour, fontSize = 13.sp, fontWeight = FontWeight.Medium), maxLines = 1)
+        }
     }
 }

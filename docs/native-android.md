@@ -81,7 +81,7 @@ Java 17 et les dépôts Maven des nouveaux modules sont réglés par le plugin G
 
 | Widget | Receiver (ne jamais renommer) | Tailles | Contenu |
 |---|---|---|---|
-| Batterie | `com.kelec.KelecMainWIdget` | 4x2 par défaut, redimensionnable : barre 4x1 (le widget historique), carré 2x2, large 4x2 | Selon la taille : 4x1 = logo, nom, niveau, jauge, état, autonomie, temps de charge, heure ; 2x2 = petit widget iOS ; 4x2 = widget moyen iOS, avec le bouton de confort thermique |
+| Batterie | `com.kelec.KelecMainWIdget` | 4x2 par défaut, redimensionnable : barre 4x1 (le widget historique), carré 2x2, large 4x2 | Selon la taille : 4x1 = logo, nom, niveau, jauge, état, autonomie, temps de charge, heure ; 2x2 = petit widget iOS ; 4x2 = widget moyen iOS ; bouton de confort thermique dans les trois tailles |
 | Tempo | `com.kelec.widgets.KelecTempoWidgetReceiver` | 4x2 | Voiture (vue 2x2) + dernier jour Tempo connu, avec les prix HP / HC |
 | Tempo 2 jours | `com.kelec.widgets.KelecTempo2DaysWidgetReceiver` | 4x2 | Voiture (vue 2x2) + les deux derniers jours connus |
 
@@ -96,10 +96,18 @@ Java 17 et les dépôts Maven des nouveaux modules sont réglés par le plugin G
 - Aperçus du sélecteur : `kelec_main_w_idget.xml` (widget 4x2) et `tempo_*_widget_preview.xml`, des layouts statiques
   avec la Mégane en dur (`widget_preview_megane`, comme les aperçus iOS).
 
-### Bouton de confort thermique (4x2)
+### Bouton de confort thermique
 
-Bouton « 21°C » (`HvacButton`, `WidgetComponents.kt`) dans l'en-tête du widget batterie 4x2, entre le nom et le niveau.
-Pas sur la barre 4x1, le carré 2x2 ni les widgets Tempo (pas la place).
+`HvacButton` (`WidgetComponents.kt`), sur tous les widgets :
+
+| Où | Bouton |
+|---|---|
+| Widget batterie 4x2 | Complet (icône et « 21°C ») dans l'en-tête, entre le nom et le niveau |
+| Barre 4x1 | Compact (pastille ronde, icône seule) sur la dernière ligne, avant l'heure |
+| Carré 2x2 et moitié voiture des widgets Tempo (`CarSquareView`) | Compact, en bas à gauche, l'heure en bas à droite, par-dessus l'image |
+
+Le bouton compact n'a pas le texte, pour tenir à la taille minimale : le retour passe par l'icône (chargement, coche
+verte, croix rouge). Chaque changement redessine tous les widgets posés (`WidgetUpdater.redrawAll`), Tempo compris.
 
 1. Le tap lance `LaunchHvacAction` (`HvacWidgetCommand.kt`) : retour `SENDING` enregistré sous `<vin>/widgetHvacStatus`,
    redessin (indicateur de chargement, bouton inactif), puis `HvacWidgetWorker` (tâche unique `kelec_widget_hvac_<vin>`, `KEEP`) :
@@ -176,7 +184,7 @@ Textes : `widget_launch_pre_heat`, `widget_pre_heat_launched` (descriptions), `w
 - `./gradlew :app:assembleDebug` : compile les trois modules (l'app avec Compose et Glance).
 - À vérifier sur appareil après un changement du widget : un widget déjà posé s'affiche toujours, le bouton de l'heure,
   le choix de la voiture, les trois tailles du widget batterie (redimensionner), les widgets Tempo (jour et 2 jours),
-  le mode sombre, le bouton de confort thermique du 4x2 (chargement, réussite, échec, retour du bouton après 60 s), l'historique de kilométrage dans l'app, l'export des logs.
+  le mode sombre, le bouton de confort thermique dans chaque taille et sur les widgets Tempo (chargement, réussite, échec, retour du bouton après 60 s), l'historique de kilométrage dans l'app, l'export des logs.
 - Réglages → Debug → « Debug zone » (côté RN) : choix d'une voiture, puis « Battery status » (appel Renault pas à pas)
   ou « Mileage history » (10 dernières entrées écrites par le widget), avec export des logs en fichier texte.
 

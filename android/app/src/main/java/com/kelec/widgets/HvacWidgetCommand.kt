@@ -36,7 +36,7 @@ class LaunchHvacAction : ActionCallback {
         // un envoi est déjà en cours pour cette voiture
         if (store.widgetHvacFeedback(vin)?.status == Status.SENDING) return
         store.saveWidgetHvacFeedback(vin, WidgetHvacFeedback(Status.SENDING, System.currentTimeMillis()))
-        WidgetRedraw.all(context, CarStatusWidget())
+        WidgetUpdater.redrawAll(context)
         // la requête se fait dans un worker : le BroadcastReceiver de Glance est limité à ~10 s (goAsync)
         HvacWidgetWorker.launch(context, vin)
     }
@@ -66,7 +66,7 @@ class HvacWidgetWorker(context: Context, params: WorkerParameters) : CoroutineWo
         }
         history.writeWidgetLog(if (sent) "HVAC widget: command sent" else "HVAC widget: command not sent")
         store.saveWidgetHvacFeedback(vin, WidgetHvacFeedback(if (sent) Status.SUCCESS else Status.ERROR, System.currentTimeMillis()))
-        WidgetRedraw.all(applicationContext, CarStatusWidget())
+        WidgetUpdater.redrawAll(applicationContext)
         HvacFeedbackClearWorker.schedule(applicationContext, vin)
         return Result.success()
     }
@@ -117,7 +117,7 @@ class HvacFeedbackClearWorker(context: Context, params: WorkerParameters) : Coro
         // widgetHvacFeedback est null une fois expiré ; un nouvel envoi (SENDING) est gardé
         if (store.widgetHvacFeedback(vin)?.status != Status.SENDING) {
             store.clearWidgetHvacFeedback(vin)
-            WidgetRedraw.all(applicationContext, CarStatusWidget())
+            WidgetUpdater.redrawAll(applicationContext)
         }
         return Result.success()
     }

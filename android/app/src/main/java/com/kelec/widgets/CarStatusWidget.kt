@@ -78,7 +78,7 @@ private fun CarStatusContent(state: CarWidgetState) {
     }
 }
 
-/** 4x1 : logo, nom et niveau, jauge, état de charge et autonomie, temps de charge, heure (bouton de rechargement). */
+/** 4x1 : logo, nom et niveau, jauge, état de charge et autonomie, temps de charge, bouton de confort thermique, heure (bouton de rechargement). */
 @Composable
 private fun CarBarView(state: CarWidgetState.Loaded) {
     val battery = state.battery
@@ -102,12 +102,14 @@ private fun CarBarView(state: CarWidgetState.Loaded) {
                 ChargeAndRange(state, 12)
                 if (battery.isPlugged) ChargingTimes(battery, 12)
             }
+            HvacButton(state.car.vin, state.hvacFeedback, compact = true)
+            Spacer(GlanceModifier.width(8.dp))
             LastRefreshLabel(battery, 12.sp)
         }
     }
 }
 
-/** 2x2 : nom, niveau et autonomie (ou temps de charge), image de la voiture, heure. Aussi la moitié gauche des widgets Tempo. */
+/** 2x2 : nom, niveau et autonomie (ou temps de charge), image de la voiture, bouton de confort thermique, heure. Aussi la moitié gauche des widgets Tempo. */
 @Composable
 internal fun CarSquareView(state: CarWidgetState.Loaded, modifier: GlanceModifier = GlanceModifier.widgetContainer(state.car.vin)) {
     val battery = state.battery
@@ -144,7 +146,12 @@ internal fun CarSquareView(state: CarWidgetState.Loaded, modifier: GlanceModifie
         }
         Box(modifier = GlanceModifier.fillMaxWidth().defaultWeight(), contentAlignment = Alignment.BottomEnd) {
             CarImage(state, GlanceModifier.fillMaxSize().padding(top = 4.dp, bottom = 8.dp))
-            LastRefreshLabel(battery, 10.sp)
+            // bouton en bas à gauche, heure en bas à droite, par-dessus l'image
+            Row(modifier = GlanceModifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                HvacButton(state.car.vin, state.hvacFeedback, compact = true)
+                Spacer(GlanceModifier.defaultWeight())
+                LastRefreshLabel(battery, 10.sp)
+            }
         }
     }
 }
@@ -163,7 +170,6 @@ private fun CarLargeView(state: CarWidgetState.Loaded) {
                 maxLines = 1,
                 modifier = GlanceModifier.defaultWeight(),
             )
-            // seulement sur le 4x2 : il n'y a pas la place sur la barre 4x1 ni sur le carré 2x2
             HvacButton(state.car.vin, state.hvacFeedback)
             Spacer(GlanceModifier.width(8.dp))
             BatteryLevelText(battery, 26.sp)
