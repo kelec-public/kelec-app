@@ -52,15 +52,36 @@ struct LastRefreshLabel: View {
   }
 }
 
-// pre-heating button of the medium widgets (21 °C), with the result of the last tap:
+// pre-heating button (21 °C), with the result of the last tap:
 // dimmed while the command is sent, then green (sent) or red (error) for WidgetHvacFeedback.displayDuration.
 // It can be tapped again after an error.
+// - full (medium widgets): icon and "21°C" ("Error" after a failure);
+// - compact (small widget, car half of the Tempo widgets): round pill with the icon only.
 struct HvacWidgetButton: View {
   var vin: String
   var feedback: WidgetHvacFeedback?
+  var compact: Bool = false
 
   var body: some View {
     Button(intent: LaunchHVACWidgetIntent(vin: vin)) {
+      label
+        .foregroundColor(colour)
+        .widgetAccentable()
+        // dimmed by WidgetKit while the intent runs
+        .invalidatableContent()
+    }
+    .buttonStyle(.plain)
+    .accessibilityLabel(Text(feedback?.status == .success ? "preHeatLaunched" : "launchPreHeat"))
+  }
+
+  @ViewBuilder
+  private var label: some View {
+    if compact {
+      Image(systemName: icon)
+        .font(.system(size: 12, weight: .semibold))
+        .frame(width: 26, height: 26)
+        .background(Circle().fill(Color("gris")))
+    } else {
       HStack(spacing: 4) {
         Image(systemName: icon)
         if feedback?.status == .error {
@@ -71,16 +92,10 @@ struct HvacWidgetButton: View {
       }
       .font(.caption)
       .fontWeight(.semibold)
-      .foregroundColor(colour)
       .padding(.horizontal, 10)
       .padding(.vertical, 5)
       .background(Capsule().fill(Color("gris")))
-      .widgetAccentable()
-      // dimmed by WidgetKit while the intent runs
-      .invalidatableContent()
     }
-    .buttonStyle(.plain)
-    .accessibilityLabel(Text(feedback?.status == .success ? "preHeatLaunched" : "launchPreHeat"))
   }
 
   private var icon: String {

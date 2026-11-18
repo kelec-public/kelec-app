@@ -165,6 +165,19 @@ struct WidgetHvacFeedback: Codable {
     return feedback
   }
 
+  // timeline of a car widget: one entry with the feedback until it expires, then one with the button
+  static func timeline<Entry: TimelineEntry>(
+    vin: String?,
+    now: Date,
+    nextRefresh: Date,
+    entry: (Date, WidgetHvacFeedback?) -> Entry
+  ) -> Timeline<Entry> {
+    guard let feedback = load(vin: vin, now: now) else {
+      return Timeline(entries: [entry(now, nil)], policy: .after(nextRefresh))
+    }
+    return Timeline(entries: [entry(now, feedback), entry(feedback.expiryDate, nil)], policy: .after(nextRefresh))
+  }
+
   // true right after a tap on the button of this car
   static func isJustSaved(vin: String?, now: Date = Date()) -> Bool {
     guard let feedback = load(vin: vin, now: now) else { return false }

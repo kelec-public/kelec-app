@@ -23,13 +23,19 @@ struct TempoProvider: AppIntentTimelineProvider {
   func timeline(for configuration: ConfigurationAppIntent, in context: Context) async -> Timeline<TempoEntry>  {
     let currentDate = Date()
     let nextRefresh = Calendar.current.date(byAdding: .minute, value: 15, to: currentDate)!
-    let data = await VehicleLoader.loadWidgetData { account in
-      widgetCar(account: account, configuredVin: configuration.car?.id)
-    }
+    let data = await VehicleLoader.loadWidgetData(
+      selectCar: { account in widgetCar(account: account, configuredVin: configuration.car?.id) },
+      // reload right after the pre-heating button: the status has not changed, no need for a request
+      useCache: { userCar in WidgetHvacFeedback.isJustSaved(vin: userCar.car?.vin, now: currentDate) }
+    )
     // tempo data is only useful when a car is displayed
     let tempoApi = data.userCar != nil ? await TempoService.fetch() : nil
-    let entry = TempoEntry(date: currentDate, data: data, tempoApi: tempoApi)
-    return Timeline(entries: [entry], policy: .after(nextRefresh))
+    // result of the pre-heating button: shown until it expires, then the button again
+    return WidgetHvacFeedback.timeline(vin: data.userCar?.car?.vin, now: currentDate, nextRefresh: nextRefresh) { date, hvacFeedback in
+      var entry = TempoEntry(date: date, data: data, tempoApi: tempoApi)
+      entry.hvacFeedback = hvacFeedback
+      return entry
+    }
   }
 }
 
@@ -43,6 +49,8 @@ struct TempoEntry: TimelineEntry {
   let appPreferences: AppPreferences?
   let tempoApi: tempoFinalReturn?
   let apiHandler: ApiHandler?
+  // result of the pre-heating button, nil to show the button
+  var hvacFeedback: WidgetHvacFeedback? = nil
 }
 
 extension TempoEntry {
