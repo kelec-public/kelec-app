@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Textes de l'app Wear OS, repris des Localizable.strings iOS (« iPhone » remplacé par « téléphone »). -->
+<resources>
+    <string name="watch_open_phone_to_sync">Ανοίξτε την εφαρμογή στο τηλέφωνο για συγχρονισμό</string>
+    <string name="watch_add_vehicle_on_phone">Προσθέστε ένα όχημα στην εφαρμογή του τηλεφώνου</string>
+    <string name="refresh">Ανανέωση</string>
+    <string name="car_maker_server_error">Δεν είναι δυνατή η σύνδεση με τον διακομιστή %1$s</string>
+    <string name="watch_widget_car">Αυτοκίνητο στα widget</string>
+    <string name="watch_settings">Ρυθμίσεις</string>
+    <string name="watch_car_location_error">Δεν είναι δυνατή η λήψη της τοποθεσίας του αυτοκινήτου</string>
+    <string name="information_sent">Οι πληροφορίες στάλθηκαν</string>
+    <string name="pre_heat_launched">Η προθέρμανση ξεκίνησε</string>
+    <string name="error">Σφάλμα</string>
+    <string name="command_send_error">Σφάλμα κατά την αποστολή της εντολής στον διακομιστή. Δοκιμάστε ξανά αργότερα.</string>
+    <string name="launch_pre_heat">Έναρξη προθέρμανσης</string>
+    <string name="are_you_sure_launch_pre_heating">Είστε βέβαιοι ότι θέλετε να ξεκινήσετε την προθέρμανση;</string>
+    <string name="confirm">Επιβεβαίωση</string>
+    <string name="cancel">Ακύρωση</string>
+    <string name="watch_widget_description">Επίπεδο φόρτισης του Renault E-Tech σας</string>
+</resources>

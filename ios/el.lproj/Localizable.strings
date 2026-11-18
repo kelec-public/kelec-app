@@ -1,0 +1,143 @@
+/* No comment provided by engineer. */
+" %@" = "%@";
+
+/* No comment provided by engineer. */
+" | %lldkm" = "| %lldkm";
+
+/* No comment provided by engineer. */
+"--h--" = "--h--";
+
+/* No comment provided by engineer. */
+"%" = "%";
+
+/* No comment provided by engineer. */
+"% | " = "% |";
+
+/* No comment provided by engineer. */
+"%@" = "%@";
+
+/* No comment provided by engineer. */
+"%lld" = "%lld";
+
+/* No comment provided by engineer. */
+"%lld km" = "%lld km";
+
+/* No comment provided by engineer. */
+"%lld%%" = "%lld%%";
+
+/* No comment provided by engineer. */
+"%lldh%@%lld" = "%lldh%@%lld";
+
+/* No comment provided by engineer. */
+"| %lld km " = "| %lld km ";
+
+/* No comment provided by engineer. */
+"| %lldkm" = "| %lldkm";
+
+/* No comment provided by engineer. */
+"watchAddVehicleOnIphone" = "Προσθέστε ένα όχημα στην εφαρμογή του iPhone";
+
+/* No comment provided by engineer. */
+"widgetServerError" = "Δεν είναι δυνατή η σύνδεση με τον διακομιστή";
+
+/* No comment provided by engineer. */
+"carMakerServerError %@" = "Δεν είναι δυνατή η σύνδεση με τον διακομιστή %@";
+
+/* No comment provided by engineer. */
+"watchOpenIphoneToSync" = "Ανοίξτε την εφαρμογή στο iPhone για συγχρονισμό";
+
+/* No comment provided by engineer. */
+"refresh" = "Ανανέωση";
+
+/* No comment provided by engineer. */
+"widgetHomeScreenDescription" = "Εμφανίζει πληροφορίες για το Renault E-Tech σας στην οθόνη Αφετηρίας";
+
+/* No comment provided by engineer. */
+"widgetLockScreenDescription" = "Εμφανίζει πληροφορίες για το Renault E-Tech σας στην οθόνη κλειδώματος";
+
+/* No comment provided by engineer. */
+"Renault E-Tech" = "Renault E-Tech";
+
+/* No comment provided by engineer. */
+"widgetNoCarSelected" = "Πρέπει πρώτα να προσθέσετε ένα όχημα στην εφαρμογή";
+
+/* No comment provided by engineer. */
+"widgetNotLoggedIn" = "Πρέπει πρώτα να συνδεθείτε στην εφαρμογή";
+
+"CHARGE PLANIFIÉE | " = "ΠΡΟΓΡΑΜΜΑΤΙΣΜΕΝΗ ΦΟΡΤΙΣΗ | ";
+
+"CHARGE TERMINÉE | " = "ΦΟΡΤΙΣΗ ΟΛΟΚΛΗΡΩΘΗΚΕ | ";
+
+"EN CHARGE | " = "ΦΟΡΤΙΖΕΙ | ";
+
+"NE CHARGE PAS | " = "ΔΕΝ ΦΟΡΤΙΖΕΙ | ";
+
+"Demain" = "Αύριο";
+
+"Aujourd'hui" = "Σήμερα";
+
+"BLUE" = "ΜΠΛΕ";
+
+"WHITE" = "ΛΕΥΚΟ";
+
+"RED" = "ΚΟΚΚΙΝΟ";
+
+"informationSent" = "Οι πληροφορίες στάλθηκαν";
+
+"preHeatLaunched" = "Η προθέρμανση ξεκίνησε";
+
+"error" = "Σφάλμα";
+
+"commandSendError" = "Σφάλμα κατά την αποστολή της εντολής στον διακομιστή. Δοκιμάστε ξανά αργότερα.";
+
+"Car" = "Αυτοκίνητο";
+
+"launchPreHeat" = "Έναρξη προθέρμανσης";
+
+"launchPreHeatCarDescription" = "Το αυτοκίνητο προς προθέρμανση.";
+"launchPreHeatTemperature" = "Θερμοκρασία";
+"launchPreHeatTemperatureDescription" = "Επιθυμητή θερμοκρασία καμπίνας, σε °C.";
+"launchPreHeatSummary ${car} ${temperature}" = "Προθέρμανση ${car} στους ${temperature} °C";
+"preHeatLaunchedOn %@ %@" = "Η προθέρμανση ξεκίνησε για το %1$@ στους %2$@ °C.";
+"preHeatLaunchError %@" = "Δεν ήταν δυνατή η έναρξη της προθέρμανσης για το %@. Δοκιμάστε ξανά αργότερα.";
+"launchPreHeatControlDescription" = "Ξεκινά την προθέρμανση του επιλεγμένου αυτοκινήτου στην επιλεγμένη θερμοκρασία.";
+
+"areYouSureYouWantToLaunchPreheating" = "Είστε βέβαιοι ότι θέλετε να ξεκινήσετε την προθέρμανση;";
+
+"confirm" = "Επιβεβαίωση";
+
+"cancel" = "Ακύρωση";
+
+"tempoCarServerError" = "Δεν είναι δυνατή η σύνδεση με τον διακομιστή της Renault";
+"tempoRteServerError" = "Δεν είναι δυνατή η σύνδεση με τον διακομιστή της RTE";
+"tempoLoadingError" = "ΣΦΑΛΜΑ ΦΟΡΤΩΣΗΣ ΔΕΔΟΜΕΝΩΝ";
+"watchCarLocationError" = "Δεν είναι δυνατή η λήψη της τοποθεσίας του αυτοκινήτου";
+"tempoLockScreenWidgetDescription" = "Ένδειξη Tempo";
+"tempoWidgetDescription" = "Εμφανίζει πληροφορίες για το Renault E-Tech σας στην οθόνη Αφετηρίας με την ένδειξη Tempo";
+"tempo2DaysWidgetDescription" = "Εμφανίζει πληροφορίες για το Renault E-Tech σας στην οθόνη Αφετηρίας με την ένδειξη Tempo για 2 ημέρες";
+"watchWidgetDescription" = "Επίπεδο φόρτισης του Renault E-Tech σας";
+"watchSettings" = "Ρυθμίσεις";
+"watchWidgetCar" = "Αυτοκίνητο στα widget";
+
+"getCarStatus" = "Λήψη κατάστασης αυτοκινήτου";
+"getCarStatusDescription" = "Επιστρέφει το επίπεδο μπαταρίας, την αυτονομία, την κατάσταση φόρτισης και άλλα στοιχεία του επιλεγμένου αυτοκινήτου, για χρήση στις επόμενες ενέργειες. Η κατάσταση κλειδώματος και το όριο φόρτισης μένουν κενά για τα αυτοκίνητα Renault, Dacia και Alpine, των οποίων το API δεν τα παρέχει.";
+"getCarStatusSummary ${car}" = "Λήψη της κατάστασης του ${car}";
+"getCarStatusCarDescription" = "Το αυτοκίνητο του οποίου την κατάσταση θέλετε.";
+"carStatus" = "Κατάσταση αυτοκινήτου";
+"carStatusBatteryLevel" = "Επίπεδο μπαταρίας";
+"carStatusRange" = "Αυτονομία";
+"carStatusChargeStatus" = "Κατάσταση φόρτισης";
+"carStatusIsPlugged" = "Συνδεδεμένο";
+"carStatusRemainingTime" = "Υπολειπόμενος χρόνος φόρτισης";
+"carStatusChargeLimit" = "Όριο φόρτισης";
+"carStatusIsLocked" = "Κλειδωμένο";
+"carStatusMileage" = "Χιλιόμετρα";
+"carStatusLastUpdate" = "Τελευταία ενημέρωση";
+"chargeStatusNotPlugged" = "Μη συνδεδεμένο";
+"chargeStatusNotCharging" = "Δεν φορτίζει";
+"chargeStatusCharging" = "Φορτίζει";
+"chargeStatusScheduled" = "Προγραμματισμένη φόρτιση";
+"chargeStatusEnded" = "Η φόρτιση ολοκληρώθηκε";
+"chargeStatusV2G" = "V2G";
+"chargeStatusV2L" = "V2L";
+"carStatusDialog %@ %@ %@ %@" = "%1$@: %2$@%% · %3$@ · %4$@";

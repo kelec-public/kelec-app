@@ -5,7 +5,7 @@ interface NestedDictionary {
     [key: string]: string | NestedDictionary;
 }
 
-const ACCEPTED_LANGUAGES: string[] = ["en", "fr", "es", "sv", "it", "de", "pt", "da", "bg", "nl", "hu", "pl", "ro", "cs", "nb", "sl", "hr", "fi", "ca"];
+const ACCEPTED_LANGUAGES: string[] = ["en", "fr", "es", "sv", "it", "de", "pt", "da", "bg", "nl", "hu", "pl", "ro", "cs", "nb", "sl", "hr", "fi", "ca", "el", "tr"];
 const DEFAULT_LANGUAGE = "en";
 
 class LanguageHandler {

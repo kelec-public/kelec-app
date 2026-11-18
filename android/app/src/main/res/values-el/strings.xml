@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Kelec</string>
+    <string name="app_widget_description">Εμφανίζει πληροφορίες για το Renault E-Tech σας στην οθόνη Αφετηρίας</string>
+    <string name="widget_image_description">Car logo manufacturer</string>
+    <string name="widget_time_remaining_image_description">Remaining time image</string>
+    <string name="widget_end_time_image_description">End time image</string>
+    <string name="widget_car_name">RENAULT</string>
+    <string name="widget_battery_level">50</string>
+    <string name="widget_percent">%</string>
+    <string name="widget_charging_status">"ΦΟΡΤΙΖΕΙ | "</string>
+    <string name="widget_battery_autonomy">77 km</string>
+    <string name="time_remaining_text">5h38</string>
+    <string name="end_time_text">04:34</string>
+    <string name="widget_configure_subtitle">Επιλέξτε το αυτοκίνητο που θα εμφανίζεται σε αυτό το widget</string>
+    <string name="widget_configure_title">Επιλέξτε αυτοκίνητο</string>
+
+    <!-- Widgets Tempo -->
+    <string name="tempo_widget_description">Εμφανίζει πληροφορίες για το Renault E-Tech σας στην οθόνη Αφετηρίας με την ένδειξη Tempo</string>
+    <string name="tempo_2days_widget_description">Εμφανίζει πληροφορίες για το Renault E-Tech σας στην οθόνη Αφετηρίας με την ένδειξη Tempo για 2 ημέρες</string>
+    <string name="tempo_blue">ΜΠΛΕ</string>
+    <string name="tempo_white">ΛΕΥΚΟ</string>
+    <string name="tempo_red">ΚΟΚΚΙΝΟ</string>
+    <string name="tempo_car_server_error">Δεν είναι δυνατή η σύνδεση με τον διακομιστή της Renault</string>
+    <string name="tempo_rte_server_error">Δεν είναι δυνατή η σύνδεση με τον διακομιστή της RTE</string>
+</resources>

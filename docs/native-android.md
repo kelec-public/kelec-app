@@ -58,7 +58,7 @@ android/
 │   ├── TempoLoader         Requête RTE + cache `tempo` + repli sur le cache
 │   ├── Models              UserAccount (carFor), UserCar, CarMaker, AppPreferences
 │   ├── Formatting          « 14:05 », « 07/10 14:05 », « 2h05 », « 300 km » / « 186 mi », prix Tempo, libellés des états de charge
-│   └── res/values*/        Textes du widget partagés (états de charge, erreurs), 19 langues
+│   └── res/values*/        Textes du widget partagés (états de charge, erreurs), 21 langues
 └── app/
     ├── KelecMainWIdget     Receiver du widget batterie (CarStatusWidget)
     ├── ApiKeys             Clés d'API du .env (BuildConfig) pour :carapi (Renault, RTE)
@@ -147,8 +147,8 @@ Java 17 et les dépôts Maven des nouveaux modules sont réglés par le plugin G
   `com.kelec.shared.R` (alias `SharedR` dans l'app).
 - `app/src/main/res/values*/strings.xml` : textes propres à l'app (configuration du widget, widgets Tempo, textes des aperçus).
   Les textes Tempo viennent des `Localizable.strings` iOS (`BLUE`, `tempoRteServerError`…).
-- `values/` est le français (langue par défaut), puis 18 langues (`values-en`, `values-de`…). Un nouveau texte doit être
-  ajouté dans les 19 dossiers ; les traductions des widgets iOS (`ios/<langue>.lproj/Localizable.strings`) peuvent servir.
+- `values/` est le français (langue par défaut), puis 20 langues (`values-en`, `values-de`…). Un nouveau texte doit être
+  ajouté dans les 21 dossiers ; les traductions des widgets iOS (`ios/<langue>.lproj/Localizable.strings`) peuvent servir.
 
 ## Compiler et tester
 
@@ -209,7 +209,7 @@ Pendant de l'app Apple Watch (8 octobre 2026). Module `:wear` (Compose for Wear 
 
 ### Textes
 
-`wear/src/main/res/values*/strings.xml`, 19 langues, repris des `Localizable.strings` iOS. Les deux textes qui parlaient
+`wear/src/main/res/values*/strings.xml`, 21 langues, repris des `Localizable.strings` iOS. Les deux textes qui parlaient
 de l'iPhone (`watch_open_phone_to_sync`, `watch_add_vehicle_on_phone`) ont été réécrits avec « téléphone ».
 
 ### Compiler
