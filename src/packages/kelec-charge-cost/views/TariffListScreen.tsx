@@ -12,7 +12,7 @@ type Props = {
 
 /** Page des tarifs d'une voiture (route `TARIFF_LIST_ROUTE`). */
 function TariffListScreen({ vin, onBack, onOpenTariff }: Props): React.JSX.Element | null {
-    const { settings, setCurrency } = useTariffList(vin);
+    const { settings, setCurrency, chargingLossText, isChargingLossValid, changeChargingLoss } = useTariffList(vin);
     const vehicleName = useVehicleName(vin);
     if (!settings) return null;
 
@@ -22,6 +22,9 @@ function TariffListScreen({ vin, onBack, onOpenTariff }: Props): React.JSX.Eleme
             settings={settings}
             onBack={onBack}
             onSelectCurrency={setCurrency}
+            chargingLoss={chargingLossText}
+            isChargingLossValid={isChargingLossValid}
+            onChangeChargingLoss={changeChargingLoss}
             onEditTariff={id => onOpenTariff(id)}
             onAddTariff={() => onOpenTariff()}
         />

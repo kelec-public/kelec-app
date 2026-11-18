@@ -9,6 +9,8 @@ import { Currency, DEFAULT_CURRENCY, sortTariffs, Tariff, TariffSettings } from 
 const GLOBAL_KEY = 'electricityTariffs';
 /** Tarifs d'une voiture : `<vin>/electricityTariffs`, liste de `Tariff`. */
 const VEHICLE_KEY = 'electricityTariffs';
+/** Pertes à la recharge d'une voiture : `<vin>/chargingLoss`, en % (texte). Absent : aucune perte. */
+const CHARGING_LOSS_KEY = 'chargingLoss';
 /** Marqueur posé une fois l'ancien tarif commun recopié sur les voitures du garage. */
 const MIGRATED_KEY = 'electricityTariffsPerVehicle';
 
@@ -42,30 +44,42 @@ async function migrate(vins: string[]): Promise<void> {
     await AppStorage.setString(MIGRATED_KEY, 'true');
 }
 
-/** Tarifs de l'électricité, par voiture, et devise commune à toute l'app. */
+/** Tarifs de l'électricité et pertes à la recharge, par voiture, et devise commune à toute l'app. */
 export const TariffRepository = {
     async get(vin: string): Promise<TariffSettings> {
         await migration;
-        const [global, own] = await Promise.all([
+        const [global, own, loss] = await Promise.all([
             AppStorage.getJSON<GlobalJSON>(GLOBAL_KEY),
             VinStorage.getJSON<Tariff[]>(vin, VEHICLE_KEY),
+            VinStorage.getString(vin, CHARGING_LOSS_KEY),
         ]);
         // migration pas encore faite : la voiture garde l'ancien tarif commun
         const tariffs = own ?? (await AppStorage.getString(MIGRATED_KEY) === null ? global?.tariffs : null) ?? [];
+        const chargingLoss = Number(loss);
         return {
             currency: global?.currency ?? DEFAULT_CURRENCY,
             tariffs: sortTariffs(tariffs),
+            // pas de pertes : le champ reste absent
+            ...(chargingLoss > 0 ? { chargingLoss } : {}),
         };
     },
 
-    /** Enregistre les tarifs de la voiture, et la devise (pour toutes les voitures). */
+    /** Enregistre les tarifs et les pertes de la voiture, et la devise (pour toutes les voitures). */
     async save(vin: string, settings: TariffSettings): Promise<void> {
         await migration;
-        const sorted = { ...settings, tariffs: sortTariffs(settings.tariffs) };
+        const { chargingLoss, ...rest } = settings;
+        const sorted: TariffSettings = {
+            ...rest,
+            tariffs: sortTariffs(settings.tariffs),
+            ...(chargingLoss ? { chargingLoss } : {}),
+        };
         const global = await AppStorage.getJSON<GlobalJSON>(GLOBAL_KEY);
         await Promise.all([
             AppStorage.setJSON(GLOBAL_KEY, { ...global, currency: sorted.currency }),
             VinStorage.setJSON(vin, VEHICLE_KEY, sorted.tariffs),
+            chargingLoss
+                ? VinStorage.setString(vin, CHARGING_LOSS_KEY, String(chargingLoss))
+                : VinStorage.remove(vin, CHARGING_LOSS_KEY),
         ]);
         listeners.forEach(listener => listener({ vin, settings: sorted }));
     },

@@ -90,6 +90,7 @@ Les tarifs sont ceux de la voiture, dans [`kelec-charge-cost`](./charge-cost.md)
   (`chargeCurrentType`) : « AC » avec la prise Type 2, « DC » avec la prise CCS2 (`isDCCharge`, vitesse moyenne ≥ 26 kW). En-tête du mois : total des charges affichées (`chargeIndexCost`).
 - Rien n'est affiché sans tarif ; une bannière (`setTariffBanner`) ouvre alors les tarifs. La feuille « … » a aussi un bouton « Tarif d'électricité ».
 - `ChargesHistoryView` reçoit `onOpenTariffs` de `CarsPageView`, qui enregistre les pages des tarifs (`TARIFF_LIST_ROUTE`, `TARIFF_EDITOR_ROUTE`) et les ouvre pour cette voiture.
+- Les pertes à la recharge de la voiture (en %, page des tarifs) s'ajoutent au coût au tarif, pas aux prix saisis à la main.
 - Session V2G : pas de coût. Charge fusionnée : somme du coût des sous-charges, chacune à ses horaires (HP / HC).
 - Le coût est calculé à l'affichage, jamais stocké : changer un tarif met à jour tout l'historique.
 

@@ -10,10 +10,15 @@ const DAY_MS = 24 * 60 * 60 * 1000;
  * L'énergie est répartie au prorata du temps : on suppose une puissance constante pendant la charge.
  * Une charge qui chevauche un changement de tarif ou une plage d'heures creuses est donc coupée en morceaux.
  * Les heures et les dates des tarifs sont lues dans le fuseau du téléphone.
+ * `chargingLoss` (en %) : l'énergie payée au réseau est celle reçue par la batterie, plus les pertes.
  */
-export function computeCost(start: Date, end: Date, energyKwh: number, tariffs: Tariff[]): number | null {
+export function computeCost(start: Date, end: Date, energyKwh: number, tariffs: Tariff[], chargingLoss = 0): number | null {
     if (tariffs.length === 0) return null;
+    const cost = costOfEnergy(start, end, energyKwh, tariffs);
+    return cost * (1 + chargingLoss / 100);
+}
 
+function costOfEnergy(start: Date, end: Date, energyKwh: number, tariffs: Tariff[]): number {
     const charge = { start: start.getTime(), end: end.getTime() };
     const duration = charge.end - charge.start;
 

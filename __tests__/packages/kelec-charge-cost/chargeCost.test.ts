@@ -24,6 +24,16 @@ describe("computeCost", () => {
         expect(cost("2026-03-01T10:00", "2026-03-01T12:00", 10, [flat(0.25)])).toBeCloseTo(2.5);
     });
 
+    test("charging losses are paid on top of the energy received by the battery", () => {
+        expect(computeCost(local("2026-03-01T10:00"), local("2026-03-01T12:00"), 10, [flat(0.25)], 10)).toBeCloseTo(2.75);
+        // 20:00 → 00:00 : 2 h pleines puis 2 h creuses, + 20 %
+        const tariff = peakOffPeak([["22:00", "06:00"]]);
+        expect(computeCost(local("2026-03-01T20:00"), local("2026-03-02T00:00"), 8, [tariff], 20)).toBeCloseTo((4 * 0.3 + 4 * 0.2) * 1.2);
+        // charge sans durée : au prix du début, pertes comprises
+        expect(computeCost(local("2026-03-01T10:00"), local("2026-03-01T10:00"), 10, [flat(0.25)], 10)).toBeCloseTo(2.75);
+        expect(computeCost(local("2026-03-01T10:00"), local("2026-03-01T12:00"), 10, [], 10)).toBeNull();
+    });
+
     test("entirely in off-peak hours, with a slot crossing midnight", () => {
         const tariff = peakOffPeak([["22:00", "06:00"]]);
         expect(cost("2026-03-01T23:00", "2026-03-02T05:00", 12, [tariff])).toBeCloseTo(12 * 0.2);

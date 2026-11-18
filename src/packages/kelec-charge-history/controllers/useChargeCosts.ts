@@ -6,7 +6,7 @@ import { ChargeCosts } from "../models/ChargeCosts";
 import { chargeCost, hasManualCost } from "../services/chargeCost";
 
 /**
- * Coût des charges avec les tarifs et les prix saisis à la main.
+ * Coût des charges avec les tarifs (et les pertes à la recharge) et les prix saisis à la main.
  * `null` tant que les tarifs ne sont pas lus, ou s'il n'y a ni tarif ni prix saisi.
  */
 export function useChargeCosts(
@@ -18,7 +18,7 @@ export function useChargeCosts(
         if (!settings || (settings.tariffs.length === 0 && overrides.isEmpty())) return null;
         return {
             currency: settings.currency,
-            costOf: charge => chargeCost(charge, settings.tariffs, overrides),
+            costOf: charge => chargeCost(charge, settings.tariffs, overrides, settings.chargingLoss),
             isManual: charge => hasManualCost(charge, overrides),
             format: amount => formatPrice(amount, settings.currency),
             edit,

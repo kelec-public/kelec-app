@@ -1,4 +1,4 @@
-import { isValidTimeOfDay, minutesOfDay, OffPeakSlot, slotDays, Tariff, TariffKind, toLocalDate, withDays } from "./Tariff";
+import { isValidTimeOfDay, MAX_CHARGING_LOSS, minutesOfDay, OffPeakSlot, slotDays, Tariff, TariffKind, toLocalDate, withDays } from "./Tariff";
 
 /** Tarif en cours de saisie : les prix restent du texte tant qu'ils ne sont pas validés. */
 export type TariffDraft = {
@@ -48,6 +48,13 @@ export function parsePrice(text: string): number | null {
     const normalized = text.trim().replace(',', '.');
     if (!/^\d+(\.\d+)?$/.test(normalized)) return null;
     return Number(normalized);
+}
+
+/** Pertes saisies (%, virgule ou point) : vide = 0, sinon de 0 à 100. `null` si la saisie n'est pas valide. */
+export function parseChargingLoss(text: string): number | null {
+    if (text.trim() === '') return 0;
+    const loss = parsePrice(text);
+    return loss !== null && loss <= MAX_CHARGING_LOSS ? loss : null;
 }
 
 export function tariffFromDraft(draft: TariffDraft): Validated<Tariff> {
