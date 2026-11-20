@@ -1,0 +1,80 @@
+# Visuels 2 à 5 : l'app, déjà connectée au compte démo, dans la langue du simulateur.
+# Lancé par capture-ios.mjs, qui recopie les captures (takeScreenshot/<n>.png) dans raw/iphone/<langue>/.
+appId: com.kelyanselme.MyRenault
+---
+- launchApp:
+    stopApp: true
+- extendedWaitUntil:
+    visible:
+      id: carViewTitle
+    timeout: 30000
+- waitForAnimationToEnd:
+    timeout: 5000
+
+# 2. Page voiture
+- takeScreenshot: "2"
+
+# 3. Carte plein écran
+- scrollUntilVisible:
+    element:
+      id: fullScreenButton
+    direction: DOWN
+- tapOn:
+    id: fullScreenButton
+- extendedWaitUntil:
+    visible:
+      id: closeModalButton
+    timeout: 10000
+- waitForAnimationToEnd:
+    timeout: 8000
+- takeScreenshot: "3"
+- tapOn:
+    id: closeModalButton
+
+# 4. Historique des charges, filtré sur l'énergie ajoutée > 5 kWh
+- scrollUntilVisible:
+    element:
+      id: ChargesCard
+    direction: UP
+- tapOn:
+    id: ChargesCard
+- extendedWaitUntil:
+    visible:
+      id: showFiltersButton
+    timeout: 10000
+- tapOn:
+    id: showFiltersButton
+- tapOn:
+    id: expandButtonenergyRecovered
+- tapOn:
+    id: leftTextInputenergyRecovered
+- inputText: "5"
+- hideKeyboard
+- tapOn:
+    id: confirmButton
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: "4"
+
+# 5. Confort thermique (feuille ouverte sur la page voiture). iOS n'a pas de retour système : on relance l'app.
+- launchApp:
+    stopApp: true
+- extendedWaitUntil:
+    visible:
+      id: carViewTitle
+    timeout: 10000
+- scrollUntilVisible:
+    element:
+      id: HVACCardButton
+    direction: UP
+- tapOn:
+    id: HVACCardButton
+- extendedWaitUntil:
+    visible:
+      id: temperatureText
+    timeout: 10000
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: "5"
+- tapOn:
+    id: HVACModalCloseButton

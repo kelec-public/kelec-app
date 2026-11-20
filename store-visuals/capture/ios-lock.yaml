@@ -1,0 +1,4 @@
+# Verrouille le simulateur, pour la capture de l'écran verrouillé (1bis.png).
+appId: com.apple.springboard
+---
+- pressKey: Lock

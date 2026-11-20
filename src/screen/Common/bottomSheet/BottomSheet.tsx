@@ -41,7 +41,7 @@ const BottomSheet = (props: Props) => {
                     >
                         <View style={styles.mainViewContent}>
                             <View style={[commonStyles.rowFlex, { justifyContent: 'space-between', alignItems: 'center' }]}>
-                                <Text style={commonStyles.bottomSheetTitle}>{title}</Text>
+                                <Text style={[commonStyles.bottomSheetTitle, styles.title]}>{title}</Text>
                                 <GlassButton
                                     testID={testID + "CloseButton"}
                                     icon="close"
@@ -72,6 +72,11 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
         marginTop: 10,
+    },
+    // le titre passe à la ligne au lieu de pousser le bouton fermer hors de l'écran
+    title: {
+        flexShrink: 1,
+        marginRight: 10,
     },
     glassCloseButton: {
         padding: 6,

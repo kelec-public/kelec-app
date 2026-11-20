@@ -1,0 +1,12 @@
+{
+  "name": "kelec-store-visuals",
+  "private": true,
+  "type": "module",
+  "description": "Génère les visuels App Store / Play Store à partir des captures brutes",
+  "scripts": {
+    "generate": "node generate.mjs"
+  },
+  "dependencies": {
+    "playwright-core": "^1.65.1"
+  }
+}

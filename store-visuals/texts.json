@@ -1,0 +1,149 @@
+{
+  "fr": [
+    ["Votre voiture", "à portée de main"],
+    ["Suivez votre", "E-TECH"],
+    ["Et localisez-la", "au mètre près"],
+    ["Suivez et filtrez", "vos recharges"],
+    ["Préchauffage", "à distance"]
+  ],
+  "en": [
+    ["Your car", "at your fingertips"],
+    ["Keep track of your", "E-TECH"],
+    ["And locate it", "to the metre"],
+    ["Track and filter", "your charges"],
+    ["Preheat", "remotely"]
+  ],
+  "de": [
+    ["Ihr Auto", "immer griffbereit"],
+    ["Behalten Sie Ihren", "E-TECH im Blick"],
+    ["Und finden Sie ihn", "auf den Meter genau"],
+    ["Verfolgen und filtern", "Sie Ihre Ladevorgänge"],
+    ["Vorheizen", "aus der Ferne"]
+  ],
+  "es": [
+    ["Tu coche", "al alcance de la mano"],
+    ["Sigue tu", "E-TECH"],
+    ["Y localízalo", "al metro"],
+    ["Sigue y filtra", "tus recargas"],
+    ["Precalentamiento", "a distancia"]
+  ],
+  "it": [
+    ["La tua auto", "a portata di mano"],
+    ["Segui la tua", "E-TECH"],
+    ["E localizzala", "al metro"],
+    ["Monitora e filtra", "le tue ricariche"],
+    ["Preriscaldamento", "a distanza"]
+  ],
+  "pt": [
+    ["O seu carro", "à distância de um toque"],
+    ["Acompanhe o seu", "E-TECH"],
+    ["E localize-o", "ao metro"],
+    ["Acompanhe e filtre", "os seus carregamentos"],
+    ["Pré-aquecimento", "à distância"]
+  ],
+  "nl": [
+    ["Uw auto", "binnen handbereik"],
+    ["Volg uw", "E-TECH"],
+    ["En vind hem", "tot op de meter"],
+    ["Volg en filter", "uw laadsessies"],
+    ["Voorverwarmen", "op afstand"]
+  ],
+  "ca": [
+    ["El teu cotxe", "a l'abast de la mà"],
+    ["Segueix el teu", "E-TECH"],
+    ["I localitza'l", "al metre"],
+    ["Segueix i filtra", "les teves càrregues"],
+    ["Preescalfament", "a distància"]
+  ],
+  "sv": [
+    ["Din bil", "nära till hands"],
+    ["Följ din", "E-TECH"],
+    ["Och hitta den", "på metern när"],
+    ["Följ och filtrera", "dina laddningar"],
+    ["Förvärmning", "på distans"]
+  ],
+  "da": [
+    ["Din bil", "lige ved hånden"],
+    ["Følg din", "E-TECH"],
+    ["Og find den", "ned til meteren"],
+    ["Følg og filtrer", "dine opladninger"],
+    ["Forvarmning", "på afstand"]
+  ],
+  "nb": [
+    ["Bilen din", "rett ved hånden"],
+    ["Følg din", "E-TECH"],
+    ["Og finn den", "på meteren"],
+    ["Følg og filtrer", "ladingene dine"],
+    ["Forvarming", "på avstand"]
+  ],
+  "fi": [
+    ["Autosi", "aina ulottuvillasi"],
+    ["Seuraa", "E-TECHiäsi"],
+    ["Ja paikanna se", "metrin tarkkuudella"],
+    ["Seuraa ja suodata", "latauksiasi"],
+    ["Esilämmitys", "etänä"]
+  ],
+  "pl": [
+    ["Twój samochód", "na wyciągnięcie ręki"],
+    ["Śledź swój", "E-TECH"],
+    ["I zlokalizuj go", "co do metra"],
+    ["Śledź i filtruj", "swoje ładowania"],
+    ["Ogrzewanie wstępne", "zdalnie"]
+  ],
+  "cs": [
+    ["Vaše auto", "na dosah ruky"],
+    ["Sledujte svůj", "E-TECH"],
+    ["A najděte ho", "na metr přesně"],
+    ["Sledujte a filtrujte", "svá nabíjení"],
+    ["Předehřev", "na dálku"]
+  ],
+  "sl": [
+    ["Vaš avto", "na dosegu roke"],
+    ["Spremljajte svoj", "E-TECH"],
+    ["In ga poiščite", "na meter natančno"],
+    ["Spremljajte in filtrirajte", "svoja polnjenja"],
+    ["Predgrevanje", "na daljavo"]
+  ],
+  "hr": [
+    ["Vaš automobil", "na dohvat ruke"],
+    ["Pratite svoj", "E-TECH"],
+    ["I pronađite ga", "do metra točno"],
+    ["Pratite i filtrirajte", "svoja punjenja"],
+    ["Predgrijavanje", "na daljinu"]
+  ],
+  "hu": [
+    ["Az autója", "karnyújtásnyira"],
+    ["Kövesse", "E-TECH-jét"],
+    ["És találja meg", "méterre pontosan"],
+    ["Kövesse és szűrje", "a töltéseit"],
+    ["Előfűtés", "távolról"]
+  ],
+  "ro": [
+    ["Mașina ta", "la îndemână"],
+    ["Urmărește-ți", "E-TECH-ul"],
+    ["Și găsește-o", "la metru"],
+    ["Urmărește și filtrează", "încărcările"],
+    ["Preîncălzire", "de la distanță"]
+  ],
+  "bg": [
+    ["Колата ви", "винаги под ръка"],
+    ["Следете своя", "E-TECH"],
+    ["И я открийте", "с точност до метър"],
+    ["Следете и филтрирайте", "зарежданията си"],
+    ["Затопляне", "от разстояние"]
+  ],
+  "el": [
+    ["Το αυτοκίνητό σας", "στο χέρι σας"],
+    ["Παρακολουθήστε το", "E-TECH σας"],
+    ["Και εντοπίστε το", "με ακρίβεια μέτρου"],
+    ["Δείτε και φιλτράρετε", "τις φορτίσεις σας"],
+    ["Προθέρμανση", "από απόσταση"]
+  ],
+  "tr": [
+    ["Aracınız", "parmaklarınızın ucunda"],
+    ["Takip edin", "E-TECH'inizi"],
+    ["Ve konumunu bulun", "metre hassasiyetinde"],
+    ["İzleyin ve filtreleyin", "şarjlarınızı"],
+    ["Ön ısıtma", "uzaktan"]
+  ]
+}
