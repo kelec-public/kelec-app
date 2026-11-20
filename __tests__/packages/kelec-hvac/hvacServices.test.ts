@@ -4,6 +4,7 @@ import { getTemperatureLabel, stepTemperature } from "../../../src/packages/kele
 import { TemperaturePreferences } from "../../../src/packages/kelec-hvac/services/temperaturePreferences";
 import { RenaultHvacSource } from "../../../src/packages/kelec-hvac/services/sources/renaultHvacSource";
 import { HyundaiHvacSource } from "../../../src/packages/kelec-hvac/services/sources/hyundaiHvacSource";
+import { DemoHvacSource } from "../../../src/packages/kelec-hvac/services/sources/demoHvacSource";
 import Account, { CarMaker } from "../../../src/lib/clients/accounts/account";
 import { HvacStopAction } from "../../../src/lib/clients/carMakers/renaultEnums";
 
@@ -120,6 +121,20 @@ describe('HyundaiHvacSource', () => {
 
         await storeCarStatus(false);
         expect(await source.loadCachedStatus()).toEqual(new HvacStatus(false, null));
+    });
+
+    test('pas d\'arrêt à distance', async () => {
+        expect(source.canStop).toBe(false);
+        expect(await source.stop()).toBe(false);
+    });
+});
+
+describe('DemoHvacSource', () => {
+    const source = new DemoHvacSource(new Account('email', 'password', CarMaker.DEMO));
+
+    test('SOC minimum de 10 %, jamais en cours', async () => {
+        expect(await source.loadCachedStatus()).toEqual(new HvacStatus(false, 10));
+        expect(await source.syncStatus()).toEqual(new HvacStatus(false, 10));
     });
 
     test('pas d\'arrêt à distance', async () => {

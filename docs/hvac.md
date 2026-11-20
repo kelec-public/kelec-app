@@ -16,7 +16,8 @@ kelec-hvac/
 │   ├── temperaturePreferences.ts   Dernière température choisie, par voiture
 │   ├── createHvacSource.ts         Choix de la source selon le constructeur
 │   └── sources/
-│       ├── commandOnlyHvacSource.ts   Lancement seul, pas de statut ni d'arrêt (Démo ; classe de base)
+│       ├── commandOnlyHvacSource.ts   Lancement seul, pas de statut ni d'arrêt (classe de base)
+│       ├── demoHvacSource.ts          Démo : SOC minimum fixe de 10 %
 │       ├── renaultHvacSource.ts       Renault / Dacia / Alpine : statut via l'API HVAC + cache, arrêt
 │       └── hyundaiHvacSource.ts       Hyundai : statut lu dans la réponse de statut de la voiture
 ├── controllers/
@@ -50,7 +51,7 @@ kelec-hvac/
 |---|---|---|---|---|
 | Renault / Dacia / Alpine | `RenaultHvacSource` | `hvacStatus === 'on'` (API HVAC) | `socThreshold` | oui |
 | Hyundai | `HyundaiHvacSource` | `vehicleStatus.airCtrlOn === true` | non fourni (`null`) | non |
-| Démo | `CommandOnlyHvacSource` | jamais | `null` | non |
+| Démo | `DemoHvacSource` | jamais | 10 % (fixe) | non |
 
 Quand le SOC minimum est inconnu, l'avertissement « SOC minimum inconnu » est toujours affiché (comportement d'origine).
 

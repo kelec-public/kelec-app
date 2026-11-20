@@ -41,8 +41,8 @@ comme pour une vraie voiture. Le natif enregistre aussi le kilométrage de la d�
 
 - **Import de charges** : les charges importées sont gardées **en mémoire**, par VIN, et perdues au redémarrage de l'app.
   Une charge déjà présente l'emporte sur celle importée, comme pour une vraie voiture.
-- **Confort thermique** : le lancement réussit toujours (app, montre, Siri, widgets). Il n'y a pas de statut
-  (`CommandOnlyHvacSource`, voir [hvac.md](./hvac.md)).
+- **Confort thermique** : le lancement réussit toujours (app, montre, Siri, widgets). Jamais « en cours », pas d'arrêt ;
+  le SOC minimum pour la lancer est de 10 % (`DemoHvacSource`, voir [hvac.md](./hvac.md)).
 - **Rafraîchissement** : pas de réseau, les données ne changent pas (sauf la date de mise à jour).
 - **Pas d'affichage hybride dans les widgets** : les widgets n'affichent ni carburant ni autonomie thermique,
   quelle que soit la voiture.
