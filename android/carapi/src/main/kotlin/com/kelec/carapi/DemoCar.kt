@@ -16,7 +16,7 @@ enum class DemoCar(
     val totalMileage: Double,
     val location: CarLocation,
 ) {
-    CLASSIC("VF1AA", 56, 202, 1.0, 51, 30995.2, CarLocation(48.854700, 2.347749)),
+    CLASSIC("VF1AA", 56, 202, 1.0, 51, 77596.2, CarLocation(48.854700, 2.347749)),
     V2G("VF1AA2", 68, 265, -1.3, 0, 12480.5, CarLocation(48.8606, 2.3376)),
     HYBRID("VF1AA3", 35, 17, 0.1, 0, 45210.3, CarLocation(48.8462, 2.3371));
 
