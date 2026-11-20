@@ -16,7 +16,8 @@ kelec-weather/                        (domaine partagé, importé via index.ts)
 ├── models/Weather.ts                 Weather (température, URL de l'icône), WeatherState (loading | error | loaded)
 ├── types/weatherApi.ts               Format de la réponse de weatherapi.com (utilisé par le modèle et le service)
 ├── services/weatherClient.ts         Appel weatherapi.com (clé WEATHER_API_KEY)
-├── controllers/useWeather.ts         Météo à une position ; aucun appel si la position est null
+├── services/weatherCache.ts          WeatherCache : météo récente par position (30 min, position arrondie à ~1 km)
+├── controllers/useWeather.ts         Météo à une position (cache puis API) ; aucun appel si la position est null
 ├── views/WeatherBadge.tsx            Pastille : chargement, erreur, ou icône + température
 └── index.ts
 
@@ -96,10 +97,23 @@ Points importants pour Android (`react-native-maps` y dessine le marqueur en ima
 | `<vin>/locationStatus` | Réponse brute de l'API position Renault | `kelec-map` (`RenaultLocationSource`) |
 | `<vin>/batteryStatus` | Statut Hyundai (lu seulement, pour la position) | `kelec-car-page` (`CarStatusCache`) |
 | `appPreferences.mapType` | Type de carte | `kelec-preferences` |
+| `weatherCache` | Météo récente par position arrondie (`{ "<lat>,<lon>": { weather, fetchedAt } }`, 2 décimales) | `kelec-weather` (`WeatherCache`) |
 
-## Pourquoi pas de repository ni d'interface de source dans `kelec-weather`
+## Cache de la météo
 
-- **Repository** : il sert à la persistance, or la météo n'est pas stockée (pas de cache).
+weatherapi.com n'offre que 100 000 appels gratuits par mois, et l'app en faisait environ 1 000 000 :
+chaque affichage de la carte appelait l'API. `useWeather` lit d'abord `WeatherCache` :
+
+- une météo de **moins de 30 min** (`WEATHER_CACHE_TTL_MS`) est réutilisée sans appel ;
+- la position est **arrondie à 2 décimales** (~1 km) : une voiture garée au même endroit, ou relue avec quelques mètres d'écart, tombe sur la même entrée ;
+- seules les réponses réussies sont enregistrées (une erreur, ex. quota dépassé, sera retentée au prochain affichage) ;
+- les entrées expirées sont supprimées à chaque écriture, et au plus 20 positions sont gardées ;
+- un cache illisible est ignoré (appel à l'API).
+
+L'appel à l'API garde la position exacte : seul le cache utilise la position arrondie.
+
+## Pourquoi pas d'interface de source dans `kelec-weather`
+
 - **Interface de source** (comme `LocationSource`) : elle n'a de sens qu'avec plusieurs implémentations. Il n'y a qu'un fournisseur (weatherapi.com) ;
   on l'ajoutera s'il en arrive un deuxième ou un mode démo.
 
@@ -120,7 +134,7 @@ Points importants pour Android (`react-native-maps` y dessine le marqueur en ima
 ## Tests
 
 - `__tests__/packages/kelec-weather/weather.test.tsx` : construction du modèle, et un seul état affiché par la pastille (pas de « ° » pendant le chargement ou en cas d'erreur).
-- `__tests__/packages/kelec-weather/useWeather.test.ts` (avec `fetch` simulé) : aucun appel sans position, chargement, erreur de l'API, erreur réseau, rechargement quand la position change.
+- `__tests__/packages/kelec-weather/useWeather.test.ts` (avec `fetch` simulé) : aucun appel sans position, chargement, erreur de l'API, erreur réseau, rechargement quand la position change ; cache : réutilisation à la même position et à quelques mètres, nouvel appel après 30 min, erreurs non mises en cache, cache illisible.
 - `__tests__/packages/kelec-map/CarMarker.test.tsx` : placement de la pointe, icône sans photo, `tracksViewChanges` jusqu'au chargement (+ 300 ms, et filet de sécurité), aucune rotation, photo en enfant direct du `Marker` et affichée aussi sur Android.
 - `__tests__/packages/kelec-map/location.test.ts` : `parseHyundaiTime`, `locationFromRenault`, source Renault (cache, erreur), source Hyundai.
 - Tests d'intégration existants, inchangés : `__tests__/CarView/MapCard.renault.test.tsx` et `MapCard.hyundai.test.tsx`.
