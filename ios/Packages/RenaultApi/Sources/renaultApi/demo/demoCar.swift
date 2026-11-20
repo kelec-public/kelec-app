@@ -63,7 +63,7 @@ public enum DemoCar: String, Codable, CaseIterable {
     // km
     var mileage: Double {
         switch self {
-        case .classic: return 30995.2
+        case .classic: return 77596.2
         case .v2g: return 12480.5
         case .hybrid: return 45210.3
         }

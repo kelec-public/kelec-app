@@ -14,14 +14,14 @@ une vraie voiture.
 
 | VIN | Nom | Ce qu'elle montre |
 |---|---|---|
-| `VF1AA` | Demo car | En charge (AC) : barre verte, puissance, temps restant, heure de fin, limite de charge. Historique de 8 charges, dont une en DC. |
+| `VF1AA` | Demo car | En charge (AC) : barre verte, puissance, temps restant, heure de fin, limite de charge. Historique de 578 charges (avril 2024 – novembre 2026), dont des charges rapides DC, des charges à fusionner et une en erreur ; kilométrage exact à chaque charge. |
 | `VF1AA2` | Demo V2G | En V2G : statut et barre orange. Historique avec 3 charges et 4 sessions V2G (énergie chargée / renvoyée au réseau). |
 | `VF1AA3` | Demo PHEV | Hybride rechargeable : carburant (28 l), autonomie thermique et totale. Branchée, charge programmée chaque soir (« Prochaine charge »). Déverrouillée dans les widgets iOS et le raccourci Siri. |
 
 Un VIN inconnu (ex. voiture démo ajoutée avant ces trois profils) reçoit les données de `VF1AA`.
 
 Le statut batterie, la programmation de charge et la position sont **datés de maintenant** à chaque lecture :
-la démo est toujours « à jour ». Les dates de l'historique de charge, elles, sont fixes (2023-2024).
+la démo est toujours « à jour ». Les dates de l'historique de charge, elles, sont fixes (2023-2026).
 
 ## Où sont les données
 
