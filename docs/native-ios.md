@@ -220,7 +220,7 @@ Pas sur les widgets de l'écran verrouillé (pas la place).
 - Au tap, `LaunchHVACWidgetIntent` (dans `LaunchHVACControl.swift`, masqué de Raccourcis) enregistre seulement
   `confirming` : WidgetKit recharge le widget, qui affiche la confirmation par-dessus (`HvacFeedbackView`) :
   icône du confort thermique, « Lancer le confort thermique » (`launchPreHeat`), Annuler (`cancel`) et Confirmer
-  (`confirm`, bleu). Sans réponse, elle disparaît après 10 s (`displayDuration`, entrée de la timeline).
+  (`confirm`, texte bleu sur pastille bleu clair : le style par défaut d'un bouton de widget n'est pas plein). Sans réponse, elle disparaît après 10 s (`displayDuration`, entrée de la timeline).
   Annuler, c'est `DismissHvacFeedbackIntent`.
 - Confirmer lance `ConfirmHVACWidgetIntent` dans l'extension : rien si la confirmation n'est plus en cours
   (annulée, expirée ou déjà confirmée : elle est marquée `dismissed` avant l'envoi, contre un double tap), sinon

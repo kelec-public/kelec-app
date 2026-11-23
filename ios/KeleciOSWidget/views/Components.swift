@@ -128,8 +128,9 @@ struct HvacFeedbackView: View {
           }
           HStack(spacing: 0) {
             Button(intent: ConfirmHVACWidgetIntent(vin: vin)) {
+              // the default style fills the pill with a light shade of the tint: the text takes the tint itself
               buttonLabel("confirm")
-                .foregroundStyle(Color.white)
+                .foregroundStyle(Color.blue)
             }
           }
           .tint(.blue)
