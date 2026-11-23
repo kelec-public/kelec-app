@@ -106,28 +106,36 @@ Java 17 et les dépôts Maven des nouveaux modules sont réglés par le plugin G
 | Barre 4x1 | Compact, sur la dernière ligne, avant l'heure |
 | Carré 2x2 et moitié voiture des widgets Tempo (`CarSquareView`) | Compact, en bas à gauche, l'heure en bas à droite, par-dessus l'image |
 
-Le retour recouvre tout le widget, Tempo compris (`HvacFeedbackView`, sur une ligne pour la barre 4x1) :
+Le tap demande d'abord une confirmation. Elle et le retour recouvrent tout le widget, Tempo compris
+(`HvacFeedbackView`, sur une ligne pour la barre 4x1) :
+- `CONFIRMING` : icône du confort thermique, « Lancer le confort thermique », Annuler et Confirmer (bleu). Sur le carré
+  2x2, les deux boutons se partagent la largeur ;
 - `SENDING` : indicateur de chargement et « Envoi… » ;
 - `SUCCESS` : coche verte, « Confort thermique actif » et OK ;
 - `ERROR` : croix rouge, « Erreur » et OK (pas de Réessayer : le bouton revient avec le widget).
 
-OK (`DismissHvacFeedbackAction`) efface le retour tout de suite. Chaque changement redessine tous les widgets posés
+OK et Annuler (`DismissHvacFeedbackAction`) effacent le retour tout de suite. Chaque changement redessine tous les widgets posés
 (`WidgetUpdater.redrawAll`), Tempo compris.
 
-1. Le tap lance `LaunchHvacAction` (`HvacWidgetCommand.kt`) : retour `SENDING` enregistré sous `<vin>/widgetHvacStatus`,
+1. Le tap lance `LaunchHvacAction` (`HvacWidgetCommand.kt`) : retour `CONFIRMING` enregistré sous `<vin>/widgetHvacStatus`,
+   redessin, et `HvacFeedbackClearWorker` programmé dans 10 s (sans réponse, la confirmation disparaît).
+   Rien n'est envoyé.
+2. Confirmer lance `ConfirmHvacAction` (ignoré si un `SENDING` est en cours) : retour `SENDING`,
    redessin (chargement), puis `HvacWidgetWorker` (tâche unique `kelec_widget_hvac_<vin>`, `KEEP`) :
    le BroadcastReceiver de Glance est limité à ~10 s. La tâche est *expedited* (`RUN_AS_NON_EXPEDITED_WORK_REQUEST` sans quota) :
    une tâche normale peut être retardée dans un bucket App Standby bas. Android 10 et 11 la font tourner dans un service
    au premier plan, avec une notification discrète le temps de l'envoi (canal `kelec_widget_hvac`, `getForegroundInfo`).
-2. Le worker envoie `VehicleCommands.launchHvac` à 21 °C (`WidgetHvacFeedback.TEMPERATURE`), enregistre `SUCCESS`
+3. Le worker envoie `VehicleCommands.launchHvac` à 21 °C (`WidgetHvacFeedback.TEMPERATURE`), enregistre `SUCCESS`
    ou `ERROR`, redessine, et programme `HvacFeedbackClearWorker` dans 10 s (`DISPLAY_DURATION_MS`).
    Voiture de démo : `launchHvac` attend 3 s avant de réussir, pour simuler une requête.
-3. `HvacFeedbackClearWorker` efface le retour et redessine : le widget normal revient (WorkManager peut le retarder un
-   peu en veille). Le retour est aussi ignoré à la lecture une fois expiré (`WidgetHvacFeedback.isExpired` : 10 s,
-   2 min pour un `SENDING` dont le processus aurait été tué).
+4. `HvacFeedbackClearWorker` efface la confirmation ou le retour et redessine (jamais un `SENDING`) : le widget normal
+   revient (WorkManager peut le retarder un peu en veille). Le retour est aussi ignoré à la lecture une fois expiré
+   (`WidgetHvacFeedback.isExpired` : 10 s, 2 min pour un `SENDING` dont le processus aurait été tué).
+   Un Confirmer touché sur une confirmation déjà expirée mais encore affichée envoie quand même la commande.
 
 Textes : `widget_launch_pre_heat`, `widget_pre_heat_launched`, `widget_pre_heat_error`, repris de `launchPreHeat`,
-`preHeatLaunched` et `error` des `Localizable.strings` iOS ; `widget_ok` comme `widgetHvacOk` sur iOS ; `widget_pre_heat_sending` (Android seulement).
+`preHeatLaunched` et `error` des `Localizable.strings` iOS ; `widget_ok` comme `widgetHvacOk` sur iOS ; `widget_cancel` et `widget_confirm` repris de `cancel` et `confirm` ;
+`widget_pre_heat_sending` (Android seulement).
 
 ## Rafraîchissement des widgets
 
@@ -184,7 +192,7 @@ Textes : `widget_launch_pre_heat`, `widget_pre_heat_launched`, `widget_pre_heat_
 - `app/src/main/res/values*/strings.xml` : textes propres à l'app (configuration du widget, widgets Tempo, textes des aperçus).
   Les textes Tempo viennent des `Localizable.strings` iOS (`BLUE`, `tempoRteServerError`…).
 - Clé `<vin>/widgetHvacStatus` (`StorageKey.widgetHvacStatus`, en clair) : retour du bouton de confort thermique,
-  `{"status":"SUCCESS","date":<ms>}`, propre au widget.
+  `{"status":"SUCCESS","date":<ms>}` (`CONFIRMING`, `SENDING`, `SUCCESS` ou `ERROR`), propre au widget.
 - `values/` est le français (langue par défaut), puis 20 langues (`values-en`, `values-de`…). Un nouveau texte doit être
   ajouté dans les 21 dossiers ; les traductions des widgets iOS (`ios/<langue>.lproj/Localizable.strings`) peuvent servir.
 

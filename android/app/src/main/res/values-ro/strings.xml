@@ -30,4 +30,6 @@
     <string name="widget_pre_heat_error">Eroare</string>
     <string name="widget_pre_heat_sending">Se trimite…</string>
     <string name="widget_ok">OK</string>
+    <string name="widget_cancel">Anulați</string>
+    <string name="widget_confirm">Confirmați</string>
 </resources>

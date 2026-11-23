@@ -37,4 +37,6 @@
     <string name="widget_pre_heat_error">Erreur</string>
     <string name="widget_pre_heat_sending">Envoi…</string>
     <string name="widget_ok">OK</string>
+    <string name="widget_cancel">Annuler</string>
+    <string name="widget_confirm">Confirmer</string>
 </resources>

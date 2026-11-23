@@ -31,4 +31,6 @@
     <string name="widget_pre_heat_error">Hiba</string>
     <string name="widget_pre_heat_sending">Küldés…</string>
     <string name="widget_ok">OK</string>
+    <string name="widget_cancel">Mégse</string>
+    <string name="widget_confirm">Megerősít</string>
 </resources>

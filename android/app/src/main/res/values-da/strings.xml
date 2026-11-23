@@ -30,4 +30,6 @@
     <string name="widget_pre_heat_error">Fejl</string>
     <string name="widget_pre_heat_sending">Sender…</string>
     <string name="widget_ok">OK</string>
+    <string name="widget_cancel">Annuller</string>
+    <string name="widget_confirm">Bekræft</string>
 </resources>

@@ -30,4 +30,6 @@
     <string name="widget_pre_heat_error">Error</string>
     <string name="widget_pre_heat_sending">Sending…</string>
     <string name="widget_ok">OK</string>
+    <string name="widget_cancel">Cancel</string>
+    <string name="widget_confirm">Confirm</string>
 </resources>

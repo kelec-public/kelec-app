@@ -30,4 +30,6 @@
     <string name="widget_pre_heat_error">Chyba</string>
     <string name="widget_pre_heat_sending">Odesílání…</string>
     <string name="widget_ok">OK</string>
+    <string name="widget_cancel">Zrušit</string>
+    <string name="widget_confirm">Potvrdit</string>
 </resources>

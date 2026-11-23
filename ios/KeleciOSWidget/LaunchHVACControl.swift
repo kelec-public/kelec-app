@@ -4,7 +4,8 @@
 //
 //  Control Center / lock screen / Action button control (iOS 18) that launches the pre-heating.
 //  A control cannot ask anything when tapped: the car and the temperature are chosen when the control is added.
-//  Also the pre-heating button of the medium home screen widgets (LaunchHVACWidgetIntent) and its feedback.
+//  Also the pre-heating button of the home screen widgets (LaunchHVACWidgetIntent), its confirmation
+//  (ConfirmHVACWidgetIntent) and its feedback.
 //
 
 import AppIntents
@@ -103,9 +104,9 @@ enum LaunchHVACControlError: Error, CustomLocalizedStringResourceConvertible {
   }
 }
 
-// action of the pre-heating button of the home screen widgets: the car of the widget, at 21 °C.
-// While it runs, the widget shows the system loading effect (invalidatableContent); WidgetKit then reloads the widget,
-// which shows the saved result (WidgetHvacFeedback) over the whole widget (HvacFeedbackContainer).
+// action of the pre-heating button of the home screen widgets: asks for a confirmation first. WidgetKit then reloads
+// the widget, which shows it over the whole widget (HvacFeedbackContainer) until Cancel, Confirm or displayDuration.
+// The control (LaunchHVACControl) has no confirmation: nothing can be shown between the tap and the command.
 struct LaunchHVACWidgetIntent: AppIntent {
   static let title: LocalizedStringResource = "launchPreHeat"
   static let isDiscoverable = false
@@ -125,6 +126,40 @@ struct LaunchHVACWidgetIntent: AppIntent {
       writeWidgetLog(message: "HVAC widget: no car")
       return .result()
     }
+    WidgetHvacFeedback.save(vin: vin, status: .confirming)
+    return .result()
+  }
+}
+
+// Confirm button of the confirmation: the car of the widget, at 21 °C.
+// While it runs, the confirmation shows the system loading effect (invalidatableContent); WidgetKit then reloads the
+// widget, which shows the saved result (WidgetHvacFeedback) over the whole widget (HvacFeedbackContainer).
+// Cancel is DismissHvacFeedbackIntent.
+struct ConfirmHVACWidgetIntent: AppIntent {
+  static let title: LocalizedStringResource = "confirm"
+  static let isDiscoverable = false
+
+  @Parameter(title: "Car")
+  var car: CarEntity?
+
+  init() {}
+
+  init(vin: String) {
+    self.car = CarEntity(name: "", id: vin, registrationNumber: nil)
+  }
+
+  func perform() async throws -> some IntentResult {
+    guard let vin = car?.id else {
+      writeWidgetLog(message: "HVAC widget: no car")
+      return .result()
+    }
+    // the confirmation must still be shown: not cancelled, not expired, not already confirmed
+    guard WidgetHvacFeedback.load(vin: vin)?.status == .confirming else {
+      writeWidgetLog(message: "HVAC widget: no confirmation pending")
+      return .result()
+    }
+    // a second tap on Confirm while the command is sent does nothing (iOS does not redraw the widget meanwhile)
+    WidgetHvacFeedback.dismiss(vin: vin)
     var sent = false
     if let userCar = SharedStore.loadAccount()?.cars.first(where: { $0.car?.vin == vin }) {
       sent = await sendHVACCommand(userCar: userCar, temperature: WidgetHvacFeedback.temperature)
@@ -137,7 +172,8 @@ struct LaunchHVACWidgetIntent: AppIntent {
   }
 }
 
-// OK button of the result of the pre-heating button: the widget goes back to the car before displayDuration
+// OK button of the result of the pre-heating button, and Cancel of its confirmation: the widget goes back to the car
+// before displayDuration
 struct DismissHvacFeedbackIntent: AppIntent {
   static let title: LocalizedStringResource = "widgetHvacOk"
   static let isDiscoverable = false
@@ -159,11 +195,12 @@ struct DismissHvacFeedbackIntent: AppIntent {
   }
 }
 
-// result of the last pre-heating button tap of a car, shown over the home screen widgets for `displayDuration`
-// or until OK. Saved in the App Group under "<vin>/widgetHvacStatus":
-// {"status":"success","date":<seconds since 1970>}, and "dismissed":true after OK.
+// confirmation, then result, of the last pre-heating button tap of a car, shown over the home screen widgets for
+// `displayDuration` or until Cancel / OK. Saved in the App Group under "<vin>/widgetHvacStatus":
+// {"status":"success","date":<seconds since 1970>} (confirming, success or error), and "dismissed":true after Cancel / OK.
 struct WidgetHvacFeedback: Codable {
   enum Status: String, Codable {
+    case confirming
     case success
     case error
   }
@@ -175,7 +212,7 @@ struct WidgetHvacFeedback: Codable {
 
   let status: Status
   let date: Double
-  // OK tapped: no longer shown, but still a recent tap for isJustSaved
+  // Cancel or OK tapped: no longer shown, but still a recent tap for isJustSaved
   var dismissed: Bool? = nil
 
   // when the widget must show the button again
@@ -183,7 +220,7 @@ struct WidgetHvacFeedback: Codable {
     Date(timeIntervalSince1970: date + Self.displayDuration)
   }
 
-  // nil when there is none, when it has expired or after OK
+  // nil when there is none, when it has expired or after Cancel / OK
   static func load(vin: String?, now: Date = Date()) -> WidgetHvacFeedback? {
     guard let feedback = stored(vin: vin), feedback.dismissed != true, feedback.expiryDate > now else {
       return nil
@@ -213,7 +250,7 @@ struct WidgetHvacFeedback: Codable {
     return Timeline(entries: [entry(now, feedback), entry(feedback.expiryDate, nil)], policy: .after(nextRefresh))
   }
 
-  // true right after a tap on the button of this car, or on OK
+  // true right after a tap on the button of this car, on Confirm, Cancel or OK
   static func isJustSaved(vin: String?, now: Date = Date()) -> Bool {
     guard let feedback = stored(vin: vin) else { return false }
     return now.timeIntervalSince1970 - feedback.date < reloadDelay
@@ -223,7 +260,7 @@ struct WidgetHvacFeedback: Codable {
     write(vin: vin, feedback: WidgetHvacFeedback(status: status, date: Date().timeIntervalSince1970))
   }
 
-  // OK: the date is kept, so the reload that follows still uses the cache
+  // Cancel / OK: the date is kept, so the reload that follows still uses the cache
   static func dismiss(vin: String) {
     guard var feedback = stored(vin: vin) else { return }
     feedback.dismissed = true
