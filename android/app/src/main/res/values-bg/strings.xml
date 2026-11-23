@@ -30,4 +30,6 @@
     <string name="widget_pre_heat_error">Грешка</string>
     <string name="widget_pre_heat_sending">Изпращане…</string>
     <string name="widget_ok">OK</string>
+    <string name="widget_cancel">Отказ</string>
+    <string name="widget_confirm">Потвърдете</string>
 </resources>

@@ -30,4 +30,6 @@
     <string name="widget_pre_heat_error">Σφάλμα</string>
     <string name="widget_pre_heat_sending">Αποστολή…</string>
     <string name="widget_ok">OK</string>
+    <string name="widget_cancel">Ακύρωση</string>
+    <string name="widget_confirm">Επιβεβαίωση</string>
 </resources>

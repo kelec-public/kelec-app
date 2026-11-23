@@ -30,4 +30,6 @@
     <string name="widget_pre_heat_error">Napaka</string>
     <string name="widget_pre_heat_sending">Pošiljanje…</string>
     <string name="widget_ok">V redu</string>
+    <string name="widget_cancel">Prekliči</string>
+    <string name="widget_confirm">Potrdi</string>
 </resources>

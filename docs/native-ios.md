@@ -84,7 +84,7 @@ et l'app RN en lit une partie.
 | `widgetLogs` | App Group | Logs des 5 derniers jours (`[{date, message}]`) | `writeWidgetLog` | App RN (export) |
 | `<vin>_mileageHistory` | App Group | Kilométrage du dernier mois (`[{mileage, timestamp ISO}]`) | `SharedHistory` | App RN (historique de charge) |
 | `<vin>_batteryStatus` | App Group | Dernier `RenaultBatteryStatus` | `SharedHistory` | App RN |
-| `<vin>/widgetHvacStatus` | App Group | Retour du bouton de confort thermique des widgets de l'écran d'accueil (`{status: success/error, date}`, secondes depuis 1970) (`dismissed: true` après OK) | `LaunchHVACWidgetIntent`, `DismissHvacFeedbackIntent` | Widgets de l'écran d'accueil (affiché 10 s) |
+| `<vin>/widgetHvacStatus` | App Group | Confirmation puis retour du bouton de confort thermique des widgets de l'écran d'accueil (`{status: confirming/success/error, date}`, secondes depuis 1970) (`dismissed: true` après Annuler, OK ou Confirmer) | `LaunchHVACWidgetIntent`, `ConfirmHVACWidgetIntent`, `DismissHvacFeedbackIntent` | Widgets de l'écran d'accueil (affiché 10 s) |
 | `watchWidgetCar` | App Group (montre) | VIN choisi dans les Réglages de la montre | `WatchSettingsView` | Widgets de la montre |
 | `<vin>/savedTemperature` | UserDefaults.standard (montre) | Dernière température du préchauffage (`"21"`), même clé et format que l'app RN (AsyncStorage) | `CarViewModel` | App de la montre |
 | `<vin>_password` | Keychain | Mot de passe du compte | Stockage chiffré RN / `WatchSync` (Hyundai) | Clients d'API, intent |
@@ -217,11 +217,20 @@ plus petite en version compacte.
 
 Pas sur les widgets de l'écran verrouillé (pas la place).
 
-- Au tap, `LaunchHVACWidgetIntent` (dans `LaunchHVACControl.swift`, masqué de Raccourcis) s'exécute dans l'extension :
+- Au tap, `LaunchHVACWidgetIntent` (dans `LaunchHVACControl.swift`, masqué de Raccourcis) enregistre seulement
+  `confirming` : WidgetKit recharge le widget, qui affiche la confirmation par-dessus (`HvacFeedbackView`) :
+  icône du confort thermique, « Lancer le confort thermique » (`launchPreHeat`), Annuler (`cancel`) et Confirmer
+  (`confirm`, texte bleu sur pastille bleu clair : le style par défaut d'un bouton de widget n'est pas plein). Sans réponse, elle disparaît après 10 s (`displayDuration`, entrée de la timeline).
+  Annuler, c'est `DismissHvacFeedbackIntent`.
+- Confirmer lance `ConfirmHVACWidgetIntent` dans l'extension : rien si la confirmation n'est plus en cours
+  (annulée, expirée ou déjà confirmée : elle est marquée `dismissed` avant l'envoi, contre un double tap), sinon
   voiture du widget (VIN), `sendHVACCommand` à 21 °C (`WidgetHvacFeedback.temperature`), log dans `widgetLogs`.
-- Pendant la requête : l'effet de chargement du système sur tout le widget (`invalidatableContent()` sur le contenu, dans
-  `HvacFeedbackContainer`). iOS ne redessine pas le widget pendant l'intent : pas d'écran « envoi en cours » personnalisé.
-- Les `Button` n'ont aucun modificateur à eux : l'apparence est posée dans le label et sur un conteneur.
+- Le contrôle (`LaunchHVACControl`) n'a pas de confirmation : rien ne peut s'afficher entre le tap et la commande.
+- Pendant la requête : l'effet de chargement du système sur l'icône et le texte de la confirmation
+  (`invalidatableContent()`, pas sur les boutons). iOS ne redessine pas le widget pendant l'intent : pas d'écran
+  « envoi en cours » personnalisé. Le même effet couvre le widget pendant `LaunchHVACWidgetIntent` (`HvacFeedbackContainer`).
+- Les `Button` n'ont aucun modificateur à eux : l'apparence est posée dans le label et sur un conteneur (le bleu
+  de Confirmer est un `.tint` sur un `HStack` autour du bouton).
   Avec `.buttonStyle(.plain)`, `.invalidatableContent()` et `.accessibilityLabel` sur le bouton, il n'était pas interactif :
   le tap ouvrait l'app (`Launching from widgetURL` dans les logs).
 - Le résultat est enregistré sous `<vin>/widgetHvacStatus`, puis WidgetKit recharge le widget : le provider
@@ -230,7 +239,7 @@ Pas sur les widgets de l'écran verrouillé (pas la place).
 - Le retour recouvre tout le widget, Tempo compris (`HvacFeedbackView`) : coche verte et « Confort thermique actif »
   (`preHeatLaunched`), ou croix rouge et « Erreur » (`error`). Pas de Réessayer : le bouton revient avec le widget. Les deux ont OK (`widgetHvacOk`) : `DismissHvacFeedbackIntent` marque le retour `dismissed` et le widget revient.
 - Démo : `DemoApiClient.launchHvac` attend 3 s avant de réussir, pour simuler une requête.
-- Le rechargement qui suit le tap ou OK (dans les 15 s, `WidgetHvacFeedback.isJustSaved`, même après OK) affiche le statut du cache
+- Le rechargement qui suit le tap, Confirmer, Annuler ou OK (dans les 15 s, `WidgetHvacFeedback.isJustSaved`, même après OK) affiche le statut du cache
   (`loadWidgetData(useCache:)`) sans requête : le statut n'a pas changé, et chaque tap ferait sinon une requête
   de plus par widget. Sans cache, la requête est faite.
 - Budget de WidgetKit : le rechargement qui suit l'intent d'un widget interactif n'est pas compté, et l'entrée

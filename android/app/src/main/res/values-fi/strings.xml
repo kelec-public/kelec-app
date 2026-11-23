@@ -30,4 +30,6 @@
     <string name="widget_pre_heat_error">Virhe</string>
     <string name="widget_pre_heat_sending">Lähetetään…</string>
     <string name="widget_ok">OK</string>
+    <string name="widget_cancel">Peruuttaa</string>
+    <string name="widget_confirm">Vahvistaa</string>
 </resources>

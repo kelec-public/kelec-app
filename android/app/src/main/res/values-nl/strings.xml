@@ -31,4 +31,6 @@
     <string name="widget_pre_heat_error">Fout</string>
     <string name="widget_pre_heat_sending">Verzenden…</string>
     <string name="widget_ok">OK</string>
+    <string name="widget_cancel">Annuleren</string>
+    <string name="widget_confirm">Bevestigen</string>
 </resources>

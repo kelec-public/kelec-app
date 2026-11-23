@@ -30,4 +30,6 @@
     <string name="widget_pre_heat_error">Greška</string>
     <string name="widget_pre_heat_sending">Slanje…</string>
     <string name="widget_ok">U redu</string>
+    <string name="widget_cancel">Otkazati</string>
+    <string name="widget_confirm">Potvrdi</string>
 </resources>

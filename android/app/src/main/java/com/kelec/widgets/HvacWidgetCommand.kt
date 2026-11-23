@@ -25,9 +25,9 @@ import com.kelec.shared.WidgetHvacFeedback.Status
 import java.util.concurrent.TimeUnit
 
 /**
- * Bouton de confort thermique des widgets : lance le préchauffage à [WidgetHvacFeedback.TEMPERATURE] °C.
- * Le widget affiche tout de suite « envoi en cours » sur toute sa taille, puis la réussite ou l'échec jusqu'à OK ou
- * pendant [WidgetHvacFeedback.DISPLAY_DURATION_MS] (état enregistré par voiture et relu par [WidgetData]).
+ * Bouton de confort thermique des widgets : demande d'abord une confirmation, affichée sur toute la taille du widget
+ * (Annuler / Confirmer) jusqu'à un choix ou pendant [WidgetHvacFeedback.DISPLAY_DURATION_MS].
+ * L'état est enregistré par voiture et relu par [WidgetData].
  */
 class LaunchHvacAction : ActionCallback {
     override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
@@ -35,14 +35,32 @@ class LaunchHvacAction : ActionCallback {
         val store = SharedStore(context)
         // un envoi est déjà en cours pour cette voiture
         if (store.widgetHvacFeedback(vin)?.status == Status.SENDING) return
-        store.saveWidgetHvacFeedback(vin, WidgetHvacFeedback(Status.SENDING, System.currentTimeMillis()))
+        store.saveWidgetHvacFeedback(vin, WidgetHvacFeedback(Status.CONFIRMING, System.currentTimeMillis()))
         WidgetUpdater.redrawAll(context)
-        // la requête se fait dans un worker : le BroadcastReceiver de Glance est limité à ~10 s (goAsync)
-        HvacWidgetWorker.launch(context, vin)
+        // sans réponse, la confirmation disparaît (un envoi confirmé entre-temps est gardé)
+        HvacFeedbackClearWorker.schedule(context, vin)
     }
 
     companion object {
         val VIN = ActionParameters.Key<String>("vin")
+    }
+}
+
+/**
+ * Confirmer : lance le préchauffage à [WidgetHvacFeedback.TEMPERATURE] °C. Le widget affiche tout de suite
+ * « envoi en cours », puis la réussite ou l'échec jusqu'à OK ou pendant [WidgetHvacFeedback.DISPLAY_DURATION_MS].
+ * Annuler, c'est [DismissHvacFeedbackAction].
+ */
+class ConfirmHvacAction : ActionCallback {
+    override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
+        val vin = parameters[LaunchHvacAction.VIN] ?: return
+        val store = SharedStore(context)
+        // double tap : un envoi est déjà en cours pour cette voiture
+        if (store.widgetHvacFeedback(vin)?.status == Status.SENDING) return
+        store.saveWidgetHvacFeedback(vin, WidgetHvacFeedback(Status.SENDING, System.currentTimeMillis()))
+        WidgetUpdater.redrawAll(context)
+        // la requête se fait dans un worker : le BroadcastReceiver de Glance est limité à ~10 s (goAsync)
+        HvacWidgetWorker.launch(context, vin)
     }
 }
 
@@ -108,7 +126,10 @@ class HvacWidgetWorker(context: Context, params: WorkerParameters) : CoroutineWo
     }
 }
 
-/** Bouton OK du retour : le widget revient à la voiture sans attendre [WidgetHvacFeedback.DISPLAY_DURATION_MS]. */
+/**
+ * Bouton OK du retour, et Annuler de la confirmation : le widget revient à la voiture sans attendre
+ * [WidgetHvacFeedback.DISPLAY_DURATION_MS].
+ */
 class DismissHvacFeedbackAction : ActionCallback {
     override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
         val vin = parameters[LaunchHvacAction.VIN] ?: return
@@ -120,7 +141,7 @@ class DismissHvacFeedbackAction : ActionCallback {
     }
 }
 
-/** Efface la réussite ou l'échec affiché par le widget une fois sa durée passée. */
+/** Efface la confirmation, la réussite ou l'échec affiché par le widget une fois sa durée passée. */
 class HvacFeedbackClearWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {

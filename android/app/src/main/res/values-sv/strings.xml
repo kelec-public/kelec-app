@@ -30,4 +30,6 @@
     <string name="widget_pre_heat_error">Fel</string>
     <string name="widget_pre_heat_sending">Skickar…</string>
     <string name="widget_ok">OK</string>
+    <string name="widget_cancel">Avbryt</string>
+    <string name="widget_confirm">Bekräfta</string>
 </resources>

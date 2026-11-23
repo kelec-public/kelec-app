@@ -30,4 +30,6 @@
     <string name="widget_pre_heat_error">Hata</string>
     <string name="widget_pre_heat_sending">Gönderiliyor…</string>
     <string name="widget_ok">Tamam</string>
+    <string name="widget_cancel">İptal</string>
+    <string name="widget_confirm">Onayla</string>
 </resources>
