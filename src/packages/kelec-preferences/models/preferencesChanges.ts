@@ -8,7 +8,7 @@ export type BooleanPreference = {
 }[keyof PreferencesPatch];
 
 /** Préférences lues par les widgets natifs de l'écran d'accueil (iOS et Android). */
-const WIDGET_FIELDS: (keyof PreferencesPatch)[] = ['displayMiles', 'convertToMiles'];
+const WIDGET_FIELDS: (keyof PreferencesPatch)[] = ['displayMiles', 'convertToMiles', 'widgetHvacButton'];
 
 /** Nouvelles préférences (copie) avec les changements appliqués et les dépendances respectées. */
 export const applyChanges = (current: AppPreferences, patch: PreferencesPatch): AppPreferences => {

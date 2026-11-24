@@ -273,6 +273,31 @@ test('should update the app preferences highlightDCCharges', async () => {
     });
 });
 
+test('should hide and show the hvac button of the widgets', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await waitFor(() => expect(hasTab('account')).toBe(true));
+    await selectTab('settings');
+    await waitFor(() => expect(screen.getByTestId('settingsView')).toBeDefined());
+
+    let actionButton = screen.getByTestId('testSettingRowwidgets');
+    await user.press(actionButton);
+    await waitFor(async () => {
+        const appPreferences = await AsyncStorage.getItem('appPreferences');
+        expect(JSON.parse(appPreferences ?? "")).toMatchObject({ widgetHvacButton: false });
+    });
+    expect(mocksaveNativePreferences).toHaveBeenLastCalledWith(expect.objectContaining({ widgetHvacButton: false }));
+
+    actionButton = screen.getByTestId('testSettingRowwidgets');
+    await user.press(actionButton);
+    await waitFor(async () => {
+        const appPreferences = await AsyncStorage.getItem('appPreferences');
+        expect(JSON.parse(appPreferences ?? "")).toMatchObject({ widgetHvacButton: true });
+    });
+    expect(mocksaveNativePreferences).toHaveBeenLastCalledWith(expect.objectContaining({ widgetHvacButton: true }));
+});
+
 test('should update the app preferences show charging power', async () => {
     const user = userEvent.setup();
     render(<App />);

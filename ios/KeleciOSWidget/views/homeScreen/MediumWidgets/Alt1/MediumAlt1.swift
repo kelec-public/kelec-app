@@ -24,7 +24,7 @@ struct MediumCarWidgetAltView: View {
           .fontWeight(.bold)
         Spacer()
         // pre-heating button in the header, before the charging time (compact: same height as the title)
-        if let vin = userCar.car?.vin {
+        if let vin = userCar.car?.vin, appPreferences?.showsWidgetHvacButton ?? true {
           HvacWidgetButton(vin: vin, compact: true)
             .padding(.trailing, 4)
         }

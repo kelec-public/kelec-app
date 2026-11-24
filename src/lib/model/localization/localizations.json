@@ -224,6 +224,7 @@
     "watchOnForeground": "Приложението трябва да работи на преден план на часовника",
     "wednesday": "сряда",
     "welcomeOnKelec": "Добре дошли",
+    "widgetHvacButton": "Бутон за предварително загряване в уиджетите",
     "yesterdayAt": "вчера в ",
     "youLlBeRedirectedToPreviousScreenClickNext": "Ще бъдете пренасочени към предния екран. Натиснете върху следващия още веднъж",
     "your_cars": "Вашите автомобили"
@@ -453,6 +454,7 @@
     "watchOnForeground": "Aplicació en primer pla del rellotge",
     "wednesday": "Dimecres",
     "welcomeOnKelec": "Benvingut a Kelec",
+    "widgetHvacButton": "Botó de preescalfament als ginys",
     "yesterdayAt": "Ahir : ",
     "youLlBeRedirectedToPreviousScreenClickNext": "Seràs redirigit a la pantalla anterior. Fes clic de nou a següent",
     "your_cars": "El meu cotxe no surt al llistat"
@@ -682,6 +684,7 @@
     "watchOnForeground": "Aplikace na hodinkách musí být otevřena v popředí",
     "wednesday": "středa",
     "welcomeOnKelec": "Vítejte v apl. Kelec",
+    "widgetHvacButton": "Tlačítko předehřevu ve widgetech",
     "yesterdayAt": "včera v ",
     "youLlBeRedirectedToPreviousScreenClickNext": "Budete přesměrováni na předchozí obrazovku. Klikněte znovu na další",
     "your_cars": "Vaše vozy"
@@ -911,6 +914,7 @@
     "watchOnForeground": "Appen skal være åben i forgrunden på uret",
     "wednesday": "onsdag",
     "welcomeOnKelec": "Velkommen på Kelec",
+    "widgetHvacButton": "Forvarmningsknap på widgets",
     "yesterdayAt": "i går kl ",
     "youLlBeRedirectedToPreviousScreenClickNext": "Du vil blive omdirigeret til forrige skærm. Klik igen på næste",
     "your_cars": "Dine biler"
@@ -1140,6 +1144,7 @@
     "watchOnForeground": "Die App muss im Vordergrund auf der Uhr geöffnet sein",
     "wednesday": "Mittwoch",
     "welcomeOnKelec": "Willkommen bei Kelec",
+    "widgetHvacButton": "Vorheiztaste in den Widgets",
     "yesterdayAt": "gestern um ",
     "youLlBeRedirectedToPreviousScreenClickNext": "Du wirst zum vorherigen Bildschirm umgeleitet. Klicke erneut auf Weiter",
     "your_cars": "Deine Fahrzeuge"
@@ -1369,6 +1374,7 @@
     "watchOnForeground": "Η εφαρμογή πρέπει να είναι ανοιχτή σε πρώτο πλάνο στο ρολόι",
     "wednesday": "Τέταρτη",
     "welcomeOnKelec": "Καλώς ήρθατε στο Kelec",
+    "widgetHvacButton": "Κουμπί προθέρμανσης στα widget",
     "yesterdayAt": "χτες στις ",
     "youLlBeRedirectedToPreviousScreenClickNext": "Θα μεταφερθείτε στην προηγούμενη οθόνη. Πατήστε ξανά «Επόμενο»",
     "your_cars": "Τα αυτοκίνητά σας"
@@ -1598,6 +1604,7 @@
     "watchOnForeground": "The app must be open in the foreground on the watch",
     "wednesday": "wednesday",
     "welcomeOnKelec": "Welcome on Kelec",
+    "widgetHvacButton": "Pre-heating button on the widgets",
     "yesterdayAt": "yesterday at ",
     "youLlBeRedirectedToPreviousScreenClickNext": "You will be redirected to previous screen. Click next again",
     "your_cars": "Your cars"
@@ -1827,6 +1834,7 @@
     "watchOnForeground": "La aplicación debe estar abierta en primer plano en el reloj",
     "wednesday": "miércoles",
     "welcomeOnKelec": "Bienvenido a Kelec",
+    "widgetHvacButton": "Botón de precalentamiento en los widgets",
     "yesterdayAt": "Ayer en ",
     "youLlBeRedirectedToPreviousScreenClickNext": "Serás redirigido a la pantalla anterior. Haz clic en siguiente nuevamente",
     "your_cars": "Tus coches"
@@ -2056,6 +2064,7 @@
     "watchOnForeground": "Pidä sovellus auki kellon näytöllä.",
     "wednesday": "keskiviikko",
     "welcomeOnKelec": "Tervetuloa Kelec-sovellukseen",
+    "widgetHvacButton": "Esilämmityspainike widgeteissä",
     "yesterdayAt": "eilen klo ",
     "youLlBeRedirectedToPreviousScreenClickNext": "Sinut ohjataan takaisin edellissivulle. Napsauta uudestaan seuraava",
     "your_cars": "Sinun autosi"
@@ -2285,6 +2294,7 @@
     "watchOnForeground": "L'application doit être ouverte au premier plan sur la montre",
     "wednesday": "mercredi",
     "welcomeOnKelec": "Bienvenue sur Kelec",
+    "widgetHvacButton": "Bouton « Confort thermique » sur les widgets",
     "yesterdayAt": "hier à ",
     "youLlBeRedirectedToPreviousScreenClickNext": "Vous serez redirigé vers l'écran précédent. Cliquez à nouveau sur suivant",
     "your_cars": "Vos véhicules"
@@ -2514,6 +2524,7 @@
     "watchOnForeground": "Aplikacija na satu mora biti pokrenuta, ne u pozadini",
     "wednesday": "srijeda",
     "welcomeOnKelec": "Dobrodošao u Kelec",
+    "widgetHvacButton": "Gumb za predgrijavanje na widgetima",
     "yesterdayAt": "Jučer u ",
     "youLlBeRedirectedToPreviousScreenClickNext": "Bit ćete preusmjereni na prethorni zaslon. Ponovo kliknite sljedeće",
     "your_cars": "Tvoji automobili"
@@ -2743,6 +2754,7 @@
     "watchOnForeground": "Az alkalmazásnak az előtérben kell futni az órán",
     "wednesday": "szerda",
     "welcomeOnKelec": "Üdvözli a Kelec",
+    "widgetHvacButton": "Előfűtés gomb a widgeteken",
     "yesterdayAt": "tegnap ekkor: ",
     "youLlBeRedirectedToPreviousScreenClickNext": "Át lesz irányítva a előző képernyőre. Kattintson ismét a következőre",
     "your_cars": "Az autói"
@@ -2972,6 +2984,7 @@
     "watchOnForeground": "L’app deve essere aperta in primo piano sull’orologio",
     "wednesday": "Mercoledì",
     "welcomeOnKelec": "Benvenuto su Kelec",
+    "widgetHvacButton": "Pulsante di preriscaldamento nei widget",
     "yesterdayAt": "Ieri alle ",
     "youLlBeRedirectedToPreviousScreenClickNext": "Verrai reindirizzato alla schermata precedente. Clicca di nuovo su avanti",
     "your_cars": "Le tue auto"
@@ -3201,6 +3214,7 @@
     "watchOnForeground": "Appen må være åpen i forgrunnen på klokken",
     "wednesday": "Onsdag",
     "welcomeOnKelec": "Velkommen til Kelec",
+    "widgetHvacButton": "Forvarmingsknapp på widgetene",
     "yesterdayAt": "i går kl. ",
     "youLlBeRedirectedToPreviousScreenClickNext": "Du vil bli omdirigert til forrige skjerm. Klikk neste igjen",
     "your_cars": "Dine biler"
@@ -3430,6 +3444,7 @@
     "watchOnForeground": "De app moet op de voorgrond van het horloge geopend zijn",
     "wednesday": "woensdag",
     "welcomeOnKelec": "Welkom bij Kelec",
+    "widgetHvacButton": "Voorverwarmingsknop op de widgets",
     "yesterdayAt": "gisteren om ",
     "youLlBeRedirectedToPreviousScreenClickNext": "Je wordt doorgestuurd naar het vorige scherm. Klik nogmaals op volgende",
     "your_cars": "Uw voertuigen"
@@ -3659,6 +3674,7 @@
     "watchOnForeground": "Aplikacja musi być otwarta na pierwszym planie na zegarku",
     "wednesday": "środa",
     "welcomeOnKelec": "Witaj w Kelec",
+    "widgetHvacButton": "Przycisk wstępnego podgrzewania na widżetach",
     "yesterdayAt": "wczoraj o ",
     "youLlBeRedirectedToPreviousScreenClickNext": "Zostaniesz przekierowany do poprzedniego ekranu. Kliknij ponownie dalej",
     "your_cars": "Twoje samochody"
@@ -3888,6 +3904,7 @@
     "watchOnForeground": "A aplicação deve estar aberta em primeiro plano no relógio",
     "wednesday": "quarta",
     "welcomeOnKelec": "Bem-vindo ao Kelec",
+    "widgetHvacButton": "Botão de pré-aquecimento nos widgets",
     "yesterdayAt": "ontem às ",
     "youLlBeRedirectedToPreviousScreenClickNext": "Você será redirecionado para a tela anterior. Clique em próxima novamente",
     "your_cars": "Os seus carros"
@@ -4117,6 +4134,7 @@
     "watchOnForeground": "Aplicația trebuie să fie deschisă în prim-plan pe ceas",
     "wednesday": "Miercuri",
     "welcomeOnKelec": "Bine ați venit pe Kelec",
+    "widgetHvacButton": "Buton de preîncălzire pe widgeturi",
     "yesterdayAt": "ieri la ",
     "youLlBeRedirectedToPreviousScreenClickNext": "Vei fi redirecționat către ecranul anterior. Apasă din nou pe următorul",
     "your_cars": "Mașinile dvs."
@@ -4346,6 +4364,7 @@
     "watchOnForeground": "Aplikacija mora biti v ospredju na vaši uri",
     "wednesday": "sreda",
     "welcomeOnKelec": "Dobrodošli na Kelecu",
+    "widgetHvacButton": "Gumb za predhodno ogrevanje v pripomočkih",
     "yesterdayAt": "včeraj ob ",
     "youLlBeRedirectedToPreviousScreenClickNext": "Preusmerjeni boste na prejšnji zaslon. Pritisnite znova naslednji",
     "your_cars": "Vaša vozila"
@@ -4575,6 +4594,7 @@
     "watchOnForeground": "Appen måste vara öppen i förgrunden på klockan",
     "wednesday": "onsag",
     "welcomeOnKelec": "Välkommen till Kelec",
+    "widgetHvacButton": "Förvärmningsknapp på widgetarna",
     "yesterdayAt": "igår kl. ",
     "youLlBeRedirectedToPreviousScreenClickNext": "Du kommer att omdirigeras till föregående skärm. Klicka på nästa igen",
     "your_cars": "Dina bilar"
@@ -4804,6 +4824,7 @@
     "watchOnForeground": "Uygulama saatte ön planda açık olmalıdır",
     "wednesday": "Çarşamba",
     "welcomeOnKelec": "Kelec'e hoş geldiniz",
+    "widgetHvacButton": "Widget'lardaki ön ısıtma düğmesi",
     "yesterdayAt": "Dün saat ",
     "youLlBeRedirectedToPreviousScreenClickNext": "Önceki ekrana yönlendirileceksiniz. Tekrar İleri'ye dokunun",
     "your_cars": "Araçlarınız"

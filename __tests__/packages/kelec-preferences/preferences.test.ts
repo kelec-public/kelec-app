@@ -52,3 +52,13 @@ test('le thème suit le téléphone par défaut, y compris pour des préférence
     await AsyncStorage.setItem('appPreferences', JSON.stringify({ hideMap: true }));
     expect((await PreferencesRepository.get()).colorTheme).toBe('auto');
 });
+
+test('le bouton de confort thermique des widgets est affiché par défaut, et le changer met à jour les widgets', async () => {
+    await AsyncStorage.setItem('appPreferences', JSON.stringify({ hideMap: true }));
+    const current = await PreferencesRepository.get();
+    expect(current.widgetHvacButton).toBe(true);
+
+    const next = await PreferencesRepository.update(current, { widgetHvacButton: false });
+    expect(next.widgetHvacButton).toBe(false);
+    expect(saveNativePreferences).toHaveBeenCalledWith(next);
+});

@@ -34,8 +34,8 @@ struct MediumCarWidgetView: View{
           
           
           Spacer()
-          // pre-heating button in the header, before the level
-          if let vin = userCar.car?.vin {
+          // pre-heating button in the header, before the level (unless turned off in the app's settings)
+          if let vin = userCar.car?.vin, appPreferences?.showsWidgetHvacButton ?? true {
             HvacWidgetButton(vin: vin)
               .padding(.trailing, 4)
           }

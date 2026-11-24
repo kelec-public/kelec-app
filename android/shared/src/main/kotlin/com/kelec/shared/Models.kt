@@ -34,4 +34,6 @@ data class UserAccount(val cars: List<UserCar>) {
 data class AppPreferences(
     val displayMiles: Boolean = false,
     val convertToMiles: Boolean = false,
+    /** Bouton de confort thermique des widgets (Réglages de l'app) ; absent des préférences enregistrées avant le réglage. */
+    val widgetHvacButton: Boolean = true,
 )

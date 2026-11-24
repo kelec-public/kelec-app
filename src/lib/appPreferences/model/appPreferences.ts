@@ -21,6 +21,8 @@ class AppPreferences {
     mergeCharges: boolean = false;
     // app theme: follows the phone (auto), or forced light / dark
     colorTheme: ColorTheme = 'auto';
+    // bouton de confort thermique sur les widgets de l'écran d'accueil (iOS et Android)
+    widgetHvacButton: boolean = true;
 
     constructor(preferences?: Partial<AppPreferences>) {
         if (preferences) {
