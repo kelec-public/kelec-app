@@ -16,7 +16,7 @@ struct SmallCarWidgetView: View{
   var carName: String
   var image: String
   var appPreferences: AppPreferences?
-  // car of the pre-heating button (bottom left), no button when nil
+  // car of the pre-heating button (bottom left), no button when nil or turned off in the app's settings
   var vin: String? = nil
   var body: some View{
     VStack(alignment: .leading, spacing: 0){
@@ -77,7 +77,7 @@ struct SmallCarWidgetView: View{
         VStack{
           Spacer()
           HStack(spacing: 0){
-            if let vin = vin {
+            if let vin = vin, appPreferences?.showsWidgetHvacButton ?? true {
               HvacWidgetButton(vin: vin, compact: true)
             }
             Spacer()

@@ -143,6 +143,11 @@ export function useSettingsController() {
                     switchValue: preferences.mergeCharges, description: t("mergeChargesDescription"),
                     onPress: toggle('mergeCharges'),
                 },
+                {
+                    title: t("widgetHvacButton"), icon: "widgets", type: OptionType.SWITCH,
+                    switchValue: preferences.widgetHvacButton,
+                    onPress: toggle('widgetHvacButton'),
+                },
             ],
         },
         {

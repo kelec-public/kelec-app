@@ -208,6 +208,10 @@ Bouton du Centre de contrôle, de l'écran verrouillé et du bouton Action, dans
 avec l'icône seule (style par défaut du bouton, `.tint(.gray)` et `.buttonBorderShape(.circle)` posés sur un conteneur),
 plus petite en version compacte.
 
+Masqué si l'utilisateur le désactive dans les Réglages de l'app (`widgetHvacButton` de `appPreferences`,
+`AppPreferences.showsWidgetHvacButton` : affiché si la valeur est absente, préférences enregistrées avant le réglage).
+Le changement passe par `saveNativePreferences` (`setData`), qui recharge les widgets. Le contrôle iOS 18 n'est pas concerné.
+
 | Widget | Bouton |
 |---|---|
 | Moyen | Dans l'en-tête, avant le niveau (comme le 4x2 Android) |

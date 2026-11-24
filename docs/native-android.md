@@ -99,6 +99,8 @@ Java 17 et les dépôts Maven des nouveaux modules sont réglés par le plugin G
 ### Bouton de confort thermique
 
 `HvacButton` (`WidgetComponents.kt`), sur tous les widgets : pastille ronde avec l'icône seule (30 dp, 26 dp en compact).
+Masqué si l'utilisateur le désactive dans les Réglages de l'app (`AppPreferences.widgetHvacButton`, champ `widgetHvacButton`
+de `appPreferences`, `true` s'il est absent). Le changement passe par `saveNativePreferences` (`setData`), qui redessine les widgets.
 
 | Où | Bouton |
 |---|---|

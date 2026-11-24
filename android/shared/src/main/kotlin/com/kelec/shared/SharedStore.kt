@@ -48,6 +48,7 @@ class SharedStore(context: Context) {
             AppPreferences(
                 displayMiles = json.optBoolean("displayMiles", false),
                 convertToMiles = json.optBoolean("convertToMiles", false),
+                widgetHvacButton = json.optBoolean("widgetHvacButton", true),
             )
         } catch (e: JSONException) {
             null
